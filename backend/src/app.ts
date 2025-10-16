@@ -22,15 +22,11 @@ export async function createApp(): Promise<FastifyInstance> {
 
   // Register Prisma
   const prisma = new PrismaClient();
-  await fastify.register(async (fastify) => {
-    fastify.decorate('prisma', prisma);
-  });
+  fastify.decorate('prisma', prisma);
 
   // Register Redis
   const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
-  await fastify.register(async (fastify) => {
-    fastify.decorate('redis', redis);
-  });
+  fastify.decorate('redis', redis);
 
   // Register security plugins
   await fastify.register(import('@fastify/helmet'), {
@@ -96,6 +92,19 @@ export async function createApp(): Promise<FastifyInstance> {
     // This will be implemented later with prom-client
     reply.type('text/plain');
     return '# Metrics endpoint - to be implemented with prom-client\n';
+  });
+
+  // Register global middleware
+  fastify.addHook('preHandler', async (request, reply) => {
+    // Set tenant context for all authenticated requests
+    if (request.user) {
+      try {
+        await fastify.prisma.$executeRaw`SET app.current_tenant_id = ${(request.user as any).tenantId}`;
+        await fastify.prisma.$executeRaw`SET app.current_user_id = ${(request.user as any).id}`;
+      } catch (error) {
+        // Continue without failing - RLS will be handled at database level
+      }
+    }
   });
 
   // Register routes

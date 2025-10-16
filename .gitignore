@@ -50,6 +50,12 @@ Thumbs.db
 *.swo
 *~
 
+# Prisma build files
+prisma/seed.d.ts
+prisma/seed.d.ts.map
+prisma/seed.js
+prisma/seed.js.map
+
 # Testes
 coverage/
 .nyc_output/
