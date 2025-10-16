@@ -1,0 +1,67 @@
+# Pastas ocultas de configuração (não versionar)
+.context/
+.cursor/
+.vscode/
+.idea/
+
+# Dependências
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Ambiente
+.env
+.env.local
+.env.*.local
+*.env
+
+# Build
+dist/
+build/
+.next/
+out/
+
+# Logs
+logs/
+*.log
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Database
+*.sqlite
+*.sqlite3
+prisma/dev.db
+prisma/test.db
+
+# Docker
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+*.swp
+*.swo
+*~
+
+# Testes
+coverage/
+.nyc_output/
+
+# Temporários
+tmp/
+temp/
+*.tmp
+
+# Observabilidade (dados locais)
+prometheus_data/
+grafana_data/
+
+# ESLint
+eslint-show-config.json
