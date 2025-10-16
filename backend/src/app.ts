@@ -14,9 +14,9 @@ export async function createApp(): Promise<FastifyInstance> {
   const fastify = (await import('fastify')).default({
     logger: {
       level: process.env.LOG_LEVEL || 'info',
-      transport: process.env.NODE_ENV === 'development' 
-        ? { target: 'pino-pretty' }
-        : undefined
+      ...(process.env.NODE_ENV === 'development' && {
+        transport: { target: 'pino-pretty' }
+      })
     }
   });
 
@@ -105,7 +105,7 @@ export async function createApp(): Promise<FastifyInstance> {
   await fastify.register(import('./routes/metric.routes'), { prefix: '/api/metrics' });
 
   // Global error handler
-  fastify.setErrorHandler(async (error, request, reply) => {
+  fastify.setErrorHandler(async (error: any, request, reply) => {
     fastify.log.error(error);
 
     if (error.validation) {
@@ -144,7 +144,7 @@ export async function createApp(): Promise<FastifyInstance> {
       redis.disconnect();
       fastify.log.info('Server closed successfully');
       process.exit(0);
-    } catch (error) {
+    } catch (error: any) {
       fastify.log.error('Error during shutdown:', error);
       process.exit(1);
     }

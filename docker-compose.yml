@@ -10,10 +10,9 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kaven123}
       POSTGRES_DB: ${POSTGRES_DB:-kaven}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
     networks:
       - kaven-network
     healthcheck:
