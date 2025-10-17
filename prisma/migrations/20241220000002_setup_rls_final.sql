@@ -270,7 +270,7 @@ COMMENT ON FUNCTION app.validate_tenant_ownership(text) IS 'Validates if a resou
 COMMENT ON FUNCTION app.get_tenant_stats(text) IS 'Gets tenant statistics (admin only)';
 COMMENT ON FUNCTION app.cleanup_old_metrics(timestamp, text) IS 'Cleans up old metrics (admin only)';
 
--- Log successful RLS setup
+-- Log successful RLS setup (only if tenants exist)
 INSERT INTO metrics (
   id,
   tenant_id,
@@ -278,9 +278,10 @@ INSERT INTO metrics (
   value,
   labels,
   timestamp
-) VALUES (
+) 
+SELECT 
   gen_random_uuid(),
-  (SELECT id FROM tenants WHERE subdomain = 'default' LIMIT 1),
+  id,
   'rls_setup_completed',
   1,
   jsonb_build_object(
@@ -288,4 +289,6 @@ INSERT INTO metrics (
     'timestamp', now()
   ),
   now()
-);
+FROM tenants 
+WHERE subdomain = 'default' 
+LIMIT 1;

@@ -9,8 +9,12 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
     "test:watch": "vitest --watch",
-    "test:coverage": "vitest --coverage",
     "lint": "eslint \"src/**/*.{js,ts}\"",
     "lint:fix": "eslint \"src/**/*.{js,ts}\" --fix",
     "db:generate": "prisma generate",
@@ -54,13 +58,16 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^20.14.10",
+    "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.13.1",
     "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/ui": "^1.6.1",
     "eslint": "^8.57.0",
     "prisma": "^5.19.1",
+    "supertest": "^7.1.4",
     "tsx": "^4.19.2",
     "typescript": "^5.5.3",
-    "vitest": "^1.6.0"
+    "vitest": "^1.6.1"
   }
 }
