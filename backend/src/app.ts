@@ -91,18 +91,58 @@ export async function createApp(): Promise<FastifyInstance> {
   const { initializeMetrics } = await import('./utils/metrics.js');
   initializeMetrics(fastify);
 
-  // Register global middleware
-  fastify.addHook('preHandler', async (request, reply) => {
-    // Set tenant context for all authenticated requests
-    if (request.user) {
-      try {
-        await fastify.prisma.$executeRaw`SET app.current_tenant_id = ${(request.user as any).tenantId}`;
-        await fastify.prisma.$executeRaw`SET app.current_user_id = ${(request.user as any).id}`;
-      } catch (error) {
-        // Continue without failing - RLS will be handled at database level
-      }
-    }
-  });
+      // Register security middlewares
+      const { 
+        securityHeaders, 
+        sanitizeRequest, 
+        requestSizeLimit,
+        auditLog,
+        apiVersioning,
+        requestTimeout
+      } = await import('./middleware/security.middleware.js');
+      
+      // Global security hooks
+      fastify.addHook('preHandler', async (request, reply) => {
+        // Apply security headers
+        await securityHeaders(request, reply);
+        
+        // Sanitize request
+        await sanitizeRequest(request, reply);
+        
+        // Check request size
+        await requestSizeLimit(request, reply);
+        
+        // API versioning
+        await apiVersioning(request, reply);
+        
+        // Request timeout
+        await requestTimeout(request, reply);
+      });
+
+      // Audit logging hook
+      fastify.addHook('onRequest', async (request, reply) => {
+        await auditLog(request, reply);
+      });
+
+      // Register tenant context middleware
+      fastify.addHook('preHandler', async (request, reply) => {
+        // Set tenant context for all authenticated requests
+        if (request.user) {
+          try {
+            await fastify.prisma.$executeRaw`SET app.current_tenant_id = ${(request.user as any).tenantId}`;
+            await fastify.prisma.$executeRaw`SET app.current_user_id = ${(request.user as any).id}`;
+            
+            fastify.log.debug({ 
+              tenantId: (request.user as any).tenantId, 
+              userId: (request.user as any).id,
+              isAdm: (request.user as any).isAdm 
+            }, 'RLS context set successfully');
+          } catch (error) {
+            fastify.log.error({ error }, 'Error setting tenant context for RLS');
+            // Continue without failing - RLS will be handled at database level
+          }
+        }
+      });
 
   // Register routes
   await fastify.register(import('./routes/auth.routes'), { prefix: '/api/auth' });

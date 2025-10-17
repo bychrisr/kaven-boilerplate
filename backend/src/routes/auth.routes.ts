@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { AuthService } from '../services/auth.service.js';
 import { AuthController } from '../controllers/auth.controller.js';
 import { authenticateUser } from '../middleware/auth.middleware.js';
+import { rateLimitPerIP } from '../middleware/security.middleware.js';
 import { 
   LoginSchema, 
   ForgotPasswordSchema, 
@@ -21,6 +22,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
 
   // POST /api/auth/login
   fastify.post('/login', {
+    preHandler: [rateLimitPerIP],
     schema: {
       body: {
         type: 'object',
