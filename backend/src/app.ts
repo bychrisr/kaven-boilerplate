@@ -87,12 +87,9 @@ export async function createApp(): Promise<FastifyInstance> {
     }
   });
 
-  // Metrics endpoint for Prometheus
-  fastify.get('/metrics', async (request, reply) => {
-    // This will be implemented later with prom-client
-    reply.type('text/plain');
-    return '# Metrics endpoint - to be implemented with prom-client\n';
-  });
+  // Initialize Prometheus metrics
+  const { initializeMetrics } = await import('./utils/metrics.js');
+  initializeMetrics(fastify);
 
   // Register global middleware
   fastify.addHook('preHandler', async (request, reply) => {
