@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install
+        working-directory: production/backend
+        run: npm ci
+      - name: Lint
+        working-directory: production/backend
+        run: npm run lint
+      - name: Test
+        working-directory: production/backend
+        run: npm test
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install
+        working-directory: production/frontend
+        run: npm ci
+      - name: Lint
+        working-directory: production/frontend
+        run: npm run lint
+      - name: Build
+        working-directory: production/frontend
+        run: npm run build

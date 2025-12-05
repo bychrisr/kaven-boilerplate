@@ -1,0 +1,66 @@
+{
+  "name": "kaven-boilerplate",
+  "version": "2.0.0",
+  "description": "Enterprise-grade SaaS boilerplate with multi-tenancy, admin panel, and observability",
+  "private": true,
+  "workspaces": [
+    "production/backend",
+    "production/frontend",
+    "production/shared"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd production/backend && npm run dev",
+    "dev:frontend": "cd production/frontend && npm run dev",
+    "build": "npm run build:shared && npm run build:backend && npm run build:frontend",
+    "build:shared": "cd production/shared && npm run build",
+    "build:backend": "cd production/backend && npm run build",
+    "build:frontend": "cd production/frontend && npm run build",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd production/backend && npm test",
+    "test:frontend": "cd production/frontend && npm test",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd production/backend && npm run lint",
+    "lint:frontend": "cd production/frontend && npm run lint",
+    "prisma:migrate": "cd production/backend && npx prisma migrate dev",
+    "prisma:studio": "cd production/backend && npx prisma studio",
+    "prisma:seed": "cd production/backend && npx prisma db seed",
+    "docker:up": "cd infra && docker compose up -d",
+    "docker:down": "cd infra && docker compose down",
+    "docker:logs": "cd infra && docker compose logs -f",
+    "telemetry:analyze": "python .agent/scripts/analyze_metrics.py",
+    "telemetry:view": "cat .agent/telemetry/metrics.json | jq '.summary'"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bychrisr/kaven-boilerplate.git"
+  },
+  "keywords": [
+    "saas",
+    "boilerplate",
+    "fastify",
+    "nextjs",
+    "prisma",
+    "multi-tenancy",
+    "admin-panel",
+    "observability",
+    "shadcn-ui",
+    "typescript",
+    "docker",
+    "prometheus",
+    "grafana"
+  ],
+  "author": "Chris (@bychrisr)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bychrisr/kaven-boilerplate/issues"
+  },
+  "homepage": "https://github.com/bychrisr/kaven-boilerplate#readme"
+}
