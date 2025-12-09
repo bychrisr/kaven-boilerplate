@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum UserRole {
+  SUPER_ADMIN
+  TENANT_ADMIN
+  USER
+}
+
+enum TenantRole {
+  TENANT_ADMIN
+  MEMBER
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+// Models
+
+model Tenant {
+  id        String       @id @default(uuid())
+  name      String
+  slug      String       @unique
+  status    TenantStatus @default(ACTIVE)
+  settings  Json?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  users    UserTenant[]
+  auditLogs AuditLog[]
+
+  @@index([status])
+}
+
+model User {
+  id               String    @id @default(uuid())
+  email            String    @unique
+  passwordHash     String
+  name             String
+  role             UserRole  @default(USER)
+  emailVerified    Boolean   @default(false)
+  emailVerifiedAt  DateTime?
+  twoFactorEnabled Boolean   @default(false)
+  twoFactorSecret  String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  tenants       UserTenant[]
+  refreshTokens RefreshToken[]
+  auditLogs     AuditLog[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model UserTenant {
+  id        String     @id @default(uuid())
+  userId    String
+  tenantId  String
+  role      TenantRole @default(MEMBER)
+  createdAt DateTime   @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tenantId])
+  @@index([userId])
+  @@index([tenantId])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  tenantId   String?
+  userId     String?
+  action     String
+  entityType String
+  entityId   String
+  changes    Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model SystemConfig {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       Json
+  description String?
+  updatedBy   String?
+  updatedAt   DateTime @updatedAt
+
+  // Not strictly enforcing FK to User here to allow system updates, 
+  // but logically it points to a User UUID if updated by human
+}
