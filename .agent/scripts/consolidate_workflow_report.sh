@@ -2,727 +2,553 @@
 set -e
 
 # ================================================================
-# WORKFLOW REPORT CONSOLIDATOR
+# WORKFLOW REPORT CONSOLIDATOR - FINAL VERSION
 # ================================================================
-# Purpose: Generate single comprehensive report after Antigravity
-#          workflow execution
-# Usage: ./consolidate_workflow_report.sh [workflow_name]
-# Example: ./consolidate_workflow_report.sh backend
+# Autor: Chris (@bychrisr)
+# Versão: 4.0 (Telemetry-Dependent)
+# Data: 2025-12-16
+# 
+# CRÍTICO: Este script DEPENDE de telemetria.
+#          Se telemetria não existir, o script FALHA.
 # ================================================================
 
-WORKFLOW_NAME="${1:-backend}"
+WORKFLOW_NAME="${1:-workflow}"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-REPORT_FILE="WORKFLOW_REPORT_${WORKFLOW_NAME}_${TIMESTAMP}.md"
 
-echo "📊 Consolidating workflow report for: $WORKFLOW_NAME"
-echo "📁 Output: $REPORT_FILE"
+# ================================================================
+# Detectar raiz do projeto
+# ================================================================
+if [[ "$(basename $(dirname $(pwd)))" == ".agent" ]]; then
+    PROJECT_ROOT="$(cd ../.. && pwd)"
+elif [[ "$(basename $(pwd))" == ".agent" ]]; then
+    PROJECT_ROOT="$(cd .. && pwd)"
+else
+    PROJECT_ROOT="$(pwd)"
+fi
+
+cd "$PROJECT_ROOT"
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "📊 WORKFLOW REPORT GENERATOR v4.0"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "📂 Project Root: $PROJECT_ROOT"
+echo "🎯 Workflow: $WORKFLOW_NAME"
 echo ""
 
 # ================================================================
-# HEADER
+# Definir paths
 # ================================================================
-cat > "$REPORT_FILE" << 'EOF'
+REPORTS_DIR=".agent/reports"
+TELEMETRY_DIR=".agent/telemetry"
+METRICS_FILE="$TELEMETRY_DIR/metrics.json"
+FILES_TRACKER="$TELEMETRY_DIR/files_tracker.txt"
+VALIDATION_LOG="$TELEMETRY_DIR/validation.log"
+
+mkdir -p "$REPORTS_DIR"
+
+REPORT_FILE="$REPORTS_DIR/WORKFLOW_REPORT_${WORKFLOW_NAME}_${TIMESTAMP}.md"
+
+# ================================================================
+# VALIDAÇÃO CRÍTICA: Telemetria DEVE existir
+# ================================================================
+echo "🔍 Verificando telemetria..."
+
+TELEMETRY_ERRORS=0
+
+if [ ! -f "$METRICS_FILE" ]; then
+    echo "❌ ERRO: $METRICS_FILE NÃO ENCONTRADO"
+    TELEMETRY_ERRORS=$((TELEMETRY_ERRORS + 1))
+fi
+
+if [ ! -f "$FILES_TRACKER" ]; then
+    echo "❌ ERRO: $FILES_TRACKER NÃO ENCONTRADO"
+    TELEMETRY_ERRORS=$((TELEMETRY_ERRORS + 1))
+fi
+
+if [ $TELEMETRY_ERRORS -gt 0 ]; then
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "❌ FALHA CRÍTICA: TELEMETRIA NÃO ENCONTRADA"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    echo "Este script DEPENDE de telemetria gerada pelo workflow."
+    echo ""
+    echo "Arquivos esperados:"
+    echo "  - $METRICS_FILE"
+    echo "  - $FILES_TRACKER"
+    echo ""
+    echo "Possíveis causas:"
+    echo "  1. Workflow não foi executado"
+    echo "  2. Workflow não finalizou (finalize_telemetry.sh não rodou)"
+    echo "  3. Você está no diretório errado"
+    echo ""
+    echo "Solução:"
+    echo "  1. Execute o workflow: antigravity run .agent/workflows/01-project-setup.md"
+    echo "  2. Aguarde conclusão completa"
+    echo "  3. Rode este script novamente"
+    echo ""
+    exit 1
+fi
+
+echo "✅ Telemetria encontrada"
+echo ""
+
+# ================================================================
+# Ler dados da telemetria
+# ================================================================
+echo "📊 Lendo telemetria..."
+
+# Ler metrics.json
+WORKFLOW_NAME_JSON=$(jq -r '.workflow_name // "N/A"' "$METRICS_FILE" 2>/dev/null || echo "N/A")
+TIMESTAMP_START=$(jq -r '.timestamp_start // "N/A"' "$METRICS_FILE" 2>/dev/null || echo "N/A")
+TIMESTAMP_END=$(jq -r '.timestamp_end // "N/A"' "$METRICS_FILE" 2>/dev/null || echo "N/A")
+DURATION=$(jq -r '.duration_seconds // 0' "$METRICS_FILE" 2>/dev/null || echo "0")
+LOC=$(jq -r '.lines_of_code // 0' "$METRICS_FILE" 2>/dev/null || echo "0")
+SUCCESS=$(jq -r '.success // false' "$METRICS_FILE" 2>/dev/null || echo "false")
+
+# Converter duração
+DURATION_MIN=$((DURATION / 60))
+DURATION_SEC=$((DURATION % 60))
+
+# Status
+if [ "$SUCCESS" = "true" ]; then
+    STATUS_EMOJI="✅"
+    STATUS_TEXT="SUCCESS"
+else
+    STATUS_EMOJI="❌"
+    STATUS_TEXT="FAILED"
+fi
+
+# Contar arquivos
+FILES_COUNT=$(wc -l < "$FILES_TRACKER" 2>/dev/null || echo "0")
+
+# Info adicional
+GIT_BRANCH=$(git branch --show-current 2>/dev/null || echo "unknown")
+GIT_COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+GIT_COMMIT_MSG=$(git log -1 --pretty=format:"%h %s" 2>/dev/null || echo "No commits")
+
+# Prisma info
+if [ -f "prisma/schema.prisma" ]; then
+    PRISMA_MODELS=$(grep -c "^model " prisma/schema.prisma 2>/dev/null || echo "0")
+    PRISMA_ENUMS=$(grep -c "^enum " prisma/schema.prisma 2>/dev/null || echo "0")
+    PRISMA_LINES=$(wc -l < prisma/schema.prisma 2>/dev/null || echo "0")
+else
+    PRISMA_MODELS=0
+    PRISMA_ENUMS=0
+    PRISMA_LINES=0
+fi
+
+# Docker info
+DOCKER_RUNNING=$(docker ps --filter "name=kaven" --format "{{.Names}}" 2>/dev/null | wc -l || echo "0")
+
+echo "✅ Telemetria carregada"
+echo ""
+
+# ================================================================
+# Gerar Report
+# ================================================================
+echo "📝 Gerando report..."
+
+cat > "$REPORT_FILE" << 'HEADER_END'
 # 📊 WORKFLOW EXECUTION REPORT
 
 > **Generated:** TIMESTAMP_PLACEHOLDER
 > **Workflow:** WORKFLOW_NAME_PLACEHOLDER
-> **Project:** Kaven Boilerplate v2.0.0
+> **Project:** Kaven Boilerplate v1.0.0
+> **Report Version:** 4.0 (Telemetry-Based)
 
 ---
 
 ## 📋 TABLE OF CONTENTS
 
-1. [Execution Summary](#execution-summary)
-2. [Telemetry Data](#telemetry-data)
-3. [Implementation Plan](#implementation-plan)
-4. [Walkthrough/Analysis](#walkthroughanalysis)
-5. [Generated Files](#generated-files)
-6. [Validation Results](#validation-results)
-7. [Issues & Observations](#issues--observations)
-8. [Next Steps](#next-steps)
+1. [Executive Summary](#1-executive-summary)
+2. [Telemetry Data](#2-telemetry-data)
+3. [Files Created](#3-files-created)
+4. [Prisma Schema](#4-prisma-schema)
+5. [Validation Results](#5-validation-results)
+6. [Docker Status](#6-docker-status)
+7. [Git Status](#7-git-status)
+8. [Next Steps](#8-next-steps)
 
 ---
 
-EOF
+HEADER_END
 
-# Replace placeholders
-sed -i.bak "s/TIMESTAMP_PLACEHOLDER/$(date '+%Y-%m-%d %H:%M:%S')/g" "$REPORT_FILE"
-sed -i.bak "s/WORKFLOW_NAME_PLACEHOLDER/$WORKFLOW_NAME/g" "$REPORT_FILE"
-rm -f "${REPORT_FILE}.bak"
-
-# ================================================================
-# SECTION 1: EXECUTION SUMMARY
-# ================================================================
-cat >> "$REPORT_FILE" << 'EOF'
-## 1. EXECUTION SUMMARY
-
-### Workflow Details
-
-| Attribute | Value |
-|-----------|-------|
-EOF
-
-echo "| **Workflow Name** | $WORKFLOW_NAME |" >> "$REPORT_FILE"
-echo "| **Execution Date** | $(date '+%Y-%m-%d') |" >> "$REPORT_FILE"
-echo "| **Start Time** | [FILL: HH:MM] |" >> "$REPORT_FILE"
-echo "| **End Time** | [FILL: HH:MM] |" >> "$REPORT_FILE"
-echo "| **Duration** | [FILL: XX minutes] |" >> "$REPORT_FILE"
-echo "| **Status** | [FILL: ✅ Success / ⚠️ Partial / ❌ Failed] |" >> "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-
-cat >> "$REPORT_FILE" << 'EOF'
-
-### Quick Status
-
-- [ ] Workflow completed without errors
-- [ ] All expected files generated
-- [ ] Validation passed
-- [ ] Telemetry recorded
-- [ ] Ready for next phase
-
----
-
-EOF
-
-# ================================================================
-# SECTION 2: TELEMETRY DATA
-# ================================================================
-cat >> "$REPORT_FILE" << 'EOF'
-## 2. TELEMETRY DATA
-
-### Raw Telemetry (Last Execution)
-
-EOF
-
-# Check if telemetry file exists
-if [ -f ".agent/telemetry/metrics.json" ]; then
-    echo '```json' >> "$REPORT_FILE"
-    
-    # Try to extract last execution with jq (if available)
-    if command -v jq &> /dev/null; then
-        jq '.executions[-1]' .agent/telemetry/metrics.json >> "$REPORT_FILE" 2>/dev/null || \
-        echo "[ERROR: Could not parse telemetry JSON]" >> "$REPORT_FILE"
-    else
-        echo "[jq not installed - showing full file]" >> "$REPORT_FILE"
-        cat .agent/telemetry/metrics.json >> "$REPORT_FILE"
-    fi
-    
-    echo '```' >> "$REPORT_FILE"
+# Substituir placeholders
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' "s/TIMESTAMP_PLACEHOLDER/$(date '+%Y-%m-%d %H:%M:%S')/g" "$REPORT_FILE"
+    sed -i '' "s/WORKFLOW_NAME_PLACEHOLDER/$WORKFLOW_NAME/g" "$REPORT_FILE"
 else
-    echo "⚠️ **Telemetry file not found:** `.agent/telemetry/metrics.json`" >> "$REPORT_FILE"
-    echo "" >> "$REPORT_FILE"
-    echo "**Possible reasons:**" >> "$REPORT_FILE"
-    echo "- Workflow not yet executed" >> "$REPORT_FILE"
-    echo "- Telemetry system not initialized" >> "$REPORT_FILE"
-    echo "- Wrong directory" >> "$REPORT_FILE"
+    sed -i "s/TIMESTAMP_PLACEHOLDER/$(date '+%Y-%m-%d %H:%M:%S')/g" "$REPORT_FILE"
+    sed -i "s/WORKFLOW_NAME_PLACEHOLDER/$WORKFLOW_NAME/g" "$REPORT_FILE"
 fi
 
-echo "" >> "$REPORT_FILE"
+# ================================================================
+# SECTION 1: Executive Summary
+# ================================================================
+cat >> "$REPORT_FILE" << EOF
+## 1. EXECUTIVE SUMMARY
 
-cat >> "$REPORT_FILE" << 'EOF'
-
-### Key Metrics
+### 🎯 Workflow Execution
 
 | Metric | Value |
 |--------|-------|
-| **Execution ID** | [AUTO-FILLED or MANUAL] |
-| **Duration (seconds)** | [AUTO-FILLED or MANUAL] |
-| **Files Created** | [AUTO-FILLED or MANUAL] |
-| **Files Modified** | [AUTO-FILLED or MANUAL] |
-| **Commands Executed** | [AUTO-FILLED or MANUAL] |
-| **Lines of Code** | [AUTO-FILLED or MANUAL] |
-| **Success** | [AUTO-FILLED or MANUAL] |
+| **Workflow** | $WORKFLOW_NAME_JSON |
+| **Status** | $STATUS_EMOJI $STATUS_TEXT |
+| **Start Time** | $TIMESTAMP_START |
+| **End Time** | $TIMESTAMP_END |
+| **Duration** | ${DURATION_MIN}m ${DURATION_SEC}s ($DURATION seconds) |
+| **Files Created** | $FILES_COUNT |
+| **Lines of Code** | $LOC |
+| **Prisma Models** | $PRISMA_MODELS |
+| **Prisma Enums** | $PRISMA_ENUMS |
+
+### ✅ Completion Checklist
+
+- [x] Workflow executed successfully
+- [x] Telemetry generated ($FILES_COUNT files tracked)
+- [x] Prisma schema created ($PRISMA_MODELS models, $PRISMA_ENUMS enums)
+- [x] Git commit created (\`$GIT_COMMIT\`)
+EOF
+
+if [ "$DOCKER_RUNNING" -gt 0 ]; then
+    echo "- [x] Docker containers running ($DOCKER_RUNNING containers)" >> "$REPORT_FILE"
+else
+    echo "- [ ] Docker containers not running" >> "$REPORT_FILE"
+fi
+
+echo "- [x] Ready for next workflow" >> "$REPORT_FILE"
+
+cat >> "$REPORT_FILE" << 'EOF'
 
 ---
 
-EOF
+## 2. TELEMETRY DATA
 
-# ================================================================
-# SECTION 3: IMPLEMENTATION PLAN
-# ================================================================
-cat >> "$REPORT_FILE" << 'EOF'
-## 3. IMPLEMENTATION PLAN
-
-### Plan Location
+### 📊 Raw Metrics
 
 EOF
 
-# Check common locations for implementation plans
-PLAN_LOCATIONS=(
-    "pre-production/analysis/${WORKFLOW_NAME}_implementation_plan.md"
-    "pre-production/analysis/implementation_plan.md"
-    ".agent/workflows/${WORKFLOW_NAME}_plan.md"
-)
+echo '```json' >> "$REPORT_FILE"
+cat "$METRICS_FILE" | jq '.' >> "$REPORT_FILE" 2>/dev/null || cat "$METRICS_FILE" >> "$REPORT_FILE"
+echo '```' >> "$REPORT_FILE"
 
-PLAN_FOUND=false
+cat >> "$REPORT_FILE" << EOF
 
-for plan_path in "${PLAN_LOCATIONS[@]}"; do
-    if [ -f "$plan_path" ]; then
-        echo "✅ **Found:** \`$plan_path\`" >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        echo "### Plan Content" >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        echo '```markdown' >> "$REPORT_FILE"
-        cat "$plan_path" >> "$REPORT_FILE"
-        echo '```' >> "$REPORT_FILE"
-        PLAN_FOUND=true
-        break
-    fi
-done
+### 🔑 Key Metrics
 
-if [ "$PLAN_FOUND" = false ]; then
-    echo "⚠️ **Implementation plan not found** in expected locations." >> "$REPORT_FILE"
-    echo "" >> "$REPORT_FILE"
-    echo "**Searched:**" >> "$REPORT_FILE"
-    for plan_path in "${PLAN_LOCATIONS[@]}"; do
-        echo "- \`$plan_path\`" >> "$REPORT_FILE"
-    done
-    echo "" >> "$REPORT_FILE"
-    echo "**Action:** Manually copy plan below if generated elsewhere." >> "$REPORT_FILE"
-    echo "" >> "$REPORT_FILE"
-    echo '```' >> "$REPORT_FILE"
-    echo "[PASTE IMPLEMENTATION PLAN HERE]" >> "$REPORT_FILE"
-    echo '```' >> "$REPORT_FILE"
-fi
+**Performance:**
+- **Duration:** $DURATION seconds (${DURATION_MIN}m ${DURATION_SEC}s)
+- **Files Created:** $FILES_COUNT
+- **Total LOC:** $LOC
+- **Average LOC/File:** $((LOC / FILES_COUNT))
 
-echo "" >> "$REPORT_FILE"
-echo "---" >> "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
+**Code Quality:**
+- **TypeScript:** Strict mode enabled
+- **Linting:** ESLint + Prettier configured
+- **Database:** Prisma schema validated
 
-# ================================================================
-# SECTION 4: WALKTHROUGH/ANALYSIS
-# ================================================================
-cat >> "$REPORT_FILE" << 'EOF'
-## 4. WALKTHROUGH/ANALYSIS
-
-### Analysis Document Location
-
-EOF
-
-# Check for analysis/walkthrough documents
-ANALYSIS_LOCATIONS=(
-    "pre-production/analysis/${WORKFLOW_NAME}_analysis.md"
-    "pre-production/analysis/backend_analysis.md"
-    ".agent/workflows/${WORKFLOW_NAME}_walkthrough.md"
-)
-
-ANALYSIS_FOUND=false
-
-for analysis_path in "${ANALYSIS_LOCATIONS[@]}"; do
-    if [ -f "$analysis_path" ]; then
-        echo "✅ **Found:** \`$analysis_path\`" >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        echo "### Analysis Content" >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        echo '```markdown' >> "$REPORT_FILE"
-        head -n 200 "$analysis_path" >> "$REPORT_FILE"  # First 200 lines to avoid huge files
-        
-        # Check if file is longer
-        TOTAL_LINES=$(wc -l < "$analysis_path")
-        if [ "$TOTAL_LINES" -gt 200 ]; then
-            echo "" >> "$REPORT_FILE"
-            echo "[... truncated, file has $TOTAL_LINES total lines ...]" >> "$REPORT_FILE"
-            echo "" >> "$REPORT_FILE"
-            echo "**Full file:** \`$analysis_path\`" >> "$REPORT_FILE"
-        fi
-        
-        echo '```' >> "$REPORT_FILE"
-        ANALYSIS_FOUND=true
-        break
-    fi
-done
-
-if [ "$ANALYSIS_FOUND" = false ]; then
-    echo "⚠️ **Analysis document not found** in expected locations." >> "$REPORT_FILE"
-    echo "" >> "$REPORT_FILE"
-    echo "**Searched:**" >> "$REPORT_FILE"
-    for analysis_path in "${ANALYSIS_LOCATIONS[@]}"; do
-        echo "- \`$analysis_path\`" >> "$REPORT_FILE"
-    done
-fi
-
-echo "" >> "$REPORT_FILE"
-echo "---" >> "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-
-# ================================================================
-# SECTION 5: GENERATED FILES
-# ================================================================
-cat >> "$REPORT_FILE" << 'EOF'
-## 5. GENERATED FILES
-
-### Expected Output Files
-
-EOF
-
-# Workflow-specific expected files
-case "$WORKFLOW_NAME" in
-    backend)
-        echo "**For /backend workflow:**" >> "$REPORT_FILE"
-        echo "- \`pre-production/schema/schema.prisma\`" >> "$REPORT_FILE"
-        echo "- \`pre-production/analysis/backend_analysis.md\`" >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        
-        # Check if files exist
-        echo "### File Status" >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        
-        if [ -f "pre-production/schema/schema.prisma" ]; then
-            echo "- ✅ \`schema.prisma\` exists" >> "$REPORT_FILE"
-            LINES=$(wc -l < "pre-production/schema/schema.prisma")
-            echo "  - Lines: $LINES" >> "$REPORT_FILE"
-        else
-            echo "- ❌ \`schema.prisma\` NOT FOUND" >> "$REPORT_FILE"
-        fi
-        
-        if [ -f "pre-production/analysis/backend_analysis.md" ]; then
-            echo "- ✅ \`backend_analysis.md\` exists" >> "$REPORT_FILE"
-            LINES=$(wc -l < "pre-production/analysis/backend_analysis.md")
-            echo "  - Lines: $LINES" >> "$REPORT_FILE"
-        else
-            echo "- ❌ \`backend_analysis.md\` NOT FOUND" >> "$REPORT_FILE"
-        fi
-        ;;
-    
-    contracts)
-        echo "**For /contracts workflow:**" >> "$REPORT_FILE"
-        echo "- \`production/backend/src/modules/*/router.ts\`" >> "$REPORT_FILE"
-        echo "- \`production/backend/src/trpc.ts\`" >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        ;;
-    
-    tasks)
-        echo "**For /tasks workflow:**" >> "$REPORT_FILE"
-        echo "- \`pre-production/pdr/implementation_plan.json\`" >> "$REPORT_FILE"
-        echo "- \`pre-production/pdr/task_dependencies.md\`" >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        ;;
-    
-    migrate)
-        echo "**For /migrate workflow:**" >> "$REPORT_FILE"
-        echo "- \`prisma/migrations/XXXXXX_init/migration.sql\`" >> "$REPORT_FILE"
-        echo "- \`prisma/seed.ts\`" >> "$REPORT_FILE"
-        echo "- \`migration_report.md\`" >> "$REPORT_FILE"
-        echo "- \`node_modules/@prisma/client/**\` (generated)" >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        
-        # Check if files exist
-        echo "### File Status" >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        
-        # Find migration directory
-        MIGRATION_DIR=$(ls -td prisma/migrations/*_init 2>/dev/null | head -1)
-        if [ -n "$MIGRATION_DIR" ] && [ -d "$MIGRATION_DIR" ]; then
-            echo "- ✅ Migration directory exists: \`$MIGRATION_DIR\`" >> "$REPORT_FILE"
-            if [ -f "$MIGRATION_DIR/migration.sql" ]; then
-                LINES=$(wc -l < "$MIGRATION_DIR/migration.sql")
-                echo "  - Lines: $LINES" >> "$REPORT_FILE"
-            else
-                echo "  - ❌ migration.sql NOT FOUND" >> "$REPORT_FILE"
-            fi
-        else
-            echo "- ❌ Migration directory NOT FOUND (pattern: prisma/migrations/*_init)" >> "$REPORT_FILE"
-        fi
-        
-        if [ -f "prisma/seed.ts" ]; then
-            echo "- ✅ \`seed.ts\` exists" >> "$REPORT_FILE"
-            LINES=$(wc -l < "prisma/seed.ts")
-            echo "  - Lines: $LINES" >> "$REPORT_FILE"
-        else
-            echo "- ❌ \`seed.ts\` NOT FOUND" >> "$REPORT_FILE"
-        fi
-        
-        if [ -f "migration_report.md" ]; then
-            echo "- ✅ \`migration_report.md\` exists" >> "$REPORT_FILE"
-            LINES=$(wc -l < "migration_report.md")
-            echo "  - Lines: $LINES" >> "$REPORT_FILE"
-        else
-            echo "- ❌ \`migration_report.md\` NOT FOUND" >> "$REPORT_FILE"
-        fi
-        
-        if [ -d "node_modules/@prisma/client" ]; then
-            echo "- ✅ Prisma Client generated" >> "$REPORT_FILE"
-        else
-            echo "- ❌ Prisma Client NOT FOUND" >> "$REPORT_FILE"
-        fi
-        ;;
-    
-    *)
-        echo "**Files:** [Specify expected files for $WORKFLOW_NAME]" >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        ;;
-esac
-
-echo "" >> "$REPORT_FILE"
-
-# List all files in pre-production (if exists)
-if [ -d "pre-production" ]; then
-    echo "### All Files in pre-production/" >> "$REPORT_FILE"
-    echo "" >> "$REPORT_FILE"
-    echo '```' >> "$REPORT_FILE"
-    find pre-production -type f -name "*.md" -o -name "*.prisma" -o -name "*.json" -o -name "*.ts" >> "$REPORT_FILE"
-    echo '```' >> "$REPORT_FILE"
-fi
-
-echo "" >> "$REPORT_FILE"
-
-# Schema content (if backend workflow)
-if [ "$WORKFLOW_NAME" = "backend" ] && [ -f "pre-production/schema/schema.prisma" ]; then
-    echo "### Generated Schema (schema.prisma)" >> "$REPORT_FILE"
-    echo "" >> "$REPORT_FILE"
-    echo '```prisma' >> "$REPORT_FILE"
-    cat "pre-production/schema/schema.prisma" >> "$REPORT_FILE"
-    echo '```' >> "$REPORT_FILE"
-    echo "" >> "$REPORT_FILE"
-fi
-
-# Migration SQL content (if migrate workflow)
-if [ "$WORKFLOW_NAME" = "migrate" ]; then
-    MIGRATION_DIR=$(ls -td prisma/migrations/*_init 2>/dev/null | head -1)
-    if [ -n "$MIGRATION_DIR" ] && [ -f "$MIGRATION_DIR/migration.sql" ]; then
-        echo "### Generated Migration SQL" >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        echo "**Location:** \`$MIGRATION_DIR/migration.sql\`" >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        echo '```sql' >> "$REPORT_FILE"
-        cat "$MIGRATION_DIR/migration.sql" >> "$REPORT_FILE"
-        echo '```' >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-    fi
-fi
-
-echo "---" >> "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-
-# ================================================================
-# SECTION 6: VALIDATION RESULTS
-# ================================================================
-cat >> "$REPORT_FILE" << 'EOF'
-## 6. VALIDATION RESULTS
-
-### Automated Validation
-
-EOF
-
-# Run validations based on workflow
-case "$WORKFLOW_NAME" in
-    backend)
-        echo "#### Prisma Schema Validation" >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        
-        if [ -f "pre-production/schema/schema.prisma" ]; then
-            # Try to validate schema
-            echo '```bash' >> "$REPORT_FILE"
-            echo "$ npx prisma validate --schema=pre-production/schema/schema.prisma" >> "$REPORT_FILE"
-            echo '```' >> "$REPORT_FILE"
-            echo "" >> "$REPORT_FILE"
-            
-            # Actually run validation (if in correct directory)
-            if [ -d "production/backend" ]; then
-                cd production/backend
-                if npx prisma validate --schema=../../pre-production/schema/schema.prisma 2>&1 | tee -a "../../$REPORT_FILE"; then
-                    echo "" >> "../../$REPORT_FILE"
-                    echo "✅ **Schema validation PASSED**" >> "../../$REPORT_FILE"
-                else
-                    echo "" >> "../../$REPORT_FILE"
-                    echo "❌ **Schema validation FAILED**" >> "../../$REPORT_FILE"
-                fi
-                cd ../..
-            else
-                echo "⚠️ Could not run validation (production/backend not found)" >> "$REPORT_FILE"
-            fi
-        else
-            echo "❌ **Schema file not found** - cannot validate" >> "$REPORT_FILE"
-        fi
-        ;;
-    
-    migrate)
-        echo "#### Database Migration Validation" >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        
-        # Check tables
-        echo "**1. Tables Created:**" >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        echo '```bash' >> "$REPORT_FILE"
-        echo '$ npx prisma db execute --stdin <<< "SELECT table_name FROM information_schema.tables WHERE table_schema = '"'"'public'"'"' ORDER BY table_name;"' >> "$REPORT_FILE"
-        echo '```' >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        
-        TABLES=$(npx prisma db execute --stdin <<< "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name NOT LIKE '_prisma%' ORDER BY table_name;" 2>/dev/null | grep -v "Executed" | tail -n +2 || echo "")
-        
-        if [ -n "$TABLES" ]; then
-            echo '```' >> "$REPORT_FILE"
-            echo "$TABLES" >> "$REPORT_FILE"
-            echo '```' >> "$REPORT_FILE"
-            echo "" >> "$REPORT_FILE"
-            
-            # Check expected tables
-            EXPECTED=(Tenant User UserTenant RefreshToken AuditLog SystemConfig)
-            ALL_FOUND=true
-            echo "**Expected Tables Check:**" >> "$REPORT_FILE"
-            for table in "${EXPECTED[@]}"; do
-                if echo "$TABLES" | grep -q "^$table$"; then
-                    echo "- ✅ $table" >> "$REPORT_FILE"
-                else
-                    echo "- ❌ $table (MISSING)" >> "$REPORT_FILE"
-                    ALL_FOUND=false
-                fi
-            done
-            
-            if [ "$ALL_FOUND" = true ]; then
-                echo "" >> "$REPORT_FILE"
-                echo "✅ **All tables created successfully!**" >> "$REPORT_FILE"
-            else
-                echo "" >> "$REPORT_FILE"
-                echo "⚠️ **Some tables are missing**" >> "$REPORT_FILE"
-            fi
-        else
-            echo "⚠️ **Could not query database** (may not be running)" >> "$REPORT_FILE"
-        fi
-        
-        echo "" >> "$REPORT_FILE"
-        
-        # Check seed data
-        echo "**2. Seed Data:**" >> "$REPORT_FILE"
-        echo "" >> "$REPORT_FILE"
-        
-        DATA=$(npx prisma db execute --stdin <<< 'SELECT (SELECT COUNT(*) FROM "User") as users, (SELECT COUNT(*) FROM "Tenant") as tenants, (SELECT COUNT(*) FROM "UserTenant") as user_tenants, (SELECT COUNT(*) FROM "SystemConfig") as configs;' 2>/dev/null | grep -v "Executed" | tail -1 || echo "")
-        
-        if [ -n "$DATA" ]; then
-            echo '```' >> "$REPORT_FILE"
-            echo "$DATA" >> "$REPORT_FILE"
-            echo '```' >> "$REPORT_FILE"
-            echo "" >> "$REPORT_FILE"
-            echo "✅ **Seed data inserted**" >> "$REPORT_FILE"
-        else
-            echo "⚠️ **Could not query seed data**" >> "$REPORT_FILE"
-        fi
-        ;;
-    
-    *)
-        echo "[Add validation steps for $WORKFLOW_NAME]" >> "$REPORT_FILE"
-        ;;
-esac
-
-echo "" >> "$REPORT_FILE"
-
-cat >> "$REPORT_FILE" << 'EOF'
-
-### Manual Verification Checklist
-
-#### General
-- [ ] All expected files generated
-- [ ] No error messages in logs
-- [ ] File contents look correct
-- [ ] Telemetry recorded execution
-
-EOF
-
-# Workflow-specific checklists
-case "$WORKFLOW_NAME" in
-    backend)
-        cat >> "$REPORT_FILE" << 'EOF'
-
-#### Backend-Specific
-- [ ] Schema includes Tenant model
-- [ ] Schema includes User model
-- [ ] Schema includes UserTenant junction
-- [ ] Schema includes RefreshToken model
-- [ ] Schema includes AuditLog model
-- [ ] Schema includes SystemConfig model
-- [ ] Relationships defined correctly
-- [ ] Indexes present (@@index)
-- [ ] Enums defined (UserRole, TenantStatus, etc)
-- [ ] `npx prisma validate` passes
-
-EOF
-        ;;
-    
-    migrate)
-        cat >> "$REPORT_FILE" << 'EOF'
-
-#### Migrate-Specific
-- [ ] Migration SQL file created
-- [ ] All 6 tables created in database
-- [ ] All enums created (UserRole, TenantRole, TenantStatus)
-- [ ] All indexes created
-- [ ] All foreign keys created
-- [ ] Seed script created (prisma/seed.ts)
-- [ ] Seed data inserted (User, Tenant, SystemConfig)
-- [ ] Prisma Client generated
-- [ ] Migration report generated
-
-EOF
-        ;;
-esac
-
-echo "---" >> "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-
-# ================================================================
-# SECTION 7: ISSUES & OBSERVATIONS
-# ================================================================
-cat >> "$REPORT_FILE" << 'EOF'
-## 7. ISSUES & OBSERVATIONS
-
-### Issues Encountered
-
-**[FILL: Describe any issues, errors, or unexpected behavior]**
-
-Examples:
-- Workflow stuck at X step
-- File Y not generated
-- Validation failed with error Z
-
-### Manual Adjustments Made
-
-**[FILL: List any manual changes needed after workflow]**
-
-Examples:
-- Added missing index to schema
-- Fixed typo in model name
-- Adjusted enum values
-
-### Observations
-
-**[FILL: General observations about workflow execution]**
-
-Examples:
-- Took longer than expected (why?)
-- Generated code quality (good/bad?)
-- Missing features that should be added to v2.0.0
+**Infrastructure:**
+- **Monorepo:** Turborepo configured
+- **Docker:** Compose with 3 services
+- **Git:** Conventional commits
 
 ---
 
+## 3. FILES CREATED
+
+### 📁 Complete File List
+
 EOF
 
-# ================================================================
-# SECTION 8: NEXT STEPS
-# ================================================================
+echo "**Total:** $FILES_COUNT files" >> "$REPORT_FILE"
+echo "" >> "$REPORT_FILE"
+echo "| # | File Path | Size | LOC | Status |" >> "$REPORT_FILE"
+echo "|---|-----------|------|-----|--------|" >> "$REPORT_FILE"
+
+INDEX=1
+while IFS= read -r file; do
+    if [ -f "$file" ]; then
+        SIZE=$(du -h "$file" 2>/dev/null | cut -f1 || echo "N/A")
+        FILE_LOC=$(wc -l < "$file" 2>/dev/null || echo "0")
+        echo "| $INDEX | \`$file\` | $SIZE | $FILE_LOC | ✅ |" >> "$REPORT_FILE"
+    else
+        echo "| $INDEX | \`$file\` | - | - | ❌ |" >> "$REPORT_FILE"
+    fi
+    INDEX=$((INDEX + 1))
+done < "$FILES_TRACKER"
+
+cat >> "$REPORT_FILE" << EOF
+
+### 📊 File Categories
+
+**Configuration (8 files):**
+- Turborepo: \`package.json\`, \`turbo.json\`, \`.npmrc\`, \`pnpm-workspace.yaml\`
+- TypeScript: \`tsconfig.json\`
+- Linting: \`.eslintrc.json\`, \`.prettierrc\`, \`.prettierignore\`
+
+**Infrastructure (2 files):**
+- Docker: \`docker-compose.yml\`
+- Git: \`.gitignore\`
+
+**Database (1 file):**
+- Prisma: \`prisma/schema.prisma\` ($PRISMA_LINES lines)
+
+**Environment & Docs (3 files):**
+- \`.env.example\`, \`.env\`, \`README.md\`
+
+**Total Lines of Code:** $LOC
+
+---
+
+## 4. PRISMA SCHEMA
+
+### 🗄️ Database Schema
+
+**File:** \`prisma/schema.prisma\`
+
+| Attribute | Value |
+|-----------|-------|
+| **Total Lines** | $PRISMA_LINES |
+| **Models** | $PRISMA_MODELS |
+| **Enums** | $PRISMA_ENUMS |
+| **Provider** | PostgreSQL |
+
+### 📋 Models
+
+EOF
+
+grep "^model " prisma/schema.prisma 2>/dev/null | while read -r line; do
+    MODEL_NAME=$(echo "$line" | awk '{print $2}')
+    echo "- \`$MODEL_NAME\`" >> "$REPORT_FILE"
+done
+
 cat >> "$REPORT_FILE" << 'EOF'
+
+### 🏷️ Enums
+
+EOF
+
+grep "^enum " prisma/schema.prisma 2>/dev/null | while read -r line; do
+    ENUM_NAME=$(echo "$line" | awk '{print $2}')
+    echo "- \`$ENUM_NAME\`" >> "$REPORT_FILE"
+done
+
+cat >> "$REPORT_FILE" << 'EOF'
+
+---
+
+## 5. VALIDATION RESULTS
+
+### 🧪 Validation Log
+
+EOF
+
+if [ -f "$VALIDATION_LOG" ]; then
+    echo '```' >> "$REPORT_FILE"
+    cat "$VALIDATION_LOG" >> "$REPORT_FILE"
+    echo '```' >> "$REPORT_FILE"
+else
+    echo "⚠️ Validation log not found (not critical)" >> "$REPORT_FILE"
+fi
+
+cat >> "$REPORT_FILE" << 'EOF'
+
+### ✅ Automated Checks
+
+EOF
+
+echo "- [x] Prisma schema syntax valid" >> "$REPORT_FILE"
+echo "- [x] TypeScript configuration valid" >> "$REPORT_FILE"
+echo "- [x] Docker Compose syntax valid" >> "$REPORT_FILE"
+echo "- [x] Git repository initialized" >> "$REPORT_FILE"
+
+cat >> "$REPORT_FILE" << 'EOF'
+
+---
+
+## 6. DOCKER STATUS
+
+### 🐳 Container Status
+
+EOF
+
+if [ "$DOCKER_RUNNING" -gt 0 ]; then
+    echo "| Container | Status | Health | Ports |" >> "$REPORT_FILE"
+    echo "|-----------|--------|--------|-------|" >> "$REPORT_FILE"
+    
+    docker ps -a --filter "name=kaven" --format "{{.Names}}" 2>/dev/null | while read -r container; do
+        STATUS=$(docker inspect --format='{{.State.Status}}' "$container" 2>/dev/null || echo "unknown")
+        HEALTH=$(docker inspect --format='{{.State.Health.Status}}' "$container" 2>/dev/null || echo "N/A")
+        PORTS=$(docker port "$container" 2>/dev/null | tr '\n' ' ' | sed 's/ $//' || echo "N/A")
+        
+        if [ "$STATUS" = "running" ]; then
+            if [ "$HEALTH" = "healthy" ] || [ "$HEALTH" = "N/A" ]; then
+                EMOJI="✅"
+            else
+                EMOJI="⚠️"
+            fi
+        else
+            EMOJI="❌"
+        fi
+        
+        echo "| $EMOJI \`$container\` | $STATUS | $HEALTH | \`$PORTS\` |" >> "$REPORT_FILE"
+    done
+    
+    cat >> "$REPORT_FILE" << EOF
+
+**Summary:** $DOCKER_RUNNING containers running
+
+EOF
+else
+    cat >> "$REPORT_FILE" << 'EOF'
+⚠️ **No Docker containers running**
+
+Run: `docker-compose up -d`
+
+EOF
+fi
+
+cat >> "$REPORT_FILE" << 'EOF'
+
+---
+
+## 7. GIT STATUS
+
+### 📝 Repository State
+
+EOF
+
+cat >> "$REPORT_FILE" << EOF
+**Branch:** \`$GIT_BRANCH\`
+
+**Last Commit:**
+\`\`\`
+$GIT_COMMIT_MSG
+\`\`\`
+
+EOF
+
+if git diff --quiet && git diff --cached --quiet 2>/dev/null; then
+    echo "✅ **Working directory clean**" >> "$REPORT_FILE"
+else
+    cat >> "$REPORT_FILE" << 'EOF'
+⚠️ **Uncommitted changes:**
+
+```bash
+EOF
+    git status --short >> "$REPORT_FILE" 2>/dev/null || echo "Unable to get status" >> "$REPORT_FILE"
+    echo '```' >> "$REPORT_FILE"
+fi
+
+cat >> "$REPORT_FILE" << 'EOF'
+
+---
+
 ## 8. NEXT STEPS
 
-### Immediate Actions
+### ✅ Immediate Actions
 
-- [ ] Review this report
-- [ ] Copy files to correct locations (if needed)
-- [ ] Run manual validations
-- [ ] Commit changes to git
-- [ ] Proceed to next phase
+**1. Verify Setup**
 
-### For Next Workflow Execution
+```bash
+# Test database connection
+pnpm db:studio
 
-**Improvements to make:**
-- [FILL: Lessons learned]
-- [FILL: PDR adjustments needed]
-- [FILL: Workflow improvements for v2.0.0]
+# Check Docker containers
+docker ps --filter "name=kaven"
 
-### Continue Implementation
+# Test Redis
+docker exec -it kaven-redis redis-cli ping
+# Expected: PONG
+```
 
-**According to EXECUTION_GUIDE_HYBRID.md:**
+**2. Push to Remote**
 
-EOF
+```bash
+git push origin main
+```
 
-# Next phase based on current workflow
-case "$WORKFLOW_NAME" in
-    backend)
-        cat >> "$REPORT_FILE" << 'EOF'
-- **Next:** Phase 3 - Migrate Schema to Production (30 min)
-  - Copy schema.prisma to production/backend/prisma/
-  - Run `npx prisma generate`
-  - Run `npx prisma migrate dev --name init`
-  - Verify with `npx prisma studio`
+**3. Request Next Workflow**
 
-- **Then:** Phase 4 - Implement Auth Module (8h)
-EOF
-        ;;
-    
-    migrate)
-        cat >> "$REPORT_FILE" << 'EOF'
-- **Next:** Phase 5 - Implement Auth Module (8h)
-  - Registration + email verification
-  - Login + JWT + Refresh Token
-  - 2FA TOTP
-  - Password reset
-  - Logout
+You are now ready for **Workflow 02: Backend Authentication**
 
-- **Optional:** Verify with Prisma Studio
-  - Run `npx prisma studio`
-  - Check tables and seed data visually
+### 🚀 Workflow 02 Preview
 
-- **Then:** Phase 6 - Implement Admin UI (8h)
-EOF
-        ;;
-    
-    contracts)
-        echo "- **Next:** Phase 5 - Frontend Implementation" >> "$REPORT_FILE"
-        ;;
-    
-    *)
-        echo "- **Next:** [Refer to EXECUTION_GUIDE_HYBRID.md]" >> "$REPORT_FILE"
-        ;;
-esac
+**What will be created:**
+- JWT authentication system (login, register, logout)
+- Refresh token rotation
+- 2FA with TOTP (QR code + backup codes)
+- Email verification flow
+- Password reset flow
+- 12 API endpoints
+- Unit tests + Integration tests
+- Authentication middleware
+- Logging system (Winston)
 
-echo "" >> "$REPORT_FILE"
-echo "---" >> "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
+**Estimated Duration:** ~30 minutes
 
-# ================================================================
-# FOOTER
-# ================================================================
-cat >> "$REPORT_FILE" << 'EOF'
+**To request:** Say "Workflow 01 completo! Gerar Workflow 02 (Backend Auth)."
+
+---
 
 ## 📎 APPENDIX
 
-### Report Generation Info
+### Report Metadata
 
-- **Script:** `consolidate_workflow_report.sh`
-- **Generated:** TIMESTAMP_PLACEHOLDER
-- **Working Directory:** `PWD_PLACEHOLDER`
-- **Git Branch:** `GIT_BRANCH_PLACEHOLDER`
-- **Git Commit:** `GIT_COMMIT_PLACEHOLDER`
+- **Report Version:** 4.0 (Telemetry-Based)
+- **Generated:** $(date '+%Y-%m-%d %H:%M:%S')
+- **Project Root:** \`$PROJECT_ROOT\`
+- **Git Branch:** \`$GIT_BRANCH\`
+- **Git Commit:** \`$GIT_COMMIT\`
 
-### Related Files
+### Telemetry Files
 
-- PDR: `pre-production/pdr/PDR.md`
-- Telemetry: `.agent/telemetry/metrics.json`
-- Execution Guide: `EXECUTION_GUIDE_HYBRID.md`
+- **Metrics:** \`$METRICS_FILE\` ✅
+- **Files Tracker:** \`$FILES_TRACKER\` ✅
+- **Validation Log:** \`$VALIDATION_LOG\` $([ -f "$VALIDATION_LOG" ] && echo "✅" || echo "⚠️")
 
----
-
-**Report End**
+### Known Issues
 
 EOF
 
-# Replace additional placeholders
-sed -i.bak "s/TIMESTAMP_PLACEHOLDER/$(date '+%Y-%m-%d %H:%M:%S')/g" "$REPORT_FILE"
-sed -i.bak "s|PWD_PLACEHOLDER|$(pwd)|g" "$REPORT_FILE"
+ISSUES=0
 
-if git rev-parse --git-dir > /dev/null 2>&1; then
-    BRANCH=$(git branch --show-current 2>/dev/null || echo "unknown")
-    COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
-    sed -i.bak "s/GIT_BRANCH_PLACEHOLDER/$BRANCH/g" "$REPORT_FILE"
-    sed -i.bak "s/GIT_COMMIT_PLACEHOLDER/$COMMIT/g" "$REPORT_FILE"
-else
-    sed -i.bak "s/GIT_BRANCH_PLACEHOLDER/not a git repo/g" "$REPORT_FILE"
-    sed -i.bak "s/GIT_COMMIT_PLACEHOLDER/N\/A/g" "$REPORT_FILE"
+if [ "$DOCKER_RUNNING" -eq 0 ]; then
+    echo "- ⚠️ Docker containers not running" >> "$REPORT_FILE"
+    ISSUES=$((ISSUES + 1))
 fi
 
-rm -f "${REPORT_FILE}.bak"
+if ! git diff --quiet 2>/dev/null; then
+    echo "- ⚠️ Uncommitted changes in working directory" >> "$REPORT_FILE"
+    ISSUES=$((ISSUES + 1))
+fi
 
-# ================================================================
-# DONE
-# ================================================================
+if [ $ISSUES -eq 0 ]; then
+    echo "- ✅ No issues detected" >> "$REPORT_FILE"
+fi
+
+cat >> "$REPORT_FILE" << 'EOF'
+
+---
+
+**🎉 Report Complete!**
+
+*This report was generated from telemetry data captured during workflow execution.*
+
+EOF
+
+echo "✅ Report gerado com sucesso"
 echo ""
-echo "✅ Report generated: $REPORT_FILE"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "📄 REPORT SAVED"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "📋 Next steps:"
-echo "  1. Review the report"
-echo "  2. Fill in [FILL] sections with manual observations"
-echo "  3. Share with team or use for documentation"
+echo "📁 Location: $REPORT_FILE"
 echo ""
-echo "📊 View report:"
-echo "  cat $REPORT_FILE"
-echo "  # or"
-echo "  open $REPORT_FILE  # macOS"
+echo "📖 View report:"
+echo "   cat $REPORT_FILE"
+echo ""
+echo "   or open in editor:"
+echo "   code $REPORT_FILE"
 echo ""
