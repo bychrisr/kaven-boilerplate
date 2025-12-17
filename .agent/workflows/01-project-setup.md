@@ -30,8 +30,6 @@ Automatiza setup completo do projeto Kaven Boilerplate.
 ## STEP 1: Criar .gitignore Raiz 📁
 
 ```bash
-echo "📝 [STEP 1/16] Criando .gitignore..."
-
 cat > .gitignore << 'EOF'
 # Dependencies
 node_modules/
@@ -75,7 +73,7 @@ coverage/
 prisma/*.db
 prisma/*.db-journal
 
-# Agent telemetry (keep structure, ignore data)
+# Agent telemetry
 .agent/telemetry/*.json
 .agent/telemetry/*.txt
 .agent/telemetry/*.log
@@ -84,16 +82,14 @@ prisma/*.db-journal
 !.agent/telemetry/README.md
 !.agent/telemetry/.gitkeep
 
-# Workflow reports (opcional)
-WORKFLOW_REPORT_*.md
-
 # Docker
 .docker/data/
 EOF
-
-echo ".gitignore" >> .agent/telemetry/files_tracker.txt
-echo "✅ .gitignore criado"
 ```
+
+// Track file
+// turbo
+jq '.files_created += [".gitignore"]' .agent/telemetry/current_execution.json > .agent/telemetry/current_execution.tmp.json && mv .agent/telemetry/current_execution.tmp.json .agent/telemetry/current_execution.json
 
 ---
 
