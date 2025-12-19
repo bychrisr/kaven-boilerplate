@@ -499,6 +499,21 @@ After running a workflow, you should see:
 ✅ Report generated
 ```
 
+### AI Validation Lifecycle (Walkthroughs)
+
+The agent system now supports a robust "Consume, Archive & Delete" lifecycle for AI insights:
+
+1.  **Create**: The agent creates `walkthrough.md` in the **project root**.
+2.  **Stage**: When `finalize_telemetry.sh` runs, it:
+    - Moves the file to `.agent/telemetry/staging_walkthrough.md`.
+    - Archives a copy to `.agent/telemetry/archive/walkthroughs/`.
+3.  **Consume**: When `consolidate_workflow_report.sh` runs, it:
+    - Reads from staging.
+    - Injects content into the "AI VALIDATION" section of the report.
+    - **Deletes** the staging file to prevent stale data in future reports.
+
+This ensures that every report has unique, relevant insights and the project root remains clean.
+
 ---
 
 ## 📦 Version History

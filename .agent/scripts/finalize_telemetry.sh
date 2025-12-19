@@ -21,7 +21,40 @@ jq --argjson f "$FILES" --argjson c "$CMDS" --arg e "$END" --argjson d "$DUR" \
    "$CURRENT_FILE" > "$CURRENT_FILE.tmp" && mv "$CURRENT_FILE.tmp" "$CURRENT_FILE"
 
 cp "$CURRENT_FILE" "$LAST_EXECUTION_FILE"
-cp "$CURRENT_FILE" "$TELEMETRY_DIR/archive/exec_$(date +%s).json"
+ARCHIVE_TIMESTAMP=$(date +%s)
+cp "$CURRENT_FILE" "$TELEMETRY_DIR/archive/exec_${ARCHIVE_TIMESTAMP}.json"
+
+# ================================================================
+# Handle Walkthrough Artifact (Consume, Archive, Stage)
+# ================================================================
+WORKFLOW_NAME=$(jq -r '.workflow_name // "unknown"' "$CURRENT_FILE")
+STAGING_FILE="$TELEMETRY_DIR/staging_walkthrough.md"
+ARCHIVE_W_DIR="$TELEMETRY_DIR/archive/walkthroughs"
+mkdir -p "$ARCHIVE_W_DIR"
+
+if [ -f "walkthrough.md" ]; then
+    echo "🧠 Found 'walkthrough.md' in root. Processing..."
+    
+    # 1. Archive (History)
+    cp "walkthrough.md" "$ARCHIVE_W_DIR/${ARCHIVE_TIMESTAMP}_${WORKFLOW_NAME}_walkthrough.md"
+    echo "✅ Archived to $ARCHIVE_W_DIR/"
+    
+    # 2. Stage (For Report) - OVERWRITE any existing staging
+    mv "walkthrough.md" "$STAGING_FILE"
+    echo "✅ Moved to staging ($STAGING_FILE) for report generation."
+    
+elif [ -f "$STAGING_FILE" ]; then
+    # If no new walkthrough, KEEP existing staging for the report to pick up?
+    # User requirement: "walkthrough é para ser temporário, depois que gera o report... apaga"
+    # So if we are finalizing a NEW execution and there is NO new walkthrough, 
+    # we should probably NOT clear staging yet, because finalize runs BEFORE report.
+    # Actually, finalize marks the end of execution. If there is no walkthrough for THIS execution, 
+    # maybe we should clear staging to prevent old walkthroughs attaching to new reports?
+    # Decision: Safety first. If no new walkthrough provided for this execution, assume none exists.
+    # BUT, if the user forgot to create it, they might want to add it later.
+    # Better approach: The REPORT script deletes it. Finalize just adds if present.
+    echo "ℹ️  No new 'walkthrough.md' found. Keeping existing staging if any."
+fi
 
 if [ ! -f "$METRICS_FILE" ]; then echo '{"executions":[]}' > "$METRICS_FILE"; fi
 jq -s '.[0].executions += [.[1]] | .[0]' "$METRICS_FILE" "$CURRENT_FILE" > "$METRICS_FILE.tmp" && mv "$METRICS_FILE.tmp" "$METRICS_FILE"

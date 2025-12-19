@@ -205,8 +205,13 @@ jq -r '.files_created[]' "$DATA_SOURCE" 2>/dev/null | while IFS= read -r file; d
     if [ -f "$file" ]; then
         SIZE=$(du -h "$file" 2>/dev/null | cut -f1 || echo "N/A")
         FILE_LOC=$(wc -l < "$file" 2>/dev/null || echo "0")
-        # Use relative path from .agent/reports/ to project root
-        REL_PATH="../../$file"
+        # Use robust relative path calculation
+        if command -v realpath &>/dev/null; then
+            REL_PATH=$(realpath --relative-to="$REPORTS_DIR" "$PROJECT_ROOT/$file")
+        else
+            # Fallback for systems without realpath (e.g. older macOS, use simple prefix)
+            REL_PATH="../../$file"
+        fi
         echo "| $INDEX | [$file]($REL_PATH) | $SIZE | $FILE_LOC | ✅ |" >> "$REPORT_FILE"
     else
         echo "| $INDEX | \`$file\` | - | - | ❌ |" >> "$REPORT_FILE"
@@ -286,17 +291,21 @@ cat >> "$REPORT_FILE" << EOF
 
 EOF
 
-WALKTHROUGH_FILE=".agent/telemetry/walkthrough.md"
+WALKTHROUGH_FILE=".agent/telemetry/staging_walkthrough.md"
 
 if [ -f "$WALKTHROUGH_FILE" ]; then
-    echo "🤖 Found AI walkthrough, injecting..."
+    echo "🤖 Found AI walkthrough in staging, injecting..."
     echo "### 🧠 AI Walkthrough & Insights" >> "$REPORT_FILE"
     echo "" >> "$REPORT_FILE"
     # Append content, skipping the first line (Title) to avoid duplicates
     tail -n +2 "$WALKTHROUGH_FILE" >> "$REPORT_FILE"
     echo "" >> "$REPORT_FILE"
+    
+    # CLEANUP: Remove staging file after consumption
+    rm "$WALKTHROUGH_FILE"
+    echo "✅ Walkthrough consumed and removed from staging."
 else
-    echo "ℹ️  No AI walkthrough found at $WALKTHROUGH_FILE"
+    echo "ℹ️  No AI walkthrough found in staging ($WALKTHROUGH_FILE)"
     echo "*No AI walkthrough/insights available for this execution.*" >> "$REPORT_FILE"
 fi
 
