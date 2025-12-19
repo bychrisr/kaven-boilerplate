@@ -28,3 +28,4 @@ prisma/*.db-journal
 !.agent/telemetry/README.md
 !.agent/telemetry/.gitkeep
 .docker/data/
+.agent/reports/

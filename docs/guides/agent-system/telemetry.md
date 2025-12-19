@@ -34,8 +34,10 @@ Os relatórios gerados (v2.1) incluem:
 
 - **Diagramas Mermaid:** Visualização gráfica do status dos containers.
 - **Auto-Diagnostics:** Se um container falhar, os logs de erro são injetados automaticamente no relatório.
-- **Smart Links:** Links diretos para abrir os arquivos criados/modificados.
+- **Links Inteligentes:** Links **relativos** para os arquivos (`../../path`), garantindo que funcionem em qualquer máquina que clonar o projeto.
 - **KPIs:** Duração, Files Created, LOC (Lines of Code).
+
+> **Nota:** Por padrão, os relatórios em `.agent/reports/` são adicionados ao `.gitignore` para não poluir o repositório, mas podem ser compartilhados se necessário.
 
 ## 🛠️ Comandos Úteis
 
