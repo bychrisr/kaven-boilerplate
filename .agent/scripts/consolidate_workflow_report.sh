@@ -131,7 +131,8 @@ cat > "$REPORT_FILE" << HEADER_END
 2. [Telemetry Data](#2-telemetry-data)
 3. [Files Created](#3-files-created)
 4. [Docker Diagnostics](#4-docker-diagnostics)
-5. [Git Status](#5-git-status)
+5. [AI Validation](#5-ai-validation)
+6. [Git Status](#6-git-status)
 
 ---
 
@@ -281,7 +282,29 @@ cat >> "$REPORT_FILE" << EOF
 
 ---
 
-## 5. GIT STATUS
+## 5. AI VALIDATION
+
+EOF
+
+WALKTHROUGH_FILE=".agent/telemetry/walkthrough.md"
+
+if [ -f "$WALKTHROUGH_FILE" ]; then
+    echo "🤖 Found AI walkthrough, injecting..."
+    echo "### 🧠 AI Walkthrough & Insights" >> "$REPORT_FILE"
+    echo "" >> "$REPORT_FILE"
+    # Append content, skipping the first line (Title) to avoid duplicates
+    tail -n +2 "$WALKTHROUGH_FILE" >> "$REPORT_FILE"
+    echo "" >> "$REPORT_FILE"
+else
+    echo "ℹ️  No AI walkthrough found at $WALKTHROUGH_FILE"
+    echo "*No AI walkthrough/insights available for this execution.*" >> "$REPORT_FILE"
+fi
+
+cat >> "$REPORT_FILE" << EOF
+
+---
+
+## 6. GIT STATUS
 
 **Branch:** \`$GIT_BRANCH\`
 **Last Commit:** \`$GIT_COMMIT\`
