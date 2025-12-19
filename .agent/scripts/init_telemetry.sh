@@ -5,7 +5,6 @@ WORKFLOW_NAME="${1:-unnamed}"
 DESC="${2:-setup}"
 TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
-mkdir -p "$TELEMETRY_DIR"
 cat > "$CURRENT_FILE" << JSON
 {
   "timestamp_start": "$TIMESTAMP",
