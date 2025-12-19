@@ -204,8 +204,9 @@ jq -r '.files_created[]' "$DATA_SOURCE" 2>/dev/null | while IFS= read -r file; d
     if [ -f "$file" ]; then
         SIZE=$(du -h "$file" 2>/dev/null | cut -f1 || echo "N/A")
         FILE_LOC=$(wc -l < "$file" 2>/dev/null || echo "0")
-        ABS_PATH="file://$(readlink -f "$file")"
-        echo "| $INDEX | [$file]($ABS_PATH) | $SIZE | $FILE_LOC | ✅ |" >> "$REPORT_FILE"
+        # Use relative path from .agent/reports/ to project root
+        REL_PATH="../../$file"
+        echo "| $INDEX | [$file]($REL_PATH) | $SIZE | $FILE_LOC | ✅ |" >> "$REPORT_FILE"
     else
         echo "| $INDEX | \`$file\` | - | - | ❌ |" >> "$REPORT_FILE"
     fi
