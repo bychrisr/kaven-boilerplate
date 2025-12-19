@@ -1,29 +1,127 @@
 ---
-description: "Kaven Phase 1 - Workflow 01: Project Setup (Final Version)"
+description: "Kaven Phase 1 - Workflow 01: Project Setup (FIXED LOGIC)"
 ---
 
 # 🚀 Workflow 01: Project Setup
 
 ---
 
-## STEP 0: INICIALIZAR 🔍
+## STEP 0: INICIALIZAR TELEMETRIA & TRACKING 🔍
 
-Carrega ferramentas e inicia telemetria.
+Este passo prepara todo o ambiente, cria os scripts de suporte necessários e inicia a telemetria.
 
 ```bash
-# 1. Carregar utilitários (Obrigatório ter rodado setup_agent.sh antes)
-if [ -f .agent/scripts/utils.sh ]; then
-    source .agent/scripts/utils.sh
-else
-    echo "❌ ERRO CRÍTICO: .agent/scripts/utils.sh não encontrado."
-    echo "⚠️  Por favor, rode ./setup_agent.sh na raiz antes de iniciar."
-    exit 1
+# 1. Garantir diretórios
+mkdir -p .agent/scripts
+mkdir -p .agent/telemetry/archive
+mkdir -p .agent/reports
+
+# 2. Criar utils.sh (Função Wrapper Persistente)
+cat > .agent/scripts/utils.sh << 'EOF'
+#!/bin/bash
+mkdir -p .agent/telemetry
+touch .agent/telemetry/commands_tracker.txt
+
+execute() {
+    local cmd="$*"
+    echo "🤖 Executing: $cmd"
+    echo "$cmd" >> .agent/telemetry/commands_tracker.txt
+    eval "$cmd"
+    return $?
+}
+EOF
+chmod +x .agent/scripts/utils.sh
+
+# 3. Criar init_telemetry.sh
+cat > .agent/scripts/init_telemetry.sh << 'EOF'
+#!/bin/bash
+TELEMETRY_DIR=".agent/telemetry"
+CURRENT_FILE="$TELEMETRY_DIR/current_execution.json"
+WORKFLOW_NAME="${1:-unnamed}"
+DESC="${2:-setup}"
+TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+cat > "$CURRENT_FILE" << JSON
+{
+  "timestamp_start": "$TIMESTAMP_START",
+  "workflow_name": "$WORKFLOW_NAME",
+  "task_description": "$DESC",
+  "files_created": [],
+  "commands_executed": [],
+  "success": true
+}
+JSON
+: > "$TELEMETRY_DIR/files_tracker.txt"
+: > "$TELEMETRY_DIR/commands_tracker.txt"
+echo "true" > "$TELEMETRY_DIR/success.txt"
+echo "✅ Telemetria iniciada: $WORKFLOW_NAME"
+EOF
+chmod +x .agent/scripts/init_telemetry.sh
+
+# 4. Criar finalize_telemetry.sh
+cat > .agent/scripts/finalize_telemetry.sh << 'EOF'
+#!/bin/bash
+TELEMETRY_DIR=".agent/telemetry"
+CURRENT_FILE="$TELEMETRY_DIR/current_execution.json"
+LAST_EXECUTION_FILE="$TELEMETRY_DIR/last_execution.json"
+FILES_TRACKER="$TELEMETRY_DIR/files_tracker.txt"
+COMMANDS_TRACKER="$TELEMETRY_DIR/commands_tracker.txt"
+METRICS_FILE="$TELEMETRY_DIR/metrics.json"
+
+if [ -f "$FILES_TRACKER" ]; then FILES=$(jq -R . "$FILES_TRACKER" | jq -s .); else FILES='[]'; fi
+if [ -f "$COMMANDS_TRACKER" ]; then CMDS=$(jq -R . "$COMMANDS_TRACKER" | jq -s .); else CMDS='[]'; fi
+
+START=$(jq -r '.timestamp_start' "$CURRENT_FILE")
+END=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+DUR=0
+if command -v python3 &>/dev/null; then
+    DUR=$(python3 -c "from datetime import datetime; s=datetime.strptime('$START', '%Y-%m-%dT%H:%M:%SZ'); e=datetime.strptime('$END', '%Y-%m-%dT%H:%M:%SZ'); print(int((e-s).total_seconds()))" 2>/dev/null || echo 0)
 fi
 
-# 2. Iniciar telemetria
-.agent/scripts/init_telemetry.sh "01-project-setup" "Setup Completo: Turborepo + Prisma + Docker"
+jq --argjson f "$FILES" --argjson c "$CMDS" --arg e "$END" --argjson d "$DUR" \
+   '.files_created=$f | .commands_executed=$c | .timestamp_end=$e | .duration_seconds=$d' \
+   "$CURRENT_FILE" > "$CURRENT_FILE.tmp" && mv "$CURRENT_FILE.tmp" "$CURRENT_FILE"
 
-```
+cp "$CURRENT_FILE" "$LAST_EXECUTION_FILE"
+cp "$CURRENT_FILE" "$TELEMETRY_DIR/archive/exec_$(date +%s).json"
+
+if [ ! -f "$METRICS_FILE" ]; then echo '{"executions":[]}' > "$METRICS_FILE"; fi
+jq -s '.[0].executions += [.[1]] | .[0]' "$METRICS_FILE" "$CURRENT_FILE" > "$METRICS_FILE.tmp" && mv "$METRICS_FILE.tmp" "$METRICS_FILE"
+
+rm -f "$FILES_TRACKER" "$COMMANDS_TRACKER" "$TELEMETRY_DIR/success.txt"
+echo "{}" > "$CURRENT_FILE"
+echo "✅ Telemetria finalizada."
+EOF
+chmod +x .agent/scripts/finalize_telemetry.sh
+
+# 5. Criar consolidate_workflow_report.sh
+cat > .agent/scripts/consolidate_workflow_report.sh << 'EOF'
+#!/bin/bash
+SNAPSHOT=".agent/telemetry/last_execution.json"
+NAME="${1:-workflow}"
+REPORT=".agent/reports/REPORT_${NAME}_$(date +%Y%m%d_%H%M%S).md"
+
+if [ ! -f "$SNAPSHOT" ]; then echo "❌ Sem dados"; exit 1; fi
+
+DUR=$(jq -r '.duration_seconds' "$SNAPSHOT")
+FILES=$(jq -r '.files_created | length' "$SNAPSHOT")
+STATUS=$(jq -r '.success' "$SNAPSHOT")
+
+echo "# 📊 Report: $NAME" > "$REPORT"
+echo "- Status: $STATUS" >> "$REPORT"
+echo "- Duração: ${DUR}s" >> "$REPORT"
+echo "- Arquivos Criados: $FILES" >> "$REPORT"
+echo "" >> "$REPORT"
+echo "## Comandos" >> "$REPORT"
+echo "\`\`\`" >> "$REPORT"
+jq -r '.commands_executed[]' "$SNAPSHOT" >> "$REPORT"
+echo "\`\`\`" >> "$REPORT"
+echo "✅ Report: $REPORT"
+EOF
+chmod +x .agent/scripts/consolidate_workflow_report.sh
+
+# 6. Executar Inicialização
+.agent/scripts/init_telemetry.sh "01-project-setup" "Setup completo: Turborepo + Prisma + Docker"
 
 ---
 
@@ -37,14 +135,29 @@ dist/
 build/
 .next/
 .turbo/
+out/
 .env
+.env.local
 .env*.local
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
 *.log
 coverage/
+.nyc_output/
 prisma/*.db
+prisma/*.db-journal
 .agent/telemetry/*.json
 .agent/telemetry/*.txt
-!.agent/telemetry/archive/
+.agent/telemetry/*.log
+.agent/telemetry/*.pid
+.agent/telemetry/archive/*.json
+!.agent/telemetry/README.md
+!.agent/telemetry/.gitkeep
 .docker/data/
 EOF
 
@@ -85,7 +198,7 @@ EOF
 
 cat > turbo.json << 'EOF'
 {
-  "$schema": "https://turbo.build/schema.json",
+  "$schema": "[https://turbo.build/schema.json](https://turbo.build/schema.json)",
   "pipeline": {
     "build": {"dependsOn": ["^build"]},
     "dev": {"cache": false},
@@ -115,7 +228,7 @@ echo "pnpm-workspace.yaml" >> .agent/telemetry/files_tracker.txt
 
 ---
 
-## STEP 3: Criar Estrutura de Pastas
+## STEP 3: Criar Estrutura
 
 ```bash
 mkdir -p apps/api/src/{modules,lib,middleware,types,utils}
@@ -255,7 +368,7 @@ model Tenant {
   status    TenantStatus @default(ACTIVE)
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
-
+  
   users     User[]
   @@index([slug])
 }
@@ -270,7 +383,7 @@ model User {
   tenantId         String?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
-
+  
   tenant Tenant? @relation(fields: [tenantId], references: [id])
   @@index([email])
 }
@@ -282,17 +395,20 @@ echo "prisma/schema.prisma" >> .agent/telemetry/files_tracker.txt
 
 ---
 
-## STEP 8: Env Files
+## STEP 8: Environment Files
 
 ```bash
 cat > .env.example << 'EOF'
 DATABASE_URL="postgresql://kaven:kaven_dev_password@localhost:5432/kaven_dev"
 REDIS_URL="redis://localhost:6379"
-JWT_SECRET="dev-secret"
+JWT_SECRET="change-me-in-production"
 NODE_ENV="development"
+PORT=8000
 EOF
 
 cp .env.example .env
+
+echo ".env.example" >> .agent/telemetry/files_tracker.txt
 echo ".env" >> .agent/telemetry/files_tracker.txt
 
 ```
@@ -304,17 +420,30 @@ echo ".env" >> .agent/telemetry/files_tracker.txt
 ```bash
 cat > README.md << 'EOF'
 # Kaven Boilerplate
+
+SaaS Boilerplate multi-tenant
+
+## Quick Start
+
+```bash
+pnpm install
+pnpm docker:up
+pnpm dev
+
+```
+
 EOF
+
 echo "README.md" >> .agent/telemetry/files_tracker.txt
 
 ```
 
 ---
 
-## STEP 10: Instalar Dependências 📦
+## STEP 10: Instalar Dependências
 
 ```bash
-# Recarrega utils por segurança
+# Carregar o wrapper criado no STEP 0
 source .agent/scripts/utils.sh
 
 execute "pnpm install"
@@ -323,42 +452,66 @@ execute "pnpm install"
 
 ---
 
-## STEP 11: Subir Docker com AI Doctor 🏥
+## STEP 10.5: Subir Docker com AI Doctor (Self-Healing) 🏥
 
 ```bash
 source .agent/scripts/utils.sh
 
-echo "🐳 Subindo Docker..."
+echo "🐳 Iniciando Docker com AI Doctor..."
 execute "docker-compose up -d"
 
-# Cria script Python de cura
-cat > .agent/scripts/docker_doctor.py << 'PYTHON_EOF'
+# Criar Docker Doctor (Python syntax corrigida)
+cat > .agent/scripts/docker_doctor.py << 'PYTHON_DOC'
 #!/usr/bin/env python3
 import subprocess, time, sys
 
+MAX_RETRIES = 15
+CONTAINERS = ["kaven-postgres", "kaven-redis"]
+
 def run(cmd):
-    try: return subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT).decode()
-    except Exception as e: return str(e.output) if hasattr(e, 'output') else str(e)
+    try:
+        return subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT).decode().strip()
+    except subprocess.CalledProcessError as e:
+        return e.output.decode().strip() if e.output else str(e)
+
+def check(name):
+    # Escape das chaves para o Python nao confundir com variáveis
+    status = run(f"docker inspect --format='{{{{.State.Status}}}}' {name}")
+    return status
+
+def heal(name, logs):
+    print(f"🔧 Healing {name}...")
+    if "Permission denied" in logs:
+        run(f"docker exec -u 0 {name} chown -R 999:999 /var/lib/postgresql/data 2>/dev/null || true")
+        run(f"docker restart {name}")
+        return True
+    if "Connection refused" in logs:
+        run(f"docker restart {name}")
+        return True
+    return False
 
 def main():
-    print("🏥 Doctor check...")
-    for i in range(15):
-        pg = run("docker inspect --format='{{.State.Status}}' kaven-postgres").strip()
-        rd = run("docker inspect --format='{{.State.Status}}' kaven-redis").strip()
-
-        print(f"   Try {i+1}: PG={pg}, RD={rd}")
-
-        if pg == "restarting":
-            run("docker restart kaven-postgres")
-
-        if pg == "running" and rd == "running":
-            print("✅ All running")
+    print("🏥 AI Doctor Monitoring...")
+    for i in range(MAX_RETRIES):
+        all_ok = True
+        for c in CONTAINERS:
+            status = check(c)
+            print(f"   [{i+1}] {c}: {status}")
+            if status == "restarting":
+                heal(c, run(f"docker logs --tail 20 {c}"))
+                all_ok = False; break
+            if status != "running":
+                all_ok = False
+        
+        if all_ok:
+            print("✅ Healthy")
             sys.exit(0)
         time.sleep(5)
+    print("❌ Failed")
     sys.exit(1)
 
 if __name__ == "__main__": main()
-PYTHON_EOF
+PYTHON_DOC
 
 execute "python3 .agent/scripts/docker_doctor.py"
 
@@ -366,23 +519,29 @@ execute "python3 .agent/scripts/docker_doctor.py"
 
 ---
 
-## STEP 12: Git Commit
+## STEP 11: Git Commit
 
 ```bash
 source .agent/scripts/utils.sh
 
+# Garante git init
 if [ ! -d .git ]; then git init; fi
+
 execute "git add ."
-execute "git commit -m 'feat: setup inicial'"
+execute "git commit -m 'feat: setup inicial do projeto Kaven Boilerplate'"
 
 ```
 
 ---
 
-## STEP 13: FINALIZAR TELEMETRIA 📊
+## STEP 12: FINALIZAR TELEMETRIA
 
 ```bash
 .agent/scripts/finalize_telemetry.sh
-.agent/scripts/consolidate_workflow_report.sh "01-project-setup"
+.agent/scripts/consolidate_workflow_report.sh 01-project-setup
+
+```
+
+```
 
 ```

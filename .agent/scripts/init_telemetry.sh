@@ -8,7 +8,7 @@ TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 mkdir -p "$TELEMETRY_DIR"
 cat > "$CURRENT_FILE" << JSON
 {
-  "timestamp_start": "$TIMESTAMP_START",
+  "timestamp_start": "$TIMESTAMP",
   "workflow_name": "$WORKFLOW_NAME",
   "task_description": "$DESC",
   "files_created": [],
