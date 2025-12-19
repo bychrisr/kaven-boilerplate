@@ -39,6 +39,16 @@ KNOWLEDGE_BASE = [
         "action": "force_env_reset"
     },
     {
+        "name": "Invalid Configuration",
+        "patterns": [
+            r"does not appear to be a valid email address",
+            r"Configuration error",
+            r"invalid value for"
+        ],
+        "diagnosis": "Configuração inválida de variáveis de ambiente (ex: email/formato inválido).",
+        "action": "force_env_reset"
+    },
+    {
         "name": "Database Locked",
         "patterns": [
             r"database system is starting up",

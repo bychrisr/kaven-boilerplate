@@ -167,6 +167,7 @@ execute "docker-compose up -d"
 ```
 
 **Benefits:**
+
 - Automatic command logging
 - No manual jq manipulation
 - Full audit trail
@@ -180,26 +181,28 @@ Intelligent container monitoring with self-healing:
 # Monitors containers in loop
 for attempt in range(MAX_RETRIES):
     status = get_status(container)
-    
+
     if status == "restarting":
         logs = get_logs(container)
         issue = diagnose(logs)  # AI diagnosis
-        
+
         if issue == "permission":
             fix_permissions()
             restart_container()
-        
+
         elif issue == "connection":
             restart_container()
 ```
 
 **Detects:**
+
 - Permission errors
 - Connection refused (race conditions)
 - Port conflicts
 - Disk space issues
 - Memory problems
 - Timeouts
+- Invalid configuration (e.g. email/password)
 
 ---
 
@@ -235,9 +238,15 @@ for attempt in range(MAX_RETRIES):
   "project": "kaven-boilerplate",
   "version": "2.0.0",
   "executions": [
-    { /* execution 1 */ },
-    { /* execution 2 */ },
-    { /* execution N */ }
+    {
+      /* execution 1 */
+    },
+    {
+      /* execution 2 */
+    },
+    {
+      /* execution N */
+    }
   ],
   "summary": {
     "total_executions": 10,
@@ -334,6 +343,7 @@ docker-compose up -d
 ```
 
 **Enables:**
+
 - Bottleneck detection (which step is slowest?)
 - Regression detection (is pnpm install getting slower?)
 - Cost estimation (CI/CD minutes)
@@ -346,12 +356,14 @@ docker-compose up -d
 ### 1. **Always Use execute() for Commands**
 
 ❌ **Bad:**
+
 ```bash
 pnpm install
 git commit -m "message"
 ```
 
 ✅ **Good:**
+
 ```bash
 execute "pnpm install"
 execute "git commit -m 'message'"
@@ -410,6 +422,7 @@ jq '.' .agent/telemetry/last_execution.json
 
 **Cause:** Race condition or permission error
 **Fix:** Docker Doctor will auto-fix. If persists, check logs:
+
 ```bash
 docker logs kaven-postgres
 ```
@@ -425,6 +438,7 @@ docker logs kaven-postgres
 ```
 
 **What it does:**
+
 - Creates `current_execution.json`
 - Initializes trackers
 - Sets start timestamp
@@ -436,6 +450,7 @@ docker logs kaven-postgres
 ```
 
 **What it does:**
+
 - Calculates duration (Python)
 - Counts LOC
 - Creates snapshot (`last_execution.json`)
@@ -449,6 +464,7 @@ bash .agent/scripts/consolidate_workflow_report.sh workflow-name
 ```
 
 **What it does:**
+
 - Reads `last_execution.json` (snapshot)
 - Extracts KPIs
 - Generates markdown report
@@ -460,6 +476,7 @@ python3 .agent/scripts/docker_doctor.py
 ```
 
 **What it does:**
+
 - Monitors container health
 - Diagnoses issues (regex patterns)
 - Auto-heals common problems
@@ -487,6 +504,7 @@ After running a workflow, you should see:
 ## 📦 Version History
 
 ### v2.0 (Current)
+
 - ✅ Snapshot-based reporting
 - ✅ Execute wrapper
 - ✅ Mathematical duration
@@ -494,6 +512,7 @@ After running a workflow, you should see:
 - ✅ Python-based timestamps
 
 ### v1.0 (Legacy)
+
 - ❌ Manual jq tracking
 - ❌ File-based duration
 - ❌ Reading from metrics.json
@@ -515,4 +534,4 @@ To add a new workflow:
 
 **Built with ❤️ for the Kaven Boilerplate project**
 
-*Data-Driven Engineering: Measure Everything, Optimize Everything*
+_Data-Driven Engineering: Measure Everything, Optimize Everything_

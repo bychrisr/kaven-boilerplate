@@ -12,7 +12,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U kaven"]
+      test: ['CMD-SHELL', 'pg_isready -U kaven']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -22,9 +22,20 @@ services:
     ports:
       - '6379:6379'
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
       timeout: 3s
       retries: 5
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: kaven-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@kaven.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
 volumes:
   postgres_data:
