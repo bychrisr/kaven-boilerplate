@@ -1,5 +1,5 @@
 ---
-description: "Kaven Phase 1 - Workflow 04: Payment System"
+description: 'Kaven Phase 1 - Workflow 04: Payment System'
 ---
 
 # 💳 Workflow 04: Payment System
@@ -9,19 +9,15 @@ description: "Kaven Phase 1 - Workflow 04: Payment System"
 ## STEP 0: INICIALIZAR TELEMETRIA & WRAPPER
 
 ```bash
+# Carregar utils e tracking
+source .agent/scripts/utils.sh
 .agent/scripts/init_telemetry.sh "04-payment-system" "Sistema de pagamentos com Stripe"
 
-# Criar tracker de comandos
-mkdir -p .agent/telemetry
-touch .agent/telemetry/commands_tracker.txt
-
-# Função Wrapper
-execute() {
-    local cmd="$*"
-    echo "🤖 Executing: $cmd"
-    echo "$cmd" >> .agent/telemetry/commands_tracker.txt
-    eval "$cmd"
-}
+# Verificar saúde da infraestrutura (Smart Doctor)
+echo "🏥 Checking infrastructure..."
+if [ -f .agent/scripts/docker_doctor.py ]; then
+    python3 .agent/scripts/docker_doctor.py
+fi
 ```
 
 ---

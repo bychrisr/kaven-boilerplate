@@ -1,5 +1,5 @@
 ---
-description: "Kaven Phase 1 - Workflow 03: Admin Panel"
+description: 'Kaven Phase 1 - Workflow 03: Admin Panel'
 ---
 
 # 🎨 Workflow 03: Admin Panel
@@ -9,19 +9,9 @@ description: "Kaven Phase 1 - Workflow 03: Admin Panel"
 ## STEP 0: INICIALIZAR TELEMETRIA & WRAPPER
 
 ```bash
+# Carregar utils e tracking
+source .agent/scripts/utils.sh
 .agent/scripts/init_telemetry.sh "03-admin-panel" "Admin panel com Next.js 14 e shadcn/ui"
-
-# Criar tracker de comandos
-mkdir -p .agent/telemetry
-touch .agent/telemetry/commands_tracker.txt
-
-# Função Wrapper
-execute() {
-    local cmd="$*"
-    echo "🤖 Executing: $cmd"
-    echo "$cmd" >> .agent/telemetry/commands_tracker.txt
-    eval "$cmd"
-}
 ```
 
 ---

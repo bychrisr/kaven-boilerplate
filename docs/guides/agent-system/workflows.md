@@ -21,17 +21,21 @@ Um workflow válido deve ter:
 description: Configuração inicial do ambiente
 ---
 
-# Passo 1: Instalar deps
+# Passo 1: Inicializar
 
 \`\`\`bash
 source .agent/scripts/utils.sh
-execute "pnpm install"
+.agent/scripts/init_telemetry.sh "meu-workflow" "Descrição"
+
+# Opcional: Verificar saúde
+
+python3 .agent/scripts/docker_doctor.py
 \`\`\`
 
-# Passo 2: Validar
+# Passo 2: Executar
 
 \`\`\`bash
-execute "pnpm test"
+execute "pnpm install"
 \`\`\`
 ```
 

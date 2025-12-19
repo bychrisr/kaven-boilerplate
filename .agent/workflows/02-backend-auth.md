@@ -1,5 +1,5 @@
 ---
-description: "Kaven Phase 1 - Workflow 02: Backend Authentication"
+description: 'Kaven Phase 1 - Workflow 02: Backend Authentication'
 ---
 
 # 🔐 Workflow 02: Backend Authentication
@@ -9,19 +9,15 @@ description: "Kaven Phase 1 - Workflow 02: Backend Authentication"
 ## STEP 0: INICIALIZAR TELEMETRIA & WRAPPER
 
 ```bash
+# Carregar utils e tracking
+source .agent/scripts/utils.sh
 .agent/scripts/init_telemetry.sh "02-backend-auth" "Sistema de autenticação: JWT + 2FA + Email"
 
-# Criar tracker de comandos
-mkdir -p .agent/telemetry
-touch .agent/telemetry/commands_tracker.txt
-
-# Função Wrapper para Rastreabilidade Automática
-execute() {
-    local cmd="$*"
-    echo "🤖 Executing: $cmd"
-    echo "$cmd" >> .agent/telemetry/commands_tracker.txt
-    eval "$cmd"
-}
+# Verificar saúde da infraestrutura (Smart Doctor)
+echo "🏥 Checking infrastructure..."
+if [ -f .agent/scripts/docker_doctor.py ]; then
+    python3 .agent/scripts/docker_doctor.py
+fi
 ```
 
 ---

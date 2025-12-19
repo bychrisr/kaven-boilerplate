@@ -1,5 +1,5 @@
 ---
-description: "Kaven Phase 1 - Workflow 05: Testing & Deployment"
+description: 'Kaven Phase 1 - Workflow 05: Testing & Deployment'
 ---
 
 # 🧪 Workflow 05: Testing & Deployment
@@ -9,19 +9,15 @@ description: "Kaven Phase 1 - Workflow 05: Testing & Deployment"
 ## STEP 0: INICIALIZAR TELEMETRIA & WRAPPER
 
 ```bash
+# Carregar utils e tracking
+source .agent/scripts/utils.sh
 .agent/scripts/init_telemetry.sh "05-testing-deployment" "Testes e deploy"
 
-# Criar tracker de comandos
-mkdir -p .agent/telemetry
-touch .agent/telemetry/commands_tracker.txt
-
-# Função Wrapper
-execute() {
-    local cmd="$*"
-    echo "🤖 Executing: $cmd"
-    echo "$cmd" >> .agent/telemetry/commands_tracker.txt
-    eval "$cmd"
-}
+# Verificar saúde da infraestrutura (Smart Doctor)
+echo "🏥 Checking infrastructure..."
+if [ -f .agent/scripts/docker_doctor.py ]; then
+    python3 .agent/scripts/docker_doctor.py
+fi
 ```
 
 ---
