@@ -60,6 +60,7 @@ export class UserService {
         createdAt: true,
         updatedAt: true,
         lastLoginAt: true,
+        deletedAt: true,
       },
     });
 
