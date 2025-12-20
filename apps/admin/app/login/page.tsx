@@ -41,7 +41,7 @@ export default function LoginPage() {
       // Redirecionar para dashboard
       router.push('/dashboard');
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : 'Erro desconhecido');
     } finally {
       setLoading(false);
     }
