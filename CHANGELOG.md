@@ -5,6 +5,87 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2025-12-19
+
+### ✨ Adicionado
+
+#### Observability Stack Completo
+
+- **Prometheus** (:9090) para coleta de métricas
+  - Scrape interval: 10s
+  - Retenção: 15 dias
+  - Auto-discovery do backend via `host.docker.internal`
+- **Grafana** (:3001) para visualização
+  - Login: admin/admin
+  - Dashboard Kaven API pré-configurado
+  - Datasource Prometheus integrado
+  - Auto-refresh a cada 5s
+
+#### Métricas Implementadas (10+)
+
+**HTTP Metrics:**
+
+- `http_requests_total` - Total de requests (counter)
+- `http_request_duration_seconds` - Duração de requests (histogram)
+- `http_requests_active` - Requests ativos (gauge)
+- `http_request_size_bytes` - Tamanho de requests (histogram)
+- `http_response_size_bytes` - Tamanho de responses (histogram)
+
+**Custom Metrics:**
+
+- `auth_login_attempts_total` - Tentativas de login (counter)
+- `database_query_duration_seconds` - Duração de queries (histogram)
+
+**System Metrics (Node.js defaults):**
+
+- `process_cpu_user_seconds_total` - CPU user
+- `process_cpu_system_seconds_total` - CPU system
+- `process_resident_memory_bytes` - Memória RSS
+- `nodejs_heap_size_used_bytes` - Heap usado
+- `nodejs_heap_size_total_bytes` - Heap total
+- `process_open_fds` - File descriptors abertos
+
+#### Health Checks Avançados (4 endpoints)
+
+- `GET /health` - Basic health check (uptime)
+- `GET /health/ready` - Readiness probe (verifica PostgreSQL)
+- `GET /health/live` - Liveness probe (memory, PID, Node version)
+- `GET /metrics` - Prometheus metrics endpoint
+
+#### Dashboard Grafana (5 painéis)
+
+1. **Request Rate** - req/s por método e rota
+2. **Response Time** - p95 e p50 (percentis)
+3. **Active Requests** - Requests sendo processados
+4. **Memory Usage** - RSS e Heap usado
+5. **Error Rate** - 4xx e 5xx por tempo
+
+### 🔧 Infraestrutura
+
+- Docker Compose: +Prometheus +Grafana
+- Volumes persistentes para dados de métricas
+- Network bridge automático entre containers
+
+### 📊 Middleware
+
+- Metrics middleware global (tracking automático de todas requests)
+- Labels: method, route, status_code
+- Histograms com buckets otimizados
+
+### 📈 Documentação
+
+- Guia de observability
+- Screenshots Prometheus e Grafana
+- Queries Prometheus exemplo
+- Dashboard JSON versionado
+
+### 🎯 Commits
+
+1. `b24230f` - feat: implementa observability
+2. `df89241` - feat: adiciona dashboard Grafana
+
+---
+
 ## [0.4.0] - 2025-12-19
 
 ### ✨ Adicionado
