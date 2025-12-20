@@ -1,6 +1,8 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { authRoutes } from './modules/auth/routes/auth.routes';
+import { userRoutes } from './modules/users/routes/user.routes';
+import { tenantRoutes } from './modules/tenants/routes/tenant.routes';
 
 const fastify = Fastify({
   logger: {
@@ -21,6 +23,8 @@ fastify.get('/health', async () => {
 
 // Rotas
 fastify.register(authRoutes, { prefix: '/api/auth' });
+fastify.register(userRoutes, { prefix: '/api/users' });
+fastify.register(tenantRoutes, { prefix: '/api/tenants' });
 
 // Start server
 const start = async () => {
