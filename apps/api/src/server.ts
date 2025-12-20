@@ -4,6 +4,8 @@ import { authRoutes } from './modules/auth/routes/auth.routes';
 import { userRoutes } from './modules/users/routes/user.routes';
 import { tenantRoutes } from './modules/tenants/routes/tenant.routes';
 import { paymentRoutes, webhookRoutes } from './modules/payments/routes/payment.routes';
+import { healthRoutes } from './routes/health.routes';
+import { metricsMiddleware } from './middleware/metrics.middleware';
 
 const fastify = Fastify({
   logger: {
@@ -17,10 +19,11 @@ fastify.register(cors, {
   credentials: true,
 });
 
-// Health check
-fastify.get('/health', async () => {
-  return { status: 'ok', timestamp: new Date().toISOString() };
-});
+// Metrics middleware (aplicado globalmente)
+fastify.addHook('onRequest', metricsMiddleware);
+
+// Health checks e Metrics
+fastify.register(healthRoutes);
 
 // Rotas
 fastify.register(authRoutes, { prefix: '/api/auth' });
