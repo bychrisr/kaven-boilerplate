@@ -77,10 +77,9 @@ fastify.register(multipart, {
 // Rate Limiting (global)
 fastify.register(rateLimit, {
   max: 100, // 100 requests
-  timeWindow: '1 minute', // por minuto
+  timeWindow: 60000, // 1 minuto em ms
   cache: 10000, // cache de 10k IPs
   allowList: ['127.0.0.1'], // whitelist localhost
-  redis: process.env.REDIS_URL ? require('ioredis').createClient(process.env.REDIS_URL) : undefined,
   keyGenerator: (req) => {
     // Usar IP ou user ID se autenticado
     return req.user?.id || req.ip || 'anonymous';
