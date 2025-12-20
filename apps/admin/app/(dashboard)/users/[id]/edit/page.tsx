@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'use';
+import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 
 export default function UserEditPage() {

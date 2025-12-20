@@ -4,7 +4,7 @@ export default function ComingSoonPage() {
       <div className="text-center text-white max-w-md">
         <h1 className="text-6xl font-bold mb-4">Coming Soon</h1>
         <p className="text-xl mb-8 opacity-90">
-          We're working on something awesome. Stay tuned!
+          We&apos;re working on something awesome. Stay tuned!
         </p>
         
         {/* Email Signup */}

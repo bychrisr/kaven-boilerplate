@@ -39,7 +39,7 @@ export default function OrdersPage() {
             {[1, 2, 3, 4, 5].map((i) => {
               const statuses = ['delivered', 'shipped', 'processing', 'pending'];
               const status = statuses[i % 4];
-              const statusColors = {
+              const statusColors: Record<string, string> = {
                 delivered: 'bg-success-light text-success-dark',
                 shipped: 'bg-secondary-light text-secondary-dark',
                 processing: 'bg-warning-light text-warning-dark',

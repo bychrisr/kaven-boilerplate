@@ -43,7 +43,7 @@ export default function InvoicesPage() {
             {[1, 2, 3, 4, 5].map((i) => {
               const statuses = ['paid', 'sent', 'overdue', 'draft'];
               const status = statuses[i % 4];
-              const statusColors = {
+              const statusColors: Record<string, string> = {
                 paid: 'bg-success-light text-success-dark',
                 sent: 'bg-secondary-light text-secondary-dark',
                 overdue: 'bg-error-light text-error-dark',

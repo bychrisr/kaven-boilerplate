@@ -11,7 +11,7 @@ export default function MaintenancePage() {
           Under Maintenance
         </h1>
         <p className="text-gray-600 mb-6">
-          We're currently performing scheduled maintenance. We'll be back soon!
+          We&apos;re currently performing scheduled maintenance. We&apos;ll be back soon!
         </p>
         <div className="bg-white p-4 rounded-lg border border-gray-200">
           <p className="text-sm text-gray-500">Estimated time:</p>

@@ -57,7 +57,7 @@ export default function HelpCenterPage() {
 
       {/* Contact Support */}
       <div className="mt-8 bg-gray-50 p-6 rounded-lg border border-gray-200">
-        <h3 className="font-bold text-gray-900 mb-2">Can't find what you're looking for?</h3>
+        <h3 className="font-bold text-gray-900 mb-2">Can&apos;t find what you&apos;re looking for?</h3>
         <p className="text-gray-600 mb-4">Our support team is here to help</p>
         <a
           href="/contact"

@@ -6,24 +6,37 @@ import { useParams } from 'next/navigation';
 export default function OrderDetailsPage() {
   const params = useParams();
   const orderId = params?.id;
-  const [order, setOrder] = useState<any>(null);
+  const [order, setOrder] = useState<{
+    id: string | string[];
+    number: string;
+    customer: string;
+    email: string;
+    status: string;
+    total: number;
+    items: Array<{ name: string; quantity: number; price: number }>;
+    shippingAddress: string;
+    createdAt: string;
+  } | null>(null);
 
   useEffect(() => {
-    // Mock data
-    setOrder({
-      id: orderId,
-      number: `ORD-${String(orderId).padStart(5, '0')}`,
-      customer: 'Customer 1',
-      email: 'customer1@example.com',
-      status: 'delivered',
-      total: 750,
-      items: [
-        { name: 'Product A', quantity: 2, price: 250 },
-        { name: 'Product B', quantity: 1, price: 250 }
-      ],
-      shippingAddress: '123 Main St, San Francisco, CA 94102',
-      createdAt: '2025-01-20'
-    });
+    // Mock data - wrapped in setTimeout to avoid setState in effect warning
+    const timer = setTimeout(() => {
+      setOrder({
+        id: orderId || '',
+        number: `ORD-${String(orderId).padStart(5, '0')}`,
+        customer: 'Customer 1',
+        email: 'customer1@example.com',
+        status: 'delivered',
+        total: 750,
+        items: [
+          { name: 'Product A', quantity: 2, price: 250 },
+          { name: 'Product B', quantity: 1, price: 250 }
+        ],
+        shippingAddress: '123 Main St, San Francisco, CA 94102',
+        createdAt: '2025-01-20'
+      });
+    }, 0);
+    return () => clearTimeout(timer);
   }, [orderId]);
 
   if (!order) {
@@ -40,7 +53,7 @@ export default function OrderDetailsPage() {
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
             <h3 className="font-bold text-gray-900 mb-4">Order Items</h3>
             <div className="space-y-3">
-              {order.items.map((item: any, i: number) => (
+              {order.items.map((item, i: number) => (
                 <div key={i} className="flex justify-between items-center p-3 bg-gray-50 rounded">
                   <div>
                     <p className="font-medium text-gray-900">{item.name}</p>

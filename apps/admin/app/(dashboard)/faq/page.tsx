@@ -40,7 +40,7 @@ export default function FAQPage() {
 
       <div className="mt-8 bg-primary-light p-6 rounded-lg border border-primary-main">
         <h3 className="font-bold text-gray-900 mb-2">Still have questions?</h3>
-        <p className="text-gray-600 mb-4">Can't find the answer you're looking for? Contact our support team.</p>
+        <p className="text-gray-600 mb-4">Can&apos;t find the answer you&apos;re looking for? Contact our support team.</p>
         <a
           href="/contact"
           className="inline-block bg-primary-main text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-dark transition-colors"

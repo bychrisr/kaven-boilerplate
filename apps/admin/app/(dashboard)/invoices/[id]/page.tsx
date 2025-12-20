@@ -6,25 +6,39 @@ import { useParams } from 'next/navigation';
 export default function InvoiceDetailsPage() {
   const params = useParams();
   const invoiceId = params?.id;
-  const [invoice, setInvoice] = useState<any>(null);
+  const [invoice, setInvoice] = useState<{
+    id: string | string[];
+    number: string;
+    customer: string;
+    amount: number;
+    status: string;
+    dueDate: string;
+    items: Array<{ description: string; quantity: number; price: number }>;
+    subtotal: number;
+    tax: number;
+    total: number;
+  } | null>(null);
 
   useEffect(() => {
-    // Mock data
-    setInvoice({
-      id: invoiceId,
-      number: `INV-${String(invoiceId).padStart(4, '0')}`,
-      customer: 'Customer 1',
-      amount: 1500,
-      status: 'paid',
-      dueDate: '2025-02-15',
-      items: [
-        { description: 'Service A', quantity: 2, price: 500 },
-        { description: 'Service B', quantity: 1, price: 500 }
-      ],
-      subtotal: 1500,
-      tax: 0,
-      total: 1500
-    });
+    // Mock data - wrapped in setTimeout to avoid setState in effect warning
+    const timer = setTimeout(() => {
+      setInvoice({
+        id: invoiceId || '',
+        number: `INV-${String(invoiceId).padStart(4, '0')}`,
+        customer: 'Customer 1',
+        amount: 1500,
+        status: 'paid',
+        dueDate: '2025-02-15',
+        items: [
+          { description: 'Service A', quantity: 2, price: 500 },
+          { description: 'Service B', quantity: 1, price: 500 }
+        ],
+        subtotal: 1500,
+        tax: 0,
+        total: 1500
+      });
+    }, 0);
+    return () => clearTimeout(timer);
   }, [invoiceId]);
 
   if (!invoice) {
@@ -75,7 +89,7 @@ export default function InvoiceDetailsPage() {
             </tr>
           </thead>
           <tbody>
-            {invoice.items.map((item: any, i: number) => (
+            {invoice.items.map((item, i: number) => (
               <tr key={i} className="border-b border-gray-100">
                 <td className="py-3 text-gray-900">{item.description}</td>
                 <td className="py-3 text-right text-gray-900">{item.quantity}</td>

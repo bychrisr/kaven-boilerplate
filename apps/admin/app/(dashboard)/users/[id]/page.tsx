@@ -6,7 +6,13 @@ import { useParams } from 'next/navigation';
 export default function UserProfilePage() {
   const params = useParams();
   const userId = params?.id;
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+    createdAt: string;
+  } | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
