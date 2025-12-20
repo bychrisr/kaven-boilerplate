@@ -17,28 +17,35 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Verificar autenticação
-    const accessToken = localStorage.getItem('accessToken');
-    const userData = localStorage.getItem('user');
+    const initializeAuth = async () => {
+      // Verificar autenticação
+      const accessToken = localStorage.getItem('accessToken');
+      const userData = localStorage.getItem('user');
 
-    if (!accessToken || !userData) {
-      router.push('/login');
-      return;
-    }
+      if (!accessToken || !userData) {
+        router.push('/login');
+        return;
+      }
 
-    // Usar setState de forma assíncrona
-    try {
-      const parsedUser = JSON.parse(userData) as User;
-      setUser(parsedUser);
-      // Carregar estatísticas (exemplo)
-      setStats({ users: 12, tenants: 3 });
-    } catch (error) {
-      console.error('Erro ao parsear dados do usuário:', error);
-      router.push('/login');
-      return;
-    }
+      // Parse de forma segura
+      try {
+        const parsedUser = JSON.parse(userData) as User;
+        
+        // Simular carregamento de estatísticas (poderia ser uma API call)
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        setUser(parsedUser);
+        setStats({ users: 12, tenants: 3 });
+      } catch (error) {
+        console.error('Erro ao parsear dados do usuário:', error);
+        router.push('/login');
+        return;
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    setLoading(false);
+    initializeAuth();
   }, [router]);
 
   const handleLogout = () => {
