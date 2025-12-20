@@ -81,6 +81,7 @@ model Tenant {
   invoices      Invoice[]
   orders        Order[]
   auditLogs     AuditLog[]
+  files         File[]
   
   @@index([slug])
   @@index([domain])
@@ -108,6 +109,7 @@ model User {
   tenant        Tenant?        @relation(fields: [tenantId], references: [id])
   refreshTokens RefreshToken[]
   auditLogs     AuditLog[]
+  files         File[]
   
   @@index([email])
   @@index([tenantId])
@@ -252,4 +254,30 @@ model Payment {
   @@index([orderId])
   @@index([status])
   @@index([transactionId])
+}
+
+// ===========================
+// FILE MANAGEMENT
+// ===========================
+
+model File {
+  id           String   @id @default(uuid())
+  filename     String   // Nome gerado (único)
+  originalName String   // Nome original do arquivo
+  mimeType     String   // ex: image/jpeg, application/pdf
+  size         Int      // Tamanho em bytes
+  path         String   // Caminho no filesystem ou S3
+  url          String?  // URL pública (se aplicável)
+  userId       String
+  tenantId     String?
+  createdAt    DateTime @default(now())
+  deletedAt    DateTime? // Soft delete
+  
+  // Relations
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([tenantId])
+  @@index([createdAt])
 }

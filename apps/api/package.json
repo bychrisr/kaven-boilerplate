@@ -11,6 +11,7 @@
   "dependencies": {
     "@fastify/cors": "^11.2.0",
     "@fastify/helmet": "^13.0.2",
+    "@fastify/multipart": "^9.3.0",
     "@fastify/rate-limit": "^10.3.0",
     "@prisma/client": "^5.22.0",
     "bcrypt": "^6.0.0",

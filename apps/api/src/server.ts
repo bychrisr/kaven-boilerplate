@@ -1,10 +1,12 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
+import multipart from '@fastify/multipart';
 import { authRoutes } from './modules/auth/routes/auth.routes';
 import { userRoutes } from './modules/users/routes/user.routes';
 import { tenantRoutes } from './modules/tenants/routes/tenant.routes';
 import { paymentRoutes, webhookRoutes } from './modules/payments/routes/payment.routes';
+import { fileRoutes } from './modules/files/routes/file.routes';
 import { healthRoutes } from './routes/health.routes';
 import { metricsMiddleware } from './middleware/metrics.middleware';
 import { tenantMiddleware } from './middleware/tenant.middleware';
@@ -21,6 +23,13 @@ fastify.register(cors, {
   credentials: true,
 });
 
+// Multipart (file upload)
+fastify.register(multipart, {
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB
+  },
+});
+
 // Rate Limiting (global)
 fastify.register(rateLimit, {
   max: 100, // 100 requests
@@ -35,7 +44,7 @@ fastify.register(rateLimit, {
   errorResponseBuilder: (req, context) => {
     return {
       error: 'Rate limit excedido',
-      message: `Muitas requisições. Tente novamente em ${Math.ceil(context.after / 1000)} segundos.`,
+      message: `Muitas requisições. Tente novamente em ${Math.ceil(Number(context.after) / 1000)} segundos.`,
       retryAfter: context.after,
     };
   },
@@ -56,6 +65,7 @@ fastify.register(userRoutes, { prefix: '/api/users' });
 fastify.register(tenantRoutes, { prefix: '/api/tenants' });
 fastify.register(paymentRoutes, { prefix: '/api/payments' });
 fastify.register(webhookRoutes, { prefix: '/api/webhooks' });
+fastify.register(fileRoutes, { prefix: '/api/files' });
 
 // Start server
 const start = async () => {
