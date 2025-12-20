@@ -4,7 +4,12 @@ import { authController } from '../controllers/auth.controller';
 export async function authRoutes(fastify: FastifyInstance) {
   // Registrar (3 req/min)
   fastify.post('/register', {
-    config: { rateLimit: { max: 3, timeWindow: '1 minute' } },
+    config: {
+      rateLimit: {
+        max: 3,
+        timeWindow: 60000, // 1 minuto em ms
+      },
+    },
     handler: authController.register.bind(authController),
   });
   
@@ -13,7 +18,12 @@ export async function authRoutes(fastify: FastifyInstance) {
   
   // Login (5 req/min)
   fastify.post('/login', {
-    config: { rateLimit: { max: 5, timeWindow: '1 minute' } },
+    config: {
+      rateLimit: {
+        max: 5,
+        timeWindow: 60000, // 1 minuto em ms
+      },
+    },
     handler: authController.login.bind(authController),
   });
   
@@ -25,7 +35,12 @@ export async function authRoutes(fastify: FastifyInstance) {
   
   // Recuperação de senha (3 req/min)
   fastify.post('/forgot-password', {
-    config: { rateLimit: { max: 3, timeWindow: '1 minute' } },
+    config: {
+      rateLimit: {
+        max: 3,
+        timeWindow: 60000, // 1 minuto em ms
+      },
+    },
     handler: authController.forgotPassword.bind(authController),
   });
   
