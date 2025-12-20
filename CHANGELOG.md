@@ -5,6 +5,112 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2025-12-19
+
+### ✨ Adicionado
+
+#### Backend Completion (6 features principais)
+
+**1. Middleware Camaleão (Tenant Detection)**
+
+- Detecção automática de tenant via 3 métodos:
+  - Header `X-Tenant-ID`
+  - Subdomain (ex: `empresa.app.com`)
+  - Path (ex: `/tenants/empresa/api/users`)
+- Suporte a modo single-tenant e multi-tenant
+- Middleware global aplicado a todas requests
+- Documentação completa em `docs/TENANT_MIDDLEWARE.md`
+
+**2. RBAC Middleware (Role-Based Access Control)**
+
+- Hierarquia de roles: SUPER_ADMIN > TENANT_ADMIN > USER
+- 6 middlewares de autorização:
+  - `authMiddleware` - Verificação JWT
+  - `requireRole()` - Requer roles específicas
+  - `requireSuperAdmin` - Apenas super admin
+  - `requireTenantAdmin` - Admin ou superior
+  - `requireResourceOwnership()` - Verifica ownership
+  - `requireTenantAccess` - Verifica acesso ao tenant
+- 11 endpoints protegidos (6 users + 5 tenants)
+- 4 helpers de verificação
+- Documentação completa em `docs/RBAC_MIDDLEWARE.md`
+
+**3. Email Service**
+
+- Nodemailer com suporte a SMTP e SendGrid
+- 4 templates HTML responsivos:
+  - Welcome email (enviado no register)
+  - Email verification
+  - Password reset (enviado no forgot-password)
+  - Invoice notification
+- Modo desenvolvimento (sem SMTP configurado)
+- Integração com auth endpoints
+- Documentação completa em `docs/EMAIL_SERVICE.md`
+
+**4. File Upload Service**
+
+- Upload de arquivos com @fastify/multipart
+- Validação de tipo (imagens, PDF, docs)
+- Validação de tamanho (max 10MB)
+- Storage local em `/uploads`
+- Soft delete de arquivos
+- 4 endpoints REST:
+  - POST `/api/files/upload`
+  - GET `/api/files` (paginado)
+  - GET `/api/files/:id`
+  - DELETE `/api/files/:id`
+- Modelo File no Prisma com relações
+
+**5. Rate Limiting**
+
+- @fastify/rate-limit com Redis support
+- Rate limiting global: 100 req/min
+- Rate limiting específico por endpoint:
+  - Login: 5 req/min
+  - Register: 3 req/min
+  - Forgot password: 3 req/min
+- Key generator personalizado (user ID ou IP)
+- Error builder em português
+- Whitelist para localhost
+
+**6. Swagger Documentation**
+
+- OpenAPI 3.0 spec completa
+- Swagger UI em `/docs`
+- 30+ endpoints documentados
+- 6 tags organizadas
+- Bearer JWT authentication scheme
+- UI interativa com try-it-out
+
+### 📊 Estatísticas
+
+- **11 arquivos criados** (1.800+ linhas)
+- **10 arquivos modificados**
+- **6 commits** incrementais
+- **30+ endpoints** REST
+- **4 documentações** completas
+- **1 migração** Prisma (modelo File)
+
+### 🔧 Dependências Adicionadas
+
+- `nodemailer@7.0.11`
+- `@types/nodemailer`
+- `@fastify/rate-limit@10.3.0`
+- `@fastify/multipart@9.3.0`
+- `@fastify/swagger@9.6.1`
+- `@fastify/swagger-ui@5.2.3`
+
+### 🎯 Commits
+
+1. `869ed36` - feat: implementa middleware Camaleão
+2. `28ee927` - feat: implementa RBAC middleware
+3. `f90b296` - feat: implementa email service
+4. `684b54c` - feat: implementa rate limiting
+5. `72e3d54` - feat: implementa file upload service
+6. `5254e7f` - feat: adiciona documentação Swagger
+
+---
+
 ## [0.5.0] - 2025-12-19
 
 ### ✨ Adicionado
