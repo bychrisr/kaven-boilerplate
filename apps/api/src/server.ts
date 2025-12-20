@@ -74,12 +74,28 @@ fastify.register(multipart, {
   },
 });
 
-// Rate Limiting (global)
+// Rate Limiting (global) - SOLUÇÃO ROBUSTA COM REDIS
 fastify.register(rateLimit, {
   max: 100, // 100 requests
   timeWindow: 60000, // 1 minuto em ms
   cache: 10000, // cache de 10k IPs
   allowList: ['127.0.0.1'], // whitelist localhost
+  // Redis para rate limiting distribuído (produção)
+  redis: process.env.REDIS_URL 
+    ? (() => {
+        const Redis = require('ioredis');
+        const client = new Redis(process.env.REDIS_URL, {
+          enableOfflineQueue: false,
+          maxRetriesPerRequest: 1,
+        });
+        
+        client.on('error', (err: Error) => {
+          console.warn('⚠️  Redis rate limit error:', err.message);
+        });
+        
+        return client;
+      })()
+    : undefined,
   keyGenerator: (req) => {
     // Usar IP ou user ID se autenticado
     return req.user?.id || req.ip || 'anonymous';
