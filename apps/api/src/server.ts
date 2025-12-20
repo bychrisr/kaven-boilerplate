@@ -2,6 +2,8 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import multipart from '@fastify/multipart';
+import swagger from '@fastify/swagger';
+import swaggerUi from '@fastify/swagger-ui';
 import { authRoutes } from './modules/auth/routes/auth.routes';
 import { userRoutes } from './modules/users/routes/user.routes';
 import { tenantRoutes } from './modules/tenants/routes/tenant.routes';
@@ -15,6 +17,48 @@ const fastify = Fastify({
   logger: {
     level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
   },
+});
+
+// Swagger Documentation
+fastify.register(swagger, {
+  openapi: {
+    info: {
+      title: 'Kaven API',
+      description: 'Multi-tenant SaaS Boilerplate - Complete REST API',
+      version: '0.6.0',
+    },
+    servers: [
+      { url: 'http://localhost:8000', description: 'Development' },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'JWT access token obtido via /api/auth/login',
+        },
+      },
+    },
+    tags: [
+      { name: 'Authentication', description: 'Endpoints de autenticação e 2FA' },
+      { name: 'Users', description: 'Gerenciamento de usuários' },
+      { name: 'Tenants', description: 'Gerenciamento de tenants (multi-tenancy)' },
+      { name: 'Payments', description: 'Sistema de pagamentos Stripe' },
+      { name: 'Files', description: 'Upload e gerenciamento de arquivos' },
+      { name: 'Health', description: 'Health checks e métricas' },
+    ],
+  },
+});
+
+fastify.register(swaggerUi, {
+  routePrefix: '/docs',
+  uiConfig: {
+    docExpansion: 'list',
+    deepLinking: true,
+  },
+  staticCSP: true,
+  transformStaticCSP: (header) => header,
 });
 
 // Plugins
