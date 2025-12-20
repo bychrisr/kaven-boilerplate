@@ -2,14 +2,20 @@ import { FastifyInstance } from 'fastify';
 import { authController } from '../controllers/auth.controller';
 
 export async function authRoutes(fastify: FastifyInstance) {
-  // Registrar
-  fastify.post('/register', authController.register.bind(authController));
+  // Registrar (3 req/min)
+  fastify.post('/register', {
+    config: { rateLimit: { max: 3, timeWindow: '1 minute' } },
+    handler: authController.register.bind(authController),
+  });
   
   // Verificar email
   fastify.post('/verify-email', authController.verifyEmail.bind(authController));
   
-  // Login
-  fastify.post('/login', authController.login.bind(authController));
+  // Login (5 req/min)
+  fastify.post('/login', {
+    config: { rateLimit: { max: 5, timeWindow: '1 minute' } },
+    handler: authController.login.bind(authController),
+  });
   
   // Refresh token
   fastify.post('/refresh', authController.refresh.bind(authController));
@@ -17,8 +23,12 @@ export async function authRoutes(fastify: FastifyInstance) {
   // Logout
   fastify.post('/logout', authController.logout.bind(authController));
   
-  // Recuperação de senha
-  fastify.post('/forgot-password', authController.forgotPassword.bind(authController));
+  // Recuperação de senha (3 req/min)
+  fastify.post('/forgot-password', {
+    config: { rateLimit: { max: 3, timeWindow: '1 minute' } },
+    handler: authController.forgotPassword.bind(authController),
+  });
+  
   fastify.post('/reset-password', authController.resetPassword.bind(authController));
   
   // 2FA

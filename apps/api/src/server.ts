@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import rateLimit from '@fastify/rate-limit';
 import { authRoutes } from './modules/auth/routes/auth.routes';
 import { userRoutes } from './modules/users/routes/user.routes';
 import { tenantRoutes } from './modules/tenants/routes/tenant.routes';
@@ -18,6 +19,26 @@ const fastify = Fastify({
 fastify.register(cors, {
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true,
+});
+
+// Rate Limiting (global)
+fastify.register(rateLimit, {
+  max: 100, // 100 requests
+  timeWindow: '1 minute', // por minuto
+  cache: 10000, // cache de 10k IPs
+  allowList: ['127.0.0.1'], // whitelist localhost
+  redis: process.env.REDIS_URL ? require('ioredis').createClient(process.env.REDIS_URL) : undefined,
+  keyGenerator: (req) => {
+    // Usar IP ou user ID se autenticado
+    return req.user?.id || req.ip || 'anonymous';
+  },
+  errorResponseBuilder: (req, context) => {
+    return {
+      error: 'Rate limit excedido',
+      message: `Muitas requisições. Tente novamente em ${Math.ceil(context.after / 1000)} segundos.`,
+      retryAfter: context.after,
+    };
+  },
 });
 
 // Metrics middleware (aplicado globalmente)
