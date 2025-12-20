@@ -3,9 +3,16 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+}
+
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [stats, setStats] = useState({ users: 0, tenants: 0 });
   const [loading, setLoading] = useState(true);
 
@@ -19,10 +26,18 @@ export default function DashboardPage() {
       return;
     }
 
-    setUser(JSON.parse(userData));
+    // Usar setState de forma assíncrona
+    try {
+      const parsedUser = JSON.parse(userData) as User;
+      setUser(parsedUser);
+      // Carregar estatísticas (exemplo)
+      setStats({ users: 12, tenants: 3 });
+    } catch (error) {
+      console.error('Erro ao parsear dados do usuário:', error);
+      router.push('/login');
+      return;
+    }
 
-    // Carregar estatísticas (exemplo)
-    setStats({ users: 12, tenants: 3 });
     setLoading(false);
   }, [router]);
 
