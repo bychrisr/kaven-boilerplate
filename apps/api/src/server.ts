@@ -6,6 +6,7 @@ import { tenantRoutes } from './modules/tenants/routes/tenant.routes';
 import { paymentRoutes, webhookRoutes } from './modules/payments/routes/payment.routes';
 import { healthRoutes } from './routes/health.routes';
 import { metricsMiddleware } from './middleware/metrics.middleware';
+import { tenantMiddleware } from './middleware/tenant.middleware';
 
 const fastify = Fastify({
   logger: {
@@ -21,6 +22,9 @@ fastify.register(cors, {
 
 // Metrics middleware (aplicado globalmente)
 fastify.addHook('onRequest', metricsMiddleware);
+
+// Tenant detection middleware (Camaleão)
+fastify.addHook('onRequest', tenantMiddleware);
 
 // Health checks e Metrics
 fastify.register(healthRoutes);
