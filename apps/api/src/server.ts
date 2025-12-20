@@ -3,6 +3,7 @@ import cors from '@fastify/cors';
 import { authRoutes } from './modules/auth/routes/auth.routes';
 import { userRoutes } from './modules/users/routes/user.routes';
 import { tenantRoutes } from './modules/tenants/routes/tenant.routes';
+import { paymentRoutes, webhookRoutes } from './modules/payments/routes/payment.routes';
 
 const fastify = Fastify({
   logger: {
@@ -25,6 +26,8 @@ fastify.get('/health', async () => {
 fastify.register(authRoutes, { prefix: '/api/auth' });
 fastify.register(userRoutes, { prefix: '/api/users' });
 fastify.register(tenantRoutes, { prefix: '/api/tenants' });
+fastify.register(paymentRoutes, { prefix: '/api/payments' });
+fastify.register(webhookRoutes, { prefix: '/api/webhooks' });
 
 // Start server
 const start = async () => {
