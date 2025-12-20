@@ -7,6 +7,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ===========================
+// ENUMS
+// ===========================
+
 enum TenantStatus {
   ACTIVE
   SUSPENDED
@@ -19,29 +23,233 @@ enum Role {
   USER
 }
 
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  TRIALING
+  EXPIRED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  PENDING
+  PAID
+  OVERDUE
+  CANCELED
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  CANCELED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  STRIPE
+  PIX
+  CREDIT_CARD
+  BOLETO
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+// ===========================
+// CORE MODELS
+// ===========================
+
 model Tenant {
   id        String       @id @default(uuid())
   name      String
   slug      String       @unique
+  domain    String?      @unique // Para subdomain-based detection
   status    TenantStatus @default(ACTIVE)
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
+  deletedAt DateTime?    // Soft delete
   
-  users     User[]
+  // Relations
+  users         User[]
+  subscriptions Subscription[]
+  invoices      Invoice[]
+  orders        Order[]
+  auditLogs     AuditLog[]
+  
   @@index([slug])
+  @@index([domain])
+  @@index([status])
 }
 
 model User {
-  id               String    @id @default(uuid())
-  email            String    @unique
-  password         String
-  name             String
-  emailVerified    Boolean   @default(false)
-  twoFactorEnabled Boolean   @default(false)
-  tenantId         String?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  id                String    @id @default(uuid())
+  email             String    @unique
+  password          String
+  name              String
+  emailVerified     Boolean   @default(false)
+  emailVerifiedAt   DateTime?
+  twoFactorEnabled  Boolean   @default(false)
+  twoFactorSecret   String?   // TOTP secret
+  backupCodes       String?   // JSON array of backup codes
+  role              Role      @default(USER)
+  tenantId          String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime? // Soft delete
+  lastLoginAt       DateTime?
   
-  tenant Tenant? @relation(fields: [tenantId], references: [id])
+  // Relations
+  tenant        Tenant?        @relation(fields: [tenantId], references: [id])
+  refreshTokens RefreshToken[]
+  auditLogs     AuditLog[]
+  
   @@index([email])
+  @@index([tenantId])
+  @@index([role])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  revokedAt DateTime?
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  action      String   // Ex: "user.created", "tenant.updated"
+  entity      String   // Ex: "User", "Tenant"
+  entityId    String
+  userId      String?
+  tenantId    String?
+  metadata    Json?    // Dados adicionais
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  user   User?   @relation(fields: [userId], references: [id])
+  tenant Tenant? @relation(fields: [tenantId], references: [id])
+  
+  @@index([userId])
+  @@index([tenantId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+// ===========================
+// SUBSCRIPTION & BILLING
+// ===========================
+
+model Subscription {
+  id                 String             @id @default(uuid())
+  tenantId           String
+  stripeCustomerId   String?            @unique
+  stripeSubscriptionId String?          @unique
+  status             SubscriptionStatus @default(TRIALING)
+  planName           String             // Ex: "FREE", "STARTER", "PRO"
+  priceMonthly       Decimal            @db.Decimal(10, 2)
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelAtPeriodEnd  Boolean            @default(false)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  deletedAt          DateTime?
+  
+  // Relations
+  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  invoices Invoice[]
+  
+  @@index([tenantId])
+  @@index([status])
+  @@index([stripeSubscriptionId])
+}
+
+model Invoice {
+  id             String        @id @default(uuid())
+  tenantId       String
+  subscriptionId String?
+  invoiceNumber  String        @unique
+  status         InvoiceStatus @default(PENDING)
+  amountDue      Decimal       @db.Decimal(10, 2)
+  amountPaid     Decimal       @default(0) @db.Decimal(10, 2)
+  currency       String        @default("BRL")
+  dueDate        DateTime
+  paidAt         DateTime?
+  metadata       Json?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+  
+  // Relations
+  tenant       Tenant        @relation(fields: [tenantId], references: [id])
+  subscription Subscription? @relation(fields: [subscriptionId], references: [id])
+  payments     Payment[]
+  
+  @@index([tenantId])
+  @@index([status])
+  @@index([invoiceNumber])
+  @@index([dueDate])
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  tenantId    String
+  orderNumber String      @unique
+  status      OrderStatus @default(PENDING)
+  totalAmount Decimal     @db.Decimal(10, 2)
+  currency    String      @default("BRL")
+  metadata    Json?       // Items, customer info, etc.
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  deletedAt   DateTime?
+  
+  // Relations
+  tenant   Tenant    @relation(fields: [tenantId], references: [id])
+  payments Payment[]
+  
+  @@index([tenantId])
+  @@index([status])
+  @@index([orderNumber])
+}
+
+model Payment {
+  id                String        @id @default(uuid())
+  invoiceId         String?
+  orderId           String?
+  amount            Decimal       @db.Decimal(10, 2)
+  currency          String        @default("BRL")
+  method            PaymentMethod
+  status            PaymentStatus @default(PENDING)
+  transactionId     String?       @unique // Stripe/Pix transaction ID
+  pixQrCode         String?       // For Pix payments
+  pixQrCodeUrl      String?
+  metadata          Json?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  confirmedAt       DateTime?
+  
+  // Relations
+  invoice Invoice? @relation(fields: [invoiceId], references: [id])
+  order   Order?   @relation(fields: [orderId], references: [id])
+  
+  @@index([invoiceId])
+  @@index([orderId])
+  @@index([status])
+  @@index([transactionId])
 }

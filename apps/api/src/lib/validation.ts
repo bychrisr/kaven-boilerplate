@@ -1,0 +1,93 @@
+import { z } from 'zod';
+
+// ===========================
+// AUTH SCHEMAS
+// ===========================
+
+export const registerSchema = z.object({
+  email: z.string().email('Email inválido'),
+  password: z.string().min(8, 'Senha deve ter no mínimo 8 caracteres'),
+  name: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres'),
+  tenantSlug: z.string().optional(), // Para multi-tenant
+});
+
+export const loginSchema = z.object({
+  email: z.string().email('Email inválido'),
+  password: z.string().min(1, 'Senha é obrigatória'),
+  twoFactorCode: z.string().length(6).optional(), // TOTP code
+});
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email('Email inválido'),
+});
+
+export const resetPasswordSchema = z.object({
+  token: z.string(),
+  password: z.string().min(8, 'Senha deve ter no mínimo 8 caracteres'),
+});
+
+export const verifyEmailSchema = z.object({
+  token: z.string(),
+});
+
+export const setup2FASchema = z.object({
+  userId: z.string().uuid(),
+});
+
+export const verify2FASchema = z.object({
+  userId: z.string().uuid(),
+  code: z.string().length(6),
+});
+
+export const disable2FASchema = z.object({
+  userId: z.string().uuid(),
+  code: z.string().length(6),
+});
+
+// ===========================
+// USER SCHEMAS
+// ===========================
+
+export const createUserSchema = z.object({
+  email: z.string().email('Email inválido'),
+  password: z.string().min(8, 'Senha deve ter no mínimo 8 caracteres'),
+  name: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres'),
+  role: z.enum(['SUPER_ADMIN', 'TENANT_ADMIN', 'USER']).default('USER'),
+  tenantId: z.string().uuid().optional(),
+});
+
+export const updateUserSchema = z.object({
+  name: z.string().min(2).optional(),
+  email: z.string().email().optional(),
+  role: z.enum(['SUPER_ADMIN', 'TENANT_ADMIN', 'USER']).optional(),
+});
+
+// ===========================
+// TENANT SCHEMAS
+// ===========================
+
+export const createTenantSchema = z.object({
+  name: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres'),
+  slug: z.string().regex(/^[a-z0-9-]+$/, 'Slug deve conter apenas letras minúsculas, números e hífens'),
+  domain: z.string().optional(),
+});
+
+export const updateTenantSchema = z.object({
+  name: z.string().min(2).optional(),
+  slug: z.string().regex(/^[a-z0-9-]+$/).optional(),
+  domain: z.string().optional(),
+  status: z.enum (['ACTIVE', 'SUSPENDED', 'DELETED']).optional(),
+});
+
+// ===========================
+// TYPES
+// ===========================
+
+export type RegisterInput = z.infer<typeof registerSchema>;
+export type LoginInput = z.infer<typeof loginSchema>;
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+export type CreateUserInput = z.infer<typeof createUserSchema>;
+export type UpdateUserInput = z.infer<typeof updateUserSchema>;
+export type CreateTenantInput = z.infer<typeof createTenantSchema>;
+export type UpdateTenantInput = z.infer<typeof updateTenantSchema>;
