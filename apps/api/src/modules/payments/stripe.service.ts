@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 import prisma from '../../../lib/prisma';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-12-18.acacia',
+  apiVersion: '2025-12-15.clover',
 });
 
 export class StripeService {
@@ -62,14 +62,14 @@ export class StripeService {
         status: 'TRIALING',
         planName: 'STARTER', // TODO: extrair do priceId
         priceMonthly: 29.99, // TODO: extrair do priceId
-        currentPeriodStart: new Date(stripeSubscription.current_period_start * 1000),
-        currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
+        currentPeriodStart: new Date((stripeSubscription as any).current_period_start * 1000),
+        currentPeriodEnd: new Date((stripeSubscription as any).current_period_end * 1000),
       },
     });
 
     // Retornar client secret para pagamento frontend
     const invoice = stripeSubscription.latest_invoice as Stripe.Invoice;
-    const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+    const paymentIntent = (invoice as any).payment_intent as Stripe.PaymentIntent;
 
     return {
       subscriptionId: subscription.id,
@@ -208,7 +208,7 @@ export class StripeService {
    */
   private async handleInvoicePaymentSucceeded(stripeInvoice: Stripe.Invoice) {
     const subscription = await prisma.subscription.findUnique({
-      where: { stripeSubscriptionId: stripeInvoice.subscription as string },
+      where: { stripeSubscriptionId: (stripeInvoice as any).subscription as string },
     });
 
     if (!subscription) return;
@@ -241,7 +241,7 @@ export class StripeService {
    */
   private async handleInvoicePaymentFailed(stripeInvoice: Stripe.Invoice) {
     const subscription = await prisma.subscription.findUnique({
-      where: { stripeSubscriptionId: stripeInvoice.subscription as string },
+      where: { stripeSubscriptionId: (stripeInvoice as any).subscription as string },
     });
 
     if (!subscription) return;
@@ -267,9 +267,9 @@ export class StripeService {
       where: { id: subscription.id },
       data: {
         status: stripeSubscription.status.toUpperCase() as any,
-        currentPeriodStart: new Date(stripeSubscription.current_period_start * 1000),
-        currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
-        cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end,
+        currentPeriodStart: new Date((stripeSubscription as any).current_period_start * 1000),
+        currentPeriodEnd: new Date((stripeSubscription as any).current_period_end * 1000),
+        cancelAtPeriodEnd: (stripeSubscription as any).cancel_at_period_end,
       },
     });
   }

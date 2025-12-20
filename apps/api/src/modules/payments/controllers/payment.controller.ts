@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { stripeService } from '../services/stripe.service';
+import { stripeService } from '../stripe.service';
 import { z } from 'zod';
 
 const createSubscriptionSchema = z.object({
