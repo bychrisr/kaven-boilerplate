@@ -1,4 +1,3 @@
-@import './globals.css' layer(base);
 @import '../styles/theme.css';
 
 @layer base {
