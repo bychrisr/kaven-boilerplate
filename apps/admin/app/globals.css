@@ -1,4 +1,16 @@
-@import "tailwindcss";
+@import './globals.css' layer(base);
+@import '../styles/theme.css';
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));

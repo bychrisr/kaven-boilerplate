@@ -1,0 +1,280 @@
+/* ============================================
+   KAVEN BOILERPLATE - DESIGN SYSTEM
+   Based on Minimals.cc + Phase 0 Specification
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ===== PRIMARY COLORS ===== */
+  --primary-main: #00ab55;
+  --primary-dark: #007b55;
+  --primary-light: #5be584;
+  --primary-lighter: #c8facd;
+  --primary-darker: #005249;
+
+  /* ===== SECONDARY COLORS ===== */
+  --secondary-main: #3366ff;
+  --secondary-dark: #1939b7;
+  --secondary-light: #84a9ff;
+  --secondary-lighter: #d6e4ff;
+  --secondary-darker: #091a7a;
+
+  /* ===== SUCCESS COLORS ===== */
+  --success-main: #22c55e;
+  --success-dark: #118d57;
+  --success-light: #77ed8b;
+  --success-lighter: #d8fbde;
+  --success-darker: #065e49;
+
+  /* ===== WARNING COLORS ===== */
+  --warning-main: #ffab00;
+  --warning-dark: #b76e00;
+  --warning-light: #ffd666;
+  --warning-lighter: #fff5cc;
+  --warning-darker: #7a4100;
+
+  /* ===== ERROR COLORS ===== */
+  --error-main: #ff5630;
+  --error-dark: #b71d18;
+  --error-light: #ffac82;
+  --error-lighter: #ffe9d5;
+  --error-darker: #7a0916;
+
+  /* ===== INFO COLORS ===== */
+  --info-main: #00b8d9;
+  --info-dark: #006c9c;
+  --info-light: #61f3f3;
+  --info-lighter: #cafdf5;
+  --info-darker: #003768;
+
+  /* ===== GRAY SCALE ===== */
+  --gray-900: #161c24;
+  --gray-800: #212b36;
+  --gray-700: #454f5b;
+  --gray-600: #637381;
+  --gray-500: #919eab;
+  --gray-400: #c4cdd5;
+  --gray-300: #dfe3e8;
+  --gray-200: #f4f6f8;
+  --gray-100: #f9fafb;
+  --gray-50: #fcfcfd;
+
+  /* ===== COMMON COLORS ===== */
+  --common-black: #000000;
+  --common-white: #ffffff;
+
+  /* ===== TEXT COLORS ===== */
+  --text-primary: var(--gray-900);
+  --text-secondary: var(--gray-600);
+  --text-disabled: var(--gray-500);
+
+  /* ===== BACKGROUND COLORS ===== */
+  --background-default: #ffffff;
+  --background-paper: #ffffff;
+  --background-neutral: var(--gray-200);
+
+  /* ===== ACTION COLORS ===== */
+  --action-active: var(--gray-600);
+  --action-hover: rgba(145, 158, 171, 0.08);
+  --action-selected: rgba(145, 158, 171, 0.16);
+  --action-disabled: rgba(145, 158, 171, 0.8);
+  --action-disabled-background: rgba(145, 158, 171, 0.24);
+  --action-focus: rgba(145, 158, 171, 0.24);
+
+  /* ===== DIVIDER ===== */
+  --divider: rgba(145, 158, 171, 0.24);
+
+  /* ===== SPACING (4px grid) ===== */
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-7: 28px;
+  --spacing-8: 32px;
+  --spacing-9: 36px;
+  --spacing-10: 40px;
+  --spacing-11: 44px;
+  --spacing-12: 48px;
+  --spacing-14: 56px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+
+  /* ===== BORDER RADIUS ===== */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* ===== SHADOWS ===== */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+  /* ===== Z-INDEX ===== */
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-fixed: 1200;
+  --z-modal-backdrop: 1300;
+  --z-modal: 1400;
+  --z-popover: 1500;
+  --z-tooltip: 1600;
+}
+
+/* ===== DARK MODE ===== */
+[data-theme='dark'] {
+  --background-default: #161c24;
+  --background-paper: #212b36;
+  --background-neutral: var(--gray-800);
+
+  --text-primary: #ffffff;
+  --text-secondary: var(--gray-400);
+  --text-disabled: var(--gray-600);
+
+  --action-hover: rgba(255, 255, 255, 0.08);
+  --action-selected: rgba(255, 255, 255, 0.16);
+  --action-disabled: rgba(255, 255, 255, 0.3);
+  --action-disabled-background: rgba(255, 255, 255, 0.12);
+  --action-focus: rgba(255, 255, 255, 0.12);
+
+  --divider: rgba(255, 255, 255, 0.12);
+}
+
+/* ===== TYPOGRAPHY ===== */
+body {
+  font-family:
+    'Public Sans',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Roboto',
+    'Oxygen',
+    'Ubuntu',
+    'Cantarell',
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--background-default);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Font Sizes */
+.text-xs {
+  font-size: 12px;
+  line-height: 18px;
+}
+.text-sm {
+  font-size: 14px;
+  line-height: 22px;
+}
+.text-base {
+  font-size: 16px;
+  line-height: 24px;
+}
+.text-lg {
+  font-size: 18px;
+  line-height: 28px;
+}
+.text-xl {
+  font-size: 20px;
+  line-height: 30px;
+}
+.text-2xl {
+  font-size: 24px;
+  line-height: 36px;
+}
+.text-3xl {
+  font-size: 30px;
+  line-height: 42px;
+}
+.text-4xl {
+  font-size: 36px;
+  line-height: 48px;
+}
+.text-5xl {
+  font-size: 48px;
+  line-height: 60px;
+}
+
+/* Font Weights */
+.font-regular {
+  font-weight: 400;
+}
+.font-medium {
+  font-weight: 500;
+}
+.font-semibold {
+  font-weight: 600;
+}
+.font-bold {
+  font-weight: 700;
+}
+
+/* ===== UTILITY CLASSES ===== */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--spacing-4);
+  padding-right: var(--spacing-4);
+}
+
+.card {
+  background-color: var(--background-paper);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-6);
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--divider);
+  border: none;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray-200);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gray-400);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-500);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-track {
+  background: var(--gray-800);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: var(--gray-600);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-500);
+}
