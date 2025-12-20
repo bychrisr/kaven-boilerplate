@@ -40,7 +40,7 @@ export default function LoginPage() {
 
       // Redirecionar para dashboard
       router.push('/dashboard');
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
@@ -58,7 +58,7 @@ export default function LoginPage() {
             Faça login na sua conta
           </p>
         </div>
-        <form className="mt-8 space-y-6" on Submit={handleLogin}>
+        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
           {error && (
             <div className="rounded-md bg-red-50 p-4">
               <p className="text-sm text-red-800">{error}</p>
