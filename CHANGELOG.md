@@ -5,6 +5,49 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2025-12-19
+
+### ✨ Adicionado
+
+#### Payment System (Stripe)
+
+- **Stripe Service expandido** com 9 métodos:
+  - `getOrCreateCustomer()` - Criar ou buscar customer
+  - `createSubscription()` - Criar subscription com plano
+  - `cancelSubscription()` - Cancelar subscription
+  - `updatePaymentMethod()` - Atualizar método de pagamento
+  - `listPaymentMethods()` - Listar métodos do customer
+  - `handleWebhook()` - Processar webhooks do Stripe
+  - 4 event handlers privados (invoice succeeded/failed, subscription updated/deleted)
+- **Payment Controller** com 5 endpoints:
+  - POST `/api/payments/subscription` - Criar subscription
+  - DELETE `/api/payments/subscription/:id` - Cancelar
+  - PUT `/api/payments/payment-method` - Atualizar método
+  - GET `/api/payments/payment-methods/:id` - Listar métodos
+  - POST `/api/webhooks/stripe` - Webhook handler
+- **Integração automática** com Prisma:
+  - Cria/atualiza subscriptions no banco
+  - Cria invoices automaticamente quando pagamento sucede
+  - Sincroniza status de subscriptions via webhooks
+- **Raw body support** para verificação de signature do Stripe
+
+### 🔧 Melhorado
+
+- Server Fastify agora registra rotas de `/api/payments` e `/api/webhooks`
+- Validação Zod em todos os endpoints de pagamento
+
+### 📊 Estatísticas
+
+- **Total de endpoints:** 26 (21 anteriores + 5 payments)
+- **Services:** 5 módulos (auth, users, tenants, payments, subscriptions)
+- **Webhooks:** 1 endpoint, 4 event types tratados
+
+### 🎯 Commits
+
+1. `6788488` - feat: sistema completo de pagamentos Stripe
+
+---
+
 ## [0.3.0] - 2025-12-19
 
 ### ✨ Adicionado
