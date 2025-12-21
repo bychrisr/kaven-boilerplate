@@ -66,8 +66,12 @@ export default function UsersPage() {
   const [limit, setLimit] = useState(5);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { users, isLoading, pagination, deleteUser } = useUsers({ page, limit });
+  const { data: usersData, isLoading } = useUsers({ page, limit });
   const { data: statsData } = useUserStats();
+  const deleteUserMutation = useDeleteUser();
+
+  const users = usersData?.users || [];
+  const pagination = usersData?.pagination;
 
   // Tabs with counts
   const tabs = useMemo(() => {
@@ -85,7 +89,7 @@ export default function UsersPage() {
   const handleDelete = async (id: string) => {
     if (confirm('Tem certeza que deseja excluir este usuário?')) {
       try {
-        await deleteUser.mutateAsync(id);
+        await deleteUserMutation.mutateAsync(id);
         toast.success('Usuário excluído com sucesso!');
       } catch {
         toast.error('Erro ao excluir usuário');
