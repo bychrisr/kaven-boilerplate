@@ -201,6 +201,7 @@ export default function InvoicesPage() {
                           {/* Dropdown Menu com Portal */}
                           <DropdownMenu
                             isOpen={openMenuId === invoice.id}
+                            onOpen={() => setOpenMenuId(invoice.id)}
                             onClose={() => setOpenMenuId(null)}
                             invoiceId={invoice.id}
                             onDelete={handleDelete}
@@ -247,12 +248,13 @@ export default function InvoicesPage() {
 // Componente DropdownMenu usando Portal para escapar do overflow da tabela
 interface DropdownMenuProps {
   isOpen: boolean;
+  onOpen: () => void;
   onClose: () => void;
   invoiceId: string;
   onDelete: (id: string) => void;
 }
 
-function DropdownMenu({ isOpen, onClose, invoiceId, onDelete }: Readonly<DropdownMenuProps>) {
+function DropdownMenu({ isOpen, onOpen, onClose, invoiceId, onDelete }: Readonly<DropdownMenuProps>) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
 
@@ -270,7 +272,7 @@ function DropdownMenu({ isOpen, onClose, invoiceId, onDelete }: Readonly<Dropdow
     return (
       <button
         ref={buttonRef}
-        onClick={onClose}
+        onClick={onOpen}
         className="p-2 text-gray-400 hover:text-gray-900 transition-colors"
         title="Ações"
       >
