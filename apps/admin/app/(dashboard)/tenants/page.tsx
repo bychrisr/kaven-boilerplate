@@ -12,6 +12,7 @@ import {
   Globe,
   CheckCircle2,
   XCircle,
+  Eye,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -172,16 +173,20 @@ export default function TenantsPage() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Link
+                          href={`/tenants/${tenant.id}`}
+                          className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                        <Link
                           href={`/tenants/${tenant.id}/edit`}
-                          className="p-2 text-gray-400 hover:text-primary-main transition-colors"
-                          title="Editar"
+                          className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
                         >
                           <Pencil className="h-4 w-4" />
                         </Link>
                         <button
                           onClick={() => handleDelete(tenant.id, tenant.name)}
-                          className="p-2 text-gray-400 hover:text-error-main transition-colors"
-                          title="Excluir"
+                          className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-rose-600"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
