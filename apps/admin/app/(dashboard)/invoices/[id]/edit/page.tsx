@@ -124,7 +124,7 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
                 id="amountDue"
                 type="number"
                 step="0.01"
-                {...register('amountDue')}
+                {...register('amountDue', { valueAsNumber: true })}
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
                 placeholder="0.00"
               />
