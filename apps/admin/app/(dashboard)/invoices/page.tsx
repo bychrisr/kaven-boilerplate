@@ -19,7 +19,8 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { toast } from 'sonner';
+import { ptBR } from 'date-fns/locale';
+import { ConfirmationModal } from '@/components/ui/confirmation-modal';
 
 // Avatar color generator
 const getAvatarColor = (name: string) => {
@@ -59,6 +60,8 @@ export default function InvoicesPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
   const [searchQuery, setSearchQuery] = useState('');
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [invoiceToDelete, setInvoiceToDelete] = useState<string | null>(null);
 
   const { invoices, isLoading, pagination, deleteInvoice } = useInvoices({
     page,
@@ -129,14 +132,19 @@ export default function InvoicesPage() {
     ];
   }, [statsData]);
 
-  const handleDelete = async (id: string) => {
-    if (confirm('Tem certeza que deseja excluir esta fatura?')) {
-      try {
-        await deleteInvoice.mutateAsync(id);
-        toast.success('Fatura excluída com sucesso!');
-      } catch {
-        toast.error('Erro ao excluir fatura');
-      }
+  const handleDelete = (id: string) => {
+    setInvoiceToDelete(id);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!invoiceToDelete) return;
+    try {
+      await deleteInvoice.mutateAsync(invoiceToDelete);
+      setDeleteModalOpen(false);
+      setInvoiceToDelete(null);
+    } catch {
+      // handled by hook
     }
   };
 
@@ -389,6 +397,19 @@ export default function InvoicesPage() {
           </div>
         )}
       </div>
+      </div>
+
+      <ConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+        title="Excluir Fatura"
+        message="Tem certeza que deseja excluir esta fatura? Esta ação não pode ser desfeita."
+        confirmLabel="Excluir"
+        cancelLabel="Cancelar"
+        variant="danger"
+        isLoading={deleteInvoice.isPending}
+      />
     </div>
   );
 }

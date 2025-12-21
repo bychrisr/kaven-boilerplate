@@ -194,7 +194,7 @@ export default function TenantsPage() {
           </table>
         </div>
       </div>
-      </div>
+
 
       <ConfirmationModal
         isOpen={deleteModalOpen}
