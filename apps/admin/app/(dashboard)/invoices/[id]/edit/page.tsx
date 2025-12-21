@@ -80,6 +80,16 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
     }
   };
 
+  const onError = (errors: unknown) => {
+    console.error('❌ ERROS DE VALIDAÇÃO:', errors);
+    console.log('📋 Erros detalhados:', JSON.stringify(errors, null, 2));
+  };
+
+  console.log('🔍 Componente EditInvoicePage renderizado');
+  console.log('📝 Invoice ID:', id);
+  console.log('📊 Form errors:', errors);
+  console.log('🔄 updateInvoice.isPending:', updateInvoice.isPending);
+
   if (isLoadingInvoice) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -117,7 +127,7 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
       </div>
 
       <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
+        <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-6 max-w-2xl">
           <div className="grid gap-6 md:grid-cols-2">
             
             {/* Tenant Display (readonly) */}
