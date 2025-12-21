@@ -9,7 +9,7 @@ export interface Tenant {
   slug: string;
   domain?: string | null;
   logo?: string | null;
-  active: boolean;
+  status: 'ACTIVE' | 'SUSPENDED' | 'DELETED';
   createdAt: string;
   updatedAt: string;
 }
@@ -22,7 +22,7 @@ export interface CreateTenantDTO {
 }
 
 export interface UpdateTenantDTO extends Partial<CreateTenantDTO> {
-  active?: boolean;
+  status?: 'ACTIVE' | 'SUSPENDED' | 'DELETED';
 }
 
 interface TenantsResponse {

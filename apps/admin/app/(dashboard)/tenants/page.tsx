@@ -132,11 +132,11 @@ export default function TenantsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        tenant.active 
+                        tenant.status === 'ACTIVE'
                           ? 'bg-success-light/20 text-success-dark' 
                           : 'bg-gray-100 text-gray-600'
                       }`}>
-                        {tenant.active ? (
+                        {tenant.status === 'ACTIVE' ? (
                           <>
                             <CheckCircle2 className="h-3.5 w-3.5" />
                             Ativo
@@ -144,7 +144,7 @@ export default function TenantsPage() {
                         ) : (
                           <>
                             <XCircle className="h-3.5 w-3.5" />
-                            Inativo
+                            {tenant.status === 'SUSPENDED' ? 'Suspenso' : 'Inativo'}
                           </>
                         )}
                       </div>

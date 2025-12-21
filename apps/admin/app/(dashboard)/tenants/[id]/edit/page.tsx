@@ -43,7 +43,7 @@ export default function EditTenantPage({ params }: { params: Promise<{ id: strin
         name: tenant.name,
         slug: tenant.slug,
         domain: tenant.domain || '',
-        active: tenant.active,
+        active: tenant.status === 'ACTIVE',
       });
     }
   }, [tenant, reset]);
@@ -53,8 +53,10 @@ export default function EditTenantPage({ params }: { params: Promise<{ id: strin
       await updateTenant.mutateAsync({
         id,
         data: {
-          ...data,
+          name: data.name,
+          slug: data.slug,
           domain: data.domain || undefined,
+          status: data.active ? 'ACTIVE' : 'SUSPENDED',
         },
       });
       router.push('/tenants');
