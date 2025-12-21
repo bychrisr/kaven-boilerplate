@@ -65,6 +65,7 @@ describe('UserService', () => {
         email: 'existing@example.com',
         name: 'Existing User',
         password: 'password123',
+        role: 'USER' as const,
       };
 
       prismaMock.user.findUnique.mockResolvedValue({ id: 'existing-id' });

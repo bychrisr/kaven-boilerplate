@@ -25,17 +25,29 @@ export interface UpdateTenantDTO extends Partial<CreateTenantDTO> {
   active?: boolean;
 }
 
-export function useTenants() {
+interface TenantsResponse {
+  tenants: Tenant[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export function useTenants(page: number = 1, limit: number = 100) {
   const queryClient = useQueryClient();
 
   const {
-    data: tenants,
+    data,
     isLoading,
     error,
-  } = useQuery<Tenant[]>({
-    queryKey: ['tenants'],
+  } = useQuery<TenantsResponse>({
+    queryKey: ['tenants', page, limit],
     queryFn: async () => {
-      const response = await api.get('/tenants');
+      const response = await api.get('/tenants', {
+        params: { page, limit },
+      });
       return response.data;
     },
   });
@@ -82,7 +94,8 @@ export function useTenants() {
   });
 
   return {
-    tenants,
+    tenants: data?.tenants || [],
+    pagination: data?.pagination,
     isLoading,
     error,
     createTenant,

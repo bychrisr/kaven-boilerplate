@@ -34,7 +34,7 @@ interface CreateUserData {
 interface UpdateUserData {
   name?: string;
   email?: string;
-  role?: 'USER' | 'TENANT_ADMIN';
+  role?: 'USER' | 'TENANT_ADMIN' | 'SUPER_ADMIN';
 }
 
 // Query: Listar usuários

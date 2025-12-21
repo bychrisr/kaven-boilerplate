@@ -12,7 +12,9 @@ import {
   FileText,
   BarChart3,
   Settings,
-  ChevronDown
+  ChevronDown,
+  Activity,
+  LucideIcon
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -21,10 +23,25 @@ interface SidebarProps {
   onClose: () => void;
 }
 
-const navigation = [
+interface NavigationChild {
+  name: string;
+  href: string;
+  external?: boolean;
+}
+
+interface NavigationItem {
+  name: string;
+  href: string;
+  icon: LucideIcon;
+  role?: string;
+  children?: NavigationChild[];
+}
+
+const navigation: NavigationItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
   {
     name: 'Users',
+    href: '/users', // Added base href for parent
     icon: Users,
     children: [
       { name: 'List', href: '/users' },
@@ -36,10 +53,19 @@ const navigation = [
   { name: 'Orders', href: '/orders', icon: ShoppingCart },
   { name: 'Invoices', href: '/invoices', icon: FileText },
   { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
+  {
+    name: 'Monitoring',
+    href: '#', // Placeholder
+    icon: Activity,
+    children: [
+      { name: 'Grafana', href: 'http://localhost:3001', external: true },
+      { name: 'Prometheus', href: 'http://localhost:9090', external: true }
+    ]
+  },
   { name: 'Settings', href: '/settings', icon: Settings }
 ];
 
-export function Sidebar({ open, onClose }: SidebarProps) {
+export function Sidebar({ open, onClose }: Readonly<SidebarProps>) {
   const pathname = usePathname();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
@@ -53,9 +79,11 @@ export function Sidebar({ open, onClose }: SidebarProps) {
     <>
       {/* Mobile Overlay */}
       {open && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+        <button
+          type="button"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden w-full h-full cursor-default focus:outline-none"
           onClick={onClose}
+          aria-label="Close sidebar"
         />
       )}
 
@@ -74,7 +102,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         {/* Navigation */}
         <nav className="p-4 space-y-1">
           {navigation.map((item) => {
-            const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
+            const isActive = pathname === item.href || item.children?.some(child => pathname === child.href);
             const isExpanded = expandedItems.includes(item.name);
             const Icon = item.icon;
 
@@ -107,6 +135,8 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                         <Link
                           key={child.href}
                           href={child.href}
+                          target={child.external ? '_blank' : undefined}
+                          rel={child.external ? 'noopener noreferrer' : undefined}
                           className={cn(
                             'block px-4 py-2 text-sm rounded-lg transition-colors',
                             pathname === child.href

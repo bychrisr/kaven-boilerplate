@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useUsers, useDeleteUser } from '@/hooks/use-users';
 import { Plus, Pencil, Trash2, Search } from 'lucide-react';
+import { ConfirmationModal } from '@/components/ui/confirmation-modal';
 
 interface User {
   id: string;
@@ -15,23 +16,38 @@ interface User {
   updatedAt: string;
 }
 
+// Helper to get badge colors based on role
+const getRoleBadgeColor = (role: string) => {
+  switch (role) {
+    case 'SUPER_ADMIN':
+      return 'bg-purple-100 text-purple-800';
+    case 'TENANT_ADMIN':
+      return 'bg-blue-100 text-blue-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
+};
+
 export default function UsersPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<{ id: string; name: string } | null>(null);
   const limit = 10;
 
   const { data, isLoading } = useUsers(page, limit);
   const deleteUser = useDeleteUser();
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Tem certeza que deseja deletar o usuário "${name}"?`)) {
-      return;
-    }
+  const handleDeleteClick = (user: { id: string; name: string }) => {
+    setUserToDelete(user);
+    setIsDeleteModalOpen(true);
+  };
 
-    try {
-      await deleteUser.mutateAsync(id);
-    } catch {
-      // Error já tratado no hook com toast
+  const handleConfirmDelete = async () => {
+    if (userToDelete) {
+      await deleteUser.mutateAsync(userToDelete.id);
+      setIsDeleteModalOpen(false);
+      setUserToDelete(null);
     }
   };
 
@@ -88,24 +104,32 @@ export default function UsersPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
-            {isLoading ? (
-              <tr>
-                <td colSpan={4} className="px-6 py-12 text-center">
-                  <div className="flex items-center justify-center">
-                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
-                  </div>
-                </td>
-              </tr>
-            ) : data?.users.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="px-6 py-12 text-center">
-                  <p className="text-sm text-gray-500">
-                    Nenhum usuário encontrado
-                  </p>
-                </td>
-              </tr>
-            ) : (
-              data?.users.map((user: User) => (
+            {(() => {
+              if (isLoading) {
+                return (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-12 text-center">
+                      <div className="flex items-center justify-center">
+                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              }
+
+              if (data?.users.length === 0) {
+                return (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-12 text-center">
+                      <p className="text-sm text-gray-500">
+                        Nenhum usuário encontrado
+                      </p>
+                    </td>
+                  </tr>
+                );
+              }
+
+              return data?.users.map((user: User) => (
                 <tr key={user.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
                     <div>
@@ -117,13 +141,9 @@ export default function UsersPage() {
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                        user.role === 'SUPER_ADMIN'
-                          ? 'bg-purple-100 text-purple-800'
-                          : user.role === 'TENANT_ADMIN'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}
+                      className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getRoleBadgeColor(
+                        user.role
+                      )}`}
                     >
                       {user.role}
                     </span>
@@ -133,14 +153,14 @@ export default function UsersPage() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <Link
+                       <Link
                         href={`/users/${user.id}/edit`}
                         className="rounded p-1 text-gray-600 hover:bg-gray-100 hover:text-blue-600"
                       >
                         <Pencil className="h-4 w-4" />
                       </Link>
                       <button
-                        onClick={() => handleDelete(user.id, user.name)}
+                        onClick={() => handleDeleteClick({ id: user.id, name: user.name })}
                         disabled={deleteUser.isPending}
                         className="rounded p-1 text-gray-600 hover:bg-gray-100 hover:text-red-600 disabled:opacity-50"
                       >
@@ -149,8 +169,8 @@ export default function UsersPage() {
                     </div>
                   </td>
                 </tr>
-              ))
-            )}
+              ));
+            })()}
           </tbody>
         </table>
 
@@ -181,6 +201,17 @@ export default function UsersPage() {
           </div>
         )}
       </div>
+
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="Excluir Usuário"
+        message={`Tem certeza que deseja excluir o usuário "${userToDelete?.name}"? Esta ação não pode ser desfeita.`}
+        confirmLabel="Excluir Usuário"
+        variant="danger"
+        isLoading={deleteUser.isPending}
+      />
     </div>
   );
 }

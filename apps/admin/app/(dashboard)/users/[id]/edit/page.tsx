@@ -12,7 +12,7 @@ import Link from 'next/link';
 const userSchema = z.object({
   name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
   email: z.string().email('Email inválido'),
-  role: z.enum(['USER', 'TENANT_ADMIN']),
+  role: z.enum(['USER', 'TENANT_ADMIN', 'SUPER_ADMIN']),
 });
 
 type UserFormData = z.infer<typeof userSchema>;
@@ -40,7 +40,7 @@ export default function EditUserPage() {
       reset({
         name: user.name,
         email: user.email,
-        role: user.role === 'SUPER_ADMIN' ? 'TENANT_ADMIN' : user.role,
+        role: user.role,
       });
     }
   }, [user, reset]);

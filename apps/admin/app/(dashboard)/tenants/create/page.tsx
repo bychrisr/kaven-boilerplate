@@ -14,7 +14,6 @@ const createTenantSchema = z.object({
     .min(2, 'Slug deve ter pelo menos 2 caracteres')
     .regex(/^[a-z0-9-]+$/, 'Slug deve conter apenas letras minúsculas, números e hífens'),
   domain: z.string().optional().or(z.literal('')),
-  active: z.boolean(),
 });
 
 type CreateTenantFormData = z.infer<typeof createTenantSchema>;
@@ -32,7 +31,6 @@ export default function CreateTenantPage() {
   } = useForm({
     resolver: zodResolver(createTenantSchema),
     defaultValues: {
-      active: true,
       domain: '',
     },
   });
@@ -46,11 +44,11 @@ export default function CreateTenantPage() {
     setValue('name', newName);
     
     // Only auto-generate if slug hasn't been manually edited or is empty
-    if (!slug || slug === name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')) {
+    if (!slug || slug === name?.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-').replaceAll(/^-+|-+$/g, '')) {
       const newSlug = newName
         .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
+        .replaceAll(/[^a-z0-9]+/g, '-')
+        .replaceAll(/^-+|-+$/g, '');
       setValue('slug', newSlug);
     }
   };
@@ -58,7 +56,8 @@ export default function CreateTenantPage() {
   const onSubmit = async (data: CreateTenantFormData) => {
     try {
       await createTenant.mutateAsync({
-        ...data,
+        name: data.name,
+        slug: data.slug,
         domain: data.domain || undefined, // Send undefined if empty string
       });
       router.push('/tenants');
@@ -157,20 +156,7 @@ export default function CreateTenantPage() {
               )}
             </div>
 
-            {/* Status */}
-            <div className="col-span-2">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  {...register('active')}
-                  className="h-4 w-4 rounded border-gray-300 text-primary-main focus:ring-primary-main"
-                />
-                <span className="text-sm font-medium text-gray-700">Tenant Ativo</span>
-              </label>
-              <p className="mt-1 text-xs text-gray-500 ml-6">
-                Tenants inativos não podem ser acessados por usuários.
-              </p>
-            </div>
+
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-4 border-t">

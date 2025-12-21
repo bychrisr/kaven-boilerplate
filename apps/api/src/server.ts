@@ -64,6 +64,7 @@ fastify.register(swaggerUi, {
 });
 
 // Plugins
+// Plugins
 fastify.register(cors, {
   origin: [
     'http://localhost:3000',
@@ -71,6 +72,8 @@ fastify.register(cors, {
     process.env.FRONTEND_URL || 'http://localhost:3000',
   ],
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID'],
 });
 
 // Multipart (file upload)
