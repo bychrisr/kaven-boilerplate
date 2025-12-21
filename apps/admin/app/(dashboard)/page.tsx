@@ -3,6 +3,7 @@
 import { useUsers } from '@/hooks/use-users';
 import { Users, DollarSign, FileText, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 
 interface User {
   id: string;
@@ -129,18 +130,23 @@ export default function DashboardPage() {
         <div className="rounded-lg border border-gray-200 bg-white p-6">
           <h3 className="text-lg font-semibold text-gray-900">Receita Mensal</h3>
           <p className="mt-1 text-sm text-gray-500">Últimos 6 meses</p>
-          <div className="mt-6 flex h-64 items-end justify-between gap-2">
-            {[65, 78, 82, 90, 95, 100].map((height, index) => (
-              <div key={index} className="flex flex-1 flex-col items-center gap-2">
-                <div
-                  className="w-full rounded-t bg-blue-500 transition-all hover:bg-blue-600"
-                  style={{ height: `${height}%` }}
-                />
-                <span className="text-xs text-gray-500">
-                  {['Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'][index]}
-                </span>
-              </div>
-            ))}
+          <div className="mt-6 h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={[
+                { name: 'Jul', value: 65 },
+                { name: 'Ago', value: 78 },
+                { name: 'Set', value: 82 },
+                { name: 'Out', value: 90 },
+                { name: 'Nov', value: 95 },
+                { name: 'Dez', value: 100 },
+              ]}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                <YAxis axisLine={false} tickLine={false} />
+                <Tooltip />
+                <Bar dataKey="value" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
@@ -148,18 +154,23 @@ export default function DashboardPage() {
         <div className="rounded-lg border border-gray-200 bg-white p-6">
           <h3 className="text-lg font-semibold text-gray-900">Crescimento de Usuários</h3>
           <p className="mt-1 text-sm text-gray-500">Últimos 6 meses</p>
-          <div className="mt-6 flex h-64 items-end justify-between gap-2">
-            {[45, 52, 68, 75, 85, 100].map((height, index) => (
-              <div key={index} className="flex flex-1 flex-col items-center gap-2">
-                <div
-                  className="w-full rounded-t bg-green-500 transition-all hover:bg-green-600"
-                  style={{ height: `${height}%` }}
-                />
-                <span className="text-xs text-gray-500">
-                  {['Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'][index]}
-                </span>
-              </div>
-            ))}
+          <div className="mt-6 h-64">
+             <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={[
+                { name: 'Jul', value: 45 },
+                { name: 'Ago', value: 52 },
+                { name: 'Set', value: 68 },
+                { name: 'Out', value: 75 },
+                { name: 'Nov', value: 85 },
+                { name: 'Dez', value: 100 },
+              ]}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                <YAxis axisLine={false} tickLine={false} />
+                <Tooltip />
+                <Line type="monotone" dataKey="value" stroke="#10B981" strokeWidth={2} activeDot={{ r: 8 }} />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
