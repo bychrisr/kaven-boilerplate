@@ -37,9 +37,11 @@ export default function CreateInvoicePage() {
   const onSubmit = async (data: CreateInvoiceFormData) => {
     try {
       await createInvoice.mutateAsync({
-        ...data,
+        tenantId: data.tenantId,
         amountDue: Number(data.amountDue),
+        dueDate: new Date(data.dueDate),
         currency: 'BRL',
+        metadata: data.metadata,
       });
       router.push('/invoices');
     } catch (error) {
