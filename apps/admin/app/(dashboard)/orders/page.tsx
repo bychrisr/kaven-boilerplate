@@ -4,20 +4,19 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useOrders, OrderStatus } from '@/hooks/use-orders';
 import {
-  Search,
   ShoppingBag,
   MoreVertical,
   CheckCircle2,
-  AlertCircle,
   Clock,
   XCircle,
   Loader2,
   RotateCcw,
+  LucideIcon,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-const statusConfig: Record<OrderStatus, { label: string; color: string; icon: any }> = {
+const statusConfig: Record<OrderStatus, { label: string; color: string; icon: LucideIcon }> = {
   COMPLETED: { label: 'Concluído', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
   PROCESSING: { label: 'Processando', color: 'bg-blue-100 text-blue-700', icon: Loader2 },
   PENDING: { label: 'Pendente', color: 'bg-amber-100 text-amber-700', icon: Clock },
