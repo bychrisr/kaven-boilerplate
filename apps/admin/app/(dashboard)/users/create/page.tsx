@@ -53,6 +53,7 @@ export default function CreateUserPage() {
     },
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const tenantAssignment = watch('tenantAssignment');
 
   const onSubmit = async (data: UserFormData) => {
