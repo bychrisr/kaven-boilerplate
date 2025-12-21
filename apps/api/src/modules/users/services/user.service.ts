@@ -165,6 +165,12 @@ export class UserService {
         role: true,
         status: true,
         tenantId: true,
+        tenant: {
+          select: {
+            name: true,
+            slug: true,
+          },
+        },
         createdAt: true,
       },
     });
@@ -205,6 +211,12 @@ export class UserService {
         name: true,
         role: true,
         tenantId: true,
+        tenant: {
+          select: {
+            name: true,
+            slug: true,
+          },
+        },
         updatedAt: true,
       },
     });
