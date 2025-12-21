@@ -119,8 +119,8 @@ export class UserService {
 
     let tenantId = data.tenantId;
 
-    // Se createOwnTenant = true, criar tenant próprio
-    if (data.createOwnTenant) {
+    // Se createOwnTenant = true ou tenantId = 'create-own', criar tenant próprio
+    if ((data as any).createOwnTenant || tenantId === 'create-own') {
       const baseSlug = data.name
         .toLowerCase()
         .normalize('NFD')
