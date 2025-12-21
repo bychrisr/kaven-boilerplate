@@ -40,7 +40,15 @@ export class UserService {
           role: true,
           emailVerified: true,
           twoFactorEnabled: true,
+          phone: true,
+          status: true,
           tenantId: true,
+          tenant: {
+            select: {
+              name: true,
+              slug: true,
+            },
+          },
           createdAt: true,
           lastLoginAt: true,
         },
