@@ -8,11 +8,16 @@ import {
   FileText,
   Send,
   Eye,
+  Pencil,
+  Trash2,
+  MoreVertical,
   CheckCircle2,
   AlertCircle,
   Clock,
   XCircle,
   LucideIcon,
+  Building2,
+  User,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -29,6 +34,7 @@ export default function InvoicesPage() {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<InvoiceStatus | ''>('');
   const [sendingId, setSendingId] = useState<string | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   
   const { invoices, isLoading, pagination, sendInvoice } = useInvoices({ 
     page, 
@@ -44,6 +50,13 @@ export default function InvoicesPage() {
       } finally {
         setSendingId(null);
       }
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (confirm('Tem certeza que deseja excluir esta fatura?')) {
+      // TODO: Implement delete mutation
+      console.log('Delete invoice:', id);
     }
   };
 
@@ -129,9 +142,29 @@ export default function InvoicesPage() {
                             <p className="font-medium text-gray-900 truncate w-32" title={invoice.id}>
                               #{invoice.id.slice(0, 8)}
                             </p>
-                            <p className="text-xs text-gray-500">
-                              {invoice.tenant?.name || 'Cliente Desconhecido'}
-                            </p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <p className="text-xs text-gray-500">
+                                {invoice.tenant?.name || 'Cliente Desconhecido'}
+                              </p>
+                              {/* Badge de tipo */}
+                              <div className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
+                                invoice.subscriptionId 
+                                  ? 'bg-blue-100 text-blue-700' 
+                                  : 'bg-purple-100 text-purple-700'
+                              }`}>
+                                {invoice.subscriptionId ? (
+                                  <>
+                                    <Building2 className="h-3 w-3" />
+                                    Tenant
+                                  </>
+                                ) : (
+                                  <>
+                                    <User className="h-3 w-3" />
+                                    User
+                                  </>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </td>
@@ -163,14 +196,59 @@ export default function InvoicesPage() {
                           >
                             <Send className="h-4 w-4" />
                           </button>
-                          <Link
-                            href={`/invoices/${invoice.id}`}
-                            className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
-                            title="Visualizar Detalhes"
-                          >
-                            <Eye className="h-4 w-4" />
-                            Visualizar
-                          </Link>
+                          
+                          {/* Dropdown Menu */}
+                          <div className="relative">
+                            <button
+                              onClick={() => setOpenMenuId(openMenuId === invoice.id ? null : invoice.id)}
+                              className="p-2 text-gray-400 hover:text-gray-900 transition-colors"
+                              title="Ações"
+                            >
+                              <MoreVertical className="h-4 w-4" />
+                            </button>
+                            
+                            {openMenuId === invoice.id && (
+                              <>
+                                {/* Backdrop para fechar o menu */}
+                                <div 
+                                  className="fixed inset-0 z-10" 
+                                  onClick={() => setOpenMenuId(null)}
+                                />
+                                
+                                {/* Menu dropdown */}
+                                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20">
+                                  <div className="py-1">
+                                    <Link
+                                      href={`/invoices/${invoice.id}`}
+                                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                      onClick={() => setOpenMenuId(null)}
+                                    >
+                                      <Eye className="h-4 w-4" />
+                                      Visualizar
+                                    </Link>
+                                    <Link
+                                      href={`/invoices/${invoice.id}/edit`}
+                                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                      onClick={() => setOpenMenuId(null)}
+                                    >
+                                      <Pencil className="h-4 w-4" />
+                                      Editar
+                                    </Link>
+                                    <button
+                                      onClick={() => {
+                                        setOpenMenuId(null);
+                                        handleDelete(invoice.id);
+                                      }}
+                                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                      Excluir
+                                    </button>
+                                  </div>
+                                </div>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </td>
                     </tr>
