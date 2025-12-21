@@ -2,6 +2,69 @@ import prisma from '../../../lib/prisma';
 
 export class InvoiceService {
   /**
+   * GET /api/invoices/stats - Obter estatísticas de invoices
+   */
+  async getStats(tenantId?: string) {
+    const where = tenantId ? { tenantId, deletedAt: null } : { deletedAt: null };
+
+    const [total, paid, pending, overdue, draft] = await Promise.all([
+      // Total
+      prisma.invoice.aggregate({
+        where,
+        _count: true,
+        _sum: { amountDue: true },
+      }),
+      // Paid
+      prisma.invoice.aggregate({
+        where: { ...where, status: 'PAID' },
+        _count: true,
+        _sum: { amountDue: true },
+      }),
+      // Pending
+      prisma.invoice.aggregate({
+        where: { ...where, status: 'PENDING' },
+        _count: true,
+        _sum: { amountDue: true },
+      }),
+      // Overdue
+      prisma.invoice.aggregate({
+        where: { ...where, status: 'OVERDUE' },
+        _count: true,
+        _sum: { amountDue: true },
+      }),
+      // Draft
+      prisma.invoice.aggregate({
+        where: { ...where, status: 'DRAFT' },
+        _count: true,
+        _sum: { amountDue: true },
+      }),
+    ]);
+
+    return {
+      total: {
+        count: total._count,
+        amount: Number(total._sum.amountDue || 0),
+      },
+      paid: {
+        count: paid._count,
+        amount: Number(paid._sum.amountDue || 0),
+      },
+      pending: {
+        count: pending._count,
+        amount: Number(pending._sum.amountDue || 0),
+      },
+      overdue: {
+        count: overdue._count,
+        amount: Number(overdue._sum.amountDue || 0),
+      },
+      draft: {
+        count: draft._count,
+        amount: Number(draft._sum.amountDue || 0),
+      },
+    };
+  }
+
+  /**
    * GET /api/invoices - Listar invoices com paginação
    */
   async listInvoices(tenantId?: string, page: number = 1, limit: number = 10) {

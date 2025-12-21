@@ -4,6 +4,12 @@ import { authMiddleware } from '../../../middleware/auth.middleware';
 import { requireTenantAdmin } from '../../../middleware/rbac.middleware';
 
 export async function invoiceRoutes(fastify: FastifyInstance) {
+  // GET /api/invoices/stats - Obter estatísticas
+  fastify.get('/stats', {
+    preHandler: [authMiddleware],
+    handler: invoiceController.getStats.bind(invoiceController),
+  });
+
   // GET /api/invoices - Listar invoices
   fastify.get('/', {
     preHandler: [authMiddleware, requireTenantAdmin],
