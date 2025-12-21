@@ -10,7 +10,7 @@ import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 const editInvoiceSchema = z.object({
-  amountDue: z.coerce.number().min(0.01, 'O valor deve ser maior que zero'),
+  amountDue: z.number().min(0.01, 'O valor deve ser maior que zero'),
   dueDate: z.string().min(1, 'Data de vencimento é obrigatória'),
   status: z.enum(['DRAFT', 'PENDING', 'PAID', 'OVERDUE', 'CANCELED']),
   metadata: z.record(z.string(), z.unknown()).optional(),
