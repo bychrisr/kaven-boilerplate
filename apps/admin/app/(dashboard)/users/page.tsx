@@ -70,8 +70,8 @@ export default function UsersPage() {
   const { data: statsData } = useUserStats();
   const deleteUserMutation = useDeleteUser();
 
-  const users = usersData?.users || [];
-  const pagination = usersData?.pagination;
+  const users = useMemo(() => usersData?.users || [], [usersData]);
+  const pagination = useMemo(() => usersData?.pagination, [usersData]);
 
   // Tabs with counts
   const tabs = useMemo(() => {

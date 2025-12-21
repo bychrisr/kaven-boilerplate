@@ -14,7 +14,7 @@ export interface Order {
   status: OrderStatus;
   createdAt: string;
   updatedAt: string;
-  items?: any[]; // Refinar se tivermos OrderItem type
+  items?: unknown[]; // Refinar se tivermos OrderItem type
   tenant?: {
     name: string;
   };
