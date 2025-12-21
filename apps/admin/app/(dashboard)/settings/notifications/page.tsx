@@ -1,66 +1,135 @@
+'use client';
+
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { Loader2, Save, Bell, Mail } from 'lucide-react';
+
 export default function NotificationsSettingsPage() {
+  const [isSaving, setIsSaving] = useState(false);
+  const [preferences, setPreferences] = useState({
+    emailRegisters: true,
+    emailOrders: true,
+    emailInvoices: true,
+    emailSystem: false,
+    pushDesktop: true,
+    pushSound: false,
+  });
+
+  const handleToggle = (key: keyof typeof preferences) => {
+    setPreferences(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    // Simulating API call since we don't have a specific endpoint yet
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setIsSaving(false);
+    toast.success('Preferências de notificação salvas!');
+  };
+
   return (
     <div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Notification Settings</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Notificações</h1>
 
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 max-w-2xl">
-        <div className="space-y-6">
+        <div className="space-y-8">
+          
           {/* Email Notifications */}
           <div>
-            <h3 className="font-bold text-gray-900 mb-4">Email Notifications</h3>
+            <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <Mail className="h-5 w-5 text-gray-500" />
+              Notificações por Email
+            </h3>
             <div className="space-y-3">
-              {[
-                { label: 'New user registration', description: 'Get notified when a new user signs up' },
-                { label: 'Order updates', description: 'Receive updates about order status changes' },
-                { label: 'Invoice payments', description: 'Get notified when invoices are paid' },
-                { label: 'System alerts', description: 'Important system notifications and alerts' }
-              ].map((item, i) => (
-                <label key={i} className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                  <input
-                    type="checkbox"
-                    defaultChecked={i < 2}
-                    className="mt-1 h-4 w-4 text-primary-main border-gray-300 rounded focus:ring-primary-main"
-                  />
-                  <div>
-                    <p className="font-medium text-gray-900">{item.label}</p>
-                    <p className="text-sm text-gray-600">{item.description}</p>
-                  </div>
-                </label>
-              ))}
+              <ToggleOption 
+                label="Novos registros de usuários" 
+                description="Receba um email quando um novo usuário se cadastrar."
+                checked={preferences.emailRegisters}
+                onChange={() => handleToggle('emailRegisters')}
+              />
+              <ToggleOption 
+                label="Atualizações de pedidos" 
+                description="Receba atualizações sobre mudanças de status em pedidos."
+                checked={preferences.emailOrders}
+                onChange={() => handleToggle('emailOrders')}
+              />
+              <ToggleOption 
+                label="Pagamentos de faturas" 
+                description="Seja notificado quando uma fatura for paga."
+                checked={preferences.emailInvoices}
+                onChange={() => handleToggle('emailInvoices')}
+              />
+              <ToggleOption 
+                label="Alertas do sistema" 
+                description="Notificações importantes sobre manutenção e segurança."
+                checked={preferences.emailSystem}
+                onChange={() => handleToggle('emailSystem')}
+              />
             </div>
           </div>
 
+          <div className="h-px bg-gray-100" />
+
           {/* Push Notifications */}
-          <div className="pt-6 border-t border-gray-200">
-            <h3 className="font-bold text-gray-900 mb-4">Push Notifications</h3>
+          <div>
+            <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <Bell className="h-5 w-5 text-gray-500" />
+              Notificações Push
+            </h3>
             <div className="space-y-3">
-              {[
-                { label: 'Desktop notifications', description: 'Show desktop notifications for important events' },
-                { label: 'Sound alerts', description: 'Play sound for critical notifications' }
-              ].map((item, i) => (
-                <label key={i} className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                  <input
-                    type="checkbox"
-                    defaultChecked={i === 0}
-                    className="mt-1 h-4 w-4 text-primary-main border-gray-300 rounded focus:ring-primary-main"
-                  />
-                  <div>
-                    <p className="font-medium text-gray-900">{item.label}</p>
-                    <p className="text-sm text-gray-600">{item.description}</p>
-                  </div>
-                </label>
-              ))}
+              <ToggleOption 
+                label="Notificações na área de trabalho" 
+                description="Mostrar popups no navegador para eventos importantes."
+                checked={preferences.pushDesktop}
+                onChange={() => handleToggle('pushDesktop')}
+              />
+              <ToggleOption 
+                label="Alertas sonoros" 
+                description="Tocar um som quando chegar uma notificação crítica."
+                checked={preferences.pushSound}
+                onChange={() => handleToggle('pushSound')}
+              />
             </div>
           </div>
 
           {/* Save Button */}
-          <div className="pt-6 border-t border-gray-200">
-            <button className="bg-primary-main text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-dark transition-colors">
-              Save Preferences
+          <div className="pt-4 border-t border-gray-100 flex justify-end">
+            <button 
+              onClick={handleSave}
+              disabled={isSaving}
+              className="inline-flex items-center gap-2 bg-primary-main text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              {isSaving ? 'Salvando...' : 'Salvar Preferências'}
             </button>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+function ToggleOption({ label, description, checked, onChange }: { 
+  label: string; 
+  description: string; 
+  checked: boolean; 
+  onChange: () => void;
+}) {
+  return (
+    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+      <div className="relative flex items-center mt-1">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={onChange}
+          className="peer sr-only"
+        />
+        <div className="h-5 w-9 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary-main peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-main/20"></div>
+      </div>
+      <div>
+        <p className="font-medium text-gray-900">{label}</p>
+        <p className="text-sm text-gray-500">{description}</p>
+      </div>
+    </label>
   );
 }
