@@ -45,7 +45,7 @@ export function useTenants(page: number = 1, limit: number = 100) {
   } = useQuery<TenantsResponse>({
     queryKey: ['tenants', page, limit],
     queryFn: async () => {
-      const response = await api.get('/tenants', {
+      const response = await api.get('/api/tenants', {
         params: { page, limit },
       });
       return response.data;
