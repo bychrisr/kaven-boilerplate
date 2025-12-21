@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDate(date: Date | string, format: string = 'PPP'): string {
+export function formatDate(date: Date | string): string {
   // Implementar com date-fns quando necessário
   return new Date(date).toLocaleDateString();
 }
