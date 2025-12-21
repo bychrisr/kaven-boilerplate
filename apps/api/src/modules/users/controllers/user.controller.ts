@@ -61,6 +61,7 @@ export class UserController {
   async update(request: FastifyRequest, reply: FastifyReply) {
     try {
       const { id } = request.params as { id: string };
+      console.log('Update User Request Body:', request.body);
       const data = updateUserSchema.parse(request.body);
       const user = await userService.updateUser(id, data);
       reply.send(user);
