@@ -1,13 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/logo';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [isChecking, setIsChecking] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -16,6 +18,21 @@ export default function RegisterPage() {
     password: '',
     terms: false
   });
+
+  // Redirect if already logged in
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      router.replace('/');
+    } else {
+      setIsChecking(false);
+    }
+  }, [router]);
+
+  if (isChecking) {
+    return null;
+  }
+
 
   const getPasswordStrength = (password: string) => {
     let strength = 0;
@@ -35,7 +52,7 @@ export default function RegisterPage() {
     e.preventDefault();
     
     if (!formData.terms) {
-      alert('You must accept the terms and conditions');
+      toast.error('You must accept the terms and conditions');
       return;
     }
 
@@ -53,15 +70,15 @@ export default function RegisterPage() {
       });
 
       if (response.ok) {
-        alert('Account created! Please check your email to verify.');
+        toast.success('Account created! Please check your email to verify.');
         router.push('/verify-email');
       } else {
         const error = await response.json();
-        alert(error.error || 'Registration failed');
+        toast.error(error.error || 'Registration failed');
       }
     } catch (error) {
       console.error('Registration error:', error);
-      alert('Registration failed');
+      toast.error('Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }

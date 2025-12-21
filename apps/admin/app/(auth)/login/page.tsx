@@ -1,13 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/logo';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 export default function LoginPage() {
   const router = useRouter();
+  const [isChecking, setIsChecking] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -16,12 +18,25 @@ export default function LoginPage() {
     remember: false
   });
 
+  // Redirect if already logged in
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      router.replace('/');
+    } else {
+      setIsChecking(false);
+    }
+  }, [router]);
+
+  if (isChecking) {
+    return null; // Or a loading spinner preventing the form from showing
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // TODO: Integrate with backend API
       const response = await fetch('http://localhost:8000/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -37,14 +52,17 @@ export default function LoginPage() {
         localStorage.setItem('accessToken', data.accessToken);
         localStorage.setItem('refreshToken', data.refreshToken);
         
-        // Redirect to dashboard
-        router.push('/dashboard');
+        toast.success('Login successful!');
+        
+        // Redirect to dashboard home
+        router.refresh();
+        router.push('/');
       } else {
-        alert('Invalid credentials');
+        toast.error('Invalid credentials');
       }
     } catch (error) {
       console.error('Login error:', error);
-      alert('Login failed');
+      toast.error('Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
