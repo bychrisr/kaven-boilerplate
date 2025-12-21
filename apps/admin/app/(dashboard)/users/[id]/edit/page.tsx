@@ -43,7 +43,9 @@ export default function EditUserPage() {
       reset({
         name: user.name,
         email: user.email,
+        phone: user.phone || '',
         role: user.role,
+        status: user.status || 'ACTIVE',
         tenantId: user.tenantId || '',
       });
     }
@@ -127,6 +129,26 @@ export default function EditUserPage() {
             />
             {errors.email && (
               <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+            )}
+          </div>
+
+          {/* Phone */}
+          <div>
+            <label
+              htmlFor="phone"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Telefone
+            </label>
+            <input
+              {...register('phone')}
+              type="tel"
+              id="phone"
+              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder="+55 11 99999-9999"
+            />
+            {errors.phone && (
+              <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
             )}
           </div>
 
