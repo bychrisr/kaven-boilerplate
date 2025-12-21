@@ -62,15 +62,16 @@ export function useUserStats() {
 }
 
 // Query: Listar usuários
-export function useUsers(params?: { page?: number; limit?: number }) {
+export function useUsers(params?: { page?: number; limit?: number; tenantId?: string }) {
   const page = params?.page ?? 1;
   const limit = params?.limit ?? 10;
+  const tenantId = params?.tenantId;
   
   return useQuery<UsersResponse>({
-    queryKey: ['users', page, limit],
+    queryKey: ['users', page, limit, tenantId],
     queryFn: async () => {
       const response = await api.get('/api/users', {
-        params: { page, limit },
+        params: { page, limit, tenantId },
       });
       return response.data;
     },
