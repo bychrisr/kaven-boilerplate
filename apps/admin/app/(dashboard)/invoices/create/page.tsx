@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,9 +11,9 @@ import Link from 'next/link';
 
 const createInvoiceSchema = z.object({
   tenantId: z.string().min(1, 'Selecione um tenant/cliente'),
-  amountDue: z.string().transform((val) => Number(val.replace(/[^0-9.-]+/g, ''))).refine((val) => val > 0, 'O valor deve ser maior que zero'),
+  amountDue: z.coerce.number().min(0.01, 'O valor deve ser maior que zero'),
   dueDate: z.string().min(1, 'Data de vencimento é obrigatória'),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 type CreateInvoiceFormData = z.infer<typeof createInvoiceSchema>;
@@ -28,7 +27,7 @@ export default function CreateInvoicePage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<CreateInvoiceFormData>({
+  } = useForm({
     resolver: zodResolver(createInvoiceSchema),
     defaultValues: {
       amountDue: 0,
@@ -155,7 +154,7 @@ export default function CreateInvoicePage() {
 
             <div className="col-span-2">
                <p className="text-xs text-gray-500">
-                 * Campos obrigatórios. A fatura será gerada com status "Rascunho" ou "Pendente" dependendo da configuração.
+                 * Campos obrigatórios. A fatura será gerada com status &quot;Rascunho&quot; ou &quot;Pendente&quot; dependendo da configuração.
                </p>
             </div>
           </div>

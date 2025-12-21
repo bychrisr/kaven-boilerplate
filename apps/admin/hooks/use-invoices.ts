@@ -17,7 +17,7 @@ export interface Invoice {
   paidAt?: string | null;
   createdAt: string;
   updatedAt: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   tenant?: {
     name: string;
   };
@@ -39,7 +39,7 @@ export interface CreateInvoiceDTO {
   amountDue: number;
   currency?: string;
   dueDate: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface UpdateInvoiceDTO {

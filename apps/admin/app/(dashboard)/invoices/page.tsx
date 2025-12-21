@@ -5,20 +5,19 @@ import Link from 'next/link';
 import { useInvoices, InvoiceStatus } from '@/hooks/use-invoices';
 import {
   Plus,
-  Search,
   FileText,
-  Download,
   Send,
   MoreVertical,
   CheckCircle2,
   AlertCircle,
   Clock,
   XCircle,
+  LucideIcon,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-const statusConfig: Record<InvoiceStatus, { label: string; color: string; icon: any }> = {
+const statusConfig: Record<InvoiceStatus, { label: string; color: string; icon: LucideIcon }> = {
   PAID: { label: 'Pago', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
   PENDING: { label: 'Pendente', color: 'bg-amber-100 text-amber-700', icon: Clock },
   OVERDUE: { label: 'Vencido', color: 'bg-rose-100 text-rose-700', icon: AlertCircle },
