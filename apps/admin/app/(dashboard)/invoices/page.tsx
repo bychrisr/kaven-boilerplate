@@ -153,7 +153,7 @@ export default function InvoicesPage() {
   const { invoices, isLoading, pagination, deleteInvoice } = useInvoices({
     page,
     limit,
-    status: statusFilter,
+    status: statusFilter || undefined,
     search: debouncedSearch,
   });
 
