@@ -126,18 +126,7 @@ export default function UsersPage() {
 
   return (
     <div className="space-y-6">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-500">
-        <Link href="/dashboard" className="hover:text-gray-700">
-          Dashboard
-        </Link>
-        <ChevronRight className="h-4 w-4" />
-        <Link href="/users" className="hover:text-gray-700">
-          Usuários
-        </Link>
-        <ChevronRight className="h-4 w-4" />
-        <span className="font-medium text-gray-900">Lista</span>
-      </nav>
+
 
       {/* Header */}
       <div className="flex items-center justify-between">
