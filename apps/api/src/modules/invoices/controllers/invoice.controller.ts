@@ -14,12 +14,14 @@ export class InvoiceController {
 
   async list(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { page = '1', limit = '10', tenantId } = request.query as any;
-      const result = await invoiceService.listInvoices(
+      const { page = '1', limit = '10', tenantId, status, search } = request.query as any;
+      const result = await invoiceService.listInvoices({
+        page: parseInt(page),
+        limit: parseInt(limit),
         tenantId,
-        parseInt(page),
-        parseInt(limit)
-      );
+        status,
+        search,
+      });
       reply.send(result);
     } catch (error: any) {
       reply.status(400).send({ error: error.message });
