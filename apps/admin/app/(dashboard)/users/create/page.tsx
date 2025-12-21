@@ -5,7 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { useCreateUser } from '@/hooks/use-users';
-import { ArrowLeft } from 'lucide-react';
+import { useTenants } from '@/hooks/use-tenants';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 const userSchema = z.object({
@@ -13,17 +14,32 @@ const userSchema = z.object({
   email: z.string().email('Email inválido'),
   password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
   role: z.enum(['USER', 'TENANT_ADMIN']),
-});
+  tenantAssignment: z.enum(['create_own', 'existing']),
+  tenantId: z.string().optional(),
+}).refine(
+  (data) => {
+    if (data.tenantAssignment === 'existing') {
+      return !!data.tenantId;
+    }
+    return true;
+  },
+  {
+    message: 'Selecione um tenant',
+    path: ['tenantId'],
+  }
+);
 
 type UserFormData = z.infer<typeof userSchema>;
 
 export default function CreateUserPage() {
   const router = useRouter();
   const createUser = useCreateUser();
+  const { tenants, isLoading: isLoadingTenants } = useTenants();
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
@@ -32,12 +48,23 @@ export default function CreateUserPage() {
       email: '',
       password: '',
       role: 'USER',
+      tenantAssignment: 'create_own',
     },
   });
 
+  const tenantAssignment = watch('tenantAssignment');
+
   const onSubmit = async (data: UserFormData) => {
     try {
-      await createUser.mutateAsync(data);
+      const payload = {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        role: data.role,
+        tenantId: data.tenantAssignment === 'existing' ? data.tenantId : undefined,
+        createOwnTenant: data.tenantAssignment === 'create_own',
+      };
+      await createUser.mutateAsync(payload);
       router.push('/users');
     } catch {
       // Error já tratado no hook com toast
@@ -147,6 +174,58 @@ export default function CreateUserPage() {
               <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>
             )}
           </div>
+
+          {/* Tenant Assignment */}
+          <div>
+            <label
+              htmlFor="tenantAssignment"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Associação de Tenant
+            </label>
+            <select
+              {...register('tenantAssignment')}
+              id="tenantAssignment"
+              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              <option value="create_own">Criar tenant próprio (Camaleão)</option>
+              <option value="existing">Associar a tenant existente</option>
+            </select>
+          </div>
+
+          {/* Conditional: Tenant Selection */}
+          {tenantAssignment === 'existing' && (
+            <div>
+              <label
+                htmlFor="tenantId"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Selecione o Tenant
+              </label>
+              {isLoadingTenants ? (
+                <div className="flex items-center gap-2 text-sm text-gray-500 mt-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Carregando tenants...
+                </div>
+              ) : (
+                <select
+                  {...register('tenantId')}
+                  id="tenantId"
+                  className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  <option value="">Selecione um tenant</option>
+                  {tenants.map((tenant) => (
+                    <option key={tenant.id} value={tenant.id}>
+                      {tenant.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+              {errors.tenantId && (
+                <p className="mt-1 text-sm text-red-600">{errors.tenantId.message}</p>
+              )}
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex items-center justify-end gap-3 border-t pt-6">
