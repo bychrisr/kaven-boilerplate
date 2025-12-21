@@ -145,9 +145,15 @@ export class TenantService {
       throw new Error('Tenant não encontrado');
     }
 
+    const now = Date.now();
     await prisma.tenant.update({
       where: { id },
-      data: { deletedAt: new Date() },
+      data: {
+        deletedAt: new Date(),
+        slug: `deleted_${now}_${existingTenant.slug}`,
+        domain: existingTenant.domain ? `deleted_${now}_${existingTenant.domain}` : undefined,
+        status: 'DELETED',
+      },
     });
 
     return { message: 'Tenant deletado com sucesso' };

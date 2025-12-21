@@ -238,7 +238,11 @@ export class UserService {
 
     await prisma.user.update({
       where: { id },
-      data: { deletedAt: new Date() },
+      data: {
+        deletedAt: new Date(),
+        email: `deleted_${Date.now()}_${existingUser.email}`,
+        status: 'BANNED',
+      },
     });
 
     return { message: 'Usuário deletado com sucesso' };

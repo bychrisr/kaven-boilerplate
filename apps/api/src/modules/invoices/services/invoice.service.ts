@@ -250,7 +250,11 @@ export class InvoiceService {
 
     await prisma.invoice.update({
       where: { id },
-      data: { deletedAt: new Date() },
+      data: {
+        deletedAt: new Date(),
+        invoiceNumber: `deleted_${Date.now()}_${existingInvoice.invoiceNumber}`,
+        status: 'CANCELED',
+      },
     });
 
     return { message: 'Invoice deletada com sucesso' };
