@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Logo } from '@/components/logo';
 import { Eye, EyeOff } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function ResetPasswordPage() {
     if (password.length >= 8) strength++;
     if (/[A-Z]/.test(password)) strength++;
     if (/[a-z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
+    if (/\d/.test(password)) strength++;
     if (/[^A-Za-z0-9]/.test(password)) strength++;
     return strength;
   };
@@ -36,12 +37,13 @@ export default function ResetPasswordPage() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      toast.error('Passwords do not match');
       return;
     }
 
     if (!token) {
-      alert('Invalid reset token');
+
+      toast.error('Invalid reset token');
       return;
     }
 
@@ -58,14 +60,14 @@ export default function ResetPasswordPage() {
       });
 
       if (response.ok) {
-        alert('Password reset successfully!');
+        toast.success('Password reset successfully!');
         router.push('/login');
       } else {
-        alert('Password reset failed');
+        toast.error('Password reset failed');
       }
     } catch (error) {
       console.error('Reset password error:', error);
-      alert('Password reset failed');
+      toast.error('Password reset failed');
     } finally {
       setLoading(false);
     }
