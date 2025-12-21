@@ -7,8 +7,13 @@ interface User {
   id: string;
   email: string;
   name: string;
+  phone?: string;
   role: 'SUPER_ADMIN' | 'TENANT_ADMIN' | 'USER';
+  status?: 'ACTIVE' | 'PENDING' | 'BANNED' | 'REJECTED';
   tenantId?: string;
+  tenant?: {
+    name: string;
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -35,10 +40,32 @@ interface UpdateUserData {
   name?: string;
   email?: string;
   role?: 'USER' | 'TENANT_ADMIN' | 'SUPER_ADMIN';
+  tenantId?: string;
+}
+
+interface UserStats {
+  total: number;
+  active: number;
+  pending: number;
+  banned: number;
+  rejected: number;
+}
+
+export function useUserStats() {
+  return useQuery<UserStats>({
+    queryKey: ['user-stats'],
+    queryFn: async () => {
+      const response = await api.get('/api/users/stats');
+      return response.data;
+    },
+  });
 }
 
 // Query: Listar usuários
-export function useUsers(page: number = 1, limit: number = 10) {
+export function useUsers(params?: { page?: number; limit?: number }) {
+  const page = params?.page ?? 1;
+  const limit = params?.limit ?? 10;
+  
   return useQuery<UsersResponse>({
     queryKey: ['users', page, limit],
     queryFn: async () => {
@@ -125,6 +152,7 @@ export function useDeleteUser() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['user-stats'] });
       toast.success('Usuário deletado com sucesso!');
     },
     onError: (error: unknown) => {
