@@ -1,5 +1,6 @@
 'use client';
 
+import { use } from 'react';
 import Link from 'next/link';
 import { useTenant } from '@/hooks/use-tenants';
 import { useUsers } from '@/hooks/use-users';
@@ -13,17 +14,17 @@ import {
   XCircle,
   Mail,
   User as UserIcon,
-  Phone,
   Shield,
   Loader2,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-export default function TenantDetailsPage({ params }: { params: { id: string } }) {
-  const { data: tenant, isLoading: isLoadingTenant } = useTenant(params.id);
+export default function TenantDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const { data: tenant, isLoading: isLoadingTenant } = useTenant(id);
   const { data: usersData, isLoading: isLoadingUsers } = useUsers({ 
-    tenantId: params.id,
+    tenantId: id,
     limit: 100 // Listar todos ou muitos
   });
 
