@@ -1,13 +1,14 @@
 'use client';
 
-import { useInvoice } from '@/hooks/use-invoices';
-import { useInvoices, InvoiceStatus } from '@/hooks/use-invoices';
+import { use } from 'react';
+import { useInvoice, useInvoices, InvoiceStatus } from '@/hooks/use-invoices';
 import { ArrowLeft, Send, Download, Loader2, FileText, Calendar, Building2, CreditCard, CheckCircle2, AlertCircle, Clock, XCircle } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import type { LucideIcon } from 'lucide-react';
 
-const statusConfig: Record<InvoiceStatus, { label: string; color: string; icon: any }> = {
+const statusConfig: Record<InvoiceStatus, { label: string; color: string; icon: LucideIcon }> = {
   PAID: { label: 'Pago', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
   PENDING: { label: 'Pendente', color: 'bg-amber-100 text-amber-700', icon: Clock },
   OVERDUE: { label: 'Vencido', color: 'bg-rose-100 text-rose-700', icon: AlertCircle },
@@ -15,13 +16,14 @@ const statusConfig: Record<InvoiceStatus, { label: string; color: string; icon: 
   CANCELED: { label: 'Cancelado', color: 'bg-slate-100 text-slate-700', icon: XCircle },
 };
 
-export default function InvoiceDetailsPage({ params }: { params: { id: string } }) {
-  const { data: invoice, isLoading, error } = useInvoice(params.id);
+export default function InvoiceDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const { data: invoice, isLoading, error } = useInvoice(id);
   const { sendInvoice } = useInvoices(); // Getting mutations
 
   const handleSendEmail = async () => {
     if (confirm('Deseja reenviar a fatura por e-mail para o cliente?')) {
-      await sendInvoice.mutateAsync(params.id);
+      await sendInvoice.mutateAsync(id);
     }
   };
 
