@@ -1,130 +1,209 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useInvoice } from '@/hooks/use-invoices';
+import { useInvoices, InvoiceStatus } from '@/hooks/use-invoices';
+import { ArrowLeft, Send, Download, Loader2, FileText, Calendar, Building2, CreditCard, CheckCircle2, AlertCircle, Clock, XCircle } from 'lucide-react';
+import Link from 'next/link';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
-export default function InvoiceDetailsPage() {
-  const params = useParams();
-  const invoiceId = params?.id;
-  const [invoice, setInvoice] = useState<{
-    id: string | string[];
-    number: string;
-    customer: string;
-    amount: number;
-    status: string;
-    dueDate: string;
-    items: Array<{ description: string; quantity: number; price: number }>;
-    subtotal: number;
-    tax: number;
-    total: number;
-  } | null>(null);
+const statusConfig: Record<InvoiceStatus, { label: string; color: string; icon: any }> = {
+  PAID: { label: 'Pago', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
+  PENDING: { label: 'Pendente', color: 'bg-amber-100 text-amber-700', icon: Clock },
+  OVERDUE: { label: 'Vencido', color: 'bg-rose-100 text-rose-700', icon: AlertCircle },
+  DRAFT: { label: 'Rascunho', color: 'bg-gray-100 text-gray-700', icon: FileText },
+  CANCELED: { label: 'Cancelado', color: 'bg-slate-100 text-slate-700', icon: XCircle },
+};
 
-  useEffect(() => {
-    // Mock data - wrapped in setTimeout to avoid setState in effect warning
-    const timer = setTimeout(() => {
-      setInvoice({
-        id: invoiceId || '',
-        number: `INV-${String(invoiceId).padStart(4, '0')}`,
-        customer: 'Customer 1',
-        amount: 1500,
-        status: 'paid',
-        dueDate: '2025-02-15',
-        items: [
-          { description: 'Service A', quantity: 2, price: 500 },
-          { description: 'Service B', quantity: 1, price: 500 }
-        ],
-        subtotal: 1500,
-        tax: 0,
-        total: 1500
-      });
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [invoiceId]);
+export default function InvoiceDetailsPage({ params }: { params: { id: string } }) {
+  const { data: invoice, isLoading, error } = useInvoice(params.id);
+  const { sendInvoice } = useInvoices(); // Getting mutations
 
-  if (!invoice) {
-    return <div>Loading...</div>;
+  const handleSendEmail = async () => {
+    if (confirm('Deseja reenviar a fatura por e-mail para o cliente?')) {
+      await sendInvoice.mutateAsync(params.id);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-96 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-main" />
+      </div>
+    );
   }
 
+  if (error || !invoice) {
+    return (
+      <div className="flex h-96 flex-col items-center justify-center gap-4">
+        <h1 className="text-2xl font-bold text-gray-900">Fatura não encontrada</h1>
+        <p className="text-gray-500">A fatura solicitada não existe ou foi removida.</p>
+        <Link
+          href="/invoices"
+          className="text-primary-main hover:underline"
+        >
+          Voltar para listagem
+        </Link>
+      </div>
+    );
+  }
+
+  const status = statusConfig[invoice.status];
+  const StatusIcon = status.icon;
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Invoice Details</h1>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-4">
+          <Link
+            href="/invoices"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-gray-900">Fatura #{invoice.id.slice(0, 8)}</h1>
+              <div className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${status.color}`}>
+                <StatusIcon className="h-3.5 w-3.5" />
+                {status.label}
+              </div>
+            </div>
+            <p className="text-sm text-gray-500 mt-1">
+              Emitida em {format(new Date(invoice.createdAt), "d 'de' MMMM 'de' yyyy", { locale: ptBR })}
+            </p>
+          </div>
+        </div>
+        
         <div className="flex gap-2">
-          <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-50">
-            Download PDF
+          <button
+             disabled={sendInvoice.isPending}
+             onClick={handleSendEmail}
+             className="inline-flex items-center gap-2 rounded-lg border bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 disabled:opacity-50"
+          >
+             <Send className="h-4 w-4" />
+             {sendInvoice.isPending ? 'Enviando...' : 'Reenviar Email'}
           </button>
-          <button className="bg-primary-main text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-dark">
-            Send Email
+          <button className="inline-flex items-center gap-2 rounded-lg bg-primary-main px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2">
+            <Download className="h-4 w-4" />
+            Baixar PDF
           </button>
         </div>
       </div>
 
-      <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
-        {/* Header */}
-        <div className="flex justify-between mb-8">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">INVOICE</h2>
-            <p className="text-gray-600">{invoice.number}</p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-gray-600">Due Date</p>
-            <p className="font-medium text-gray-900">{invoice.dueDate}</p>
+      <div className="grid gap-6 md:grid-cols-3">
+        {/* Main Info */}
+        <div className="md:col-span-2 space-y-6">
+          <div className="rounded-lg border bg-white p-6 shadow-sm">
+            <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">Detalhes da Cobrança</h3>
+            
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">Valor Total</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: invoice.currency,
+                  }).format(invoice.amountDue)}
+                </p>
+              </div>
+              
+               <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">Valor Pago</p>
+                <p className="text-xl font-semibold text-emerald-600">
+                  {new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: invoice.currency,
+                  }).format(invoice.amountPaid)}
+                </p>
+              </div>
+
+               <div>
+                <p className="text-sm font-medium text-gray-500 mb-1 flex items-center gap-1.5">
+                  <Calendar className="h-4 w-4" />
+                  Data de Vencimento
+                </p>
+                <p className="text-base text-gray-900">
+                  {format(new Date(invoice.dueDate), "dd/MM/yyyy", { locale: ptBR })}
+                </p>
+              </div>
+              
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1 flex items-center gap-1.5">
+                  <CheckCircle2 className="h-4 w-4" />
+                  Data de Pagamento
+                </p>
+                <p className="text-base text-gray-900">
+                  {invoice.paidAt 
+                    ? format(new Date(invoice.paidAt), "dd/MM/yyyy HH:mm", { locale: ptBR }) 
+                    : '-'}
+                </p>
+              </div>
+            </div>
+            
+             {invoice.metadata && Object.keys(invoice.metadata).length > 0 && (
+              <div className="mt-6 pt-4 border-t">
+                <p className="text-sm font-medium text-gray-500 mb-2">Metadados</p>
+                <pre className="bg-gray-50 p-3 rounded-md text-xs text-gray-700 overflow-x-auto">
+                  {JSON.stringify(invoice.metadata, null, 2)}
+                </pre>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Customer Info */}
-        <div className="mb-8">
-          <p className="text-sm text-gray-600 mb-1">Bill To:</p>
-          <p className="font-medium text-gray-900">{invoice.customer}</p>
-        </div>
-
-        {/* Items Table */}
-        <table className="w-full mb-8">
-          <thead className="border-b-2 border-gray-200">
-            <tr>
-              <th className="text-left py-2 text-sm font-medium text-gray-600">Description</th>
-              <th className="text-right py-2 text-sm font-medium text-gray-600">Qty</th>
-              <th className="text-right py-2 text-sm font-medium text-gray-600">Price</th>
-              <th className="text-right py-2 text-sm font-medium text-gray-600">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {invoice.items.map((item, i: number) => (
-              <tr key={i} className="border-b border-gray-100">
-                <td className="py-3 text-gray-900">{item.description}</td>
-                <td className="py-3 text-right text-gray-900">{item.quantity}</td>
-                <td className="py-3 text-right text-gray-900">${item.price}</td>
-                <td className="py-3 text-right text-gray-900">${item.quantity * item.price}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {/* Totals */}
-        <div className="flex justify-end">
-          <div className="w-64 space-y-2">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Subtotal:</span>
-              <span className="text-gray-900">${invoice.subtotal}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Tax:</span>
-              <span className="text-gray-900">${invoice.tax}</span>
-            </div>
-            <div className="flex justify-between pt-2 border-t-2 border-gray-200">
-              <span className="font-bold text-gray-900">Total:</span>
-              <span className="font-bold text-gray-900">${invoice.total}</span>
+        {/* Sidebar Info */}
+        <div className="space-y-6">
+          {/* Client Info */}
+          <div className="rounded-lg border bg-white p-6 shadow-sm">
+            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <Building2 className="h-4 w-4" />
+              Cliente
+            </h3>
+            {invoice.tenant ? (
+              <div className="space-y-3">
+                 <div>
+                  <p className="text-sm text-gray-400">Nome</p>
+                  <p className="font-medium text-gray-900">{invoice.tenant.name}</p>
+                 </div>
+                 {/* ID is tenantId */}
+                 <div>
+                  <p className="text-sm text-gray-400">ID do Tenant</p>
+                  <p className="text-xs font-mono bg-gray-100 p-1 rounded inline-block text-gray-600">
+                    {invoice.tenantId}
+                  </p>
+                 </div>
+              </div>
+            ) : (
+                <p className="text-sm text-gray-500 italic">Informações do cliente indisponíveis.</p>
+            )}
+            
+            <div className="mt-6 pt-4 border-t">
+              <Link
+                href="/tenants"
+                className="text-sm text-primary-main hover:underline flex items-center gap-1"
+              >
+                Ver todos clientes →
+              </Link>
             </div>
           </div>
-        </div>
-
-        {/* Status */}
-        <div className="mt-8 pt-8 border-t border-gray-200">
-          <span className={`px-4 py-2 rounded-full text-sm font-medium ${
-            invoice.status === 'paid' ? 'bg-success-light text-success-dark' : 'bg-warning-light text-warning-dark'
-          }`}>
-            {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
-          </span>
+          
+           {/* Payment Info */}
+           <div className="rounded-lg border bg-white p-6 shadow-sm">
+            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <CreditCard className="h-4 w-4" />
+              Pagamento
+            </h3>
+            <div className="space-y-3">
+               <div>
+                  <p className="text-sm text-gray-400">ID da Assinatura</p>
+                  <p className="text-sm text-gray-900 break-all">
+                    {invoice.subscriptionId || '-'}
+                  </p>
+               </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
