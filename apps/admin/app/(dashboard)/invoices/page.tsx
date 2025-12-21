@@ -97,7 +97,7 @@ export default function InvoicesPage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border bg-white shadow-sm overflow-hidden">
+      <div className="rounded-lg border bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="bg-gray-50 text-gray-600 font-medium border-b">
@@ -210,13 +210,17 @@ export default function InvoicesPage() {
                             {openMenuId === invoice.id && (
                               <>
                                 {/* Backdrop para fechar o menu */}
-                                <div 
-                                  className="fixed inset-0 z-10" 
+                                <button
+                                  type="button"
+                                  className="fixed inset-0 z-40" 
                                   onClick={() => setOpenMenuId(null)}
+                                  onKeyDown={(e) => e.key === 'Escape' && setOpenMenuId(null)}
+                                  aria-label="Fechar menu"
+                                  tabIndex={-1}
                                 />
                                 
                                 {/* Menu dropdown */}
-                                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20">
+                                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                                   <div className="py-1">
                                     <Link
                                       href={`/invoices/${invoice.id}`}
