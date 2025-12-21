@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,7 +7,6 @@ import { z } from 'zod';
 import { useTenants } from '@/hooks/use-tenants';
 import { ArrowLeft, Save } from 'lucide-react';
 import Link from 'next/link';
-import { toast } from 'sonner';
 
 const createTenantSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
@@ -16,7 +14,7 @@ const createTenantSchema = z.object({
     .min(2, 'Slug deve ter pelo menos 2 caracteres')
     .regex(/^[a-z0-9-]+$/, 'Slug deve conter apenas letras minúsculas, números e hífens'),
   domain: z.string().optional().or(z.literal('')),
-  active: z.boolean().default(true),
+  active: z.boolean(),
 });
 
 type CreateTenantFormData = z.infer<typeof createTenantSchema>;
@@ -28,10 +26,10 @@ export default function CreateTenantPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors, iSubmitting },
+    formState: { errors },
     watch,
     setValue,
-  } = useForm<CreateTenantFormData>({
+  } = useForm({
     resolver: zodResolver(createTenantSchema),
     defaultValues: {
       active: true,
