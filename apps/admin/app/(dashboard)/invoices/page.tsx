@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { useInvoices, InvoiceStatus } from '@/hooks/use-invoices';
 import {
@@ -197,62 +198,13 @@ export default function InvoicesPage() {
                             <Send className="h-4 w-4" />
                           </button>
                           
-                          {/* Dropdown Menu */}
-                          <div className="relative">
-                            <button
-                              onClick={() => setOpenMenuId(openMenuId === invoice.id ? null : invoice.id)}
-                              className="p-2 text-gray-400 hover:text-gray-900 transition-colors"
-                              title="Ações"
-                            >
-                              <MoreVertical className="h-4 w-4" />
-                            </button>
-                            
-                            {openMenuId === invoice.id && (
-                              <>
-                                {/* Backdrop para fechar o menu */}
-                                <button
-                                  type="button"
-                                  className="fixed inset-0 z-40" 
-                                  onClick={() => setOpenMenuId(null)}
-                                  onKeyDown={(e) => e.key === 'Escape' && setOpenMenuId(null)}
-                                  aria-label="Fechar menu"
-                                  tabIndex={-1}
-                                />
-                                
-                                {/* Menu dropdown */}
-                                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-                                  <div className="py-1">
-                                    <Link
-                                      href={`/invoices/${invoice.id}`}
-                                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                      onClick={() => setOpenMenuId(null)}
-                                    >
-                                      <Eye className="h-4 w-4" />
-                                      Visualizar
-                                    </Link>
-                                    <Link
-                                      href={`/invoices/${invoice.id}/edit`}
-                                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                      onClick={() => setOpenMenuId(null)}
-                                    >
-                                      <Pencil className="h-4 w-4" />
-                                      Editar
-                                    </Link>
-                                    <button
-                                      onClick={() => {
-                                        setOpenMenuId(null);
-                                        handleDelete(invoice.id);
-                                      }}
-                                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                      Excluir
-                                    </button>
-                                  </div>
-                                </div>
-                              </>
-                            )}
-                          </div>
+                          {/* Dropdown Menu com Portal */}
+                          <DropdownMenu
+                            isOpen={openMenuId === invoice.id}
+                            onClose={() => setOpenMenuId(null)}
+                            invoiceId={invoice.id}
+                            onDelete={handleDelete}
+                          />
                         </div>
                       </td>
                     </tr>
@@ -289,5 +241,104 @@ export default function InvoicesPage() {
         )}
       </div>
     </div>
+  );
+}
+
+// Componente DropdownMenu usando Portal para escapar do overflow da tabela
+interface DropdownMenuProps {
+  isOpen: boolean;
+  onClose: () => void;
+  invoiceId: string;
+  onDelete: (id: string) => void;
+}
+
+function DropdownMenu({ isOpen, onClose, invoiceId, onDelete }: Readonly<DropdownMenuProps>) {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPosition({
+        top: rect.bottom + window.scrollY + 8,
+        left: rect.right + window.scrollX - 192, // 192px = w-48
+      });
+    }
+  }, [isOpen]);
+
+  if (!isOpen) {
+    return (
+      <button
+        ref={buttonRef}
+        onClick={onClose}
+        className="p-2 text-gray-400 hover:text-gray-900 transition-colors"
+        title="Ações"
+      >
+        <MoreVertical className="h-4 w-4" />
+      </button>
+    );
+  }
+
+  return (
+    <>
+      <button
+        ref={buttonRef}
+        onClick={onClose}
+        className="p-2 text-gray-900 transition-colors"
+        title="Ações"
+      >
+        <MoreVertical className="h-4 w-4" />
+      </button>
+
+      {createPortal(
+        <>
+          {/* Backdrop */}
+          <button
+            type="button"
+            className="fixed inset-0 z-40"
+            onClick={onClose}
+            onKeyDown={(e) => e.key === 'Escape' && onClose()}
+            aria-label="Fechar menu"
+            tabIndex={-1}
+          />
+
+          {/* Menu */}
+          <div
+            className="fixed w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+            style={{ top: `${position.top}px`, left: `${position.left}px` }}
+          >
+            <div className="py-1">
+              <Link
+                href={`/invoices/${invoiceId}`}
+                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                onClick={onClose}
+              >
+                <Eye className="h-4 w-4" />
+                Visualizar
+              </Link>
+              <Link
+                href={`/invoices/${invoiceId}/edit`}
+                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                onClick={onClose}
+              >
+                <Pencil className="h-4 w-4" />
+                Editar
+              </Link>
+              <button
+                onClick={() => {
+                  onClose();
+                  onDelete(invoiceId);
+                }}
+                className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+              >
+                <Trash2 className="h-4 w-4" />
+                Excluir
+              </button>
+            </div>
+          </div>
+        </>,
+        document.body
+      )}
+    </>
   );
 }
