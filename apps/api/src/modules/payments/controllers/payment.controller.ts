@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { stripeService } from '../stripe.service';
+import { pixService } from '../pix.service';
 import { z } from 'zod';
 
 const createSubscriptionSchema = z.object({
@@ -16,6 +17,12 @@ const cancelSubscriptionSchema = z.object({
 const updatePaymentMethodSchema = z.object({
   subscriptionId: z.string().uuid(),
   paymentMethodId: z.string(),
+});
+
+const createPixPaymentSchema = z.object({
+  tenantId: z.string().uuid(),
+  amount: z.number().positive(),
+  description: z.string(),
 });
 
 export class PaymentController {
@@ -75,6 +82,32 @@ export class PaymentController {
   }
 
   /**
+   * POST /api/payments/pix/create
+   */
+  async createPixPayment(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const data = createPixPaymentSchema.parse(request.body);
+      const result = await pixService.createPixPayment(data);
+      reply.status(201).send(result);
+    } catch (error: any) {
+      reply.status(400).send({ error: error.message });
+    }
+  }
+
+  /**
+   * GET /api/payments/pix/:id/status
+   */
+  async checkPixPaymentStatus(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const { id } = request.params as { id: string };
+      const result = await pixService.checkPixPaymentStatus(id);
+      reply.send(result);
+    } catch (error: any) {
+      reply.status(404).send({ error: error.message });
+    }
+  }
+
+  /**
    * POST /api/webhooks/stripe
    * Webhook do Stripe para eventos de pagamento
    */
@@ -92,6 +125,21 @@ export class PaymentController {
       reply.send(result);
     } catch (error: any) {
       console.error('Webhook error:', error);
+      reply.status(400).send({ error: error.message });
+    }
+  }
+
+  /**
+   * POST /api/webhooks/pix
+   * Webhook para notificações de pagamento Pix
+   */
+  async handlePixWebhook(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const data = request.body as any;
+      const result = await pixService.handlePixWebhook(data);
+      reply.send(result);
+    } catch (error: any) {
+      console.error('Pix webhook error:', error);
       reply.status(400).send({ error: error.message });
     }
   }

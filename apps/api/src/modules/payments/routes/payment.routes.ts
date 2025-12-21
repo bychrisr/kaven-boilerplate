@@ -12,6 +12,10 @@ export async function paymentRoutes(fastify: FastifyInstance) {
     '/payment-methods/:subscriptionId',
     paymentController.listPaymentMethods.bind(paymentController)
   );
+
+  // Pix
+  fastify.post('/pix/create', paymentController.createPixPayment.bind(paymentController));
+  fastify.get('/pix/:id/status', paymentController.checkPixPaymentStatus.bind(paymentController));
 }
 
 export async function webhookRoutes(fastify: FastifyInstance) {
@@ -25,4 +29,7 @@ export async function webhookRoutes(fastify: FastifyInstance) {
     },
     paymentController.handleStripeWebhook.bind(paymentController)
   );
+
+  // Webhook do Pix
+  fastify.post('/pix', paymentController.handlePixWebhook.bind(paymentController));
 }

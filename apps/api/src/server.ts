@@ -8,6 +8,8 @@ import { authRoutes } from './modules/auth/routes/auth.routes';
 import { userRoutes } from './modules/users/routes/user.routes';
 import { tenantRoutes } from './modules/tenants/routes/tenant.routes';
 import { paymentRoutes, webhookRoutes } from './modules/payments/routes/payment.routes';
+import { invoiceRoutes } from './modules/invoices/routes/invoice.routes';
+import { orderRoutes } from './modules/orders/routes/order.routes';
 import { fileRoutes } from './modules/files/routes/file.routes';
 import { healthRoutes } from './routes/health.routes';
 import { metricsMiddleware } from './middleware/metrics.middleware';
@@ -123,6 +125,8 @@ fastify.register(authRoutes, { prefix: '/api/auth' });
 fastify.register(userRoutes, { prefix: '/api/users' });
 fastify.register(tenantRoutes, { prefix: '/api/tenants' });
 fastify.register(paymentRoutes, { prefix: '/api/payments' });
+fastify.register(invoiceRoutes, { prefix: '/api/invoices' });
+fastify.register(orderRoutes, { prefix: '/api/orders' });
 fastify.register(webhookRoutes, { prefix: '/api/webhooks' });
 fastify.register(fileRoutes, { prefix: '/api/files' });
 
