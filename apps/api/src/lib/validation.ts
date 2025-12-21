@@ -55,7 +55,7 @@ export const createUserSchema = z.object({
   phone: z.string().optional(),
   role: z.enum(['SUPER_ADMIN', 'TENANT_ADMIN', 'USER']).default('USER'),
   status: z.enum(['ACTIVE', 'PENDING', 'BANNED', 'REJECTED']).default('ACTIVE'),
-  tenantId: z.string().uuid().optional(),
+  tenantId: z.union([z.string().uuid(), z.literal('create-own')]).optional(),
 });
 
 export const updateUserSchema = z.object({

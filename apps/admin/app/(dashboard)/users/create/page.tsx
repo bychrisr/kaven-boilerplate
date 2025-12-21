@@ -64,8 +64,14 @@ export default function CreateUserPage() {
         phone: data.phone,
         password: data.password,
         role: data.role,
-        tenantId: data.tenantAssignment === 'existing' ? data.tenantId : undefined,
-        createOwnTenant: data.tenantAssignment === 'create_own',
+        password: data.password,
+        role: data.role,
+        tenantId:
+          data.tenantAssignment === 'create_own'
+            ? 'create-own'
+            : data.tenantId === ''
+              ? undefined
+              : data.tenantId,
       };
       await createUser.mutateAsync(payload);
       router.push('/users');
