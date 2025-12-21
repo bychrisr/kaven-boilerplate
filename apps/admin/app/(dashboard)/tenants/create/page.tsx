@@ -36,6 +36,7 @@ export default function CreateTenantPage() {
   });
 
   // Auto-generate slug from name if slug is empty
+  // eslint-disable-next-line react-hooks/incompatible-library
   const name = watch('name');
   const slug = watch('slug');
 
