@@ -55,17 +55,19 @@ export interface InvoicesParams {
   status?: InvoiceStatus;
 }
 
-export function useInvoices(params: InvoicesParams = { page: 1, limit: 10 }) {
+export function useInvoices(params?: InvoicesParams) {
   const queryClient = useQueryClient();
+
+  const queryParams = params ?? { page: 1, limit: 10 };
 
   const {
     data,
     isLoading,
     error,
   } = useQuery<InvoicesResponse>({
-    queryKey: ['invoices', params],
+    queryKey: ['invoices', queryParams],
     queryFn: async () => {
-      const response = await api.get('/api/invoices', { params });
+      const response = await api.get('/api/invoices', { params: queryParams });
       return response.data;
     },
   });
