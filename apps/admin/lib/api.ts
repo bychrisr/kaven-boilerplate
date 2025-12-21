@@ -61,12 +61,12 @@ api.interceptors.response.use(
       } catch (refreshError) {
         // Refresh falhou, fazer logout via store para limpar tudo (incluindo persist state)
         useAuthStore.getState().clearAuth();
-        window.location.href = '/login';
-        return Promise.reject(refreshError);
+        globalThis.location.href = '/login';
+        throw refreshError;
       }
     }
 
-    return Promise.reject(error);
+    throw error;
   }
 );
 

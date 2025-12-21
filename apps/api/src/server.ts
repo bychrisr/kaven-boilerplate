@@ -140,7 +140,7 @@ fastify.register(fileRoutes, { prefix: '/api/files' });
 // Start server
 const start = async () => {
   try {
-    const port = parseInt(process.env.PORT || '8000');
+    const port = Number.parseInt(process.env.PORT || '8000');
     await fastify.listen({ port, host: '0.0.0.0' });
     console.log(`🚀 Server running on http://localhost:${port}`);
     console.log(`📚 API Documentation: http://localhost:${port}/api/auth`);

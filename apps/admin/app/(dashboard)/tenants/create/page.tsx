@@ -44,11 +44,11 @@ export default function CreateTenantPage() {
     setValue('name', newName);
     
     // Only auto-generate if slug hasn't been manually edited or is empty
-    if (!slug || slug === name?.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-').replaceAll(/^-+|-+$/g, '')) {
+    if (!slug || slug === name?.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-').replaceAll(/(^-+)|(-+$)/g, '')) {
       const newSlug = newName
         .toLowerCase()
         .replaceAll(/[^a-z0-9]+/g, '-')
-        .replaceAll(/^-+|-+$/g, '');
+        .replaceAll(/(^-+)|(-+$)/g, '');
       setValue('slug', newSlug);
     }
   };
