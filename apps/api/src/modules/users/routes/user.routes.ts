@@ -4,6 +4,12 @@ import { authMiddleware } from '../../../middleware/auth.middleware';
 import { requireTenantAdmin, requireResourceOwnership } from '../../../middleware/rbac.middleware';
 
 export async function userRoutes(fastify: FastifyInstance) {
+  // GET /api/users/stats - Obter estatísticas
+  fastify.get('/stats', {
+    preHandler: [authMiddleware],
+    handler: userController.getStats.bind(userController),
+  });
+
   // GET /api/users - Listar usuários (requer TENANT_ADMIN ou SUPER_ADMIN)
   fastify.get('/', {
     preHandler: [authMiddleware, requireTenantAdmin],

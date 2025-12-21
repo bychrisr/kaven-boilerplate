@@ -23,6 +23,13 @@ enum Role {
   USER
 }
 
+enum UserStatus {
+  ACTIVE
+  PENDING
+  BANNED
+  REJECTED
+}
+
 enum SubscriptionStatus {
   ACTIVE
   CANCELED
@@ -89,20 +96,22 @@ model Tenant {
 }
 
 model User {
-  id                String    @id @default(uuid())
-  email             String    @unique
+  id                String     @id @default(uuid())
+  email             String     @unique
   password          String
   name              String
-  emailVerified     Boolean   @default(false)
+  phone             String?
+  emailVerified     Boolean    @default(false)
   emailVerifiedAt   DateTime?
-  twoFactorEnabled  Boolean   @default(false)
-  twoFactorSecret   String?   // TOTP secret
-  backupCodes       String?   // JSON array of backup codes
-  role              Role      @default(USER)
+  twoFactorEnabled  Boolean    @default(false)
+  twoFactorSecret   String?    // TOTP secret
+  backupCodes       String?    // JSON array of backup codes
+  role              Role       @default(USER)
+  status            UserStatus @default(ACTIVE)
   tenantId          String?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  deletedAt         DateTime? // Soft delete
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  deletedAt         DateTime?  // Soft delete
   lastLoginAt       DateTime?
   
   // Relations
@@ -114,6 +123,7 @@ model User {
   @@index([email])
   @@index([tenantId])
   @@index([role])
+  @@index([status])
 }
 
 model RefreshToken {

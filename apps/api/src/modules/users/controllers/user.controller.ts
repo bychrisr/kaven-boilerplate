@@ -3,6 +3,16 @@ import { userService } from '../services/user.service';
 import { createUserSchema, updateUserSchema } from '../../../lib/validation';
 
 export class UserController {
+  async getStats(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const tenantId = request.headers['x-tenant-id'] as string | undefined;
+      const stats = await userService.getStats(tenantId);
+      reply.send(stats);
+    } catch (error: any) {
+      reply.status(400).send({ error: error.message });
+    }
+  }
+
   async list(request: FastifyRequest, reply: FastifyReply) {
     try {
       const { page = '1', limit = '10', tenantId } = request.query as any;

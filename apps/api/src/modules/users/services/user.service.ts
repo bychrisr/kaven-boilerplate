@@ -4,6 +4,23 @@ import type { CreateUserInput, UpdateUserInput } from '../../../lib/validation';
 
 export class UserService {
   /**
+   * GET /api/users/stats - Obter estatísticas de usuários
+   */
+  async getStats(tenantId?: string) {
+    const where = tenantId ? { tenantId, deletedAt: null } : { deletedAt: null };
+
+    const [total, active, pending, banned, rejected] = await Promise.all([
+      prisma.user.count({ where }),
+      prisma.user.count({ where: { ...where, status: 'ACTIVE' } }),
+      prisma.user.count({ where: { ...where, status: 'PENDING' } }),
+      prisma.user.count({ where: { ...where, status: 'BANNED' } }),
+      prisma.user.count({ where: { ...where, status: 'REJECTED' } }),
+    ]);
+
+    return { total, active, pending, banned, rejected };
+  }
+
+  /**
    * GET /api/users - Listar usuários (com paginação)
    */
   async listUsers(tenantId?: string, page: number = 1, limit: number = 10) {
