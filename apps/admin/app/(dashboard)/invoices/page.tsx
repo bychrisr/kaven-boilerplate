@@ -17,8 +17,6 @@ import {
   Clock,
   XCircle,
   LucideIcon,
-  Building2,
-  User,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -142,29 +140,9 @@ export default function InvoicesPage() {
                             <p className="font-medium text-gray-900 truncate w-32" title={invoice.id}>
                               #{invoice.id.slice(0, 8)}
                             </p>
-                            <div className="flex items-center gap-2 mt-1">
-                              <p className="text-xs text-gray-500">
-                                {invoice.tenant?.name || 'Cliente Desconhecido'}
-                              </p>
-                              {/* Badge de tipo */}
-                              <div className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
-                                invoice.subscriptionId 
-                                  ? 'bg-blue-100 text-blue-700' 
-                                  : 'bg-purple-100 text-purple-700'
-                              }`}>
-                                {invoice.subscriptionId ? (
-                                  <>
-                                    <Building2 className="h-3 w-3" />
-                                    Tenant
-                                  </>
-                                ) : (
-                                  <>
-                                    <User className="h-3 w-3" />
-                                    User
-                                  </>
-                                )}
-                              </div>
-                            </div>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {invoice.tenant?.name || 'Cliente Desconhecido'}
+                            </p>
                           </div>
                         </div>
                       </td>
