@@ -113,6 +113,20 @@ export function useInvoices(params?: InvoicesParams) {
     },
   });
 
+  const deleteInvoice = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await api.delete(`/api/invoices/${id}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['invoices'] });
+      toast.success('Fatura excluída com sucesso!');
+    },
+    onError: (error: unknown) => {
+      toast.error(getErrorMessage(error));
+    },
+  });
+
   return {
     invoices: data?.invoices || [],
     pagination: data?.pagination,
@@ -121,6 +135,7 @@ export function useInvoices(params?: InvoicesParams) {
     createInvoice,
     updateInvoice,
     sendInvoice,
+    deleteInvoice,
   };
 }
 

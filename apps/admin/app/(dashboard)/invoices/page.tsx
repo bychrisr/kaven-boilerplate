@@ -37,7 +37,7 @@ export default function InvoicesPage() {
   const [sendingId, setSendingId] = useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   
-  const { invoices, isLoading, pagination, sendInvoice } = useInvoices({ 
+  const { invoices, isLoading, pagination, sendInvoice, deleteInvoice } = useInvoices({ 
     page, 
     limit: 10,
     status: statusFilter || undefined
@@ -55,9 +55,8 @@ export default function InvoicesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Tem certeza que deseja excluir esta fatura?')) {
-      // TODO: Implement delete mutation
-      console.log('Delete invoice:', id);
+    if (confirm('Tem certeza que deseja excluir esta fatura? Esta ação não pode ser desfeita.')) {
+      await deleteInvoice.mutateAsync(id);
     }
   };
 
@@ -306,13 +305,13 @@ function DropdownMenu({ isOpen, onOpen, onClose, invoiceId, onDelete }: Readonly
 
           {/* Menu */}
           <div
-            className="fixed w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+            className="fixed w-48 rounded-lg shadow-xl bg-white border border-gray-200 z-50"
             style={{ top: `${position.top}px`, left: `${position.left}px` }}
           >
             <div className="py-1">
               <Link
                 href={`/invoices/${invoiceId}`}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                 onClick={onClose}
               >
                 <Eye className="h-4 w-4" />
@@ -320,18 +319,19 @@ function DropdownMenu({ isOpen, onOpen, onClose, invoiceId, onDelete }: Readonly
               </Link>
               <Link
                 href={`/invoices/${invoiceId}/edit`}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                 onClick={onClose}
               >
                 <Pencil className="h-4 w-4" />
                 Editar
               </Link>
+              <div className="border-t border-gray-100 my-1" />
               <button
                 onClick={() => {
                   onClose();
                   onDelete(invoiceId);
                 }}
-                className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
               >
                 <Trash2 className="h-4 w-4" />
                 Excluir
