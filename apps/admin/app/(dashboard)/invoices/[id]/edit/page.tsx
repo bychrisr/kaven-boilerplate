@@ -39,7 +39,7 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
         amountDue: invoice.amountDue,
         dueDate: new Date(invoice.dueDate).toISOString().split('T')[0],
         status: invoice.status,
-        metadata: invoice.metadata,
+        metadata: invoice.metadata || undefined, // Converte null para undefined
       });
     }
   }, [invoice, reset]);
