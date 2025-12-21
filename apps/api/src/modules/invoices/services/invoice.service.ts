@@ -116,9 +116,12 @@ export class InvoiceService {
    * PUT /api/invoices/:id - Atualizar invoice
    */
   async updateInvoice(id: string, data: {
+    amountDue?: number;
+    dueDate?: Date;
     status?: 'DRAFT' | 'PENDING' | 'PAID' | 'OVERDUE' | 'CANCELED';
     amountPaid?: number;
     paidAt?: Date;
+    currency?: string;
     metadata?: any;
   }) {
     const existingInvoice = await prisma.invoice.findUnique({
@@ -132,9 +135,12 @@ export class InvoiceService {
     const invoice = await prisma.invoice.update({
       where: { id },
       data: {
+        amountDue: data.amountDue,
+        dueDate: data.dueDate,
         status: data.status,
         amountPaid: data.amountPaid,
         paidAt: data.paidAt,
+        currency: data.currency,
         metadata: data.metadata,
         updatedAt: new Date(),
       },
