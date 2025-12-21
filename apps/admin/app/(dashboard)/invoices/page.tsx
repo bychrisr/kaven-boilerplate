@@ -147,15 +147,19 @@ export default function InvoicesPage() {
     }
   };
 
-  // Filtered invoices by search
-  const filteredInvoices = useMemo(() => {
-    if (!searchQuery) return invoices;
-    
-    return invoices.filter(invoice => 
-      invoice.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      invoice.tenant?.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [invoices, searchQuery]);
+  const debouncedSearch = useDebounce(searchQuery, 500);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [statusFilter, debouncedSearch]);
+
+  const { invoices, isLoading, pagination, deleteInvoice } = useInvoices({
+    page,
+    limit,
+    status: statusFilter,
+    search: debouncedSearch,
+  });
 
   return (
     <div className="space-y-6">
