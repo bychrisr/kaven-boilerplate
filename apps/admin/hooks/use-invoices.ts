@@ -76,6 +76,7 @@ export interface InvoicesParams {
   limit?: number;
   tenantId?: string;
   status?: InvoiceStatus;
+  search?: string;
 }
 
 export function useInvoices(params?: InvoicesParams) {
