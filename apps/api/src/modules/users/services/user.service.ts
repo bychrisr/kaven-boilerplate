@@ -81,7 +81,7 @@ export class UserService {
   /**
    * POST /api/users - Criar novo usuário
    */
-  async createUser(data: CreateUserInput) {
+  async createUser(data: CreateUserInput & { createOwnTenant?: boolean }) {
     const existingUser = await prisma.user.findUnique({
       where: { email: data.email },
     });
@@ -92,13 +92,43 @@ export class UserService {
 
     const hashedPassword = await hashPassword(data.password);
 
+    let tenantId = data.tenantId;
+
+    // Se createOwnTenant = true, criar tenant próprio
+    if (data.createOwnTenant) {
+      const baseSlug = data.name
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+      // Garantir slug único
+      let slug = baseSlug;
+      let counter = 1;
+      while (await prisma.tenant.findUnique({ where: { slug } })) {
+        slug = `${baseSlug}-${counter}`;
+        counter++;
+      }
+
+      const tenant = await prisma.tenant.create({
+        data: {
+          name: data.name,
+          slug,
+          status: 'ACTIVE',
+        },
+      });
+
+      tenantId = tenant.id;
+    }
+
     const user = await prisma.user.create({
       data: {
         email: data.email,
         password: hashedPassword,
         name: data.name,
         role: data.role || 'USER',
-        tenantId: data.tenantId,
+        tenantId: tenantId || null,
       },
       select: {
         id: true,

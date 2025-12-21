@@ -23,12 +23,39 @@ export class AuthService {
     // Verificar/criar tenant
     let tenantId: string | undefined;
     if (data.tenantSlug) {
+      // Se tenantSlug fornecido, associar a tenant existente
       const tenant = await prisma.tenant.findUnique({
         where: { slug: data.tenantSlug },
       });
       if (!tenant) {
         throw new Error('Tenant não encontrado');
       }
+      tenantId = tenant.id;
+    } else {
+      // Se não fornecido, criar tenant próprio (modo camaleão)
+      const baseSlug = data.name
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+      // Garantir slug único
+      let slug = baseSlug;
+      let counter = 1;
+      while (await prisma.tenant.findUnique({ where: { slug } })) {
+        slug = `${baseSlug}-${counter}`;
+        counter++;
+      }
+
+      const tenant = await prisma.tenant.create({
+        data: {
+          name: data.name,
+          slug,
+          status: 'ACTIVE',
+        },
+      });
+
       tenantId = tenant.id;
     }
 
