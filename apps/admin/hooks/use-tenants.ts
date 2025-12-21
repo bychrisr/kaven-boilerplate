@@ -54,7 +54,7 @@ export function useTenants(page: number = 1, limit: number = 100) {
 
   const createTenant = useMutation({
     mutationFn: async (data: CreateTenantDTO) => {
-      const response = await api.post('/tenants', data);
+      const response = await api.post('/api/tenants', data);
       return response.data;
     },
     onSuccess: () => {
@@ -68,7 +68,7 @@ export function useTenants(page: number = 1, limit: number = 100) {
 
   const updateTenant = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: UpdateTenantDTO }) => {
-      const response = await api.put(`/tenants/${id}`, data);
+      const response = await api.put(`/api/tenants/${id}`, data);
       return response.data;
     },
     onSuccess: () => {
@@ -82,7 +82,7 @@ export function useTenants(page: number = 1, limit: number = 100) {
 
   const deleteTenant = useMutation({
     mutationFn: async (id: string) => {
-      await api.delete(`/tenants/${id}`);
+      await api.delete(`/api/tenants/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tenants'] });
