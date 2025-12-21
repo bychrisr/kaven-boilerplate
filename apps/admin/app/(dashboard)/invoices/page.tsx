@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useInvoices, InvoiceStatus, useInvoiceStats } from '@/hooks/use-invoices';
+import { useDebounce } from '@/hooks/use-debounce';
 import {
   Plus,
   FileText,
@@ -145,10 +146,10 @@ export default function InvoicesPage() {
 
   const debouncedSearch = useDebounce(searchQuery, 500);
 
-  // Reset page when filters change
+  // Reset page when search changes
   useEffect(() => {
     setPage(1);
-  }, [statusFilter, debouncedSearch]);
+  }, [debouncedSearch]);
 
   const { invoices, isLoading, pagination, deleteInvoice } = useInvoices({
     page,
@@ -200,7 +201,10 @@ export default function InvoicesPage() {
           {tabs.map((tab) => (
             <button
               key={tab.label}
-              onClick={() => setStatusFilter(tab.value)}
+              onClick={() => {
+                setStatusFilter(tab.value);
+                setPage(1);
+              }}
               className={`border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
                 statusFilter === tab.value
                   ? 'border-blue-600 text-blue-600'
