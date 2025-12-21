@@ -1,14 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Logo } from '@/components/logo';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { useAuthStore } from '@/stores/auth.store';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnUrl = searchParams.get('returnUrl');
   const [isChecking, setIsChecking] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -17,16 +20,16 @@ export default function LoginPage() {
     password: '',
     remember: false
   });
+  const { setAuth, isAuthenticated } = useAuthStore();
 
   // Redirect if already logged in
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      router.replace('/');
+    if (isAuthenticated) {
+        router.replace(returnUrl ? decodeURIComponent(returnUrl) : '/');
     } else {
       setIsChecking(false);
     }
-  }, [router]);
+  }, [router, isAuthenticated, returnUrl]);
 
   if (isChecking) {
     return null; // Or a loading spinner preventing the form from showing
@@ -48,15 +51,15 @@ export default function LoginPage() {
 
       if (response.ok) {
         const data = await response.json();
-        // Store tokens
-        localStorage.setItem('accessToken', data.accessToken);
-        localStorage.setItem('refreshToken', data.refreshToken);
+        
+        // Update store (which also handles localStorage)
+        setAuth(data.user, data.accessToken, data.refreshToken);
         
         toast.success('Login successful!');
         
-        // Redirect to dashboard home
+        // Redirect
         router.refresh();
-        router.push('/');
+        router.push(returnUrl ? decodeURIComponent(returnUrl) : '/');
       } else {
         toast.error('Invalid credentials');
       }
