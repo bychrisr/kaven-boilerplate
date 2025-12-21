@@ -62,11 +62,7 @@ export default function InvoicesPage() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [invoiceToDelete, setInvoiceToDelete] = useState<string | null>(null);
 
-  const { invoices, isLoading, pagination, deleteInvoice } = useInvoices({
-    page,
-    limit,
-    status: statusFilter || undefined,
-  });
+
 
   const { data: statsData } = useInvoiceStats();
 
@@ -269,14 +265,14 @@ export default function InvoicesPage() {
                     <Loader2 className="mx-auto h-8 w-8 animate-spin text-blue-600" />
                   </td>
                 </tr>
-              ) : filteredInvoices.length === 0 ? (
+              ) : invoices.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500">
                     Nenhuma fatura encontrada
                   </td>
                 </tr>
               ) : (
-                filteredInvoices.map((invoice) => (
+                invoices.map((invoice) => (
                   <tr key={invoice.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -359,7 +355,7 @@ export default function InvoicesPage() {
         </div>
 
         {/* Pagination */}
-        {!isLoading && filteredInvoices.length > 0 && (
+        {!isLoading && invoices.length > 0 && (
           <div className="flex items-center justify-between border-t border-gray-200 px-6 py-4">
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500">Linhas por página:</span>
