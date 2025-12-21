@@ -1,152 +1,167 @@
 'use client';
 
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { useRouter } from 'next/navigation';
+import { useCreateUser } from '@/hooks/use-users';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
-export default function UserCreatePage() {
+const userSchema = z.object({
+  name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
+  email: z.string().email('Email inválido'),
+  password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
+  role: z.enum(['USER', 'TENANT_ADMIN']),
+});
+
+type UserFormData = z.infer<typeof userSchema>;
+
+export default function CreateUserPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    role: 'USER',
-    tenantId: ''
+  const createUser = useCreateUser();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<UserFormData>({
+    resolver: zodResolver(userSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      role: 'USER',
+    },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
+  const onSubmit = async (data: UserFormData) => {
     try {
-      const response = await fetch('http://localhost:8000/api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-        },
-        body: JSON.stringify(formData)
-      });
-
-      if (response.ok) {
-        alert('User created successfully!');
-        router.push('/users');
-      } else {
-        alert('Failed to create user');
-      }
-    } catch (error) {
-      console.error('Create user error:', error);
-      alert('Failed to create user');
-    } finally {
-      setLoading(false);
+      await createUser.mutateAsync(data);
+      router.push('/users');
+    } catch {
+      // Error já tratado no hook com toast
     }
   };
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Create User</h1>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <Link
+          href="/users"
+          className="rounded-lg p-2 hover:bg-gray-100"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Link>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Novo Usuário</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Preencha os dados para criar um novo usuário
+          </p>
+        </div>
+      </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 max-w-2xl">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Form */}
+      <div className="rounded-lg border border-gray-200 bg-white p-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Name */}
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              Full Name *
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Nome completo
             </label>
             <input
-              id="name"
+              {...register('name')}
               type="text"
-              required
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-main"
-              placeholder="John Doe"
+              id="name"
+              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder="João Silva"
             />
+            {errors.name && (
+              <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+            )}
           </div>
 
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email Address *
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Email
             </label>
             <input
-              id="email"
+              {...register('email')}
               type="email"
-              required
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-main"
-              placeholder="john@example.com"
+              id="email"
+              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder="joao@example.com"
             />
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+            )}
           </div>
 
           {/* Password */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Password *
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Senha
             </label>
             <input
-              id="password"
+              {...register('password')}
               type="password"
-              required
-              minLength={8}
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-main"
+              id="password"
+              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               placeholder="••••••••"
             />
-            <p className="text-xs text-gray-500 mt-1">Minimum 8 characters</p>
+            {errors.password && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           {/* Role */}
           <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
-              Role *
+            <label
+              htmlFor="role"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Permissão
             </label>
             <select
+              {...register('role')}
               id="role"
-              value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-main"
+              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <option value="USER">User</option>
-              <option value="TENANT_ADMIN">Tenant Admin</option>
-              <option value="SUPER_ADMIN">Super Admin</option>
+              <option value="USER">Usuário</option>
+              <option value="TENANT_ADMIN">Administrador</option>
             </select>
-          </div>
-
-          {/* Tenant (optional) */}
-          <div>
-            <label htmlFor="tenantId" className="block text-sm font-medium text-gray-700 mb-1">
-              Tenant (Optional)
-            </label>
-            <select
-              id="tenantId"
-              value={formData.tenantId}
-              onChange={(e) => setFormData({ ...formData, tenantId: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-main"
-            >
-              <option value="">No Tenant</option>
-              <option value="1">Tenant 1</option>
-              <option value="2">Tenant 2</option>
-            </select>
+            {errors.role && (
+              <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>
+            )}
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 pt-4">
+          <div className="flex items-center justify-end gap-3 border-t pt-6">
+            <Link
+              href="/users"
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Cancelar
+            </Link>
             <button
               type="submit"
-              disabled={loading}
-              className="bg-primary-main text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-dark transition-colors disabled:opacity-50"
+              disabled={isSubmitting || createUser.isPending}
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
             >
-              {loading ? 'Creating...' : 'Create User'}
-            </button>
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors"
-            >
-              Cancel
+              {isSubmitting || createUser.isPending ? 'Criando...' : 'Criar Usuário'}
             </button>
           </div>
         </form>
