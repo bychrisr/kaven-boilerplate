@@ -84,23 +84,31 @@ export default function TenantsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {isLoading ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
-                    <div className="flex justify-center items-center gap-2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-main border-t-transparent"></div>
-                      Carregando tenants...
-                    </div>
-                  </td>
-                </tr>
-              ) : filteredTenants?.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
-                    {searchTerm ? `Nenhum tenant encontrado para "${searchTerm}"` : 'Nenhum tenant cadastrado.'}
-                  </td>
-                </tr>
-              ) : (
-                filteredTenants?.map((tenant) => (
+              {(() => {
+                if (isLoading) {
+                  return (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                        <div className="flex justify-center items-center gap-2">
+                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-main border-t-transparent"></div>
+                          Carregando tenants...
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                }
+
+                if (filteredTenants?.length === 0) {
+                  return (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                        {searchTerm ? `Nenhum tenant encontrado para "${searchTerm}"` : 'Nenhum tenant cadastrado.'}
+                      </td>
+                    </tr>
+                  );
+                }
+
+                return filteredTenants?.map((tenant) => (
                   <tr key={tenant.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -171,8 +179,8 @@ export default function TenantsPage() {
                       </div>
                     </td>
                   </tr>
-                ))
-              )}
+                ));
+              })()}
             </tbody>
           </table>
         </div>
