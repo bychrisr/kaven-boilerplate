@@ -58,20 +58,20 @@ export default function CreateUserPage() {
 
   const onSubmit = async (data: UserFormData) => {
     try {
+      let tenantId: string | undefined = undefined;
+      if (data.tenantAssignment === 'create_own') {
+        tenantId = 'create-own';
+      } else if (data.tenantId !== '') {
+        tenantId = data.tenantId;
+      }
+
       const payload = {
         name: data.name,
         email: data.email,
         phone: data.phone,
         password: data.password,
         role: data.role,
-        password: data.password,
-        role: data.role,
-        tenantId:
-          data.tenantAssignment === 'create_own'
-            ? 'create-own'
-            : data.tenantId === ''
-              ? undefined
-              : data.tenantId,
+        tenantId,
       };
       await createUser.mutateAsync(payload);
       router.push('/users');
