@@ -6,12 +6,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useInvoice, useInvoices } from '@/hooks/use-invoices';
-import { useTenants } from '@/hooks/use-tenants';
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 const editInvoiceSchema = z.object({
-  tenantId: z.string().min(1, 'Selecione um tenant/cliente'),
   amountDue: z.coerce.number().min(0.01, 'O valor deve ser maior que zero'),
   dueDate: z.string().min(1, 'Data de vencimento é obrigatória'),
   status: z.enum(['DRAFT', 'PENDING', 'PAID', 'OVERDUE', 'CANCELED']),
@@ -25,7 +23,6 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
   const router = useRouter();
   const { data: invoice, isLoading: isLoadingInvoice } = useInvoice(id);
   const { updateInvoice } = useInvoices();
-  const { tenants, isLoading: isLoadingTenants } = useTenants();
   
   const {
     register,
@@ -39,7 +36,6 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
   useEffect(() => {
     if (invoice) {
       reset({
-        tenantId: invoice.tenantId,
         amountDue: invoice.amountDue,
         dueDate: new Date(invoice.dueDate).toISOString().split('T')[0],
         status: invoice.status,
@@ -53,7 +49,6 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
       await updateInvoice.mutateAsync({
         id,
         data: {
-          tenantId: data.tenantId,
           amountDue: Number(data.amountDue),
           dueDate: new Date(data.dueDate),
           status: data.status,
@@ -107,33 +102,17 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
           <div className="grid gap-6 md:grid-cols-2">
             
-            {/* Tenant Selection */}
+            {/* Tenant Display (readonly) */}
             <div className="col-span-2">
-              <label htmlFor="tenantId" className="block text-sm font-medium text-gray-700 mb-1">
-                Cliente / Tenant *
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Cliente / Tenant
               </label>
-              {isLoadingTenants ? (
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Carregando clientes...
-                </div>
-              ) : (
-                <select
-                  id="tenantId"
-                  {...register('tenantId')}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
-                >
-                  <option value="">Selecione um cliente</option>
-                  {tenants.map((tenant) => (
-                    <option key={tenant.id} value={tenant.id}>
-                      {tenant.name}
-                    </option>
-                  ))}
-                </select>
-              )}
-              {errors.tenantId && (
-                <p className="mt-1 text-sm text-red-600">{errors.tenantId.message}</p>
-              )}
+              <div className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600">
+                {invoice.tenant?.name || invoice.tenantId}
+              </div>
+              <p className="mt-1 text-xs text-gray-500">
+                O cliente não pode ser alterado após a criação da fatura
+              </p>
             </div>
 
             {/* Amount */}

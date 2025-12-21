@@ -43,9 +43,13 @@ export interface CreateInvoiceDTO {
 }
 
 export interface UpdateInvoiceDTO {
+  amountDue?: number;
+  dueDate?: string | Date;
   status?: InvoiceStatus;
   amountPaid?: number;
   paidAt?: string;
+  currency?: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface InvoicesParams {
