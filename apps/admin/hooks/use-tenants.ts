@@ -103,3 +103,14 @@ export function useTenants(page: number = 1, limit: number = 100) {
     deleteTenant,
   };
 }
+
+export function useTenant(id: string) {
+  return useQuery<Tenant>({
+    queryKey: ['tenant', id],
+    queryFn: async () => {
+      const response = await api.get(`/api/tenants/${id}`);
+      return response.data;
+    },
+    enabled: !!id,
+  });
+}
