@@ -235,64 +235,57 @@ const { sidebarOpen, toggleSidebar, theme, setTheme } = useUIStore();
 
 ---
 
-## 🐛 Problemas Conhecidos
+## 5. Problemas Conhecidos & Soluções
 
-### 1. Instalação de Dependências
+### Resolvidos
 
-**Status:** ❌ Falhou
+- **`npm install` failure:** Resolvido usando `pnpm` no monorepo e corrigindo dependências no `package.json`.
+- **Lint Errors:** Corrigidos tipos any implícitos e variáveis não usadas.
+- **Hydration Error:** Corrigido adicionando `suppressHydrationWarning` no layout.
+- **CSS Build Error:** Corrigida ordem dos `@import` no `globals.css` (Tailwind v4 requirement).
+- **CORS Error:** Backend configurado para aceitar porta 3002.
 
-**Erro:**
+## 6. Próximos Passos Imediatos
 
-```
-npm error Cannot read properties of null (reading 'name')
-```
+1. **Implementar Página de Login:** Conectar formulário de login com a API (`/api/auth/login`).
+2. **Implementar Tenant Management:** Criar páginas de listagem e criação de tenants.
+3. **Implementar Invoice/Order Views:** Visualização básica de pedidos e faturas.
+4. **Testes E2E:** Validar fluxos críticos no browser.
 
-**Solução:**
+## 1. Status Geral
 
-- Limpar cache npm
-- Usar --legacy-peer-deps
-- Verificar package.json
+**Progresso:** 90% Concluído
+**Fase Atual:** Finalização do Frontend e Testes de Integração
+**Data:** 21/12/2025
 
-### 2. Dependências Faltantes
+## 2. Features Implementadas
 
-**Pendentes:**
+### Backend (100%)
 
-- @tanstack/react-query
-- @tanstack/react-query-devtools
-- zustand
-- react-hook-form
-- @hookform/resolvers
-- sonner
-- axios
+- **Arquitetura Base:** Fastify, Prisma, Zod, Swagger.
+- **Módulos:** Auth, Users, Tenants, Payments, Invoices, Orders.
+- **API:** 42 endpoints implementados e documentados.
+- **Segurança:** RLS (Row Level Security), RBAC, JWT Refresh Token.
+- **CORS:** Configurado para aceitar frontend (`localhost:3002`).
 
-**Impacto:**
+### Frontend (Admin Panel) (85%)
 
-- Erros de compilação (módulos não encontrados)
-- Não é possível testar no browser
-- Dev server não inicia
-
----
-
-## 📊 Métricas
-
-### Linhas de Código
-
-- **Infraestrutura:** ~400 linhas
-- **UI Components:** ~500 linhas
-- **Total:** ~900 linhas
-
-### Arquivos Criados
-
-- **Infraestrutura:** 6 arquivos
-- **UI Components:** 5 arquivos
-- **Total:** 11 arquivos
-
-### Tempo Estimado
-
-- **Infraestrutura:** 4h ✅
-- **Layout:** 3h ✅
-- **Users Page:** 2h ✅
-- **Total:** 9h de 24h (37.5%)
+- **Infraestrutura:** Next.js 16 (App Router), Tailwind v4, Shadcn/UI (base).
+- **Core Components:** Sidebar, Header, Breadcrumbs, Layout.
+- **State Management:** Zustand (Auth, UI), TanStack Query (Server State).
+- **User Management:**
+  - Listagem com paginação e busca.
+  - Criação de usuários com validação.
+  - Edição de usuários e proteção de roles.
+  - Exclusão com confirmação.
+- **Dashboard Home:**
+  - Cards de métricas (Users, Revenue, etc).
+  - Gráficos de barra (Receita, Crescimento).
+  - Tabela de usuários recentes.
+- **Fixes Críticos:**
+  - Hydration Error (Next.js 16 + Browser Automation).
+  - CSS Build Error (@import ordering).
+  - CORS Policies.5%)
 
 ---
 
