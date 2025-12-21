@@ -55,7 +55,11 @@ export default function EditUserPage() {
 
   const onSubmit = async (data: UserFormData) => {
     try {
-      await updateUser.mutateAsync(data);
+      const payload = {
+        ...data,
+        tenantId: data.tenantId === '' ? null : data.tenantId,
+      };
+      await updateUser.mutateAsync(payload as any); // Type cast until we fix frontend types properly
       router.push('/users');
     } catch {
       // Error já tratado no hook com toast

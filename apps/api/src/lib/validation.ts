@@ -64,7 +64,7 @@ export const updateUserSchema = z.object({
   phone: z.string().nullable().optional(),
   role: z.enum(['SUPER_ADMIN', 'TENANT_ADMIN', 'USER']).optional(),
   status: z.enum(['ACTIVE', 'PENDING', 'BANNED', 'REJECTED']).optional(),
-  tenantId: z.string().uuid().optional(),
+  tenantId: z.string().uuid().nullable().optional(),
 });
 
 // ===========================
