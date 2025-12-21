@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { useUsers, useUserStats } from '@/hooks/use-users';
+import { useUsers, useUserStats, useDeleteUser } from '@/hooks/use-users';
 import {
   Plus,
   Search,
