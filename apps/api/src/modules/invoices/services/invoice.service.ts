@@ -28,6 +28,11 @@ export class InvoiceService {
           tenantId: true,
           subscriptionId: true,
           createdAt: true,
+          tenant: {
+            select: {
+              name: true,
+            },
+          },
         },
         orderBy: { createdAt: 'desc' },
       }),

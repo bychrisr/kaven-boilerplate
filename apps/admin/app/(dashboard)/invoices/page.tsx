@@ -7,7 +7,7 @@ import {
   Plus,
   FileText,
   Send,
-  MoreVertical,
+  Eye,
   CheckCircle2,
   AlertCircle,
   Clock,
@@ -28,6 +28,7 @@ const statusConfig: Record<InvoiceStatus, { label: string; color: string; icon: 
 export default function InvoicesPage() {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<InvoiceStatus | ''>('');
+  const [sendingId, setSendingId] = useState<string | null>(null);
   
   const { invoices, isLoading, pagination, sendInvoice } = useInvoices({ 
     page, 
@@ -36,8 +37,13 @@ export default function InvoicesPage() {
   });
 
   const handleSendEmail = async (id: string) => {
-    if (confirm('Deseja enviar a fatura por e-mail?')) {
-      await sendInvoice.mutateAsync(id);
+    if (confirm('Deseja enviar a fatura por e-mail para o cliente?')) {
+      setSendingId(id);
+      try {
+        await sendInvoice.mutateAsync(id);
+      } finally {
+        setSendingId(null);
+      }
     }
   };
 
@@ -151,17 +157,19 @@ export default function InvoicesPage() {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => handleSendEmail(invoice.id)}
-                            className="p-2 text-gray-400 hover:text-primary-main transition-colors"
+                            disabled={sendingId === invoice.id}
+                            className="p-2 text-gray-400 hover:text-primary-main transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             title="Enviar por Email"
                           >
                             <Send className="h-4 w-4" />
                           </button>
                           <Link
                             href={`/invoices/${invoice.id}`}
-                            className="p-2 text-gray-400 hover:text-gray-900 transition-colors"
-                            title="Detalhes"
+                            className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                            title="Visualizar Detalhes"
                           >
-                            <MoreVertical className="h-4 w-4" />
+                            <Eye className="h-4 w-4" />
+                            Visualizar
                           </Link>
                         </div>
                       </td>
