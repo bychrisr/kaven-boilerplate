@@ -57,6 +57,11 @@ export class InvoiceService {
     const invoice = await prisma.invoice.findUnique({
       where: { id },
       include: {
+        tenant: {
+          select: {
+            name: true,
+          },
+        },
         subscription: {
           select: {
             id: true,
