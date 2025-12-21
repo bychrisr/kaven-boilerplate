@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { ptBR } from 'date-fns/locale';
 import { ConfirmationModal } from '@/components/ui/confirmation-modal';
 
 // Avatar color generator
@@ -397,7 +396,7 @@ export default function InvoicesPage() {
           </div>
         )}
       </div>
-      </div>
+
 
       <ConfirmationModal
         isOpen={deleteModalOpen}
