@@ -59,6 +59,7 @@ export default function EditUserPage() {
         ...data,
         tenantId: data.tenantId === '' ? null : data.tenantId,
       };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await updateUser.mutateAsync(payload as any); // Type cast until we fix frontend types properly
       router.push('/users');
     } catch {
