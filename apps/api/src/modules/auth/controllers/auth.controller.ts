@@ -42,6 +42,19 @@ export class AuthController {
   }
 
   /**
+   * POST /api/auth/resend-verification
+   */
+  async resendVerification(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const { email } = forgotPasswordSchema.parse(request.body); // Usa mesmo schema (só email)
+      const result = await authService.resendVerification(email);
+      reply.send(result);
+    } catch (error: any) {
+      reply.status(400).send({ error: error.message || 'Erro ao reenviar verificação' });
+    }
+  }
+
+  /**
    * POST /api/auth/login
    */
   async login(request: FastifyRequest, reply: FastifyReply) {

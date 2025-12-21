@@ -16,6 +16,17 @@ export async function authRoutes(fastify: FastifyInstance) {
   // Verificar email
   fastify.post('/verify-email', authController.verifyEmail.bind(authController));
   
+  // Reenviar verificação (3 req/min)
+  fastify.post('/resend-verification', {
+    config: {
+      rateLimit: {
+        max: 3,
+        timeWindow: 60000, // 1 minuto em ms
+      },
+    },
+    handler: authController.resendVerification.bind(authController),
+  });
+  
   // Login (5 req/min)
   fastify.post('/login', {
     config: {

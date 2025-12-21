@@ -77,6 +77,36 @@ export class AuthService {
   }
 
   /**
+   * POST /api/auth/resend-verification
+   * Reenvia email de verificação
+   */
+  async resendVerification(email: string) {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      // Por segurança, sempre retornar sucesso (previne enumeração de emails)
+      return { message: 'Se o email existir, um novo link de verificação será enviado' };
+    }
+
+    if (user.emailVerified) {
+      throw new Error('Email já verificado');
+    }
+
+    // Gerar novo token de verificação
+    const verificationToken = `${user.id}.${Date.now()}.${Math.random().toString(36)}`;
+    
+    // TODO: Salvar token no banco com expiração
+    // await prisma.verificationToken.create({ data: { token: verificationToken, userId: user.id, expiresAt: ... } });
+    
+    // Enviar email de verificação
+    await emailService.sendVerificationEmail(user, verificationToken);
+
+    return { message: 'Se o email existir, um novo link de verificação será enviado' };
+  }
+
+  /**
    * POST /api/auth/login
    * Realiza login e retorna access token + refresh token
    */
