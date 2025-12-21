@@ -1,74 +1,88 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTenants } from '@/hooks/use-tenants';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
-const createTenantSchema = z.object({
+const updateTenantSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
   slug: z.string()
     .min(2, 'Slug deve ter pelo menos 2 caracteres')
     .regex(/^[a-z0-9-]+$/, 'Slug deve conter apenas letras minúsculas, números e hífens'),
   domain: z.string().optional().or(z.literal('')),
-  active: z.boolean().default(true),
+  active: z.boolean(),
 });
 
-type CreateTenantFormData = z.infer<typeof createTenantSchema>;
+type UpdateTenantFormData = z.infer<typeof updateTenantSchema>;
 
-export default function CreateTenantPage() {
+export default function EditTenantPage({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const { createTenant } = useTenants();
+  const { tenants, isLoading: isLoadingTenants, updateTenant } = useTenants();
+  
+  const tenant = tenants?.find((t) => t.id === params.id);
   
   const {
     register,
     handleSubmit,
-    formState: { errors, iSubmitting },
-    watch,
-    setValue,
-  } = useForm<CreateTenantFormData>({
-    resolver: zodResolver(createTenantSchema),
-    defaultValues: {
-      active: true,
-      domain: '',
-    },
+    formState: { errors },
+    reset,
+  } = useForm<UpdateTenantFormData>({
+    resolver: zodResolver(updateTenantSchema),
   });
 
-  // Auto-generate slug from name if slug is empty
-  const name = watch('name');
-  const slug = watch('slug');
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newName = e.target.value;
-    setValue('name', newName);
-    
-    // Only auto-generate if slug hasn't been manually edited or is empty
-    if (!slug || slug === name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')) {
-      const newSlug = newName
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-      setValue('slug', newSlug);
+  useEffect(() => {
+    if (tenant) {
+      reset({
+        name: tenant.name,
+        slug: tenant.slug,
+        domain: tenant.domain || '',
+        active: tenant.active,
+      });
     }
-  };
+  }, [tenant, reset]);
 
-  const onSubmit = async (data: CreateTenantFormData) => {
+  const onSubmit = async (data: UpdateTenantFormData) => {
     try {
-      await createTenant.mutateAsync({
-        ...data,
-        domain: data.domain || undefined, // Send undefined if empty string
+      await updateTenant.mutateAsync({
+        id: params.id,
+        data: {
+          ...data,
+          domain: data.domain || undefined,
+        },
       });
       router.push('/tenants');
     } catch (error) {
-      // Error handled by hook
       console.error(error);
     }
   };
+
+  if (isLoadingTenants) {
+    return (
+      <div className="flex h-96 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-main" />
+      </div>
+    );
+  }
+
+  if (!tenant) {
+    return (
+      <div className="flex h-96 flex-col items-center justify-center gap-4">
+        <h1 className="text-2xl font-bold text-gray-900">Tenant não encontrado</h1>
+        <Link
+          href="/tenants"
+          className="text-primary-main hover:underline"
+        >
+          Voltar para listagem
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -80,9 +94,9 @@ export default function CreateTenantPage() {
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Novo Tenant</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Editar Tenant</h1>
           <p className="text-sm text-gray-500">
-            Cadastre uma nova organização no sistema
+            Atualize as informações de {tenant.name}
           </p>
         </div>
       </div>
@@ -99,13 +113,11 @@ export default function CreateTenantPage() {
                 id="name"
                 type="text"
                 {...register('name')}
-                onChange={handleNameChange}
                 className={`w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 ${
                   errors.name
                     ? 'border-error-main focus:border-error-main focus:ring-error-light/50'
                     : 'border-gray-300 focus:border-primary-main focus:ring-primary-main/50'
                 }`}
-                placeholder="Ex: Acme Corporation"
               />
               {errors.name && (
                 <p className="mt-1 text-sm text-error-main">{errors.name.message}</p>
@@ -130,7 +142,6 @@ export default function CreateTenantPage() {
                       ? 'border-error-main focus:border-error-main focus:ring-error-light/50'
                       : 'border-gray-300 focus:border-primary-main focus:ring-primary-main/50'
                   }`}
-                  placeholder="acme-corp"
                 />
               </div>
               {errors.slug && (
@@ -152,7 +163,6 @@ export default function CreateTenantPage() {
                     ? 'border-error-main focus:border-error-main focus:ring-error-light/50'
                     : 'border-gray-300 focus:border-primary-main focus:ring-primary-main/50'
                 }`}
-                placeholder="app.acme.com"
               />
               {errors.domain && (
                 <p className="mt-1 text-sm text-error-main">{errors.domain.message}</p>
@@ -169,9 +179,6 @@ export default function CreateTenantPage() {
                 />
                 <span className="text-sm font-medium text-gray-700">Tenant Ativo</span>
               </label>
-              <p className="mt-1 text-xs text-gray-500 ml-6">
-                Tenants inativos não podem ser acessados por usuários.
-              </p>
             </div>
           </div>
 
@@ -184,11 +191,11 @@ export default function CreateTenantPage() {
             </Link>
             <button
               type="submit"
-              disabled={createTenant.isPending}
+              disabled={updateTenant.isPending}
               className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary-main rounded-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-main disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Save className="h-4 w-4" />
-              {createTenant.isPending ? 'Criando...' : 'Criar Tenant'}
+              {updateTenant.isPending ? 'Salvando...' : 'Salvar Alterações'}
             </button>
           </div>
         </form>
