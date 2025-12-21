@@ -45,7 +45,22 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
   }, [invoice, reset]);
 
   const onSubmit = async (data: EditInvoiceFormData) => {
+    console.log('🔵 onSubmit chamado!');
+    console.log('📦 Dados do formulário:', data);
+    
     try {
+      console.log('🚀 Chamando updateInvoice.mutateAsync...');
+      console.log('📝 Payload:', {
+        id,
+        data: {
+          amountDue: data.amountDue,
+          dueDate: new Date(data.dueDate),
+          status: data.status,
+          currency: 'BRL',
+          metadata: data.metadata,
+        },
+      });
+      
       await updateInvoice.mutateAsync({
         id,
         data: {
@@ -56,9 +71,12 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
           metadata: data.metadata,
         },
       });
+      
+      console.log('✅ Mutation executada com sucesso!');
+      console.log('🔄 Redirecionando para:', `/invoices/${id}`);
       router.push(`/invoices/${id}`);
     } catch (error) {
-      console.error(error);
+      console.error('❌ Erro ao salvar:', error);
     }
   };
 
