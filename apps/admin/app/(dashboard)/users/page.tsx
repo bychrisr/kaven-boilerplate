@@ -13,7 +13,7 @@ import {
   Trash2,
   Loader2,
 } from 'lucide-react';
-import { toast } from 'sonner';
+
 import { ConfirmationModal } from '@/components/ui/confirmation-modal';
 
 // Avatar color generator

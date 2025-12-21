@@ -15,11 +15,15 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { ConfirmationModal } from '@/components/ui/confirmation-modal';
 
 
 export default function TenantsPage() {
   const { tenants, isLoading, deleteTenant } = useTenants();
   const [searchTerm, setSearchTerm] = useState('');
+
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [tenantToDelete, setTenantToDelete] = useState<{ id: string; name: string } | null>(null);
 
   const filteredTenants = tenants?.filter(
     (tenant) =>
@@ -27,14 +31,19 @@ export default function TenantsPage() {
       tenant.slug.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDelete = async (id: string, name: string) => {
-    if (confirm(`Tem certeza que deseja excluir o tenant "${name}"?`)) {
-      try {
-        await deleteTenant.mutateAsync(id);
-      } catch (error) {
-        // Error handling is already in the hook but we prevent defaults here
-        console.error(error);
-      }
+  const handleDelete = (id: string, name: string) => {
+    setTenantToDelete({ id, name });
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!tenantToDelete) return;
+    try {
+      await deleteTenant.mutateAsync(tenantToDelete.id);
+      setDeleteModalOpen(false);
+      setTenantToDelete(null);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -185,6 +194,19 @@ export default function TenantsPage() {
           </table>
         </div>
       </div>
+      </div>
+
+      <ConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+        title="Excluir Tenant"
+        message={`Tem certeza que deseja excluir o tenant "${tenantToDelete?.name}"? Esta ação removerá todos os dados associados e não pode ser desfeita.`}
+        confirmLabel="Excluir"
+        cancelLabel="Cancelar"
+        variant="danger"
+        isLoading={deleteTenant.isPending}
+      />
     </div>
   );
 }
