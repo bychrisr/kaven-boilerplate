@@ -11,6 +11,8 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-slot": "^1.2.4",
+    "@tanstack/react-query": "^5.62.8",
+    "@tanstack/react-query-devtools": "^5.62.8",
     "@tanstack/react-table": "^8.21.3",
     "axios": "^1.13.2",
     "class-variance-authority": "^0.7.1",
@@ -22,9 +24,11 @@
     "react-dom": "19.2.3",
     "react-hook-form": "^7.69.0",
     "recharts": "^3.6.0",
+    "sonner": "^1.7.1",
     "swr": "^2.3.8",
     "tailwind-merge": "^3.4.0",
-    "zod": "^4.2.1"
+    "zod": "^4.2.1",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
