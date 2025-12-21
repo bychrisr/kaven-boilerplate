@@ -52,14 +52,19 @@ export const createUserSchema = z.object({
   email: z.string().email('Email inválido'),
   password: z.string().min(8, 'Senha deve ter no mínimo 8 caracteres'),
   name: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres'),
+  phone: z.string().optional(),
   role: z.enum(['SUPER_ADMIN', 'TENANT_ADMIN', 'USER']).default('USER'),
+  status: z.enum(['ACTIVE', 'PENDING', 'BANNED', 'REJECTED']).default('ACTIVE'),
   tenantId: z.string().uuid().optional(),
 });
 
 export const updateUserSchema = z.object({
   name: z.string().min(2).optional(),
   email: z.string().email().optional(),
+  phone: z.string().nullable().optional(),
   role: z.enum(['SUPER_ADMIN', 'TENANT_ADMIN', 'USER']).optional(),
+  status: z.enum(['ACTIVE', 'PENDING', 'BANNED', 'REJECTED']).optional(),
+  tenantId: z.string().uuid().optional(),
 });
 
 // ===========================
