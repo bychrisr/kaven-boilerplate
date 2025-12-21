@@ -179,7 +179,7 @@ export default function EditTenantPage({ params }: { params: Promise<{ id: strin
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={field.value}
+                      checked={field.value ?? false}
                       onChange={field.onChange}
                       className="h-4 w-4 rounded border-gray-300 text-primary-main focus:ring-primary-main"
                     />
