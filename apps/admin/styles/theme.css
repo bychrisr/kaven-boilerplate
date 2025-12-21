@@ -3,7 +3,7 @@
    Based on Minimals.cc + Phase 0 Specification
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap');
+/* Font import moved to globals.css */
 
 :root {
   /* ===== PRIMARY COLORS ===== */
