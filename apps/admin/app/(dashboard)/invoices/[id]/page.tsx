@@ -1,8 +1,9 @@
 'use client';
 
 import { use } from 'react';
+import { useRouter } from 'next/navigation';
 import { useInvoice, useInvoices, InvoiceStatus } from '@/hooks/use-invoices';
-import { ArrowLeft, Send, Download, Loader2, FileText, Calendar, Building2, CreditCard, CheckCircle2, AlertCircle, Clock, XCircle } from 'lucide-react';
+import { ArrowLeft, Send, Download, Loader2, FileText, Calendar, Building2, CreditCard, CheckCircle2, AlertCircle, Clock, XCircle, Pencil, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -18,12 +19,20 @@ const statusConfig: Record<InvoiceStatus, { label: string; color: string; icon: 
 
 export default function InvoiceDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const router = useRouter();
   const { data: invoice, isLoading, error } = useInvoice(id);
-  const { sendInvoice } = useInvoices(); // Getting mutations
+  const { sendInvoice, deleteInvoice } = useInvoices(); // Getting mutations
 
   const handleSendEmail = async () => {
     if (confirm('Deseja reenviar a fatura por e-mail para o cliente?')) {
       await sendInvoice.mutateAsync(id);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (confirm('Tem certeza que deseja excluir esta fatura? Esta ação não pode ser desfeita.')) {
+      await deleteInvoice.mutateAsync(id);
+      router.push('/invoices');
     }
   };
 
@@ -79,6 +88,22 @@ export default function InvoiceDetailsPage({ params }: { params: Promise<{ id: s
         </div>
         
         <div className="flex gap-2">
+          <Link
+            href={`/invoices/${id}/edit`}
+            className="inline-flex items-center gap-2 rounded-lg border bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2"
+          >
+            <Pencil className="h-4 w-4" />
+            Editar
+          </Link>
+          <button
+            onClick={handleDelete}
+            disabled={deleteInvoice.isPending}
+            className="inline-flex items-center gap-2 rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50"
+          >
+            <Trash2 className="h-4 w-4" />
+            {deleteInvoice.isPending ? 'Excluindo...' : 'Excluir'}
+          </button>
+          <div className="border-l border-gray-300 mx-2" />
           <button
              disabled={sendInvoice.isPending}
              onClick={handleSendEmail}
