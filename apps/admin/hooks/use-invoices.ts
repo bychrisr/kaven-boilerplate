@@ -38,7 +38,7 @@ export interface CreateInvoiceDTO {
   subscriptionId?: string;
   amountDue: number;
   currency?: string;
-  dueDate: Date;
+  dueDate: string | Date; // Aceita ambos: string do form ou Date convertido
   metadata?: Record<string, unknown>;
 }
 
