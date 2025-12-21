@@ -68,7 +68,7 @@ export default function InvoicesPage() {
     status: statusFilter || undefined,
   });
 
-  const { data: statsData, isLoading: isLoadingStats } = useInvoiceStats();
+  const { data: statsData } = useInvoiceStats();
 
   // Calculate stats from API data
   const stats = useMemo(() => {
