@@ -227,19 +227,23 @@ export default function UsersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {isLoading ? (
+              {isLoading && (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center">
                     <Loader2 className="mx-auto h-8 w-8 animate-spin text-blue-600" />
                   </td>
                 </tr>
-              ) : filteredUsers.length === 0 ? (
+              )}
+
+              {!isLoading && filteredUsers.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500">
                     Nenhum usuário encontrado
                   </td>
                 </tr>
-              ) : (
+              )}
+
+              {!isLoading &&
                 filteredUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
@@ -304,8 +308,7 @@ export default function UsersPage() {
                       </div>
                     </td>
                   </tr>
-                ))
-              )}
+                ))}
             </tbody>
           </table>
         </div>

@@ -13,7 +13,9 @@ import Link from 'next/link';
 const userSchema = z.object({
   name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
   email: z.string().email('Email inválido'),
+  phone: z.string().optional(),
   role: z.enum(['USER', 'TENANT_ADMIN', 'SUPER_ADMIN']),
+  status: z.enum(['ACTIVE', 'PENDING', 'BANNED', 'REJECTED']),
   tenantId: z.string().optional(),
 });
 
