@@ -67,12 +67,26 @@ export class InvoiceService {
   /**
    * GET /api/invoices - Listar invoices com paginação
    */
-  async listInvoices(tenantId?: string, page: number = 1, limit: number = 10) {
+  async listInvoices(params: { 
+    page?: number; 
+    limit?: number; 
+    tenantId?: string; 
+    status?: string; 
+    search?: string; 
+  }) {
+    const { page = 1, limit = 10, tenantId, status, search } = params;
     const skip = (page - 1) * limit;
     
-    const where = tenantId 
-      ? { tenantId, deletedAt: null } 
-      : { deletedAt: null };
+    const where: any = { deletedAt: null };
+
+    if (tenantId) where.tenantId = tenantId;
+    if (status) where.status = status;
+    if (search) {
+      where.OR = [
+        { invoiceNumber: { contains: search, mode: 'insensitive' } },
+        { tenant: { name: { contains: search, mode: 'insensitive' } } },
+      ];
+    }
     
     const [invoices, total] = await Promise.all([
       prisma.invoice.findMany({
