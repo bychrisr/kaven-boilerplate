@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter, useParams } from 'next/navigation';
 import { useUser, useUpdateUser } from '@/hooks/use-users';
+import { useTenants } from '@/hooks/use-tenants';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -13,6 +14,7 @@ const userSchema = z.object({
   name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
   email: z.string().email('Email inválido'),
   role: z.enum(['USER', 'TENANT_ADMIN', 'SUPER_ADMIN']),
+  tenantId: z.string().optional(),
 });
 
 type UserFormData = z.infer<typeof userSchema>;
@@ -24,6 +26,7 @@ export default function EditUserPage() {
 
   const { data: user, isLoading } = useUser(userId);
   const updateUser = useUpdateUser(userId);
+  const { tenants, isLoading: isLoadingTenants } = useTenants();
 
   const {
     register,
@@ -41,6 +44,7 @@ export default function EditUserPage() {
         name: user.name,
         email: user.email,
         role: user.role,
+        tenantId: user.tenantId || '',
       });
     }
   }, [user, reset]);
@@ -150,6 +154,38 @@ export default function EditUserPage() {
             )}
             {errors.role && (
               <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>
+            )}
+          </div>
+
+          {/* Tenant Selection */}
+          <div>
+            <label
+              htmlFor="tenantId"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Tenant
+            </label>
+            {isLoadingTenants ? (
+              <div className="flex items-center gap-2 text-sm text-gray-500 mt-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Carregando tenants...
+              </div>
+            ) : (
+              <select
+                {...register('tenantId')}
+                id="tenantId"
+                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                <option value="">Sem tenant (SUPER_ADMIN)</option>
+                {tenants.map((tenant) => (
+                  <option key={tenant.id} value={tenant.id}>
+                    {tenant.name}
+                  </option>
+                ))}
+              </select>
+            )}
+            {errors.tenantId && (
+              <p className="mt-1 text-sm text-red-600">{errors.tenantId.message}</p>
             )}
           </div>
 
