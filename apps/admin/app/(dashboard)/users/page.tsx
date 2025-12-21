@@ -14,6 +14,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { ConfirmationModal } from '@/components/ui/confirmation-modal';
 
 // Avatar color generator
 const getAvatarColor = (name: string) => {
@@ -65,6 +66,8 @@ export default function UsersPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
   const [searchQuery, setSearchQuery] = useState('');
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
 
   const { data: usersData, isLoading } = useUsers({ page, limit });
   const { data: statsData } = useUserStats();
@@ -86,14 +89,19 @@ export default function UsersPage() {
     ];
   }, [statsData]);
 
-  const handleDelete = async (id: string) => {
-    if (confirm('Tem certeza que deseja excluir este usuário?')) {
-      try {
-        await deleteUserMutation.mutateAsync(id);
-        toast.success('Usuário excluído com sucesso!');
-      } catch {
-        toast.error('Erro ao excluir usuário');
-      }
+  const handleDelete = (id: string) => {
+    setUserToDelete(id);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!userToDelete) return;
+    try {
+      await deleteUserMutation.mutateAsync(userToDelete);
+      setDeleteModalOpen(false);
+      setUserToDelete(null);
+    } catch {
+      // Error handled by mutation hook
     }
   };
 
@@ -344,6 +352,18 @@ export default function UsersPage() {
           </div>
         )}
       </div>
+
+      <ConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+        title="Excluir Usuário"
+        message="Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita."
+        confirmLabel="Excluir"
+        cancelLabel="Cancelar"
+        variant="danger"
+        isLoading={deleteUserMutation.isPending}
+      />
     </div>
   );
 }
