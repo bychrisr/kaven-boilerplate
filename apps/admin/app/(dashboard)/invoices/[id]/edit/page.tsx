@@ -49,7 +49,7 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
       await updateInvoice.mutateAsync({
         id,
         data: {
-          amountDue: Number(data.amountDue),
+          amountDue: data.amountDue,
           dueDate: new Date(data.dueDate),
           status: data.status,
           currency: 'BRL',
