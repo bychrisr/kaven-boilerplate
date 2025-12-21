@@ -2,16 +2,14 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { useInvoices, InvoiceStatus, useInvoices as useInvoicesHook } from '@/hooks/use-invoices';
+import { useInvoices, InvoiceStatus, useInvoiceStats } from '@/hooks/use-invoices';
 import {
   Plus,
   FileText,
   CheckCircle2,
   AlertCircle,
   Clock,
-  XCircle,
   Search,
-  MoreVertical,
   ChevronLeft,
   ChevronRight,
   Eye,
@@ -49,11 +47,11 @@ const statusStyles: Record<InvoiceStatus, string> = {
 };
 
 const statusLabels: Record<InvoiceStatus, string> = {
-  PAID: 'Paid',
-  PENDING: 'Pending',
-  OVERDUE: 'Overdue',
-  DRAFT: 'Draft',
-  CANCELED: 'Canceled',
+  PAID: 'Pago',
+  PENDING: 'Pendente',
+  OVERDUE: 'Vencido',
+  DRAFT: 'Rascunho',
+  CANCELED: 'Cancelado',
 };
 
 export default function InvoicesPage() {
@@ -68,81 +66,75 @@ export default function InvoicesPage() {
     status: statusFilter || undefined,
   });
 
-  // Calculate stats
-  const stats = useMemo(() => {
-    if (!invoices) return [];
+  const { data: statsData, isLoading: isLoadingStats } = useInvoiceStats();
 
-    const allInvoices = invoices; // In real app, fetch all for stats
-    
-    const calculateTotal = (status?: InvoiceStatus) => {
-      const filtered = status 
-        ? allInvoices.filter(inv => inv.status === status)
-        : allInvoices;
-      
-      return {
-        count: filtered.length,
-        amount: filtered.reduce((sum, inv) => sum + Number(inv.amountDue), 0),
-      };
-    };
+  // Calculate stats from API data
+  const stats = useMemo(() => {
+    if (!statsData) return [];
 
     return [
       {
         label: 'Total',
-        ...calculateTotal(),
+        count: statsData.total.count,
+        amount: statsData.total.amount,
         bgColor: 'bg-blue-50',
         textColor: 'text-blue-700',
         icon: FileText,
       },
       {
-        label: 'Paid',
-        ...calculateTotal('PAID'),
+        label: 'Pago',
+        count: statsData.paid.count,
+        amount: statsData.paid.amount,
         bgColor: 'bg-emerald-50',
         textColor: 'text-emerald-700',
         icon: CheckCircle2,
       },
       {
-        label: 'Pending',
-        ...calculateTotal('PENDING'),
+        label: 'Pendente',
+        count: statsData.pending.count,
+        amount: statsData.pending.amount,
         bgColor: 'bg-amber-50',
         textColor: 'text-amber-700',
         icon: Clock,
       },
       {
-        label: 'Overdue',
-        ...calculateTotal('OVERDUE'),
+        label: 'Vencido',
+        count: statsData.overdue.count,
+        amount: statsData.overdue.amount,
         bgColor: 'bg-rose-50',
         textColor: 'text-rose-700',
         icon: AlertCircle,
       },
       {
-        label: 'Draft',
-        ...calculateTotal('DRAFT'),
+        label: 'Rascunho',
+        count: statsData.draft.count,
+        amount: statsData.draft.amount,
         bgColor: 'bg-gray-50',
         textColor: 'text-gray-700',
         icon: FileText,
       },
     ];
-  }, [invoices]);
+  }, [statsData]);
 
   // Tabs with counts
   const tabs = useMemo(() => {
-    if (!invoices) return [];
+    if (!statsData) return [];
     
     return [
-      { label: 'All', count: stats[0]?.count || 0, value: null },
-      { label: 'Paid', count: stats[1]?.count || 0, value: 'PAID' as InvoiceStatus },
-      { label: 'Pending', count: stats[2]?.count || 0, value: 'PENDING' as InvoiceStatus },
-      { label: 'Overdue', count: stats[3]?.count || 0, value: 'OVERDUE' as InvoiceStatus },
-      { label: 'Draft', count: stats[4]?.count || 0, value: 'DRAFT' as InvoiceStatus },
+      { label: 'Todos', count: statsData.total.count, value: null },
+      { label: 'Pago', count: statsData.paid.count, value: 'PAID' as InvoiceStatus },
+      { label: 'Pendente', count: statsData.pending.count, value: 'PENDING' as InvoiceStatus },
+      { label: 'Vencido', count: statsData.overdue.count, value: 'OVERDUE' as InvoiceStatus },
+      { label: 'Rascunho', count: statsData.draft.count, value: 'DRAFT' as InvoiceStatus },
     ];
-  }, [stats, invoices]);
+  }, [statsData]);
 
   const handleDelete = async (id: string) => {
     if (confirm('Tem certeza que deseja excluir esta fatura?')) {
       try {
         await deleteInvoice.mutateAsync(id);
         toast.success('Fatura excluída com sucesso!');
-      } catch (error) {
+      } catch {
         toast.error('Erro ao excluir fatura');
       }
     }
@@ -163,15 +155,15 @@ export default function InvoicesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Invoices</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage your invoices and billing</p>
+          <h1 className="text-2xl font-bold text-gray-900">Faturas</h1>
+          <p className="text-sm text-gray-500 mt-1">Gerencie suas faturas e cobranças</p>
         </div>
         <Link
           href="/invoices/create"
           className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
         >
           <Plus className="h-4 w-4" />
-          New Invoice
+          Nova Fatura
         </Link>
       </div>
 
@@ -185,11 +177,11 @@ export default function InvoicesPage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">{stat.label}</p>
-                <p className="text-xs text-gray-400">{stat.count} invoices</p>
+                <p className="text-xs text-gray-400">{stat.count} faturas</p>
               </div>
             </div>
             <p className="mt-3 text-2xl font-bold text-gray-900">
-              ${stat.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              R$ {stat.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             </p>
           </div>
         ))}
@@ -224,7 +216,7 @@ export default function InvoicesPage() {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <input
               type="search"
-              placeholder="Search customer or invoice number..."
+              placeholder="Buscar por cliente ou número da fatura..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -240,22 +232,22 @@ export default function InvoicesPage() {
             <thead className="border-b border-gray-200 bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Customer
+                  Cliente
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Create
+                  Criado
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Due
+                  Vencimento
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Amount
+                  Valor
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Status
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Actions
+                  Ações
                 </th>
               </tr>
             </thead>
@@ -269,7 +261,7 @@ export default function InvoicesPage() {
               ) : filteredInvoices.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500">
-                    No invoices found
+                    Nenhuma fatura encontrada
                   </td>
                 </tr>
               ) : (
@@ -286,9 +278,9 @@ export default function InvoicesPage() {
                         </div>
                         <div>
                           <p className="font-medium text-gray-900">
-                            {invoice.tenant?.name || 'Unknown'}
+                            {invoice.tenant?.name || 'Desconhecido'}
                           </p>
-                          <p className="text-xs text-gray-500">INV-{invoice.id.slice(0, 8)}</p>
+                          <p className="text-xs text-gray-500">{invoice.invoiceNumber}</p>
                         </div>
                       </div>
                     </td>
@@ -314,7 +306,7 @@ export default function InvoicesPage() {
                     </td>
                     <td className="px-6 py-4">
                       <p className="text-sm font-medium text-gray-900">
-                        ${Number(invoice.amountDue).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        R$ {Number(invoice.amountDue).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </p>
                     </td>
                     <td className="px-6 py-4">
@@ -359,7 +351,7 @@ export default function InvoicesPage() {
         {!isLoading && filteredInvoices.length > 0 && (
           <div className="flex items-center justify-between border-t border-gray-200 px-6 py-4">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Rows per page:</span>
+              <span className="text-sm text-gray-500">Linhas por página:</span>
               <select
                 value={limit}
                 onChange={(e) => setLimit(Number(e.target.value))}

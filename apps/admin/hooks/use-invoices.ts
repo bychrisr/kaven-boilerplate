@@ -7,6 +7,7 @@ export type InvoiceStatus = 'DRAFT' | 'PENDING' | 'PAID' | 'OVERDUE' | 'CANCELED
 
 export interface Invoice {
   id: string;
+  invoiceNumber: string;
   tenantId: string;
   subscriptionId?: string | null;
   amountDue: number;
@@ -50,6 +51,24 @@ export interface UpdateInvoiceDTO {
   paidAt?: string;
   currency?: string;
   metadata?: Record<string, unknown>;
+}
+
+export interface InvoiceStats {
+  total: { count: number; amount: number };
+  paid: { count: number; amount: number };
+  pending: { count: number; amount: number };
+  overdue: { count: number; amount: number };
+  draft: { count: number; amount: number };
+}
+
+export function useInvoiceStats() {
+  return useQuery<InvoiceStats>({
+    queryKey: ['invoice-stats'],
+    queryFn: async () => {
+      const response = await api.get('/api/invoices/stats');
+      return response.data;
+    },
+  });
 }
 
 export interface InvoicesParams {
