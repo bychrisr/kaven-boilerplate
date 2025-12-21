@@ -2,7 +2,7 @@
 
 import { use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTenants } from '@/hooks/use-tenants';
@@ -32,6 +32,7 @@ export default function EditTenantPage({ params }: { params: Promise<{ id: strin
     handleSubmit,
     formState: { errors },
     reset,
+    control,
   } = useForm<UpdateTenantFormData>({
     resolver: zodResolver(updateTenantSchema),
   });
@@ -171,14 +172,21 @@ export default function EditTenantPage({ params }: { params: Promise<{ id: strin
 
             {/* Status */}
             <div className="col-span-2">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  {...register('active')}
-                  className="h-4 w-4 rounded border-gray-300 text-primary-main focus:ring-primary-main"
-                />
-                <span className="text-sm font-medium text-gray-700">Tenant Ativo</span>
-              </label>
+              <Controller
+                name="active"
+                control={control}
+                render={({ field }) => (
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={field.value}
+                      onChange={field.onChange}
+                      className="h-4 w-4 rounded border-gray-300 text-primary-main focus:ring-primary-main"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Tenant Ativo</span>
+                  </label>
+                )}
+              />
             </div>
           </div>
 
