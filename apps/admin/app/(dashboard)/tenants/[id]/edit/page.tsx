@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -20,11 +20,12 @@ const updateTenantSchema = z.object({
 
 type UpdateTenantFormData = z.infer<typeof updateTenantSchema>;
 
-export default function EditTenantPage({ params }: { params: { id: string } }) {
+export default function EditTenantPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const { tenants, isLoading: isLoadingTenants, updateTenant } = useTenants();
   
-  const tenant = tenants?.find((t) => t.id === params.id);
+  const tenant = tenants?.find((t) => t.id === id);
   
   const {
     register,
@@ -49,7 +50,7 @@ export default function EditTenantPage({ params }: { params: { id: string } }) {
   const onSubmit = async (data: UpdateTenantFormData) => {
     try {
       await updateTenant.mutateAsync({
-        id: params.id,
+        id,
         data: {
           ...data,
           domain: data.domain || undefined,
