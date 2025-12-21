@@ -95,8 +95,9 @@ export function useInvoices(params?: InvoicesParams) {
       const response = await api.put(`/api/invoices/${id}`, data);
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
+      queryClient.invalidateQueries({ queryKey: ['invoice', variables.id] });
       toast.success('Fatura atualizada com sucesso!');
     },
     onError: (error: unknown) => {
