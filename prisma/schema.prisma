@@ -121,6 +121,7 @@ model User {
   files         File[]
   verificationTokens VerificationToken[]
   passwordResetTokens PasswordResetToken[]
+  designSystemCustomization DesignSystemCustomization?
   
   @@index([email])
   @@index([tenantId])
@@ -319,3 +320,49 @@ model PasswordResetToken {
   @@index([token])
   @@index([userId])
 }
+
+// ===========================
+// DESIGN SYSTEM CUSTOMIZATION
+// ===========================
+
+enum DesignSystemType {
+  MUI
+  HIG
+  FLUENT
+  SHADCN
+}
+
+model DesignSystemCustomization {
+  id             String           @id @default(uuid())
+  userId         String           @unique
+  designSystem   DesignSystemType @default(MUI)
+  mode           String           @default("light") // "light" or "dark"
+  
+  // Color customizations (JSON)
+  colorPrimary   String?
+  colorSecondary String?
+  colorSuccess   String?
+  colorWarning   String?
+  colorError     String?
+  colorInfo      String?
+  
+  // Typography customizations
+  fontFamily     String?
+  fontSizeScale  Float?           @default(1.0)
+  
+  // Spacing customizations
+  spacingScale   Float?           @default(1.0)
+  
+  // Radius customizations
+  radiusScale    Float?           @default(1.0)
+  
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  
+  // Relations
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([designSystem])
+}
+
