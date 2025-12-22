@@ -1,6 +1,7 @@
 /**
  * Core Design System Types
  * Semantic, design-system-agnostic type definitions
+ * Updated to support Minimals.cc 5-tone color system
  */
 
 // ============================================
@@ -15,16 +16,51 @@ export enum DesignSystemType {
 }
 
 // ============================================
-// SEMANTIC COLOR TOKENS
+// SEMANTIC COLOR TOKENS (Minimals 5-Tone System)
 // ============================================
 
 export interface SemanticColorToken {
+  // Primary (5 tones)
   primary: string;
+  primaryLight: string;
+  primaryLighter: string;
+  primaryDark: string;
+  primaryDarker: string;
+  
+  // Secondary (5 tones)
   secondary: string;
+  secondaryLight: string;
+  secondaryLighter: string;
+  secondaryDark: string;
+  secondaryDarker: string;
+  
+  // Success (5 tones)
   success: string;
+  successLight: string;
+  successLighter: string;
+  successDark: string;
+  successDarker: string;
+  
+  // Warning (5 tones)
   warning: string;
+  warningLight: string;
+  warningLighter: string;
+  warningDark: string;
+  warningDarker: string;
+  
+  // Error (5 tones)
   error: string;
+  errorLight: string;
+  errorLighter: string;
+  errorDark: string;
+  errorDarker: string;
+  
+  // Info (5 tones)
   info: string;
+  infoLight: string;
+  infoLighter: string;
+  infoDark: string;
+  infoDarker: string;
 }
 
 export interface SemanticTextColors {
@@ -39,6 +75,7 @@ export interface SemanticBackgroundColors {
   paper: string;
   elevated: string;
   overlay: string;
+  neutral: string; // Added for Minimals
 }
 
 export interface SemanticBorderColors {
@@ -47,11 +84,33 @@ export interface SemanticBorderColors {
   strong: string;
 }
 
+export interface SemanticGreyScale {
+  50: string;
+  100: string;
+  200: string;
+  300: string;
+  400: string;
+  500: string;
+  600: string;
+  700: string;
+  800: string;
+  900: string;
+}
+
 // ============================================
 // SEMANTIC TYPOGRAPHY TOKENS
 // ============================================
 
 export interface SemanticTypographyScale {
+  // Heading sizes (responsive)
+  h1: string;
+  h2: string;
+  h3: string;
+  h4: string;
+  h5: string;
+  h6: string;
+  
+  // Body sizes
   xs: string;
   sm: string;
   base: string;
@@ -69,18 +128,32 @@ export interface SemanticFontWeights {
   medium: number;
   semibold: number;
   bold: number;
+  extrabold: number; // Added for Minimals (800)
+}
+
+export interface SemanticLineHeights {
+  tight: string;
+  normal: string;
+  relaxed: string;
+  // Specific line heights for headings
+  h1: string;
+  h2: string;
+  h3: string;
+  h4: string;
+  h5: string;
+  h6: string;
+  body1: string;
+  body2: string;
+  button: string;
 }
 
 export interface SemanticTypography {
   fontFamily: string;
   fontFamilyMono: string;
+  fontFamilyHeadings: string; // Added for Minimals (Barlow)
   fontSize: SemanticTypographyScale;
   fontWeight: SemanticFontWeights;
-  lineHeight: {
-    tight: string;
-    normal: string;
-    relaxed: string;
-  };
+  lineHeight: SemanticLineHeights;
 }
 
 // ============================================
@@ -108,19 +181,41 @@ export interface SemanticRadius {
   md: string;
   lg: string;
   xl: string;
+  '2xl': string; // Added for Minimals
   full: string;
 }
 
 // ============================================
-// SEMANTIC SHADOW TOKENS
+// SEMANTIC SHADOW TOKENS (Minimals 25 levels)
 // ============================================
 
 export interface SemanticShadows {
   none: string;
+  
+  // Standard elevation levels (z-index based)
+  z1: string;
+  z2: string;
+  z4: string;
+  z6: string;
+  z8: string;
+  z12: string;
+  z16: string;
+  z20: string;
+  z24: string;
+  
+  // Legacy (for compatibility)
   sm: string;
   md: string;
   lg: string;
   xl: string;
+  
+  // Custom color shadows
+  primary: string;
+  secondary: string;
+  info: string;
+  success: string;
+  warning: string;
+  error: string;
 }
 
 // ============================================
@@ -133,6 +228,7 @@ export interface SemanticDesignTokens {
     text: SemanticTextColors;
     background: SemanticBackgroundColors;
     border: SemanticBorderColors;
+    grey: SemanticGreyScale; // Added for Minimals
   };
   typography: SemanticTypography;
   spacing: SemanticSpacing;
