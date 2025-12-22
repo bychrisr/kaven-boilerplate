@@ -1,4 +1,4 @@
-import { Grid, Card, Typography, Chart, Badge } from '@/components';
+import { Card, Typography } from '@/components';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -30,15 +30,6 @@ export default function DashboardPage() {
     },
   ];
 
-  const chartData = [
-    { label: 'Jan', value: 400 },
-    { label: 'Feb', value: 300 },
-    { label: 'Mar', value: 600 },
-    { label: 'Apr', value: 800 },
-    { label: 'May', value: 500 },
-    { label: 'Jun', value: 900 },
-  ];
-
   return (
     <div>
       <Typography variant="h3" className="mb-6">
@@ -46,49 +37,44 @@ export default function DashboardPage() {
       </Typography>
 
       {/* KPI Cards */}
-      <Grid container spacing={3} className="mb-6">
-        {kpiData.map((kpi, index) => (
-          <Grid item xs={12} sm={6} lg={3} key={index}>
-            <Card>
-              <Card.Content>
-                <Typography variant="body2" color="secondary" className="mb-1">
-                  {kpi.label}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        {kpiData.map((kpi) => (
+          <Card key={kpi.label}>
+            <div className="p-6">
+              <Typography variant="body2" color="secondary" className="mb-1">
+                {kpi.label}
+              </Typography>
+              <Typography variant="h4" className="mb-2">
+                {kpi.value}
+              </Typography>
+              <div className="flex items-center gap-1">
+                {kpi.trend === 'up' ? (
+                  <TrendingUp className="size-4 text-success-main" />
+                ) : (
+                  <TrendingDown className="size-4 text-error-main" />
+                )}
+                <Typography
+                  variant="body2"
+                  className={kpi.trend === 'up' ? 'text-success-main' : 'text-error-main'}
+                >
+                  {kpi.change} from last month
                 </Typography>
-                <Typography variant="h4" className="mb-2">
-                  {kpi.value}
-                </Typography>
-                <div className="flex items-center gap-1">
-                  {kpi.trend === 'up' ? (
-                    <TrendingUp className="size-4 text-success-main" />
-                  ) : (
-                    <TrendingDown className="size-4 text-error-main" />
-                  )}
-                  <Typography
-                    variant="body2"
-                    className={kpi.trend === 'up' ? 'text-success-main' : 'text-error-main'}
-                  >
-                    {kpi.change} from last month
-                  </Typography>
-                </div>
-              </Card.Content>
-            </Card>
-          </Grid>
+              </div>
+            </div>
+          </Card>
         ))}
-      </Grid>
+      </div>
 
       {/* Chart Section */}
       <Card>
-        <Card.Header>
-          <Typography variant="h5">User Growth (30 days)</Typography>
-        </Card.Header>
-        <Card.Content>
-          <Chart
-            type="line"
-            data={chartData}
-            height={300}
-            colors={['var(--primary-main)']}
-          />
-        </Card.Content>
+        <div className="p-6">
+          <Typography variant="h5" className="mb-4">User Growth (30 days)</Typography>
+          <div className="h-64 flex items-center justify-center bg-gray-50 rounded">
+            <Typography variant="body2" color="secondary">
+              Chart will be implemented with Recharts
+            </Typography>
+          </div>
+        </div>
       </Card>
     </div>
   );

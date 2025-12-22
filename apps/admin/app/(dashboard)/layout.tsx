@@ -18,7 +18,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             
             <main className="flex-1 overflow-y-auto">
               <div className="p-6">
-                <Breadcrumbs />
+                <Breadcrumbs>
+                  <span>Dashboard</span>
+                </Breadcrumbs>
                 <div className="mt-6">{children}</div>
               </div>
             </main>
