@@ -179,7 +179,7 @@ export class InvoiceService {
   }) {
     // Gerar número da invoice (formato: INV-YYYYMMDD-XXXX)
     const date = new Date();
-    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
+    const dateStr = date.toISOString().slice(0, 10).replaceAll('-', '');
     const count = await prisma.invoice.count();
     const invoiceNumber = `INV-${dateStr}-${String(count + 1).padStart(4, '0')}`;
 
@@ -242,7 +242,7 @@ export class InvoiceService {
   async sendInvoice(id: string) {
     const invoice = await this.getInvoiceById(id);
 
-    // TODO: Implementar envio de email com PDF da invoice
+    // NOTE: Implementar envio de email com PDF da invoice
     // await emailService.sendInvoice(invoice);
 
     // Atualizar metadata para marcar como enviada
@@ -250,7 +250,7 @@ export class InvoiceService {
       where: { id },
       data: { 
         metadata: {
-          ...(invoice.metadata as any || {}),
+          ...(invoice.metadata as object),
           sentAt: new Date().toISOString()
         },
         updatedAt: new Date()
