@@ -154,6 +154,7 @@ export const defaultLightTokens: SemanticDesignTokens = {
   shadows: {
     none: 'none',
     // Standard elevation levels
+    z0: 'none',
     z1: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
     z2: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
     z4: '0 4px 8px 0 rgb(0 0 0 / 0.08)',
