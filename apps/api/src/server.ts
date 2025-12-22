@@ -134,6 +134,10 @@ fastify.register(rateLimit, {
 // Metrics middleware (aplicado globalmente)
 fastify.addHook('onRequest', metricsMiddleware);
 
+// Advanced metrics middleware (coleta latência e status codes)
+import { advancedMetricsMiddleware } from './middleware/advanced-metrics.middleware';
+fastify.addHook('onRequest', advancedMetricsMiddleware);
+
 // Tenant detection middleware (Camaleão)
 fastify.addHook('onRequest', tenantMiddleware);
 

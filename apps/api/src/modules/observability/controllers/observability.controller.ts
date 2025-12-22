@@ -1,5 +1,6 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { register } from '../../../lib/metrics';
+import { advancedMetricsService } from '../services/advanced-metrics.service';
 
 export class ObservabilityController {
   /**
@@ -52,6 +53,14 @@ export class ObservabilityController {
           errorRate: totalRequests > 0 ? Number((errorRequests / totalRequests).toFixed(4)) : 0
       }
     };
+  }
+
+  /**
+   * GET /api/observability/advanced
+   * Retorna métricas avançadas (Golden Signals + Node.js específicas)
+   */
+  async getAdvancedMetrics(request: FastifyRequest, reply: FastifyReply) {
+    return await advancedMetricsService.getAdvancedMetrics();
   }
 }
 

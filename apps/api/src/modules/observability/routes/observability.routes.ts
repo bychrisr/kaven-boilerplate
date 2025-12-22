@@ -11,4 +11,12 @@ export async function observabilityRoutes(fastify: FastifyInstance) {
     },
     observabilityController.getSystemStats
   );
+
+  fastify.get(
+    '/advanced',
+    {
+      preHandler: [requireAuth, requireRole(['SUPER_ADMIN'])],
+    },
+    observabilityController.getAdvancedMetrics
+  );
 }
