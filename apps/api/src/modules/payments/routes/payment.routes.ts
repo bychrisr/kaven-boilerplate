@@ -24,6 +24,7 @@ export async function webhookRoutes(fastify: FastifyInstance) {
     '/stripe',
     {
       config: {
+        // @ts-expect-error - rawBody is added by plugin
         rawBody: true, // Necessário para verificação de signature
       },
     },
