@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 // STACK COMPONENT
 // ============================================
 
-interface StackProps extends React.HTMLAttributes<HTMLDivElement> {
+interface StackProps extends Readonly<React.HTMLAttributes<HTMLDivElement>> {
   /**
    * Direction of the stack
    * @default 'column'
@@ -123,10 +123,11 @@ export function Stack({
     ? childrenArray.reduce<React.ReactNode[]>((acc, child, index) => {
         acc.push(child);
         if (index < childrenArray.length - 1) {
+          const dividerKey = `divider-${typeof child === 'object' && child !== null && 'key' in child ? child.key : index}`;
           acc.push(
             dividerComponent || (
               <div
-                key={`divider-${index}`}
+                key={dividerKey}
                 className={cn(
                   'bg-divider',
                   direction === 'row' || direction === 'row-reverse'
@@ -166,12 +167,12 @@ Stack.displayName = 'Stack';
 // BOX COMPONENT
 // ============================================
 
-interface BoxProps extends React.HTMLAttributes<HTMLDivElement> {
+interface BoxProps extends Readonly<React.HTMLAttributes<HTMLDivElement>> {
   /**
    * HTML element to render
    * @default 'div'
    */
-  as?: keyof JSX.IntrinsicElements;
+  as?: React.ElementType;
   children: React.ReactNode;
 }
 
@@ -181,11 +182,13 @@ export function Box({
   children,
   ...props
 }: BoxProps) {
+  const ElementType = Component as React.ElementType;
   return (
-    <Component className={cn(className)} {...props}>
+    <ElementType className={cn(className)} {...props}>
       {children}
-    </Component>
+    </ElementType>
   );
 }
 
 Box.displayName = 'Box';
+

@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 // CONTAINER COMPONENT
 // ============================================
 
-interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
+interface ContainerProps extends Readonly<React.HTMLAttributes<HTMLDivElement>> {
   /**
    * Maximum width of the container
    * @default 'lg'
@@ -36,7 +36,6 @@ const maxWidthClasses = {
 export function Container({
   maxWidth = 'lg',
   disableGutters = false,
-  fixed = false,
   className,
   children,
   ...props

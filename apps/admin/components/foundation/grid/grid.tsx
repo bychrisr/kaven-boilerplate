@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 // GRID COMPONENT
 // ============================================
 
-interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
+interface GridProps extends Readonly<React.HTMLAttributes<HTMLDivElement>> {
   /**
    * Number of columns (1-12)
    * @default 12
@@ -126,13 +126,15 @@ export function Grid({
       ].filter(Boolean)
     : [];
 
+  const gapClass = gapX ? gapXClasses[gapX] : gapY ? '' : gapClasses[gap];
+
   return (
     <div
       className={cn(
         'grid',
         !responsive && colsClasses[cols],
         ...responsiveClasses,
-        gapX ? gapXClasses[gapX] : gapY ? '' : gapClasses[gap],
+        gapClass,
         gapY && gapYClasses[gapY],
         className
       )}
@@ -149,7 +151,7 @@ Grid.displayName = 'Grid';
 // GRID ITEM COMPONENT
 // ============================================
 
-interface GridItemProps extends React.HTMLAttributes<HTMLDivElement> {
+interface GridItemProps extends Readonly<React.HTMLAttributes<HTMLDivElement>> {
   /**
    * Column span (1-12)
    */
