@@ -13,6 +13,12 @@ interface User {
   createdAt: string;
 }
 
+const getRoleBadgeClasses = (role: string) => {
+  if (role === 'SUPER_ADMIN') return 'bg-purple-100 text-purple-800';
+  if (role === 'TENANT_ADMIN') return 'bg-blue-100 text-blue-800';
+  return 'bg-gray-100 text-gray-800';
+};
+
 export default function DashboardPage() {
   const { data: usersData } = useUsers({ page: 1, limit: 5 });
 
@@ -216,13 +222,10 @@ export default function DashboardPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                      className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                        user.role === 'SUPER_ADMIN'
-                          ? 'bg-purple-100 text-purple-800'
-                          : user.role === 'TENANT_ADMIN'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}
+                    <span
+                      className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getRoleBadgeClasses(
+                        user.role
+                      )}`}
                     >
                       {user.role}
                     </span>
