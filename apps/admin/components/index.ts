@@ -49,6 +49,8 @@ export * from './ui/menu';
 export * from './ui/link';
 export * from './ui/stepper';
 export * from './ui/bottom-navigation';
+export * from './ui/navigation-bar';
+export * from './ui/mega-menu';
 
 // UI Components - Layout
 export * from './ui/accordion';
@@ -81,3 +83,17 @@ export * from './extra/form-wizard';
 export * from './extra/scrollbar';
 export * from './extra/label';
 export * from './extra/markdown';
+export * from './extra/animate';
+export * from './extra/scroll-progress';
+export * from './extra/editor';
+export * from './extra/dnd';
+export * from './extra/chart';
+export * from './extra/map';
+export * from './extra/organization-chart';
+export * from './extra/utilities';
+export * from './extra/multi-language';
+
+// Settings Components
+export * from './settings/theme-customizer';
+export * from './settings/font-selector';
+export * from './settings/color-scheme-editor';
