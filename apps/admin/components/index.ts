@@ -2,6 +2,7 @@
 export * from './foundation/grid';
 export * from './foundation/typography';
 export * from './foundation/icon';
+export * from './foundation/color-palette';
 
 // UI Components - Forms
 export * from './ui/button';
@@ -70,3 +71,13 @@ export * from './ui/portal';
 export * from './ui/click-away-listener';
 export * from './ui/utils';
 export * from './ui/css-baseline';
+
+// Extra Components
+export * from './extra/carousel';
+export * from './extra/upload';
+export * from './extra/image';
+export * from './extra/lightbox';
+export * from './extra/form-wizard';
+export * from './extra/scrollbar';
+export * from './extra/label';
+export * from './extra/markdown';
