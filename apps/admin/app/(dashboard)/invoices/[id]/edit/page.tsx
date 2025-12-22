@@ -132,9 +132,9 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
             
             {/* Tenant Display (readonly) */}
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <span className="block text-sm font-medium text-gray-700 mb-1">
                 Cliente / Tenant
-              </label>
+              </span>
               <div className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600">
                 {invoice.tenant?.name || invoice.tenantId}
               </div>

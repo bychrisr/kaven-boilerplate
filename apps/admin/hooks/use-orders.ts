@@ -41,17 +41,18 @@ export interface OrdersParams {
   status?: OrderStatus;
 }
 
-export function useOrders(params: OrdersParams = { page: 1, limit: 10 }) {
+export function useOrders(params?: OrdersParams) {
   const queryClient = useQueryClient();
+  const queryParams = params ?? { page: 1, limit: 10 };
 
   const {
     data,
     isLoading,
     error,
   } = useQuery<OrdersResponse>({
-    queryKey: ['orders', params],
+    queryKey: ['orders', queryParams],
     queryFn: async () => {
-      const response = await api.get('/api/orders', { params });
+      const response = await api.get('/api/orders', { params: queryParams });
       return response.data;
     },
   });

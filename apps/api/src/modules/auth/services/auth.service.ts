@@ -36,9 +36,9 @@ export class AuthService {
       const baseSlug = data.name
         .toLowerCase()
         .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '') // Keep replace for regex with /g flag where behavior is identical
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-+)|(-+$)/g, '');
+        .replaceAll(/[\u0300-\u036f]/g, '')
+        .replaceAll(/[^a-z0-9]+/g, '-')
+        .replaceAll(/(^-+)|(-+$)/g, '');
 
       // Garantir slug único
       let slug = baseSlug;
