@@ -484,6 +484,91 @@ Atualiza status da order.
 
 ---
 
+---
+
+## 👁️ Observability & Audit (2 endpoints)
+
+### GET /api/observability/stats
+
+Retorna métricas de sistema em tempo real (CPU, Memória, Requests).
+
+**Auth:** SUPER_ADMIN
+
+**Response:**
+
+```json
+{
+  "uptime": 3600,
+  "system": {
+    "memory": {
+      "rss": 12345678,
+      "heapTotal": 23456789,
+      "heapUsed": 12345678
+    },
+    "cpu": {
+      "user": 12345,
+      "system": 6789
+    }
+  },
+  "http": {
+    "totalRequests": 1500,
+    "requestsPerSecond": 25.5,
+    "errorRequests": 5,
+    "errorRate": 0.003
+  }
+}
+```
+
+### GET /api/audit-logs
+
+Lista logs de auditoria do sistema.
+
+**Query Params:**
+
+- `page` (default: 1)
+- `limit` (default: 10)
+- `tenantId` (opcional, para SUPER_ADMIN filtrar)
+- `entityType` (opcional: 'User', 'Auth', 'Invoice', etc.)
+- `action` (opcional: 'create', 'update', 'delete', 'login')
+- `startDate` / `endDate` (ISO 8601)
+
+**Auth:** SUPER_ADMIN ou TENANT_ADMIN (vê apenas do próprio tenant)
+
+**Response:**
+
+```json
+{
+  "logs": [
+    {
+      "id": "uuid",
+      "createdAt": "2025-12-21T10:00:00Z",
+      "actor": {
+        "id": "uuid",
+        "email": "admin@kaven.com",
+        "name": "Admin User"
+      },
+      "action": "user.create",
+      "entity": "User",
+      "entityId": "uuid-criado",
+      "metadata": {
+        "role": "USER",
+        "email": "newuser@example.com"
+      },
+      "ipAddress": "127.0.0.1",
+      "userAgent": "Mozilla/5.0..."
+    }
+  ],
+  "pagination": {
+    "total": 50,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 5
+  }
+}
+```
+
+---
+
 ## 🏥 Health & Metrics (4 endpoints)
 
 ### GET /health
@@ -650,6 +735,7 @@ curl -X POST http://localhost:8000/api/payments/pix/create \
 - **Payments:** 7 endpoints (Stripe + Pix + Webhooks)
 - **Invoices:** 5 endpoints
 - **Orders:** 3 endpoints
+- **Observability:** 2 endpoints
 - **Health:** 4 endpoints
 
-**Total:** 42 endpoints REST + Swagger docs
+**Total:** 44 endpoints REST + Swagger docs

@@ -1,49 +1,142 @@
 # Observabilidade e Auditoria
 
-O Kaven Boilerplate inclui um sistema nativo de observabilidade e auditoria projetado para fornecer visibilidade operacional e segurança sem a complexidade de ferramentas externas no MVP.
+Esta documentação detalha o sistema de observabilidade nativa e auditoria do Kaven Boilerplate. O objetivo deste módulo é fornecer visibilidade operacional (métricas) e responsabilidade (auditoria) diretamente no painel administrativo, complementando soluções de infraestrutura como Prometheus/Grafana.
 
-## Arquitetura
+---
 
-### 1. Sistema de Auditoria (Audit Logs)
+## 1. Monitoramento de Sistema (R.E.D. Method)
 
-O sistema registra ações críticas de segurança e administração.
+O dashboard de observabilidade (`/dashboard/observability`) implementa uma versão leve do método R.E.D. (Rate, Errors, Duration) utilizando métricas coletadas internamente pelo Node.js e `prom-client`.
 
-- **Armazenamento:** Tabela `AuditLog` no PostgreSQL.
-- **Service:** `AuditService` (`apps/api/src/modules/audit/services/audit.service.ts`).
-- **Contexto:** Cada log captura: `Actor` (quem), `Action` (o que), `Entity` (alvo), `Tenant` (onde) e `Metadata` (detalhes JSON).
+### Métricas Coletadas
 
-**Eventos Registrados Atualmente:**
+| Indicador               | Fonte Técnica                          | Descrição                                       | Utilidade                                              |
+| ----------------------- | -------------------------------------- | ----------------------------------------------- | ------------------------------------------------------ |
+| **Uptime**              | `process.uptime()`                     | Tempo em segundos desde o início do processo.   | Verificar estabilidade e reinicializações indesejadas. |
+| **Requests/sec** (Rate) | `prom-client` counter                  | Média móvel de requisições HTTP por segundo.    | Identificar picos de tráfego e carga.                  |
+| **Error Rate** (Errors) | `prom-client` counter (status 4xx/5xx) | Contagem e proporção de falhas nas requisições. | Alerta imediato de bugs ou ataques.                    |
+| **Memory RSS**          | `process.memoryUsage().rss`            | Memória física residente alocada pelo processo. | Detectar memory leaks.                                 |
 
-- `auth.login.success` / `auth.login.failed`
-- `auth.register`
-- `user.created`, `user.updated`, `user.deleted`
+### Visualização
 
-### 2. Métricas de Sistema
+Os dados são exibidos em formato de **Sparklines** (gráficos de linha simplificados) que acumulam dados no frontend (React state) para simular uma janela de tempo real de 60 segundos, atualizada via polling a cada 2 segundos.
 
-Dashboard em tempo real (`/dashboard/observability`) alimentado por endpoints internos.
+---
 
-- **Fonte de Dados:** `prom-client` (Prometheus) e APIs nativas do Node.js.
-- **Métricas Expostas:**
-  - Uptime (Tempo de atividade)
-  - Consumo de Memória (RSS/Heap)
-  - Requests HTTP (Total, Erros, Req/s)
-  - Saúde do Banco de Dados (via health checks)
+## 2. Sistema de Auditoria (Audit Logs)
 
-## Endpoints da API
+O Sistema de Auditoria é a espinha dorsal de segurança para ambientes Multi-Tenant. Ele garante que _todas_ as ações críticas sejam registradas de forma imutável e contextualizada.
 
-| Método | Rota                       | Descrição                               | Acesso                        |
-| ------ | -------------------------- | --------------------------------------- | ----------------------------- |
-| GET    | `/api/audit-logs`          | Lista logs de auditoria com paginação   | SUPER_ADMIN / Admin do Tenant |
-| GET    | `/api/observability/stats` | Retorna snapshot de métricas do sistema | SUPER_ADMIN                   |
+### Estrutura do Log
 
-## Frontend (Admin Panel)
+Cada entrada na tabela `AuditLog` responde às perguntas: **Quem? Onde? O Quê? Quando? Como?**
 
-O painel administrativo possui uma seção dedicada (`/observability`) construída com:
+```json
+{
+  "actor": "User ID (UUID)",
+  "tenant": "Tenant ID (UUID) [Opcional - null se for ação de sistema]",
+  "action": "domínio.recurso.verbo",
+  "entity": "Nome da Entidade (User, Invoice, etc.)",
+  "entityId": "ID do recurso afetado",
+  "metadata": { "json": "livre para detalhes" },
+  "ipAddress": "1.2.3.4",
+  "userAgent": "Mozilla/5.0...",
+  "status": "SUCCESS | FAILURE"
+}
+```
 
-- **React Query:** Polling inteligente para sensação de "tempo real" (2s para métricas, 3s para logs).
-- **Shadcn UI:** Componentes visuais modernos e acessíveis.
+### Taxonomia de Ações (Actions)
 
-### Funcionalidades
+Use esta referência ao instrumentar novas funcionalidades. Mantenha o padrão `domain.event`.
 
-1.  **Monitoramento:** Cards com indicadores de saúde do sistema.
-2.  **Investigação:** Tabela de logs auditáveis com visualizador de metadados JSON.
+#### Autenticação (`auth.*`)
+
+- `auth.login.success`: Login bem-sucedido.
+- `auth.login.failed`: Falha de login (senha errada, usuário não encontrado). _Metadata: { email }_
+- `auth.register`: Novo usuário registrado.
+- `auth.logout`: Logout explícito.
+- `auth.password_reset.request`: Solicitação de reset enviada.
+- `auth.password_reset.complete`: Senha alterada com sucesso.
+- `auth.2fa.setup`: 2FA configurado.
+- `auth.2fa.disable`: 2FA removido.
+
+#### Usuários (`user.*`)
+
+- `user.create`: Usuário criado manualmente (por admin).
+- `user.update`: Perfil atualizado. _Metadata: { fields: ['name', 'role'] }_
+- `user.delete`: Usuário removido/arquivado.
+- `user.promote`: Mudança de Role (ex: USER -> TENANT_ADMIN).
+
+#### Tenants (`tenant.*`)
+
+- `tenant.create`: Novo tenant criado.
+- `tenant.update`: Configurações de tenant alteradas.
+- `tenant.subscription.change`: Mudança de plano.
+
+#### Financeiro (`invoice.*`, `order.*`)
+
+- `invoice.create`: Fatura gerada.
+- `invoice.pay`: Pagamento registrado.
+- `invoice.void`: Fatura cancelada.
+- `order.create`: Pedido criado.
+
+---
+
+## 3. Guia de Implementação para Desenvolvedores
+
+### Como registrar um novo evento?
+
+Injete o `AuditService` no seu serviço ou controller e chame o método `create`.
+
+**Exemplo:**
+
+```typescript
+import { AuditService } from '../../audit/services/audit.service';
+
+export class FeatureService {
+  constructor(private audit: AuditService) {}
+
+  async doSomethingCritical(user: User, resourceId: string) {
+    // 1. Executa a lógica
+    const result = await db.update(...);
+
+    // 2. Registra auditoria (Fire & Forget ou Await dependendo da criticidade)
+    await this.audit.create({
+      action: 'feature.critical_action',
+      entity: 'FeatureResource',
+      entityId: resourceId,
+      actorId: user.id,
+      tenantId: user.tenantId, // IMPORTANTE para isolamento!
+      metadata: {
+        previousValue: 'A',
+        newValue: 'B',
+        reason: 'User request'
+      },
+      req: request // Opcional: extrai IP/UserAgent automaticamente se passar o objeto Request
+    });
+  }
+}
+```
+
+### Como consumir os dados?
+
+1.  **Via API:**
+    - `GET /api/audit-logs?action=auth.login.failed`
+    - Filtros suportados: `startDate`, `endDate`, `actorId`, `entityType`.
+
+2.  **Via Prisma (Backend):**
+    ```typescript
+    prisma.auditLog.findMany({
+      where: {
+        tenantId: currentTenantId, // RLS deve ser respeitado!
+      },
+    });
+    ```
+
+---
+
+## 4. Segurança e Retenção
+
+- **Isolamento:** Logs pertencentes a um tenant SÓ podem ser vistos por admins desse tenant ou SUPER_ADMINS.
+- **Imutabilidade:** Não existem endpoints de API para `UPDATE` ou `DELETE` de logs. A remoção só deve ocorrer via scripts de retenção (ex: limpeza após 1 ano) diretamente no banco.
+- **Dados Sensíveis:** NUNCA grave senhas, tokens completos ou PII sensível (CPF, Cartão) no campo `metadata`.
