@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useInvoices, InvoiceStatus, useInvoiceStats } from '@/hooks/use-invoices';
 import { useDebounce } from '@/hooks/use-debounce';
@@ -154,6 +154,106 @@ export default function InvoicesPage() {
     status: statusFilter || undefined,
     search: debouncedSearch,
   });
+
+  const renderTableContent = () => {
+    if (isLoading) {
+      return (
+        <tr>
+          <td colSpan={6} className="px-6 py-12 text-center">
+            <Loader2 className="mx-auto h-8 w-8 animate-spin text-blue-600" />
+          </td>
+        </tr>
+      );
+    }
+
+    if (invoices.length === 0) {
+      return (
+        <tr>
+          <td colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500">
+            Nenhuma fatura encontrada
+          </td>
+        </tr>
+      );
+    }
+
+    return invoices.map((invoice) => (
+      <tr key={invoice.id} className="hover:bg-gray-50">
+        <td className="px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div
+              className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium text-white ${getAvatarColor(
+                invoice.tenant?.name || 'U'
+              )}`}
+            >
+              {(invoice.tenant?.name || 'U').charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <p className="font-medium text-gray-900">
+                {invoice.tenant?.name || 'Desconhecido'}
+              </p>
+              <p className="text-xs text-gray-500">{invoice.invoiceNumber}</p>
+            </div>
+          </div>
+        </td>
+        <td className="px-6 py-4">
+          <div>
+            <p className="text-sm text-gray-900">
+              {format(new Date(invoice.createdAt), 'dd MMM yyyy', { locale: ptBR })}
+            </p>
+            <p className="text-xs text-gray-500">
+              {format(new Date(invoice.createdAt), 'HH:mm', { locale: ptBR })} pm
+            </p>
+          </div>
+        </td>
+        <td className="px-6 py-4">
+          <div>
+            <p className="text-sm text-gray-900">
+              {format(new Date(invoice.dueDate), 'dd MMM yyyy', { locale: ptBR })}
+            </p>
+            <p className="text-xs text-gray-500">
+              {format(new Date(invoice.dueDate), 'HH:mm', { locale: ptBR })} am
+            </p>
+          </div>
+        </td>
+        <td className="px-6 py-4">
+          <p className="text-sm font-medium text-gray-900">
+            R$ {Number(invoice.amountDue).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+          </p>
+        </td>
+        <td className="px-6 py-4">
+          <span
+            className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
+              statusStyles[invoice.status]
+            }`}
+          >
+            {statusLabels[invoice.status]}
+          </span>
+        </td>
+        <td className="px-6 py-4 text-right">
+          <div className="flex items-center justify-end gap-2">
+            <Link
+              href={`/invoices/${invoice.id}`}
+              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            >
+              <Eye className="h-4 w-4" />
+            </Link>
+            <Link
+              href={`/invoices/${invoice.id}/edit`}
+              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            >
+              <Pencil className="h-4 w-4" />
+            </Link>
+            <button
+              onClick={() => handleDelete(invoice.id)}
+              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-rose-600"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        </td>
+      </tr>
+    ));
+  };
 
   return (
     <div className="space-y-6">
