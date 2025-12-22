@@ -81,7 +81,7 @@ export const ToggleButton = React.forwardRef<HTMLButtonElement, ToggleButtonProp
         aria-pressed={selected}
         className={cn(
           toggleButtonVariants({ size }),
-          colorClasses[color][selected ? 'selected' : 'default'],
+          color && colorClasses[color]?.[selected ? 'selected' : 'default'],
           'disabled:opacity-50 disabled:cursor-not-allowed',
           className
         )}
@@ -95,7 +95,7 @@ export const ToggleButton = React.forwardRef<HTMLButtonElement, ToggleButtonProp
 
 ToggleButton.displayName = 'ToggleButton';
 
-export interface ToggleButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ToggleButtonGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   /**
    * Selected value(s)
    */
@@ -179,12 +179,12 @@ export const ToggleButtonGroup = React.forwardRef<HTMLDivElement, ToggleButtonGr
         {...props}
       >
         {React.Children.map(children, (child) => {
-          if (React.isValidElement(child) && child.type === ToggleButton) {
+          if (React.isValidElement<ToggleButtonProps>(child) && child.type === ToggleButton) {
             return React.cloneElement(child as React.ReactElement<ToggleButtonProps>, {
               size,
               color,
-              selected: isSelected(child.props.value),
-              onClick: () => handleClick(child.props.value),
+              selected: isSelected((child.props as ToggleButtonProps).value),
+              onClick: () => handleClick((child.props as ToggleButtonProps).value),
             });
           }
           return child;
