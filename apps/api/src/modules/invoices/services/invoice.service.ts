@@ -7,7 +7,7 @@ export class InvoiceService {
   async getStats(tenantId?: string) {
     const where = tenantId ? { tenantId, deletedAt: null } : { deletedAt: null };
 
-    const [total, paid, pending, overdue, draft] = await Promise.all([
+    const [total, paid, pending, overdue, draft, canceled] = await Promise.all([
       // Total
       prisma.invoice.aggregate({
         where,
@@ -38,6 +38,12 @@ export class InvoiceService {
         _count: true,
         _sum: { amountDue: true },
       }),
+      // Canceled
+      prisma.invoice.aggregate({
+        where: { ...where, status: 'CANCELED' },
+        _count: true,
+        _sum: { amountDue: true },
+      }),
     ]);
 
     return {
@@ -60,6 +66,10 @@ export class InvoiceService {
       draft: {
         count: draft._count,
         amount: Number(draft._sum.amountDue || 0),
+      },
+      canceled: {
+        count: canceled._count,
+        amount: Number(canceled._sum.amountDue || 0),
       },
     };
   }
