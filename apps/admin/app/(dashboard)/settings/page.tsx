@@ -1,127 +1,123 @@
 'use client';
 
-import { useState } from 'react';
-import { User, Bell, Lock, Settings } from 'lucide-react';
+import * as React from 'react';
+import { Tabs, Tab, TabPanel } from '@/components/ui/tabs';
+import { ThemeCustomizer } from '@/components/settings/theme-customizer';
+import { Settings as SettingsIcon, Palette, Bell, User } from 'lucide-react';
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState('general');
-
-  const tabs = [
-    { id: 'general', label: 'General', icon: Settings },
-    { id: 'profile', label: 'Profile', icon: User },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'security', label: 'Security', icon: Lock },
-  ];
+  const [activeTab, setActiveTab] = React.useState(0);
+  const [showCustomizer, setShowCustomizer] = React.useState(false);
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Settings</h1>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Sidebar */}
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-            <nav className="space-y-1">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center px-4 py-2 rounded-lg font-medium transition-colors ${
-                      activeTab === tab.id
-                        ? 'bg-primary-light text-primary-dark'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                  >
-                    <Icon className="h-5 w-5 mr-3" />
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
-              {tabs.find((t) => t.id === activeTab)?.label} Settings
-            </h2>
-
-            {activeTab === 'general' && (
-              <div className="space-y-4">
-                {/* Site Name */}
-                <div>
-                  <label htmlFor="site-name" className="block text-sm font-medium text-gray-700 mb-1">
-                    Site Name
-                  </label>
-                  <input
-                    id="site-name"
-                    type="text"
-                    defaultValue="Kaven Boilerplate"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-main"
-                  />
-                </div>
-
-                {/* Site URL */}
-                <div>
-                  <label htmlFor="site-url" className="block text-sm font-medium text-gray-700 mb-1">
-                    Site URL
-                  </label>
-                  <input
-                    id="site-url"
-                    type="url"
-                    defaultValue="https://kaven.com"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-main"
-                  />
-                </div>
-
-                {/* Theme */}
-                <div>
-                  <label htmlFor="theme" className="block text-sm font-medium text-gray-700 mb-1">
-                    Theme
-                  </label>
-                  <select id="theme" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-main">
-                    <option value="light">Light</option>
-                    <option value="dark">Dark</option>
-                    <option value="auto">Auto</option>
-                  </select>
-                </div>
-
-                {/* Save Button */}
-                <div className="pt-4">
-                  <button className="bg-primary-main text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-dark transition-colors">
-                    Save Changes
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'profile' && (
-              <div className="text-center py-10 text-gray-500">
-                <User className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Profile settings content would go here.</p>
-              </div>
-            )}
-
-            {activeTab === 'notifications' && (
-              <div className="text-center py-10 text-gray-500">
-                <Bell className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Notification settings content would go here.</p>
-              </div>
-            )}
-
-            {activeTab === 'security' && (
-              <div className="text-center py-10 text-gray-500">
-                <Lock className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Security settings content would go here.</p>
-              </div>
-            )}
-          </div>
-        </div>
+    <div className="container mx-auto p-6 max-w-6xl">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold flex items-center gap-2">
+          <SettingsIcon className="size-8" />
+          Configurações
+        </h1>
+        <p className="text-text-secondary mt-1">
+          Gerencie as configurações do sistema e personalize sua experiência
+        </p>
       </div>
+
+      <Tabs value={activeTab} onChange={setActiveTab}>
+        <div className="border-b border-divider mb-6">
+          <Tab value={0} icon={<User className="size-4" />}>
+            Geral
+          </Tab>
+          <Tab value={1} icon={<Palette className="size-4" />}>
+            Tema
+          </Tab>
+          <Tab value={2} icon={<Bell className="size-4" />}>
+            Notificações
+          </Tab>
+        </div>
+
+        <TabPanel value={0}>
+          <div className="bg-background-paper rounded-lg border border-divider p-6">
+            <h2 className="text-xl font-semibold mb-4">Configurações Gerais</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Nome da Aplicação</label>
+                <input
+                  type="text"
+                  defaultValue="Kaven Admin"
+                  className="w-full px-3 py-2 border border-divider rounded focus:outline-none focus:ring-2 focus:ring-primary-main/20"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Idioma</label>
+                <select className="w-full px-3 py-2 border border-divider rounded focus:outline-none focus:ring-2 focus:ring-primary-main/20">
+                  <option value="pt-BR">Português (Brasil)</option>
+                  <option value="en-US">English (US)</option>
+                  <option value="es-ES">Español</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </TabPanel>
+
+        <TabPanel value={1}>
+          <div className="bg-background-paper rounded-lg border border-divider p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-xl font-semibold">Personalização do Tema</h2>
+                <p className="text-sm text-text-secondary mt-1">
+                  Customize cores, fontes e estilos do sistema
+                </p>
+              </div>
+              <button
+                onClick={() => setShowCustomizer(true)}
+                className="px-4 py-2 bg-primary-main text-white rounded hover:bg-primary-dark transition-colors"
+              >
+                Abrir Customizador
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+              <div className="p-4 border border-divider rounded">
+                <h3 className="font-medium mb-2">Modo Claro</h3>
+                <div className="h-32 bg-gradient-to-br from-blue-50 to-purple-50 rounded" />
+              </div>
+              <div className="p-4 border border-divider rounded">
+                <h3 className="font-medium mb-2">Modo Escuro</h3>
+                <div className="h-32 bg-gradient-to-br from-gray-800 to-gray-900 rounded" />
+              </div>
+            </div>
+          </div>
+        </TabPanel>
+
+        <TabPanel value={2}>
+          <div className="bg-background-paper rounded-lg border border-divider p-6">
+            <h2 className="text-xl font-semibold mb-4">Preferências de Notificação</h2>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-medium">Notificações por Email</div>
+                  <div className="text-sm text-text-secondary">Receber atualizações por email</div>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" defaultChecked />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-main/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-main"></div>
+                </label>
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-medium">Notificações Push</div>
+                  <div className="text-sm text-text-secondary">Receber notificações no navegador</div>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-main/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-main"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </TabPanel>
+      </Tabs>
+
+      <ThemeCustomizer open={showCustomizer} onClose={() => setShowCustomizer(false)} />
     </div>
   );
 }
