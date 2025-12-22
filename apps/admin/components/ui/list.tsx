@@ -96,9 +96,9 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
           },
           className
         )}
-        onClick={disabled ? undefined : onClick}
+        onClick={disabled ? undefined : (onClick as any)}
         disabled={button && disabled ? true : undefined}
-        {...props}
+        {...(props as any)}
       >
         {children}
       </Component>

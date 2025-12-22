@@ -150,7 +150,7 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
             rows={multiline ? rows : undefined}
             aria-invalid={hasError}
             aria-describedby={displayHelperText ? `${inputId}-helper` : undefined}
-            {...props}
+            {...(props as any)}
           />
 
           {endAdornment && (

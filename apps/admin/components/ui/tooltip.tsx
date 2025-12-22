@@ -90,7 +90,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   className,
 }) => {
   const [isVisible, setIsVisible] = React.useState(false);
-  const timeoutRef = React.useRef<NodeJS.Timeout>();
+  const timeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) {
@@ -125,7 +125,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
         onMouseLeave: handleMouseLeave,
         onFocus: handleMouseEnter,
         onBlur: handleMouseLeave,
-      })}
+      } as any)}
 
       {isVisible && (
         <div
