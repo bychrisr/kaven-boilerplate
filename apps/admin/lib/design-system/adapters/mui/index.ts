@@ -7,9 +7,9 @@ import type {
   DesignSystemAdapter,
   SemanticDesignTokens,
   UserCustomization,
-} from '../core/types';
-import { DesignSystemType } from '../core/types';
-import { defaultLightTokens, defaultDarkTokens } from '../core/tokens';
+} from '@/lib/design-system/core/types';
+import { DesignSystemType } from '@/lib/design-system/core/types';
+import { defaultLightTokens, defaultDarkTokens } from '@/lib/design-system/core/tokens';
 
 export class MUIAdapter implements DesignSystemAdapter {
   type: DesignSystemType = DesignSystemType.MUI;
