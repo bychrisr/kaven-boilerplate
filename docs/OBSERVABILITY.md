@@ -4,11 +4,11 @@ Esta documentação detalha o sistema de observabilidade nativa e auditoria do K
 
 ---
 
-## 1. Monitoramento de Sistema (R.E.D. Method)
+## 1. Monitoramento de Sistema (R.E.D. Method + Golden Signals)
 
-O dashboard de observabilidade (`/dashboard/observability`) implementa uma versão leve do método R.E.D. (Rate, Errors, Duration) utilizando métricas coletadas internamente pelo Node.js e `prom-client`.
+O dashboard de observabilidade (`/dashboard/observability`) implementa uma combinação do método R.E.D. (Rate, Errors, Duration) e dos **Golden Signals** (Google SRE), utilizando métricas coletadas internamente pelo Node.js e `prom-client`.
 
-### Métricas Coletadas
+### Métricas Básicas (R.E.D.)
 
 | Indicador               | Fonte Técnica                          | Descrição                                       | Utilidade                                              |
 | ----------------------- | -------------------------------------- | ----------------------------------------------- | ------------------------------------------------------ |
@@ -17,6 +17,56 @@ O dashboard de observabilidade (`/dashboard/observability`) implementa uma vers�
 | **Error Rate** (Errors) | `prom-client` counter (status 4xx/5xx) | Contagem e proporção de falhas nas requisições. | Alerta imediato de bugs ou ataques.                    |
 | **Memory RSS**          | `process.memoryUsage().rss`            | Memória física residente alocada pelo processo. | Detectar memory leaks.                                 |
 
+### Golden Signals (Métricas Avançadas)
+
+Implementadas no endpoint `/api/observability/advanced`:
+
+#### 1. Latency (Tempo de Resposta)
+
+- **p50 (mediana):** 50% das requisições são mais rápidas que este valor
+- **p95:** 95% das requisições são mais rápidas (SLA típico)
+- **p99:** 99% das requisições são mais rápidas (tail latency)
+
+**Fonte:** Histograma de latências coletado via middleware `advanced-metrics.middleware.ts`
+
+#### 2. Traffic (Volume de Requisições)
+
+- **Requests/sec:** Taxa atual de requisições
+- **Total Requests:** Contador acumulado desde o início
+
+#### 3. Errors (Taxa de Falhas)
+
+- **Error Requests:** Contagem de requisições com status 5xx
+- **Error Rate (%):** Percentual de falhas sobre o total
+
+#### 4. Saturation (Utilização de Recursos)
+
+- **CPU Usage (%):** Percentual de uso de CPU
+- **Memory Usage (%):** Heap usado / Heap total
+
+### Métricas Específicas de Node.js
+
+#### Event Loop Lag ⭐
+
+**Crítico para Node.js!** Mede o atraso entre quando uma tarefa deveria executar vs quando realmente executa.
+
+- **< 10ms:** ✅ Saudável
+- **10-50ms:** ⚠️ Atenção
+- **> 50ms:** 🔴 Crítico (event loop bloqueado)
+
+**Fonte:** `perf_hooks` com monitoramento contínuo via `setInterval`
+
+#### Memory Heap Detalhado
+
+- **Used MB:** Memória heap atualmente em uso
+- **Total MB:** Memória heap total alocada
+- **External:** Memória C++ vinculada a objetos JavaScript
+
+#### Active Handles/Requests
+
+- **Active Handles:** File descriptors, sockets, timers ativos
+- **Active Requests:** Requisições em andamento
+
 ### Visualização
 
 Os dados são exibidos em formato de **Sparklines** (gráficos de linha simplificados) que acumulam dados no frontend (React state) para simular uma janela de tempo real de 60 segundos, atualizada via polling a cada 2 segundos.
@@ -24,19 +74,21 @@ Os dados são exibidos em formato de **Sparklines** (gráficos de linha simplifi
 #### Implementação Técnica (Frontend)
 
 - **Biblioteca:** `recharts` (v3.6.0)
-- **Componente:** `StatsChart` (`apps/admin/app/(dashboard)/observability/stats-chart.tsx`)
+- **Componentes:**
+  - `GoldenSignals` (4 cards principais)
+  - `NodeJsMetrics` (métricas específicas de Node.js)
 - **Características:**
-  - Gráficos de área com gradientes personalizados por métrica.
-  - Tooltip interativo mostrando valores ao passar o mouse.
-  - Estado de loading com skeleton animado.
-  - Histórico acumulado no state React (últimas 20 leituras).
+  - Cards com status visual (cores baseadas em thresholds)
+  - Tooltip interativo mostrando valores ao passar o mouse
+  - Estado de loading com skeleton animado
+  - Atualização automática a cada 2 segundos
 
 **Cores por Métrica:**
 
-- Uptime: Verde (`#22c55e`)
-- Requests/sec: Azul (`#3b82f6`)
-- Memória: Roxo (`#a855f7`)
-- Erros HTTP: Vermelho (`#ef4444`)
+- Latency: Azul (`#3B82F6`)
+- Traffic: Verde (`#10B981`)
+- Errors: Vermelho (`#EF4444`)
+- Saturation: Roxo (`#8B5CF6`)
 
 ---
 

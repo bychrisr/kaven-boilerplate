@@ -1,4 +1,4 @@
-import type { FastifyRequest, FastifyReply } from 'fastify';
+import type { FastifyRequest, FastifyReply, HookHandlerDoneFunction } from 'fastify';
 import { advancedMetricsService } from '../modules/observability/services/advanced-metrics.service';
 
 /**
@@ -11,14 +11,28 @@ export async function advancedMetricsMiddleware(
 ) {
   const start = Date.now();
 
-  // Hook para capturar quando a resposta é enviada
-  reply.addHook('onSend', async () => {
-    const duration = Date.now() - start;
+  // Armazena o start time no request para usar no onResponse
+  (request as any).startTime = start;
+}
+
+/**
+ * Hook onResponse para capturar métricas após resposta
+ */
+export function onResponseMetricsHook(
+  request: FastifyRequest,
+  reply: FastifyReply,
+  done: HookHandlerDoneFunction
+) {
+  const startTime = (request as any).startTime;
+  if (startTime) {
+    const duration = Date.now() - startTime;
     
     // Registra latência
     advancedMetricsService.recordLatency(duration);
     
     // Registra status code
     advancedMetricsService.recordStatusCode(reply.statusCode);
-  });
+  }
+  
+  done();
 }
