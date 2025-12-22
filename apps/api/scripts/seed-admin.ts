@@ -30,13 +30,11 @@ async function main() {
   console.log('User ID:', user.id);
 }
 
-(async () => {
-  try {
-    await main();
-    await prisma.$disconnect();
-  } catch (e) {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  }
-})();
+try {
+  await main();
+  await prisma.$disconnect();
+} catch (e) {
+  console.error(e);
+  await prisma.$disconnect();
+  process.exit(1);
+}
