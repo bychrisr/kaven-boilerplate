@@ -21,6 +21,44 @@ export interface SystemStats {
   };
 }
 
+export interface AdvancedMetrics {
+  goldenSignals: {
+    latency: {
+      p50: number;
+      p95: number;
+      p99: number;
+    };
+    traffic: {
+      requestsPerSecond: number;
+      totalRequests: number;
+    };
+    errors: {
+      errorRequests: number;
+      errorRate: number;
+    };
+    saturation: {
+      cpuUsagePercent: number;
+      memoryUsagePercent: number;
+    };
+  };
+  nodejs: {
+    eventLoopLag: number;
+    memoryHeap: {
+      used: number;
+      total: number;
+      external: number;
+      usedMB: number;
+      totalMB: number;
+    };
+    activeHandles: number;
+    activeRequests: number;
+  };
+  httpDetails: {
+    statusDistribution: Record<string, number>;
+    uptime: number;
+  };
+}
+
 export interface AuditLog {
   id: string;
   action: string;
@@ -48,6 +86,11 @@ export interface AuditLogsResponse {
 export const observabilityApi = {
   getStats: async () => {
     const { data } = await api.get<SystemStats>('/api/observability/stats');
+    return data;
+  },
+
+  getAdvancedMetrics: async () => {
+    const { data } = await api.get<AdvancedMetrics>('/api/observability/advanced');
     return data;
   },
 
