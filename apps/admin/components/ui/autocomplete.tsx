@@ -8,7 +8,7 @@ export interface AutocompleteOption<T = any> {
 }
 
 export interface AutocompleteProps<T = any>
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'> {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'defaultValue'> {
   /**
    * Options array
    */

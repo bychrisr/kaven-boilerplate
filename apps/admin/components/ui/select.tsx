@@ -3,7 +3,7 @@ import { ChevronDown, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface SelectProps<T = string>
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
   /**
    * Selected value
    */
