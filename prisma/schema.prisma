@@ -119,6 +119,8 @@ model User {
   refreshTokens RefreshToken[]
   auditLogs     AuditLog[]
   files         File[]
+  verificationTokens VerificationToken[]
+  passwordResetTokens PasswordResetToken[]
   
   @@index([email])
   @@index([tenantId])
@@ -290,4 +292,30 @@ model File {
   @@index([userId])
   @@index([tenantId])
   @@index([createdAt])
+}
+
+model VerificationToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([token])
+  @@index([userId])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([token])
+  @@index([userId])
 }

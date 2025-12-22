@@ -1,4 +1,5 @@
 import prisma from '../../../lib/prisma';
+import crypto from 'node:crypto';
 import { hashPassword, comparePassword } from '../../../lib/bcrypt';
 import { generateAccessToken, generateRefreshToken, getRefreshTokenExpiry } from '../../../lib/jwt';
 import { generate2FASecret, verify2FACode, generateBackupCodes } from '../../../lib/2fa';
@@ -98,8 +99,33 @@ export class AuthService {
    * Verifica email do usuário
    */
   async verifyEmail(token: string) {
-    // NOTE: Implementar lógica de verificação de token
-    // Por ora, simples placeholder
+    // Buscar token no banco
+    const verificationToken = await prisma.verificationToken.findUnique({
+      where: { token },
+    });
+
+    if (!verificationToken) {
+      throw new Error('Token inválido');
+    }
+
+    if (verificationToken.expiresAt < new Date()) {
+      throw new Error('Token expirado');
+    }
+
+    // Atualizar usuário
+    await prisma.user.update({
+      where: { id: verificationToken.userId },
+      data: { 
+        emailVerified: true,
+        emailVerifiedAt: new Date(),
+      },
+    });
+
+    // Deletar token usado
+    await prisma.verificationToken.delete({
+      where: { id: verificationToken.id },
+    });
+
     return { message: 'Email verificado com sucesso' };
   }
 
@@ -259,11 +285,19 @@ export class AuthService {
       return { message: 'Se o email existir, um link de recuperação será enviado' };
     }
 
-    // Gerar token de recuperação (simples por enquanto)
-    const resetToken = `${user.id}.${Date.now()}.${Math.random().toString(36)}`;
+    // Gerar token de recuperação (uuid)
+    const resetToken = crypto.randomUUID();
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 1); // 1 hora de validade
     
-    // NOTE: Salvar token no banco com expiração
-    // await prisma.passwordResetToken.create({ data: { token: resetToken, userId: user.id, expiresAt: ... } });
+    // Salvar token no banco
+    await prisma.passwordResetToken.create({ 
+      data: { 
+        token: resetToken, 
+        userId: user.id, 
+        expiresAt 
+      } 
+    });
     
     // Enviar email de reset
     await emailService.sendPasswordResetEmail(user, resetToken);
@@ -276,12 +310,31 @@ export class AuthService {
    * Reseta senha usando token
    */
   async resetPassword(token: string, newPassword: string) {
-    // NOTE: Validar token de reset
-    // Por ora, placeholder
-    // const hashedPassword = await hashPassword(newPassword);
+    // Buscar token de reset
+    const resetTokenRecord = await prisma.passwordResetToken.findUnique({
+      where: { token },
+    });
+
+    if (!resetTokenRecord) {
+      throw new Error('Token inválido');
+    }
+
+    if (resetTokenRecord.expiresAt < new Date()) {
+      throw new Error('Token expirado');
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
     
-    // NOTE: Atualizar senha do usuário associado ao token
-    // await prisma.user.update({ where: { id: userId }, data: { password: hashedPassword } });
+    // Atualizar senha do usuário
+    await prisma.user.update({
+      where: { id: resetTokenRecord.userId },
+      data: { password: hashedPassword },
+    });
+
+    // Deletar token usado (e outros tokens do mesmo usuário por segurança)
+    await prisma.passwordResetToken.deleteMany({
+      where: { userId: resetTokenRecord.userId },
+    });
 
     return { message: 'Senha resetada com sucesso' };
   }

@@ -177,26 +177,29 @@ export class InvoiceService {
     dueDate: Date;
     metadata?: any;
   }) {
-    // Gerar número da invoice (formato: INV-YYYYMMDD-XXXX)
+    // Gerar número da invoice usando transação para evitar colisão simples
+    // Formato: INV-YYYYMMDD-XXXX
     const date = new Date();
-    const dateStr = date.toISOString().slice(0, 10).replaceAll('-', '');
-    const count = await prisma.invoice.count();
-    const invoiceNumber = `INV-${dateStr}-${String(count + 1).padStart(4, '0')}`;
+    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
+    
+    return await prisma.$transaction(async (tx) => {
+      const count = await tx.invoice.count();
+      const invoiceNumber = `INV-${dateStr}-${String(count + 1).padStart(4, '0')}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
-    const invoice = await prisma.invoice.create({
-      data: {
-        invoiceNumber,
-        tenantId: data.tenantId,
-        subscriptionId: data.subscriptionId,
-        amountDue: data.amountDue,
-        currency: data.currency || 'BRL',
-        dueDate: data.dueDate,
-        metadata: data.metadata || null,
-        status: 'PENDING',
-      },
+      const invoice = await tx.invoice.create({
+        data: {
+          invoiceNumber,
+          tenantId: data.tenantId,
+          subscriptionId: data.subscriptionId,
+          amountDue: data.amountDue,
+          currency: data.currency || 'BRL',
+          dueDate: data.dueDate,
+          metadata: data.metadata || null,
+          status: 'PENDING',
+        },
+      });
+      return invoice;
     });
-
-    return invoice;
   }
 
   /**
@@ -242,7 +245,10 @@ export class InvoiceService {
   async sendInvoice(id: string) {
     const invoice = await this.getInvoiceById(id);
 
-    // NOTE: Implementar envio de email com PDF da invoice
+    // TODO: Integrar com serviço de email real (SendGrid/Resend)
+    // Por enquanto, logamos e simulamos o envio
+    console.log(`[Mock Email] Sending invoice ${invoice.invoiceNumber} to tenant...`);
+    
     // await emailService.sendInvoice(invoice);
 
     // Atualizar metadata para marcar como enviada
@@ -251,7 +257,8 @@ export class InvoiceService {
       data: { 
         metadata: {
           ...(invoice.metadata as object),
-          sentAt: new Date().toISOString()
+          sentAt: new Date().toISOString(),
+          status: 'SENT'
         },
         updatedAt: new Date()
       },
