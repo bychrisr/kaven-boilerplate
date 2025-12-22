@@ -1,51 +1,108 @@
-'use client';
+import * as React from 'react';
+import { ChevronRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-import { ChevronRight, Home } from 'lucide-react';
-
-const routeNames: Record<string, string> = {
-  '/': 'Dashboard',
-  '/users': 'Usuários',
-  '/users/create': 'Criar Usuário',
-  '/tenants': 'Tenants',
-  '/invoices': 'Invoices',
-  '/orders': 'Pedidos',
-  '/settings': 'Configurações',
-};
-
-export function Breadcrumbs() {
-  const pathname = usePathname();
-  const paths = pathname.split('/').filter(Boolean);
-
-  return (
-    <nav className="flex items-center gap-2 text-sm text-gray-600">
-      <Link
-        href="/"
-        className="flex items-center gap-1 hover:text-gray-900"
-      >
-        <Home className="h-4 w-4" />
-        <span>Home</span>
-      </Link>
-
-      {paths.map((path, index) => {
-        const href = `/${paths.slice(0, index + 1).join('/')}`;
-        const name = routeNames[href] || path;
-        const isLast = index === paths.length - 1;
-
-        return (
-          <div key={href} className="flex items-center gap-2">
-            <ChevronRight className="h-4 w-4" />
-            {isLast ? (
-              <span className="font-medium text-gray-900">{name}</span>
-            ) : (
-              <Link href={href} className="hover:text-gray-900">
-                {name}
-              </Link>
-            )}
-          </div>
-        );
-      })}
-    </nav>
-  );
+export interface BreadcrumbsProps extends React.HTMLAttributes<HTMLElement> {
+  /**
+   * Separator between items
+   */
+  separator?: React.ReactNode;
+  /**
+   * Maximum items to display
+   */
+  maxItems?: number;
+  /**
+   * Items to show before collapse
+   */
+  itemsBeforeCollapse?: number;
+  /**
+   * Items to show after collapse
+   */
+  itemsAfterCollapse?: number;
+  children: React.ReactNode;
 }
+
+export const Breadcrumbs = React.forwardRef<HTMLElement, BreadcrumbsProps>(
+  (
+    {
+      className,
+      separator = <ChevronRight className="size-4" />,
+      maxItems,
+      itemsBeforeCollapse = 1,
+      itemsAfterCollapse = 1,
+      children,
+      ...props
+    },
+    ref
+  ) => {
+    const childrenArray = React.Children.toArray(children);
+    const shouldCollapse = maxItems && childrenArray.length > maxItems;
+
+    let displayedChildren = childrenArray;
+
+    if (shouldCollapse) {
+      const before = childrenArray.slice(0, itemsBeforeCollapse);
+      const after = childrenArray.slice(-itemsAfterCollapse);
+      displayedChildren = [
+        ...before,
+        <li key="ellipsis" className="flex items-center">
+          <span className="px-2 text-text-secondary">...</span>
+        </li>,
+        ...after,
+      ];
+    }
+
+    return (
+      <nav ref={ref} aria-label="Breadcrumb" {...props}>
+        <ol className={cn('flex items-center flex-wrap gap-2', className)}>
+          {displayedChildren.map((child, index) => (
+            <React.Fragment key={index}>
+              {child}
+              {index < displayedChildren.length - 1 && (
+                <li className="flex items-center text-text-secondary" aria-hidden="true">
+                  {separator}
+                </li>
+              )}
+            </React.Fragment>
+          ))}
+        </ol>
+      </nav>
+    );
+  }
+);
+
+Breadcrumbs.displayName = 'Breadcrumbs';
+
+export interface BreadcrumbItemProps extends React.HTMLAttributes<HTMLLIElement> {
+  /**
+   * Is current page
+   */
+  current?: boolean;
+  /**
+   * Icon
+   */
+  icon?: React.ReactNode;
+  children: React.ReactNode;
+}
+
+export const BreadcrumbItem = React.forwardRef<HTMLLIElement, BreadcrumbItemProps>(
+  ({ className, current = false, icon, children, ...props }, ref) => {
+    return (
+      <li
+        ref={ref}
+        className={cn(
+          'flex items-center gap-1.5 text-sm',
+          current ? 'text-text-primary font-medium' : 'text-text-secondary',
+          className
+        )}
+        aria-current={current ? 'page' : undefined}
+        {...props}
+      >
+        {icon}
+        {children}
+      </li>
+    );
+  }
+);
+
+BreadcrumbItem.displayName = 'BreadcrumbItem';
