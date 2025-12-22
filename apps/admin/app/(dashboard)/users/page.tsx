@@ -108,7 +108,7 @@ export default function UsersPage() {
     {
       key: 'name',
       label: 'Nome',
-      render: (user: { id: string; name: string; email: string; phone?: string; tenant?: { name: string }; role: string; status: string }) => (
+      render: (user: any) => (
         <div className="flex items-center gap-3">
           <Avatar size="md" alt={user.name}>
             {user.name.charAt(0).toUpperCase()}
@@ -127,7 +127,7 @@ export default function UsersPage() {
     {
       key: 'phone',
       label: 'Telefone',
-      render: (user: { phone?: string }) => (
+      render: (user: any) => (
         <Typography variant="body2" color="secondary">
           {user.phone || '-'}
         </Typography>
@@ -136,7 +136,7 @@ export default function UsersPage() {
     {
       key: 'tenant',
       label: 'Tenant',
-      render: (user: { tenant?: { name: string } }) => (
+      render: (user: any) => (
         <Typography variant="body2" color="secondary">
           {user.tenant?.name || '-'}
         </Typography>
@@ -145,7 +145,7 @@ export default function UsersPage() {
     {
       key: 'role',
       label: 'Função',
-      render: (user: { role: string }) => (
+      render: (user: any) => (
         <Chip
           label={roleConfig[user.role as keyof typeof roleConfig]?.label || user.role}
           color={roleConfig[user.role as keyof typeof roleConfig]?.color || 'default'}
@@ -156,7 +156,7 @@ export default function UsersPage() {
     {
       key: 'status',
       label: 'Status',
-      render: (user: { status: string }) => (
+      render: (user: any) => (
         <Chip
           label={statusConfig[user.status as keyof typeof statusConfig]?.label || user.status}
           color={statusConfig[user.status as keyof typeof statusConfig]?.color || 'default'}
@@ -168,7 +168,7 @@ export default function UsersPage() {
       key: 'actions',
       label: 'Ações',
       align: 'right' as const,
-      render: (user: { id: string }) => (
+      render: (user: any) => (
         <div className="flex items-center justify-end gap-1">
           <Link href={`/users/${user.id}`}>
             <IconButton size="sm" aria-label="Ver detalhes">
