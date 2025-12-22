@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { DesignSystemProvider } from "@/lib/design-system";
+// import { DesignSystemProvider } from "@/lib/design-system";
 
 export const metadata: Metadata = {
   title: "Kaven Admin Panel",
@@ -15,9 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <DesignSystemProvider>
+        {/* <DesignSystemProvider> */}
           {children}
-        </DesignSystemProvider>
+        {/* </DesignSystemProvider> */}
       </body>
     </html>
   );
