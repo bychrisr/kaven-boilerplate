@@ -24,12 +24,47 @@ export class MUIAdapter implements DesignSystemAdapter {
       colors: {
         ...baseTokens.colors,
         brand: {
+          // Primary (Minimals Green - 5 tones)
           primary: '#00ab55',
+          primaryLight: '#5BE49B',
+          primaryLighter: '#C8FAD6',
+          primaryDark: '#007867',
+          primaryDarker: '#004B50',
+          
+          // Secondary (Minimals Blue - 5 tones)
           secondary: '#3366ff',
+          secondaryLight: '#84A9FF',
+          secondaryLighter: '#D6E4FF',
+          secondaryDark: '#1939B7',
+          secondaryDarker: '#091A7A',
+          
+          // Success (5 tones)
           success: '#22c55e',
+          successLight: '#77ED8B',
+          successLighter: '#D3FCD2',
+          successDark: '#118D57',
+          successDarker: '#065E49',
+          
+          // Warning (5 tones)
           warning: '#ffab00',
+          warningLight: '#FFD666',
+          warningLighter: '#FFF5CC',
+          warningDark: '#B76E00',
+          warningDarker: '#7A4100',
+          
+          // Error (5 tones)
           error: '#ff5630',
+          errorLight: '#FFAC82',
+          errorLighter: '#FFE9D5',
+          errorDark: '#B71D18',
+          errorDarker: '#7A0916',
+          
+          // Info (5 tones)
           info: '#00b8d9',
+          infoLight: '#61F3F3',
+          infoLighter: '#CAFDF5',
+          infoDark: '#006C9C',
+          infoDarker: '#003768',
         },
       },
       radius: {
@@ -38,6 +73,7 @@ export class MUIAdapter implements DesignSystemAdapter {
         md: '12px',
         lg: '16px',
         xl: '20px',
+        '2xl': '24px',
         full: '9999px',
       },
     };

@@ -24,12 +24,47 @@ export class HIGAdapter implements DesignSystemAdapter {
       colors: {
         ...baseTokens.colors,
         brand: {
-          primary: '#007AFF',  // iOS Blue
-          secondary: '#5856D6', // iOS Purple
-          success: '#34C759',   // iOS Green
-          warning: '#FF9500',   // iOS Orange
-          error: '#FF3B30',     // iOS Red
-          info: '#5AC8FA',      // iOS Teal
+          // Primary (iOS Blue - 5 tones)
+          primary: '#007AFF',
+          primaryLight: '#4DA2FF',
+          primaryLighter: '#B3D9FF',
+          primaryDark: '#0051D5',
+          primaryDarker: '#003D99',
+          
+          // Secondary (iOS Purple - 5 tones)
+          secondary: '#5856D6',
+          secondaryLight: '#8E8CFF',
+          secondaryLighter: '#C7C6FF',
+          secondaryDark: '#3634A3',
+          secondaryDarker: '#1E1D5F',
+          
+          // Success (iOS Green - 5 tones)
+          success: '#34C759',
+          successLight: '#6EE77B',
+          successLighter: '#B7F3BD',
+          successDark: '#248A3D',
+          successDarker: '#155724',
+          
+          // Warning (iOS Orange - 5 tones)
+          warning: '#FF9500',
+          warningLight: '#FFB340',
+          warningLighter: '#FFD699',
+          warningDark: '#CC7700',
+          warningDarker: '#995900',
+          
+          // Error (iOS Red - 5 tones)
+          error: '#FF3B30',
+          errorLight: '#FF6B63',
+          errorLighter: '#FFB3AF',
+          errorDark: '#CC2F26',
+          errorDarker: '#99231C',
+          
+          // Info (iOS Teal - 5 tones)
+          info: '#5AC8FA',
+          infoLight: '#8DDBFB',
+          infoLighter: '#C6EDFD',
+          infoDark: '#32A0C8',
+          infoDarker: '#1A7896',
         },
       },
       typography: {
@@ -52,6 +87,7 @@ export class HIGAdapter implements DesignSystemAdapter {
         md: '10px',
         lg: '14px',
         xl: '18px',
+        '2xl': '22px',
         full: '9999px',
       },
       shadows: {
@@ -60,6 +96,17 @@ export class HIGAdapter implements DesignSystemAdapter {
         md: '0 4px 12px rgba(0, 0, 0, 0.1)',
         lg: '0 8px 24px rgba(0, 0, 0, 0.12)',
         xl: '0 16px 48px rgba(0, 0, 0, 0.14)',
+        // Extended shadows for Minimals compatibility
+        z0: 'none',
+        z1: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        z2: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+        z4: '0 4px 8px 0 rgba(0, 0, 0, 0.08)',
+        z6: '0 6px 12px 0 rgba(0, 0, 0, 0.08)',
+        z8: '0 8px 16px 0 rgba(0, 0, 0, 0.08)',
+        z12: '0 12px 24px -4px rgba(0, 0, 0, 0.08)',
+        z16: '0 16px 32px -4px rgba(0, 0, 0, 0.08)',
+        z20: '0 20px 40px -4px rgba(0, 0, 0, 0.08)',
+        z24: '0 24px 48px 0 rgba(0, 0, 0, 0.08)',
       },
     };
   }
