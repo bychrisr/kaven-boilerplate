@@ -1,6 +1,8 @@
 import prisma from '../../../lib/prisma';
 import { hashPassword } from '../../../lib/bcrypt';
 import type { CreateUserInput, UpdateUserInput } from '../../../lib/validation';
+import { auditService } from '../../audit/services/audit.service';
+
 
 export class UserService {
   /**
@@ -175,6 +177,16 @@ export class UserService {
       },
     });
 
+    // Log Audit
+    await auditService.log({
+      action: 'user.created',
+      entity: 'User',
+      entityId: user.id,
+      actorId: user.id, 
+      tenantId: user.tenantId || undefined,
+      metadata: { role: user.role, email: user.email }
+    });
+
     return user;
   }
 
@@ -221,6 +233,16 @@ export class UserService {
       },
     });
 
+    // Log Audit
+    await auditService.log({
+      action: 'user.updated',
+      entity: 'User',
+      entityId: user.id,
+      actorId: undefined, // TODO
+      tenantId: user.tenantId || undefined,
+      metadata: { updatedFields: Object.keys(data) }
+    });
+
     return user;
   }
 
@@ -243,6 +265,15 @@ export class UserService {
         email: `deleted_${Date.now()}_${existingUser.email}`,
         status: 'BANNED',
       },
+    });
+
+    // Log Audit
+    await auditService.log({
+      action: 'user.deleted',
+      entity: 'User',
+      entityId: id,
+      actorId: undefined, // TODO: passar actorId
+      metadata: { originalEmail: existingUser.email }
     });
 
     return { message: 'Usuário deletado com sucesso' };

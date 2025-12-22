@@ -2,6 +2,7 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import multipart from '@fastify/multipart';
+import fastifyHelmet from '@fastify/helmet';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import { authRoutes } from './modules/auth/routes/auth.routes';
@@ -65,6 +66,18 @@ fastify.register(swaggerUi, {
 
 // Plugins
 // Plugins
+fastify.register(fastifyHelmet, {
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", 'data:', 'validator.swagger.io'],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Necessário para Swagger UI
+    },
+  },
+  global: true,
+});
+
 fastify.register(cors, {
   origin: [
     'http://localhost:3000',

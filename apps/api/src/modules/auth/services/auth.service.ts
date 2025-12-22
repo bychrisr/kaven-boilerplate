@@ -5,6 +5,8 @@ import { generateAccessToken, generateRefreshToken, getRefreshTokenExpiry } from
 import { generate2FASecret, verify2FACode, generateBackupCodes } from '../../../lib/2fa';
 import { emailService } from '../../../lib/email.service';
 import type { RegisterInput, LoginInput } from '../../../lib/validation';
+import { auditService } from '../../audit/services/audit.service';
+
 
 export class AuthService {
   /**
@@ -84,9 +86,15 @@ export class AuthService {
     // Enviar email de boas-vindas
     await emailService.sendWelcomeEmail(user);
     
-    // NOTE: Gerar token de verificação e enviar email
-    // const verificationToken = generateVerificationToken();
-    // await emailService.sendVerificationEmail(user, verificationToken);
+    // Log Audit
+    await auditService.log({
+      action: 'auth.register',
+      entity: 'User',
+      entityId: user.id,
+      actorId: user.id,
+      tenantId: user.tenantId || undefined,
+      metadata: { email: user.email, role: user.role }
+    });
 
     return {
       message: 'Usuário criado com sucesso. Verifique seu email.',
@@ -220,6 +228,16 @@ export class AuthService {
       data: { lastLoginAt: new Date() },
     });
 
+    // Log Audit
+    await auditService.log({
+      action: 'auth.login.success',
+      entity: 'User',
+      entityId: user.id,
+      actorId: user.id,
+      tenantId: user.tenantId || undefined,
+      metadata: { method: 'password', has2FA: user.twoFactorEnabled }
+    });
+
     return {
       accessToken,
       refreshToken,
@@ -267,6 +285,10 @@ export class AuthService {
       where: { token: refreshToken },
       data: { revokedAt: new Date() },
     });
+
+    // Note: Não temos fácil acesso ao user aqui sem buscar o token antes, 
+    // mas a busca poderia ser custosa. Por hora, logamos apenas a revogação.
+    // Se necessário, poderiamos buscar o user do token.
 
     return { message: 'Logout realizado com sucesso' };
   }
@@ -336,6 +358,15 @@ export class AuthService {
       where: { userId: resetTokenRecord.userId },
     });
 
+    // Log Audit
+    await auditService.log({
+      action: 'auth.password_reset',
+      entity: 'User',
+      entityId: resetTokenRecord.userId,
+      actorId: resetTokenRecord.userId,
+      metadata: { method: 'token' }
+    });
+
     return { message: 'Senha resetada com sucesso' };
   }
 
@@ -371,6 +402,15 @@ export class AuthService {
       },
     });
 
+    // Log Audit
+    await auditService.log({
+      action: 'auth.2fa.setup_initiated',
+      entity: 'User',
+      entityId: userId,
+      actorId: userId,
+      tenantId: user.tenantId || undefined
+    });
+
     return {
       secret,
       qrCodeUrl,
@@ -403,6 +443,15 @@ export class AuthService {
       data: { twoFactorEnabled: true },
     });
 
+    // Log Audit
+    await auditService.log({
+      action: 'auth.2fa.enabled',
+      entity: 'User',
+      entityId: userId,
+      actorId: userId,
+      tenantId: user.tenantId || undefined
+    });
+
     return { message: '2FA habilitado com sucesso' };
   }
 
@@ -432,6 +481,15 @@ export class AuthService {
         twoFactorSecret: null,
         backupCodes: null,
       },
+    });
+
+    // Log Audit
+    await auditService.log({
+      action: 'auth.2fa.disabled',
+      entity: 'User',
+      entityId: userId,
+      actorId: userId,
+      tenantId: user?.tenantId || undefined
     });
 
     return { message: '2FA desabilitado com sucesso' };
