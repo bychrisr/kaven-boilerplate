@@ -5,24 +5,29 @@ import Link from 'next/link';
 import { useTenants } from '@/hooks/use-tenants';
 import {
   Plus,
-  Search,
+  Eye,
   Pencil,
   Trash2,
   Building2,
   Globe,
-  CheckCircle2,
-  XCircle,
-  Eye,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { ConfirmationModal } from '@/components/ui/confirmation-modal';
 
+import {
+  Typography,
+  Button,
+  TextField,
+  DataTable,
+  Chip,
+  IconButton,
+  Dialog,
+  Skeleton,
+} from '@/components';
 
 export default function TenantsPage() {
   const { tenants, isLoading, deleteTenant } = useTenants();
   const [searchTerm, setSearchTerm] = useState('');
-
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [tenantToDelete, setTenantToDelete] = useState<{ id: string; name: string } | null>(null);
 
@@ -48,170 +53,150 @@ export default function TenantsPage() {
     }
   };
 
+  const columns = [
+    {
+      key: 'name',
+      label: 'Nome / Slug',
+      render: (tenant: any) => (
+        <div className="flex items-center gap-3">
+          <div className="flex size-10 items-center justify-center rounded-full bg-primary-light/10 text-primary-main">
+            <Building2 className="size-5" />
+          </div>
+          <div>
+            <Typography variant="body2" className="font-medium">
+              {tenant.name}
+            </Typography>
+            <Typography variant="caption" color="secondary">
+              @{tenant.slug}
+            </Typography>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'domain',
+      label: 'Domínio',
+      render: (tenant: any) =>
+        tenant.domain ? (
+          <div className="flex items-center gap-2">
+            <Globe className="size-4" />
+            <a
+              href={`https://${tenant.domain}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary-main hover:underline"
+            >
+              {tenant.domain}
+            </a>
+          </div>
+        ) : (
+          <Typography variant="body2" color="secondary">
+            -
+          </Typography>
+        ),
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (tenant: any) => (
+        <Chip
+          label={tenant.status === 'ACTIVE' ? 'Ativo' : tenant.status === 'SUSPENDED' ? 'Suspenso' : 'Inativo'}
+          color={tenant.status === 'ACTIVE' ? 'success' : 'default'}
+          size="small"
+        />
+      ),
+    },
+    {
+      key: 'createdAt',
+      label: 'Criado em',
+      render: (tenant: any) => (
+        <Typography variant="body2" color="secondary">
+          {format(new Date(tenant.createdAt), "d 'de' MMM, yyyy", { locale: ptBR })}
+        </Typography>
+      ),
+    },
+    {
+      key: 'actions',
+      label: 'Ações',
+      align: 'right' as const,
+      render: (tenant: any) => (
+        <div className="flex items-center justify-end gap-1">
+          <Link href={`/tenants/${tenant.id}`}>
+            <IconButton size="small" aria-label="Ver detalhes">
+              <Eye className="size-4" />
+            </IconButton>
+          </Link>
+          <Link href={`/tenants/${tenant.id}/edit`}>
+            <IconButton size="small" aria-label="Editar">
+              <Pencil className="size-4" />
+            </IconButton>
+          </Link>
+          <IconButton
+            size="small"
+            color="error"
+            onClick={() => handleDelete(tenant.id, tenant.name)}
+            aria-label="Excluir"
+          >
+            <Trash2 className="size-4" />
+          </IconButton>
+        </div>
+      ),
+    },
+  ];
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton variant="rectangular" height={40} />
+        <Skeleton variant="rectangular" height={400} />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tenants</h1>
-          <p className="text-sm text-gray-500">
+          <Typography variant="h4">Tenants</Typography>
+          <Typography variant="body2" color="secondary">
             Gerencie as organizações e clientes do sistema
-          </p>
+          </Typography>
         </div>
-        <Link
-          href="/tenants/create"
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-main px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2"
-        >
-          <Plus className="h-4 w-4" />
-          Novo Tenant
+        <Link href="/tenants/create">
+          <Button variant="contained" color="primary" startIcon={<Plus className="size-4" />}>
+            Novo Tenant
+          </Button>
         </Link>
       </div>
 
-      {/* Filters */}
-      <div className="flex items-center rounded-lg border bg-white p-4 shadow-sm">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Buscar tenants por nome ou slug..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-md border border-gray-300 pl-10 py-2 text-sm focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
-          />
-        </div>
-      </div>
-
-      {/* Table */}
-      <div className="rounded-lg border bg-white shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50 text-gray-600 font-medium border-b">
-              <tr>
-                <th className="px-6 py-3">Nome / Slug</th>
-                <th className="px-6 py-3">Domínio</th>
-                <th className="px-6 py-3">Status</th>
-                <th className="px-6 py-3">Criado em</th>
-                <th className="px-6 py-3 text-right">Ações</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {(() => {
-                if (isLoading) {
-                  return (
-                    <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
-                        <div className="flex justify-center items-center gap-2">
-                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-main border-t-transparent"></div>
-                          Carregando tenants...
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                }
-
-                if (filteredTenants?.length === 0) {
-                  return (
-                    <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
-                        {searchTerm ? `Nenhum tenant encontrado para "${searchTerm}"` : 'Nenhum tenant cadastrado.'}
-                      </td>
-                    </tr>
-                  );
-                }
-
-                return filteredTenants?.map((tenant) => (
-                  <tr key={tenant.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-light/10 text-primary-main">
-                          <Building2 className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900">{tenant.name}</p>
-                          <p className="text-xs text-gray-500">@{tenant.slug}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      {tenant.domain ? (
-                        <div className="flex items-center gap-2 text-gray-600">
-                          <Globe className="h-4 w-4" />
-                          <a 
-                            href={`https://${tenant.domain}`} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="hover:text-primary-main hover:underline"
-                          >
-                            {tenant.domain}
-                          </a>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400">-</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        tenant.status === 'ACTIVE'
-                          ? 'bg-success-light/20 text-success-dark' 
-                          : 'bg-gray-100 text-gray-600'
-                      }`}>
-                        {tenant.status === 'ACTIVE' ? (
-                          <>
-                            <CheckCircle2 className="h-3.5 w-3.5" />
-                            Ativo
-                          </>
-                        ) : (
-                          <>
-                            <XCircle className="h-3.5 w-3.5" />
-                            {tenant.status === 'SUSPENDED' ? 'Suspenso' : 'Inativo'}
-                          </>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-gray-600">
-                      {format(new Date(tenant.createdAt), "d 'de' MMM, yyyy", { locale: ptBR })}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Link
-                          href={`/tenants/${tenant.id}`}
-                          className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Link>
-                        <Link
-                          href={`/tenants/${tenant.id}/edit`}
-                          className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(tenant.id, tenant.name)}
-                          className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-rose-600"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ));
-              })()}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-
-      <ConfirmationModal
-        isOpen={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
-        onConfirm={confirmDelete}
-        title="Excluir Tenant"
-        message={`Tem certeza que deseja excluir o tenant "${tenantToDelete?.name}"? Esta ação removerá todos os dados associados e não pode ser desfeita.`}
-        confirmLabel="Excluir"
-        cancelLabel="Cancelar"
-        variant="danger"
-        isLoading={deleteTenant.isPending}
+      <TextField
+        placeholder="Buscar tenants por nome ou slug..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        fullWidth
       />
+
+      <DataTable
+        columns={columns}
+        data={filteredTenants || []}
+        emptyMessage={searchTerm ? `Nenhum tenant encontrado para "${searchTerm}"` : 'Nenhum tenant cadastrado.'}
+      />
+
+      <Dialog open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
+        <Dialog.Title>Excluir Tenant</Dialog.Title>
+        <Dialog.Content>
+          <Typography>
+            Tem certeza que deseja excluir o tenant "{tenantToDelete?.name}"? Esta ação removerá todos os dados
+            associados e não pode ser desfeita.
+          </Typography>
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Button onClick={() => setDeleteModalOpen(false)}>Cancelar</Button>
+          <Button variant="contained" color="error" onClick={confirmDelete} disabled={deleteTenant.isPending}>
+            {deleteTenant.isPending ? 'Excluindo...' : 'Excluir'}
+          </Button>
+        </Dialog.Actions>
+      </Dialog>
     </div>
   );
 }
