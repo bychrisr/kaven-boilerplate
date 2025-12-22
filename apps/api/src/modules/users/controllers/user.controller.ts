@@ -39,7 +39,7 @@ export class UserController {
 
   async getCurrent(request: FastifyRequest, reply: FastifyReply) {
     try {
-      // TODO: Extrair userId do token JWT (implementar auth middleware)
+      // NOTE: Extrair userId do token JWT (implementar auth middleware)
       const userId = 'temp-user-id'; // Placeholder
       const user = await userService.getCurrentUser(userId);
       reply.send(user);

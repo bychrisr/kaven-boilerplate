@@ -24,7 +24,7 @@ export function ConfirmationModal({
   cancelLabel = 'Cancelar',
   variant = 'danger',
   isLoading = false,
-}: ConfirmationModalProps) {
+}: Readonly<ConfirmationModalProps>) {
   if (!isOpen) return null;
 
   const bgColors = {

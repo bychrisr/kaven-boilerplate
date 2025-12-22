@@ -206,85 +206,95 @@ export default function TenantDetailsPage({ params }: { params: Promise<{ id: st
         </div>
 
         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-          {isLoadingUsers ? (
-            <div className="flex h-32 items-center justify-center">
-              <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-            </div>
-          ) : users.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-              <div className="rounded-full bg-gray-50 p-3 mb-3">
-                <UserIcon className="h-6 w-6 text-gray-400" />
-              </div>
-              <p className="text-gray-900 font-medium">Nenhum usuário encontrado</p>
-              <p className="text-sm text-gray-500 max-w-sm mt-1">
-                Este tenant ainda não possui usuários associados.
-              </p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-gray-50 text-gray-600 font-medium border-b">
-                  <tr>
-                    <th className="px-6 py-3">Usuário</th>
-                    <th className="px-6 py-3">Email</th>
-                    <th className="px-6 py-3">Função</th>
-                    <th className="px-6 py-3">Status</th>
-                    <th className="px-6 py-3">Cadastrado em</th>
-                    <th className="px-6 py-3 text-right">Ações</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {users.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="px-6 py-4 font-medium text-gray-900">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-600 font-bold text-xs">
-                            {user.name.charAt(0).toUpperCase()}
-                          </div>
-                          {user.name}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-gray-600">
-                        <div className="flex items-center gap-2">
-                          <Mail className="h-3.5 w-3.5 text-gray-400" />
-                          {user.email}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                          user.role === 'TENANT_ADMIN' 
-                            ? 'bg-purple-50 text-purple-700' 
-                            : 'bg-blue-50 text-blue-700'
-                        }`}>
-                          {user.role === 'TENANT_ADMIN' ? 'Admin' : 'Usuário'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                          user.status === 'ACTIVE'
-                            ? 'bg-emerald-50 text-emerald-700'
-                            : 'bg-amber-50 text-amber-700'
-                        }`}>
-                          {user.status === 'ACTIVE' ? 'Ativo' : user.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-gray-500">
-                        {format(new Date(user.createdAt), "d MMM, yyyy", { locale: ptBR })}
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <Link
-                          href={`/users/${user.id}`}
-                          className="text-primary-main hover:underline font-medium text-xs"
-                        >
-                          Ver Perfil
-                        </Link>
-                      </td>
+          {(() => {
+            if (isLoadingUsers) {
+              return (
+                <div className="flex h-32 items-center justify-center">
+                  <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+                </div>
+              );
+            }
+
+            if (users.length === 0) {
+              return (
+                <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                  <div className="rounded-full bg-gray-50 p-3 mb-3">
+                    <UserIcon className="h-6 w-6 text-gray-400" />
+                  </div>
+                  <p className="text-gray-900 font-medium">Nenhum usuário encontrado</p>
+                  <p className="text-sm text-gray-500 max-w-sm mt-1">
+                    Este tenant ainda não possui usuários associados.
+                  </p>
+                </div>
+              );
+            }
+
+            return (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-gray-55 text-gray-600 font-medium border-b">
+                    <tr>
+                      <th className="px-6 py-3">Usuário</th>
+                      <th className="px-6 py-3">Email</th>
+                      <th className="px-6 py-3">Função</th>
+                      <th className="px-6 py-3">Status</th>
+                      <th className="px-6 py-3">Cadastrado em</th>
+                      <th className="px-6 py-3 text-right">Ações</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {users.map((user) => (
+                      <tr key={user.id} className="hover:bg-gray-50/50 transition-colors">
+                        <td className="px-6 py-4 font-medium text-gray-900">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-600 font-bold text-xs">
+                              {user.name.charAt(0).toUpperCase()}
+                            </div>
+                            {user.name}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-gray-600">
+                          <div className="flex items-center gap-2">
+                            <Mail className="h-3.5 w-3.5 text-gray-400" />
+                            {user.email}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                            user.role === 'TENANT_ADMIN' 
+                              ? 'bg-purple-50 text-purple-700' 
+                              : 'bg-blue-50 text-blue-700'
+                          }`}>
+                            {user.role === 'TENANT_ADMIN' ? 'Admin' : 'Usuário'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                            user.status === 'ACTIVE'
+                              ? 'bg-emerald-50 text-emerald-700'
+                              : 'bg-amber-50 text-amber-700'
+                          }`}>
+                            {user.status === 'ACTIVE' ? 'Ativo' : user.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-gray-500">
+                          {format(new Date(user.createdAt), "d MMM, yyyy", { locale: ptBR })}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <Link
+                            href={`/users/${user.id}`}
+                            className="text-primary-main hover:underline font-medium text-xs"
+                          >
+                            Ver Perfil
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          })()}
         </div>
       </div>
     </div>
