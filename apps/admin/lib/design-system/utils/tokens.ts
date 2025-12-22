@@ -1,44 +1,7 @@
 /**
  * Design System Token Utilities
- * Helper functions to use design system tokens in components
+ * Helper constants and utilities to use Minimals design tokens in components
  */
-
-import { useDesignSystem } from '@/lib/design-system/context/design-system-context';
-
-/**
- * Hook to get design system tokens
- * Usage: const tokens = useTokens();
- */
-export function useTokens() {
-  const { tokens } = useDesignSystem();
-  return tokens;
-}
-
-/**
- * Get CSS custom properties from tokens
- * Useful for inline styles or CSS-in-JS
- */
-export function getTokenCSSVars(tokens: any) {
-  return {
-    // Colors
-    '--color-primary': tokens.colors.brand.primary,
-    '--color-primary-light': tokens.colors.brand.primaryLight,
-    '--color-primary-dark': tokens.colors.brand.primaryDark,
-    
-    // Shadows
-    '--shadow-z8': tokens.shadows.z8,
-    '--shadow-z12': tokens.shadows.z12,
-    '--shadow-z24': tokens.shadows.z24,
-    
-    // Radius
-    '--radius-md': tokens.radius.md,
-    '--radius-xl': tokens.radius.xl,
-    
-    // Typography
-    '--font-family': tokens.typography.fontFamily,
-    '--font-family-headings': tokens.typography.fontFamilyHeadings,
-  };
-}
 
 /**
  * Minimals-specific token classes
