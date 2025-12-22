@@ -14,6 +14,7 @@ export * from './ui/slider';
 export * from './ui/rating';
 export * from './ui/select';
 export * from './ui/autocomplete';
+export * from './ui/toggle-button';
 
 // UI Components - Feedback
 export * from './ui/alert';
@@ -32,6 +33,8 @@ export * from './ui/list';
 export * from './ui/divider';
 export * from './ui/timeline';
 export * from './ui/image-list';
+export * from './ui/data-table';
+export * from './ui/masonry';
 
 // UI Components - Navigation
 export * from './breadcrumbs';
@@ -48,7 +51,17 @@ export * from './ui/dialog';
 export * from './ui/drawer';
 export * from './ui/app-bar';
 export * from './ui/paper';
+export * from './ui/popover';
 
 // UI Components - Inputs
 export * from './ui/icon-button';
 export * from './ui/fab';
+export * from './ui/speed-dial';
+
+// UI Components - Transitions
+export * from './ui/transitions';
+
+// UI Components - Utils
+export * from './ui/portal';
+export * from './ui/click-away-listener';
+export * from './ui/utils';
