@@ -62,7 +62,7 @@ const chipVariants = cva(
 );
 
 export interface ChipProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'color'>,
     VariantProps<typeof chipVariants> {
   /**
    * Avatar or icon at the start
@@ -113,7 +113,7 @@ const Chip = React.forwardRef<HTMLDivElement, ChipProps>(
         tabIndex={isClickable ? 0 : undefined}
         onClick={onClick}
         className={cn(
-          chipVariants({ variant, color, size }),
+          chipVariants({ variant, color: color as any, size }),
           isClickable && 'cursor-pointer hover:opacity-80',
           className
         )}

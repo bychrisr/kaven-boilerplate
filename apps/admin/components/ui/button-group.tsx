@@ -39,7 +39,7 @@ const buttonGroupVariants = cva(
 );
 
 export interface ButtonGroupProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'color'>,
     VariantProps<typeof buttonGroupVariants> {
   /**
    * Disable elevation
@@ -72,7 +72,7 @@ export const ButtonGroup = React.forwardRef<HTMLDivElement, ButtonGroupProps>(
         ref={ref}
         role="group"
         className={cn(
-          buttonGroupVariants({ variant, color, size, orientation }),
+          buttonGroupVariants({ variant, color: color as any, size, orientation }),
           fullWidth && 'w-full',
           !disableElevation && variant === 'contained' && 'shadow-sm',
           orientation === 'horizontal' && '[&>button]:rounded-none [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md',
