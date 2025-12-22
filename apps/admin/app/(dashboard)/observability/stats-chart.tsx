@@ -30,20 +30,20 @@ export function StatsChart({
       <div className="rounded-lg border border-gray-200 bg-white p-6">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium text-gray-600">{title}</p>
-          <div className="rounded-full bg-gray-100 p-3">
-            <Icon className="h-6 w-6 text-gray-400" />
+          <div className="rounded-full bg-blue-50 p-3">
+            <Icon className="h-6 w-6 text-blue-400" />
           </div>
         </div>
-        <div className="mt-4 h-20 animate-pulse rounded bg-gray-100" />
+        <div className="mt-4 h-20 animate-pulse rounded bg-gray-50" />
       </div>
     );
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6">
+    <div className="rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium text-gray-600">{title}</p>
-        <div className="rounded-full bg-blue-100 p-3">
+        <div className="rounded-full bg-blue-50 p-3">
           <Icon className="h-6 w-6 text-blue-600" />
         </div>
       </div>
@@ -55,25 +55,18 @@ export function StatsChart({
           <AreaChart data={data}>
             <defs>
               <linearGradient id={`gradient-${title}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={color} stopOpacity={0.3} />
-                <stop offset="95%" stopColor={color} stopOpacity={0} />
+                <stop offset="5%" stopColor={color} stopOpacity={0.2} />
+                <stop offset="95%" stopColor={color} stopOpacity={0.05} />
               </linearGradient>
             </defs>
             <Tooltip
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
                   return (
-                    <div className="rounded-lg border border-gray-200 bg-white p-2 shadow-sm">
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="flex flex-col">
-                          <span className="text-[0.70rem] uppercase text-gray-500">
-                            Valor
-                          </span>
-                          <span className="font-bold text-gray-900">
-                            {payload[0].value}
-                          </span>
-                        </div>
-                      </div>
+                    <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-lg">
+                      <span className="text-sm font-semibold text-gray-900">
+                        {payload[0].value}
+                      </span>
                     </div>
                   );
                 }
@@ -85,7 +78,7 @@ export function StatsChart({
               dataKey="value"
               stroke={color}
               fill={`url(#gradient-${title})`}
-              strokeWidth={2}
+              strokeWidth={2.5}
             />
           </AreaChart>
         </ResponsiveContainer>
