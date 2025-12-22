@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
-export interface BottomNavigationProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface BottomNavigationProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "onScroll"> {
   /**
    * Selected value
    */

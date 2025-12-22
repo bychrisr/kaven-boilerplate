@@ -97,7 +97,7 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
 
 Radio.displayName = 'Radio';
 
-export interface RadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface RadioGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "onScroll"> {
   /**
    * Selected value
    */

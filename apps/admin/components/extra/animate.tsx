@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
-export interface AnimateProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface AnimateProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onScroll'> {
   /**
    * Animation type
    */

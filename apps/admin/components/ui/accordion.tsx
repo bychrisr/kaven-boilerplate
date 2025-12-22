@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export interface AccordionProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface AccordionProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "onScroll"> {
   /**
    * Expanded panel(s)
    */
@@ -54,7 +54,7 @@ export const Accordion = React.forwardRef<HTMLDivElement, AccordionProps>(
 
 Accordion.displayName = 'Accordion';
 
-export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface AccordionItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "onScroll"> {
   /**
    * Panel identifier
    */
@@ -101,7 +101,7 @@ export const AccordionItem = React.forwardRef<HTMLDivElement, AccordionItemProps
 
 AccordionItem.displayName = 'AccordionItem';
 
-export interface AccordionSummaryProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface AccordionSummaryProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "onScroll"> {
   /**
    * Expand icon
    */
@@ -165,7 +165,7 @@ export const AccordionSummary = React.forwardRef<HTMLDivElement, AccordionSummar
 
 AccordionSummary.displayName = 'AccordionSummary';
 
-export interface AccordionDetailsProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface AccordionDetailsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "onScroll"> {
   /**
    * Internal props
    */
