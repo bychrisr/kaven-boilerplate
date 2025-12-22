@@ -14,12 +14,12 @@ interface User {
 }
 
 export default function DashboardPage() {
-  const { data: usersData } = useUsers(1, 5);
+  const { data: usersData } = useUsers({ page: 1, limit: 5 });
 
   // Mock data para métricas (em produção, viriam de endpoints específicos)
   const metrics = {
     totalUsers: usersData?.pagination.total || 0,
-    revenue: 12450.00,
+    revenue: 12450,
     invoices: 23,
     orders: 45,
   };
@@ -216,7 +216,6 @@ export default function DashboardPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span
                       className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
                         user.role === 'SUPER_ADMIN'
                           ? 'bg-purple-100 text-purple-800'
