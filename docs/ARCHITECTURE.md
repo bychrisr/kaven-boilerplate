@@ -29,6 +29,7 @@ Sistema SaaS multi-tenant completo com arquitetura modular e escalável.
 ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
 │Payment Module│    │Invoice Module│    │ Order Module │
 └──────────────┘    └──────────────┘    └──────────────┘
+        │
         ▼
 ┌──────────────┐
 │ Audit Module │

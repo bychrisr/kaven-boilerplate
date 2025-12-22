@@ -142,6 +142,13 @@ fastify.get('/api/data', {
 | `/:id`   | PUT    | SUPER_ADMIN                 |
 | `/:id`   | DELETE | SUPER_ADMIN                 |
 
+### Observability & Audit (`/api`)
+
+| Endpoint               | Método | Permissão Requerida         |
+| ---------------------- | ------ | --------------------------- |
+| `/observability/stats` | GET    | SUPER_ADMIN                 |
+| `/audit-logs`          | GET    | SUPER_ADMIN ou TENANT_ADMIN |
+
 ---
 
 ## 🧪 Testes
