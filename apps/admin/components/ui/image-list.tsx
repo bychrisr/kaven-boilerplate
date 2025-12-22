@@ -82,7 +82,7 @@ export const ImageListItem = React.forwardRef<HTMLLIElement, ImageListItemProps>
 
 ImageListItem.displayName = 'ImageListItem';
 
-export interface ImageListItemBarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "onScroll"> {
+export interface ImageListItemBarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "onScroll" | "title"> {
   /**
    * Title
    */
