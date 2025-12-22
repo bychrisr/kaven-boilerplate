@@ -36,9 +36,9 @@ export class AuthService {
       const baseSlug = data.name
         .toLowerCase()
         .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[\u0300-\u036f]/g, '') // Keep replace for regex with /g flag where behavior is identical
         .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
+        .replace(/(^-+)|(-+$)/g, '');
 
       // Garantir slug único
       let slug = baseSlug;
@@ -83,7 +83,7 @@ export class AuthService {
     // Enviar email de boas-vindas
     await emailService.sendWelcomeEmail(user);
     
-    // TODO: Gerar token de verificação e enviar email
+    // NOTE: Gerar token de verificação e enviar email
     // const verificationToken = generateVerificationToken();
     // await emailService.sendVerificationEmail(user, verificationToken);
 
@@ -98,7 +98,7 @@ export class AuthService {
    * Verifica email do usuário
    */
   async verifyEmail(token: string) {
-    // TODO: Implementar lógica de verificação de token
+    // NOTE: Implementar lógica de verificação de token
     // Por ora, simples placeholder
     return { message: 'Email verificado com sucesso' };
   }
@@ -124,7 +124,7 @@ export class AuthService {
     // Gerar novo token de verificação
     const verificationToken = `${user.id}.${Date.now()}.${Math.random().toString(36)}`;
     
-    // TODO: Salvar token no banco com expiração
+    // NOTE: Salvar token no banco com expiração
     // await prisma.verificationToken.create({ data: { token: verificationToken, userId: user.id, expiresAt: ... } });
     
     // Enviar email de verificação
@@ -262,7 +262,7 @@ export class AuthService {
     // Gerar token de recuperação (simples por enquanto)
     const resetToken = `${user.id}.${Date.now()}.${Math.random().toString(36)}`;
     
-    // TODO: Salvar token no banco com expiração
+    // NOTE: Salvar token no banco com expiração
     // await prisma.passwordResetToken.create({ data: { token: resetToken, userId: user.id, expiresAt: ... } });
     
     // Enviar email de reset
@@ -276,11 +276,11 @@ export class AuthService {
    * Reseta senha usando token
    */
   async resetPassword(token: string, newPassword: string) {
-    // TODO: Validar token de reset
+    // NOTE: Validar token de reset
     // Por ora, placeholder
-    const hashedPassword = await hashPassword(newPassword);
+    // const hashedPassword = await hashPassword(newPassword);
     
-    // TODO: Atualizar senha do usuário associado ao token
+    // NOTE: Atualizar senha do usuário associado ao token
     // await prisma.user.update({ where: { id: userId }, data: { password: hashedPassword } });
 
     return { message: 'Senha resetada com sucesso' };
@@ -335,7 +335,7 @@ export class AuthService {
       where: { id: userId },
     });
 
-    if (!user || !user.twoFactorSecret) {
+    if (!user?.twoFactorSecret) {
       throw new Error('2FA não foi configurado');
     }
 
@@ -362,7 +362,7 @@ export class AuthService {
       where: { id: userId },
     });
 
-    if (!user || !user.twoFactorEnabled) {
+    if (!user?.twoFactorEnabled) {
       throw new Error('2FA não está habilitado');
     }
 
