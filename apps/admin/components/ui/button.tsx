@@ -5,13 +5,21 @@ import { Loader2 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
+/**
+ * Button Component (Minimals Design System)
+ * - Radius: 8px (md)
+ * - Shadow: z8 for contained variant
+ * - Typography: 14px bold (font-bold)
+ * - Colors: 5-tone system
+ */
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\'size-\'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+  // Minimals base styles
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[8px] text-sm font-bold transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\'size-\'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
   {
     variants: {
       variant: {
-        // Contained variants (filled background)
-        contained: 'shadow-sm',
+        // Contained variants (filled background) - Minimals shadow z8
+        contained: 'shadow-[0_8px_16px_0_rgba(145,158,171,0.08)]',
         // Outlined variants (border only)
         outlined: 'border-2 bg-transparent shadow-none',
         // Text variants (no background or border)
