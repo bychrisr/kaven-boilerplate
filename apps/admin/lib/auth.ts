@@ -5,13 +5,25 @@
 
 import type { NextAuthOptions } from 'next-auth';
 
+// Extend NextAuth types
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+    };
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   // TODO: Implement your auth configuration
   providers: [],
   callbacks: {
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.sub as string;
+        (session.user as any).id = token.sub as string;
       }
       return session;
     },

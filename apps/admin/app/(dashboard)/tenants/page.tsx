@@ -27,7 +27,7 @@ type Tenant = {
   id: string;
   name: string;
   slug: string;
-  domain?: string;
+  domain?: string | null;
   status: string;
   createdAt: string;
 };

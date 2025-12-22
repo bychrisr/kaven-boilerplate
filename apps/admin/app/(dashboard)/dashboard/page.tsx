@@ -1,6 +1,3 @@
-import { Card, Typography } from '@/components';
-import { TrendingUp, TrendingDown } from 'lucide-react';
-
 export default function DashboardPage() {
   // Mock data - replace with real data from API
   const kpiData = [
@@ -32,50 +29,32 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <Typography variant="h3" className="mb-6">
-        Dashboard
-      </Typography>
+      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         {kpiData.map((kpi) => (
-          <Card key={kpi.label}>
-            <div className="p-6">
-              <Typography variant="body2" color="secondary" className="mb-1">
-                {kpi.label}
-              </Typography>
-              <Typography variant="h4" className="mb-2">
-                {kpi.value}
-              </Typography>
-              <div className="flex items-center gap-1">
-                {kpi.trend === 'up' ? (
-                  <TrendingUp className="size-4 text-success-main" />
-                ) : (
-                  <TrendingDown className="size-4 text-error-main" />
-                )}
-                <Typography
-                  variant="body2"
-                  className={kpi.trend === 'up' ? 'text-success-main' : 'text-error-main'}
-                >
-                  {kpi.change} from last month
-                </Typography>
-              </div>
+          <div key={kpi.label} className="bg-white rounded-xl border shadow-sm p-6">
+            <p className="text-sm text-gray-500 mb-1">{kpi.label}</p>
+            <p className="text-2xl font-bold mb-2">{kpi.value}</p>
+            <div className="flex items-center gap-1">
+              <span className={kpi.trend === 'up' ? 'text-green-600' : 'text-red-600'}>
+                {kpi.change} from last month
+              </span>
             </div>
-          </Card>
+          </div>
         ))}
       </div>
 
       {/* Chart Section */}
-      <Card>
-        <div className="p-6">
-          <Typography variant="h5" className="mb-4">User Growth (30 days)</Typography>
-          <div className="h-64 flex items-center justify-center bg-gray-50 rounded">
-            <Typography variant="body2" color="secondary">
-              Chart will be implemented with Recharts
-            </Typography>
-          </div>
+      <div className="bg-white rounded-xl border shadow-sm p-6">
+        <h2 className="text-xl font-semibold mb-4">User Growth (30 days)</h2>
+        <div className="h-64 flex items-center justify-center bg-gray-50 rounded">
+          <p className="text-sm text-gray-500">
+            Chart will be implemented with Recharts
+          </p>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }
