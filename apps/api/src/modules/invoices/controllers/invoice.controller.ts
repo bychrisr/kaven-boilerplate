@@ -16,8 +16,8 @@ export class InvoiceController {
     try {
       const { page = '1', limit = '10', tenantId, status, search } = request.query as any;
       const result = await invoiceService.listInvoices({
-        page: parseInt(page),
-        limit: parseInt(limit),
+        page: Number.parseInt(page),
+        limit: Number.parseInt(limit),
         tenantId,
         status,
         search,

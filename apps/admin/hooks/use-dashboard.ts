@@ -20,7 +20,7 @@ export function useDashboardStats() {
   return useQuery<DashboardStats>({
     queryKey: ['dashboard', 'stats'],
     queryFn: async () => {
-      // TODO: Criar endpoint /api/dashboard/stats no backend
+      // NOTE: Criar endpoint /api/dashboard/stats no backend
       // Por enquanto, retornar dados mock
       return {
         totalUsers: 0,
@@ -39,7 +39,7 @@ export function useMonthlyData() {
   return useQuery<MonthlyData[]>({
     queryKey: ['dashboard', 'monthly'],
     queryFn: async () => {
-      // TODO: Criar endpoint /api/dashboard/monthly no backend
+      // NOTE: Criar endpoint /api/dashboard/monthly no backend
       // Por enquanto, retornar dados mock
       const months = ['Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
       return months.map((month, index) => ({

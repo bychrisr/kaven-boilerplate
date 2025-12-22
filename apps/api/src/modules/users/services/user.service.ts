@@ -124,9 +124,9 @@ export class UserService {
       const baseSlug = data.name
         .toLowerCase()
         .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
+        .replaceAll(/[\u0300-\u036f]/g, '')
+        .replaceAll(/[^a-z0-9]+/g, '-')
+        .replaceAll(/(^-+)|(-+$)/g, '');
 
       // Garantir slug único
       let slug = baseSlug;

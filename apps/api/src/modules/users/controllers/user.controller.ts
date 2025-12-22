@@ -18,8 +18,8 @@ export class UserController {
       const { page = '1', limit = '10', tenantId } = request.query as any;
       const result = await userService.listUsers(
         tenantId,
-        parseInt(page),
-        parseInt(limit)
+        Number.parseInt(page),
+        Number.parseInt(limit)
       );
       reply.send(result);
     } catch (error: any) {
