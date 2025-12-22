@@ -21,6 +21,23 @@ O dashboard de observabilidade (`/dashboard/observability`) implementa uma vers�
 
 Os dados são exibidos em formato de **Sparklines** (gráficos de linha simplificados) que acumulam dados no frontend (React state) para simular uma janela de tempo real de 60 segundos, atualizada via polling a cada 2 segundos.
 
+#### Implementação Técnica (Frontend)
+
+- **Biblioteca:** `recharts` (v3.6.0)
+- **Componente:** `StatsChart` (`apps/admin/app/(dashboard)/observability/stats-chart.tsx`)
+- **Características:**
+  - Gráficos de área com gradientes personalizados por métrica.
+  - Tooltip interativo mostrando valores ao passar o mouse.
+  - Estado de loading com skeleton animado.
+  - Histórico acumulado no state React (últimas 20 leituras).
+
+**Cores por Métrica:**
+
+- Uptime: Verde (`#22c55e`)
+- Requests/sec: Azul (`#3b82f6`)
+- Memória: Roxo (`#a855f7`)
+- Erros HTTP: Vermelho (`#ef4444`)
+
 ---
 
 ## 2. Sistema de Auditoria (Audit Logs)
@@ -79,6 +96,15 @@ Use esta referência ao instrumentar novas funcionalidades. Mantenha o padrão `
 - `invoice.pay`: Pagamento registrado.
 - `invoice.void`: Fatura cancelada.
 - `order.create`: Pedido criado.
+
+### Visualização no Frontend
+
+A tabela de auditoria (`AuditLogTable`) utiliza **badges coloridos** para facilitar a identificação visual:
+
+- 🔴 **Vermelho (destructive):** Ações de `delete` ou `failed`
+- 🟢 **Verde (default):** Ações de `create` ou `success`
+- 🟡 **Amarelo (secondary):** Ações de `update`
+- ⚪ **Cinza (outline):** Outras ações
 
 ---
 
