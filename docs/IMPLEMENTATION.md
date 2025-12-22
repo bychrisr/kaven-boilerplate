@@ -28,6 +28,9 @@ O **Kaven Boilerplate** é uma base sólida para aplicações SaaS multi-tenant,
 
 **Backend:**
 
+- **Autenticação Avançada**: JWT, Refresh Tokens, 2FA, e RBAC.
+- **Multi-tenancy Nativo**: Isolamento lógico de dados por tenant via middleware "Camaleão".
+- **Observabilidade**: [Dashboard nativo](OBSERVABILITY.md) com métricas em tempo real e logs de auditoria.
 - Node.js 20 LTS + TypeScript 5.3
 - Fastify 4 (API REST)
 - Prisma 5 (ORM)
@@ -36,7 +39,7 @@ O **Kaven Boilerplate** é uma base sólida para aplicações SaaS multi-tenant,
 
 **Frontend:**
 
-- Next.js 14 (App Router)
+- **Frontend Moderno**: Next.js 14 (App Router) com Shadcn UI.
 - React 18
 - TypeScript 5.3
 - Tailwind CSS
