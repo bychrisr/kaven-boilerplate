@@ -24,6 +24,14 @@ import {
     DialogTrigger,
   } from "@/components/ui/dialog"
 
+// Helper para determinar cor do badge baseado na ação
+function getActionBadgeVariant(action: string): "default" | "destructive" | "secondary" | "outline" {
+  if (action.includes('delete') || action.includes('failed')) return 'destructive';
+  if (action.includes('create') || action.includes('success')) return 'default';
+  if (action.includes('update')) return 'secondary';
+  return 'outline';
+}
+
 export function AuditLogTable() {
     const [page, setPage] = useState(1);
     const { data, isLoading } = useQuery({
@@ -52,7 +60,7 @@ export function AuditLogTable() {
                             <TableRow key={log.id}>
                                 <TableCell>{format(new Date(log.createdAt), 'dd/MM/yyyy HH:mm:ss')}</TableCell>
                                 <TableCell>
-                                    <Badge variant="outline">{log.action}</Badge>
+                                    <Badge variant={getActionBadgeVariant(log.action)}>{log.action}</Badge>
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex flex-col">

@@ -1,17 +1,51 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { observabilityApi, SystemStats } from '@/lib/api/observability';
+import { observabilityApi } from '@/lib/api/observability';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Activity, Server, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { AuditLogTable } from './audit-log-table';
+import { StatsChart } from './stats-chart';
+import { Activity, AlertTriangle, Cpu, Server, ShieldCheck } from 'lucide-react';
+import { useState } from 'react';
+
+// Interface para pontos do gráfico
+interface ChartDataPoint {
+  time: string;
+  value: number;
+}
+
+// Histórico acumulado
+interface StatsHistory {
+  requests: ChartDataPoint[];
+  errors: ChartDataPoint[];
+  memory: ChartDataPoint[];
+}
 
 export default function ObservabilityPage() {
+  // Estado para histórico de métricas
+  const [history, setHistory] = useState<StatsHistory>({
+    requests: [],
+    errors: [],
+    memory: [],
+  });
+
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['system-stats'],
-    queryFn: observabilityApi.getStats,
-    refetchInterval: 2000, // Refresh a cada 2s (Real-time feel)
+    queryFn: async () => {
+      const data = await observabilityApi.getStats();
+      
+      // Atualiza histórico ao receber novos dados
+      const now = new Date().toLocaleTimeString();
+      setHistory(prev => ({
+        requests: [...prev.requests.slice(-20), { time: now, value: data.http.requestsPerSecond }],
+        errors: [...prev.errors.slice(-20), { time: now, value: data.http.errorRequests }],
+        memory: [...prev.memory.slice(-20), { time: now, value: Math.round(data.system.memory.rss / 1024 / 1024) }],
+      }));
+      
+      return data;
+    },
+    refetchInterval: 2000, 
   });
 
   return (
@@ -29,72 +63,39 @@ export default function ObservabilityPage() {
 
         <TabsContent value="system" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Status</CardTitle>
-                <Activity className="h-4 w-4 text-green-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats ? 'Online' : '...'}</div>
-                <p className="text-xs text-muted-foreground">
-                  Uptime: {stats ? (stats.uptime / 3600).toFixed(2) : '-'} horas
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Requisições</CardTitle>
-                <Server className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats?.http.totalRequests || 0}</div>
-                <p className="text-xs text-muted-foreground">
-                  {stats?.http.requestsPerSecond || 0} req/s
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Uso de Memória</CardTitle>
-                <Server className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {stats ? (stats.system.memory.rss / 1024 / 1024).toFixed(0) : 0} MB
-                </div>
-                <p className="text-xs text-muted-foreground">RSS</p>
-              </CardContent>
-            </Card>
-
-             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Erros HTTP</CardTitle>
-                <AlertTriangle className={stats?.http.errorRate ? 'text-red-500 h-4 w-4' : 'text-muted-foreground h-4 w-4'} />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats?.http.errorRequests || 0}</div>
-                <p className="text-xs text-muted-foreground">
-                  Taxa: {(stats?.http.errorRate || 0) * 100}%
-                </p>
-              </CardContent>
-            </Card>
+            <StatsChart
+              title="Uptime (s)"
+              value={stats?.uptime.toFixed(0) ?? 0}
+              icon={Activity}
+              data={[{ time: 'now', value: stats?.uptime ?? 0 }]}
+              color="#22c55e"
+              loading={statsLoading}
+            />
+            <StatsChart
+              title="Requests / seg"
+              value={stats?.http.requestsPerSecond.toFixed(2) ?? 0}
+              icon={Server}
+              data={history.requests}
+              color="#3b82f6"
+              loading={statsLoading}
+            />
+            <StatsChart
+              title="Memória (MB)"
+              value={`${(stats?.system.memory.rss ? stats.system.memory.rss / 1024 / 1024 : 0).toFixed(0)} MB`}
+              icon={Cpu}
+              data={history.memory}
+              color="#a855f7"
+              loading={statsLoading}
+            />
+            <StatsChart
+              title="Erros HTTP"
+              value={stats?.http.errorRequests ?? 0}
+              icon={AlertTriangle}
+              data={history.errors}
+              color="#ef4444"
+              loading={statsLoading}
+            />
           </div>
-          
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-             <Card className="col-span-4">
-                  <CardHeader>
-                    <CardTitle>Visão Geral</CardTitle>
-                  </CardHeader>
-                  <CardContent className="pl-2">
-                     <div className="flex h-[200px] items-center justify-center text-muted-foreground">
-                        Gráficos históricos virão aqui (Prometheus/Grafana iframe)
-                     </div>
-                  </CardContent>
-             </Card>
-          </div>
-
         </TabsContent>
 
         <TabsContent value="audit">
