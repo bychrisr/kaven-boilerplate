@@ -53,12 +53,6 @@ export function StatsChart({
       <div className="mt-4 h-20">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
-            <defs>
-              <linearGradient id={`gradient-${title}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={color} stopOpacity={0.2} />
-                <stop offset="95%" stopColor={color} stopOpacity={0.05} />
-              </linearGradient>
-            </defs>
             <Tooltip
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
@@ -77,7 +71,7 @@ export function StatsChart({
               type="monotone"
               dataKey="value"
               stroke={color}
-              fill={`url(#gradient-${title})`}
+              fill="transparent"
               strokeWidth={2.5}
             />
           </AreaChart>
