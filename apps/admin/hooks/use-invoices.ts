@@ -59,6 +59,7 @@ export interface InvoiceStats {
   pending: { count: number; amount: number };
   overdue: { count: number; amount: number };
   draft: { count: number; amount: number };
+  canceled: { count: number; amount: number };
 }
 
 export function useInvoiceStats() {
