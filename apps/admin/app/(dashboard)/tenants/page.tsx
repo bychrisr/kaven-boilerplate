@@ -18,12 +18,19 @@ import {
   Typography,
   Button,
   TextField,
-  DataTable,
   Chip,
   IconButton,
-  Dialog,
   Skeleton,
 } from '@/components';
+
+type Tenant = {
+  id: string;
+  name: string;
+  slug: string;
+  domain?: string;
+  status: string;
+  createdAt: string;
+};
 
 export default function TenantsPage() {
   const { tenants, isLoading, deleteTenant } = useTenants();
@@ -57,7 +64,7 @@ export default function TenantsPage() {
     {
       key: 'name',
       label: 'Nome / Slug',
-      render: (tenant: any) => (
+      render: (tenant: Tenant) => (
         <div className="flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-full bg-primary-light/10 text-primary-main">
             <Building2 className="size-5" />
@@ -76,7 +83,7 @@ export default function TenantsPage() {
     {
       key: 'domain',
       label: 'Domínio',
-      render: (tenant: any) =>
+      render: (tenant: Tenant) =>
         tenant.domain ? (
           <div className="flex items-center gap-2">
             <Globe className="size-4" />
@@ -98,18 +105,21 @@ export default function TenantsPage() {
     {
       key: 'status',
       label: 'Status',
-      render: (tenant: any) => (
-        <Chip
-          label={tenant.status === 'ACTIVE' ? 'Ativo' : tenant.status === 'SUSPENDED' ? 'Suspenso' : 'Inativo'}
-          color={tenant.status === 'ACTIVE' ? 'success' : 'default'}
-          size="small"
-        />
-      ),
+      render: (tenant: Tenant) => {
+        const statusLabel = tenant.status === 'ACTIVE' ? 'Ativo' : tenant.status === 'SUSPENDED' ? 'Suspenso' : 'Inativo';
+        return (
+          <Chip
+            label={statusLabel}
+            color={tenant.status === 'ACTIVE' ? 'success' : 'default'}
+            size="sm"
+          />
+        );
+      },
     },
     {
       key: 'createdAt',
       label: 'Criado em',
-      render: (tenant: any) => (
+      render: (tenant: Tenant) => (
         <Typography variant="body2" color="secondary">
           {format(new Date(tenant.createdAt), "d 'de' MMM, yyyy", { locale: ptBR })}
         </Typography>
@@ -119,20 +129,20 @@ export default function TenantsPage() {
       key: 'actions',
       label: 'Ações',
       align: 'right' as const,
-      render: (tenant: any) => (
+      render: (tenant: Tenant) => (
         <div className="flex items-center justify-end gap-1">
           <Link href={`/tenants/${tenant.id}`}>
-            <IconButton size="small" aria-label="Ver detalhes">
+            <IconButton size="sm" aria-label="Ver detalhes">
               <Eye className="size-4" />
             </IconButton>
           </Link>
           <Link href={`/tenants/${tenant.id}/edit`}>
-            <IconButton size="small" aria-label="Editar">
+            <IconButton size="sm" aria-label="Editar">
               <Pencil className="size-4" />
             </IconButton>
           </Link>
           <IconButton
-            size="small"
+            size="sm"
             color="error"
             onClick={() => handleDelete(tenant.id, tenant.name)}
             aria-label="Excluir"
@@ -176,27 +186,65 @@ export default function TenantsPage() {
         fullWidth
       />
 
-      <DataTable
-        columns={columns}
-        data={filteredTenants || []}
-        emptyMessage={searchTerm ? `Nenhum tenant encontrado para "${searchTerm}"` : 'Nenhum tenant cadastrado.'}
-      />
+      {/* Table */}
+      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="border-b border-gray-200 bg-gray-50">
+              <tr>
+                {columns.map((col) => (
+                  <th
+                    key={col.key}
+                    className={`px-6 py-3 text-xs font-medium uppercase tracking-wider text-gray-500 ${
+                      col.align === 'right' ? 'text-right' : 'text-left'
+                    }`}
+                  >
+                    {col.label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {!filteredTenants || filteredTenants.length === 0 ? (
+                <tr>
+                  <td colSpan={columns.length} className="px-6 py-12 text-center text-sm text-gray-500">
+                    {searchTerm ? `Nenhum tenant encontrado para "${searchTerm}"` : 'Nenhum tenant cadastrado.'}
+                  </td>
+                </tr>
+              ) : (
+                filteredTenants.map((tenant) => (
+                  <tr key={tenant.id} className="hover:bg-gray-50">
+                    {columns.map((col) => (
+                      <td key={col.key} className={`px-6 py-4 ${col.align === 'right' ? 'text-right' : ''}`}>
+                        {col.render(tenant)}
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-      <Dialog open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
-        <Dialog.Title>Excluir Tenant</Dialog.Title>
-        <Dialog.Content>
-          <Typography>
-            Tem certeza que deseja excluir o tenant "{tenantToDelete?.name}"? Esta ação removerá todos os dados
-            associados e não pode ser desfeita.
-          </Typography>
-        </Dialog.Content>
-        <Dialog.Actions>
-          <Button onClick={() => setDeleteModalOpen(false)}>Cancelar</Button>
-          <Button variant="contained" color="error" onClick={confirmDelete} disabled={deleteTenant.isPending}>
-            {deleteTenant.isPending ? 'Excluindo...' : 'Excluir'}
-          </Button>
-        </Dialog.Actions>
-      </Dialog>
+      {/* Delete Confirmation Dialog */}
+      {deleteModalOpen && (
+        <div className="fixed inset-0 z-modal flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <Typography variant="h6" className="mb-4">Excluir Tenant</Typography>
+            <Typography className="mb-6">
+              Tem certeza que deseja excluir o tenant &quot;{tenantToDelete?.name}&quot;? Esta ação removerá todos os dados
+              associados e não pode ser desfeita.
+            </Typography>
+            <div className="flex justify-end gap-3">
+              <Button onClick={() => setDeleteModalOpen(false)}>Cancelar</Button>
+              <Button variant="contained" color="error" onClick={confirmDelete} disabled={deleteTenant.isPending}>
+                {deleteTenant.isPending ? 'Excluindo...' : 'Excluir'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
