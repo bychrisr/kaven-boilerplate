@@ -17,6 +17,7 @@ import {
   Pencil,
   Trash2,
   Loader2,
+  Ban,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -112,6 +113,14 @@ export default function InvoicesPage() {
         textColor: 'text-gray-700',
         icon: FileText,
       },
+      {
+        label: 'Cancelado',
+        count: statsData.canceled.count,
+        amount: statsData.canceled.amount,
+        bgColor: 'bg-slate-50',
+        textColor: 'text-slate-700',
+        icon: Ban,
+      },
     ];
   }, [statsData]);
 
@@ -125,6 +134,7 @@ export default function InvoicesPage() {
       { label: 'Pendente', count: statsData.pending.count, value: 'PENDING' as InvoiceStatus },
       { label: 'Vencido', count: statsData.overdue.count, value: 'OVERDUE' as InvoiceStatus },
       { label: 'Rascunho', count: statsData.draft.count, value: 'DRAFT' as InvoiceStatus },
+      { label: 'Cancelado', count: statsData.canceled.count, value: 'CANCELED' as InvoiceStatus },
     ];
   }, [statsData]);
 
@@ -273,7 +283,7 @@ export default function InvoicesPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {stats.map((stat) => (
           <div key={stat.label} className="rounded-lg border border-gray-200 bg-white p-4">
             <div className="flex items-center gap-3">
