@@ -107,6 +107,13 @@ export class HIGAdapter implements DesignSystemAdapter {
         z16: '0 16px 32px -4px rgba(0, 0, 0, 0.08)',
         z20: '0 20px 40px -4px rgba(0, 0, 0, 0.08)',
         z24: '0 24px 48px 0 rgba(0, 0, 0, 0.08)',
+        // Custom color shadows
+        primary: '0 8px 16px 0 rgba(0, 122, 255, 0.24)',
+        secondary: '0 8px 16px 0 rgba(88, 86, 214, 0.24)',
+        info: '0 8px 16px 0 rgba(90, 200, 250, 0.24)',
+        success: '0 8px 16px 0 rgba(52, 199, 89, 0.24)',
+        warning: '0 8px 16px 0 rgba(255, 149, 0, 0.24)',
+        error: '0 8px 16px 0 rgba(255, 59, 48, 0.24)',
       },
     };
   }
