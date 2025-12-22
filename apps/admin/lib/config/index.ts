@@ -4,7 +4,7 @@
  * Centralized configuration for the entire application
  */
 
-import packageJson from '../../../package.json';
+import packageJson from '../../package.json';
 
 // ============================================
 // APP CONFIG
