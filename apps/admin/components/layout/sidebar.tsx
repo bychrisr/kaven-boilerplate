@@ -59,7 +59,9 @@ const navigation: NavigationItem[] = [
     icon: Activity,
     children: [
       { name: 'Grafana', href: 'http://localhost:3001', external: true },
-      { name: 'Prometheus', href: 'http://localhost:9090', external: true }
+      { name: 'Prometheus', href: 'http://localhost:9090', external: true },
+      { name: 'System Health', href: '/dashboard/observability' },
+      { name: 'Audit Logs', href: '/dashboard/observability?tab=audit' }
     ]
   },
   { name: 'Settings', href: '/settings', icon: Settings }

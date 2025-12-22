@@ -11,6 +11,7 @@ import {
   ShoppingCart,
   Settings,
   LogOut,
+  Activity,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth.store';
 import { useUIStore } from '@/stores/ui.store';
@@ -31,7 +32,7 @@ export function Sidebar() {
 
   const handleLogout = () => {
     clearAuth();
-    window.location.href = '/login';
+    globalThis.location.href = '/login';
   };
 
   if (!sidebarOpen) return null;
@@ -64,6 +65,22 @@ export function Sidebar() {
               </Link>
             );
           })}
+
+          {/* Observabilidade - Apenas SUPER_ADMIN */}
+          {user?.role === 'SUPER_ADMIN' && (
+            <Link
+                href="/observability"
+                className={cn(
+                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  pathname.startsWith('/observability')
+                    ? 'bg-gray-100 text-gray-900'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                )}
+              >
+                <Activity className="h-5 w-5" />
+                Observabilidade
+            </Link>
+          )}
         </nav>
 
         {/* User Info */}

@@ -81,17 +81,22 @@ export async function authMiddleware(
       email: user.email,
       role: user.role,
       tenantId: user.tenantId,
+      // @ts-ignore
     };
 
     // Continuar para próximo handler
   } catch (error) {
-    request.log.error({ error }, 'Erro no auth middleware');
+    if (request.log) {
+        request.log.error({ error }, 'Erro no auth middleware');
+    }
     reply.status(401).send({
       error: 'Erro de autenticação',
       message: 'Falha ao verificar token',
     });
   }
 }
+
+export const requireAuth = authMiddleware;
 
 /**
  * Middleware opcional de autenticação
@@ -138,6 +143,8 @@ export async function optionalAuthMiddleware(
     }
   } catch (error) {
     // Ignora erros, continua sem user
-    request.log.warn({ error }, 'Erro no optional auth middleware');
+    if (request.log) {
+      request.log.warn({ error }, 'Erro no optional auth middleware');
+    }
   }
 }
