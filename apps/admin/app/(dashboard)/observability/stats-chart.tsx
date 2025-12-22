@@ -6,7 +6,6 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LucideIcon } from 'lucide-react';
 
 interface StatsChartProps {
@@ -23,72 +22,74 @@ export function StatsChart({
   data,
   value,
   icon: Icon,
-  color = '#8884d8',
+  color = '#3B82F6',
   loading,
 }: Readonly<StatsChartProps>) {
   if (loading) {
     return (
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">{title}</CardTitle>
-          <Icon className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="h-[80px] animate-pulse bg-muted rounded" />
-        </CardContent>
-      </Card>
+      <div className="rounded-lg border border-gray-200 bg-white p-6">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium text-gray-600">{title}</p>
+          <div className="rounded-full bg-gray-100 p-3">
+            <Icon className="h-6 w-6 text-gray-400" />
+          </div>
+        </div>
+        <div className="mt-4 h-20 animate-pulse rounded bg-gray-100" />
+      </div>
     );
   }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground" />
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        <div className="h-[80px] mt-4">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data}>
-              <defs>
-                <linearGradient id={`gradient-${title}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={color} stopOpacity={0.3} />
-                  <stop offset="95%" stopColor={color} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <Tooltip
-                content={({ active, payload }) => {
-                  if (active && payload && payload.length) {
-                    return (
-                      <div className="rounded-lg border bg-background p-2 shadow-sm">
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="flex flex-col">
-                            <span className="text-[0.70rem] uppercase text-muted-foreground">
-                              Valor
-                            </span>
-                            <span className="font-bold text-muted-foreground">
-                              {payload[0].value}
-                            </span>
-                          </div>
+    <div className="rounded-lg border border-gray-200 bg-white p-6">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-medium text-gray-600">{title}</p>
+        <div className="rounded-full bg-blue-100 p-3">
+          <Icon className="h-6 w-6 text-blue-600" />
+        </div>
+      </div>
+      <div className="mt-2">
+        <p className="text-3xl font-bold text-gray-900">{value}</p>
+      </div>
+      <div className="mt-4 h-20">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={data}>
+            <defs>
+              <linearGradient id={`gradient-${title}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={color} stopOpacity={0.3} />
+                <stop offset="95%" stopColor={color} stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <Tooltip
+              content={({ active, payload }) => {
+                if (active && payload && payload.length) {
+                  return (
+                    <div className="rounded-lg border border-gray-200 bg-white p-2 shadow-sm">
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="flex flex-col">
+                          <span className="text-[0.70rem] uppercase text-gray-500">
+                            Valor
+                          </span>
+                          <span className="font-bold text-gray-900">
+                            {payload[0].value}
+                          </span>
                         </div>
                       </div>
-                    );
-                  }
-                  return null;
-                }}
-              />
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke={color}
-                fill={`url(#gradient-${title})`}
-                strokeWidth={2}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
+                    </div>
+                  );
+                }
+                return null;
+              }}
+            />
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke={color}
+              fill={`url(#gradient-${title})`}
+              strokeWidth={2}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
   );
 }

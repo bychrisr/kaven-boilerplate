@@ -2,7 +2,6 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { observabilityApi } from '@/lib/api/observability';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AuditLogTable } from './audit-log-table';
 import { StatsChart } from './stats-chart';
@@ -50,25 +49,38 @@ export default function ObservabilityPage() {
 
   return (
     <div className="space-y-6">
-       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Observabilidade</h1>
-        <p className="text-muted-foreground">Monitoramento de sistema e auditoria de segurança.</p>
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Observabilidade</h1>
+        <p className="mt-1 text-sm text-gray-500">
+          Monitoramento de sistema e auditoria de segurança
+        </p>
       </div>
 
-      <Tabs defaultValue="system" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="system">Sistema</TabsTrigger>
-          <TabsTrigger value="audit">Auditoria</TabsTrigger>
+      <Tabs defaultValue="system" className="space-y-6">
+        <TabsList className="border-b border-gray-200 bg-transparent p-0">
+          <TabsTrigger 
+            value="system"
+            className="border-b-2 border-transparent px-4 py-3 text-sm font-medium text-gray-500 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600"
+          >
+            Sistema
+          </TabsTrigger>
+          <TabsTrigger 
+            value="audit"
+            className="border-b-2 border-transparent px-4 py-3 text-sm font-medium text-gray-500 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600"
+          >
+            Auditoria
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="system" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <TabsContent value="system" className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <StatsChart
               title="Uptime (s)"
               value={stats?.uptime.toFixed(0) ?? 0}
               icon={Activity}
               data={[{ time: 'now', value: stats?.uptime ?? 0 }]}
-              color="#22c55e"
+              color="#10B981"
               loading={statsLoading}
             />
             <StatsChart
@@ -76,7 +88,7 @@ export default function ObservabilityPage() {
               value={stats?.http.requestsPerSecond.toFixed(2) ?? 0}
               icon={Server}
               data={history.requests}
-              color="#3b82f6"
+              color="#3B82F6"
               loading={statsLoading}
             />
             <StatsChart
@@ -84,7 +96,7 @@ export default function ObservabilityPage() {
               value={`${(stats?.system.memory.rss ? stats.system.memory.rss / 1024 / 1024 : 0).toFixed(0)} MB`}
               icon={Cpu}
               data={history.memory}
-              color="#a855f7"
+              color="#8B5CF6"
               loading={statsLoading}
             />
             <StatsChart
@@ -92,23 +104,27 @@ export default function ObservabilityPage() {
               value={stats?.http.errorRequests ?? 0}
               icon={AlertTriangle}
               data={history.errors}
-              color="#ef4444"
+              color="#EF4444"
               loading={statsLoading}
             />
           </div>
         </TabsContent>
 
         <TabsContent value="audit">
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <ShieldCheck className="h-5 w-5" /> Logs de Auditoria
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <AuditLogTable />
-                </CardContent>
-            </Card>
+          <div className="rounded-lg border border-gray-200 bg-white">
+            <div className="border-b border-gray-200 p-6">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-gray-600" />
+                <h3 className="text-lg font-semibold text-gray-900">Logs de Auditoria</h3>
+              </div>
+              <p className="mt-1 text-sm text-gray-500">
+                Histórico de ações críticas do sistema
+              </p>
+            </div>
+            <div className="p-6">
+              <AuditLogTable />
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
