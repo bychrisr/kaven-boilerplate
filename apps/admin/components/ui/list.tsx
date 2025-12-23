@@ -34,7 +34,8 @@ export const List = React.forwardRef<HTMLUListElement, ListProps>(
 
 List.displayName = 'List';
 
-export interface ListItemProps extends React.HTMLAttributes<HTMLLIElement> {
+export interface ListItemProps
+  extends Omit<React.HTMLAttributes<HTMLLIElement>, 'onClick'> {
   /**
    * Dense padding
    */
@@ -59,10 +60,17 @@ export interface ListItemProps extends React.HTMLAttributes<HTMLLIElement> {
    * Disabled state
    */
   disabled?: boolean;
+  /**
+   * Click handler (works for both button and li)
+   */
+  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
   children: React.ReactNode;
 }
 
-export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
+export const ListItem = React.forwardRef<
+  HTMLLIElement | HTMLButtonElement,
+  ListItemProps
+>(
   (
     {
       className,
@@ -78,30 +86,46 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
     },
     ref
   ) => {
-    const Component = button ? 'button' : 'li';
+    const sharedClassName = cn(
+      'flex items-center w-full text-left',
+      {
+        'px-4': !disableGutters,
+        'py-2': !dense,
+        'py-1': dense,
+        'border-b border-divider': divider,
+        'cursor-pointer hover:bg-action-hover transition-colors': button && !disabled,
+        'bg-action-selected': selected,
+        'opacity-50 cursor-not-allowed': disabled,
+      },
+      className
+    );
+
+    const handleClick = disabled ? undefined : onClick;
+
+    if (button) {
+      return (
+        <button
+          ref={ref as React.Ref<HTMLButtonElement>}
+          type="button"
+          className={sharedClassName}
+          onClick={handleClick}
+          disabled={disabled}
+          {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}
+        >
+          {children}
+        </button>
+      );
+    }
 
     return (
-      <Component
-        ref={ref as any}
-        className={cn(
-          'flex items-center w-full text-left',
-          {
-            'px-4': !disableGutters,
-            'py-2': !dense,
-            'py-1': dense,
-            'border-b border-divider': divider,
-            'cursor-pointer hover:bg-action-hover transition-colors': button && !disabled,
-            'bg-action-selected': selected,
-            'opacity-50 cursor-not-allowed': disabled,
-          },
-          className
-        )}
-        onClick={disabled ? undefined : (onClick as any)}
-        disabled={button && disabled ? true : undefined}
-        {...(props as any)}
+      <li
+        ref={ref as React.Ref<HTMLLIElement>}
+        className={sharedClassName}
+        onClick={handleClick}
+        {...(props as React.LiHTMLAttributes<HTMLLIElement>)}
       >
         {children}
-      </Component>
+      </li>
     );
   }
 );
