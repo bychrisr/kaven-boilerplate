@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Logo } from '@/components/logo';
+import { TextField } from '@/components/ui/text-field';
+import { Button } from '@/components/ui/button';
+import { Alert } from '@/components/ui/alert';
 import { Copy, Check } from 'lucide-react';
 
 export default function Setup2FAPage() {
@@ -108,36 +111,16 @@ export default function Setup2FAPage() {
       <div className="space-y-6 text-center">
         <Logo size="large" className="justify-center" />
 
-        <div className="bg-success-lighter border border-success-main rounded-lg p-6">
-          <div className="h-16 w-16 bg-success-main rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg
-              className="h-8 w-8 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">2FA Enabled!</h2>
-          <p className="text-gray-600 mb-4">
-            Two-factor authentication has been successfully enabled for your account.
-          </p>
-          <p className="text-sm text-gray-500 mb-4">
-            Make sure to save your backup codes in a safe place.
-          </p>
-          <button
-            onClick={() => router.push('/settings')}
-            className="bg-primary-main text-white py-2 px-6 rounded-lg font-medium hover:bg-primary-dark transition-colors"
-          >
-            Go to Settings
-          </button>
-        </div>
+        <Alert severity="success" title="2FA Enabled!">
+          Two-factor authentication has been successfully enabled for your account.
+          <br />
+          <br />
+          Make sure to save your backup codes in a safe place.
+        </Alert>
+
+        <Button variant="contained" color="primary" onClick={() => router.push('/settings')} fullWidth size="lg">
+          Go to Settings
+        </Button>
       </div>
     );
   }
@@ -153,38 +136,33 @@ export default function Setup2FAPage() {
         </div>
 
         <form onSubmit={handleVerify} className="space-y-4">
-          <div>
-            <label htmlFor="code" className="block text-sm font-medium text-gray-700 mb-1">
-              Verification Code
-            </label>
-            <input
-              id="code"
-              type="text"
-              required
-              maxLength={6}
-              pattern="[0-9]{6}"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-main focus:border-transparent text-center text-2xl tracking-widest"
-              placeholder="000000"
-            />
-          </div>
+          <TextField
+            id="code"
+            type="text"
+            label="Verification Code"
+            placeholder="000000"
+            value={verificationCode}
+            onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
+            required
+            fullWidth
+            className="text-center text-2xl tracking-widest"
+          />
 
-          <button
+          <Button
             type="submit"
-            disabled={verifying || verificationCode.length !== 6}
-            className="w-full bg-primary-main text-white py-2 px-4 rounded-lg font-medium hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            variant="contained"
+            color="primary"
+            loading={verifying}
+            disabled={verificationCode.length !== 6}
+            fullWidth
+            size="lg"
           >
-            {verifying ? 'Verifying...' : 'Verify and Enable 2FA'}
-          </button>
+            Verify and Enable 2FA
+          </Button>
 
-          <button
-            type="button"
-            onClick={() => setStep('setup')}
-            className="w-full text-sm text-primary-main hover:text-primary-dark"
-          >
+          <Button variant="text" color="primary" onClick={() => setStep('setup')} fullWidth>
             Back to QR Code
-          </button>
+          </Button>
         </form>
       </div>
     );
@@ -256,39 +234,24 @@ export default function Setup2FAPage() {
             ))}
           </div>
 
-          <button
-            type="button"
+          <Button
+            variant="outlined"
             onClick={() => copyToClipboard(backupCodes.join('\n'), 'codes')}
-            className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+            fullWidth
+            startIcon={copiedCodes ? <Check className="h-4 w-4 text-success-main" /> : <Copy className="h-4 w-4" />}
           >
-            {copiedCodes ? (
-              <>
-                <Check className="h-4 w-4 text-success-main" />
-                Copied!
-              </>
-            ) : (
-              <>
-                <Copy className="h-4 w-4" />
-                Copy All Codes
-              </>
-            )}
-          </button>
+            {copiedCodes ? 'Copied!' : 'Copy All Codes'}
+          </Button>
         </div>
 
         {/* Continue Button */}
-        <button
-          onClick={() => setStep('verify')}
-          className="w-full bg-primary-main text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-dark transition-colors"
-        >
+        <Button variant="contained" color="primary" onClick={() => setStep('verify')} fullWidth size="lg">
           Continue to Verification
-        </button>
+        </Button>
 
-        <button
-          onClick={() => router.push('/settings')}
-          className="w-full text-sm text-gray-600 hover:text-gray-900"
-        >
+        <Button variant="text" onClick={() => router.push('/settings')} fullWidth>
           Cancel
-        </button>
+        </Button>
       </div>
     </div>
   );

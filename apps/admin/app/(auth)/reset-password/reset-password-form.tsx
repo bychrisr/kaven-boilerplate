@@ -137,7 +137,7 @@ export default function ResetPasswordForm() {
             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
             required
             fullWidth
-            error={formData.confirmPassword && formData.password !== formData.confirmPassword}
+            error={!!(formData.confirmPassword && formData.password !== formData.confirmPassword)}
             errorMessage={
               formData.confirmPassword && formData.password !== formData.confirmPassword
                 ? 'Passwords do not match'
