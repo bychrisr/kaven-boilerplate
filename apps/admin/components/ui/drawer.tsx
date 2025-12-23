@@ -37,8 +37,9 @@ export interface DrawerProps {
 }
 
 const anchorClasses = {
-  left: 'left-0 top-0 bottom-0 w-80',
-  right: 'right-0 top-0 bottom-0 w-80',
+  // Minimals: width 280px for left/right
+  left: 'left-0 top-0 bottom-0 w-[280px]',
+  right: 'right-0 top-0 bottom-0 w-[280px]',
   top: 'top-0 left-0 right-0 h-80',
   bottom: 'bottom-0 left-0 right-0 h-80',
 };
@@ -103,6 +104,8 @@ export const Drawer: React.FC<DrawerProps> = ({
       <div
         className={cn(
           'fixed bg-background-paper shadow-lg z-modal transition-transform duration-300',
+          // Minimals: border grey.200 (#F4F6F8)
+          (anchor === 'left' || anchor === 'right') && 'border-r border-[#F4F6F8]',
           anchorClasses[anchor],
           !open && slideClasses[anchor]
         )}
