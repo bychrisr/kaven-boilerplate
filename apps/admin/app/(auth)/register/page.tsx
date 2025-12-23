@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/logo';
+import { TextField } from '@/components/ui/text-field';
+import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -19,7 +21,6 @@ export default function RegisterPage() {
     terms: false,
   });
 
-  // Redirect if already logged in
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (token) {
@@ -99,65 +100,49 @@ export default function RegisterPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Name */}
+        <TextField
+          id="name"
+          type="text"
+          label="Full name"
+          placeholder="John Doe"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          required
+          fullWidth
+        />
+
+        <TextField
+          id="email"
+          type="email"
+          label="Email address"
+          placeholder="you@example.com"
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          required
+          fullWidth
+        />
+
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-            Full name
-          </label>
-          <input
-            id="name"
-            type="text"
+          <TextField
+            id="password"
+            type={showPassword ? 'text' : 'password'}
+            label="Password"
+            placeholder="••••••••"
+            value={formData.password}
+            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             required
-            minLength={2}
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-main focus:border-transparent"
-            placeholder="John Doe"
+            fullWidth
+            endAdornment={
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
+            }
           />
-        </div>
 
-        {/* Email */}
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            Email address
-          </label>
-          <input
-            id="email"
-            type="email"
-            required
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-main focus:border-transparent"
-            placeholder="you@example.com"
-          />
-        </div>
-
-        {/* Password */}
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            Password
-          </label>
-          <div className="relative">
-            <input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              required
-              minLength={8}
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-main focus:border-transparent"
-              placeholder="••••••••"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-            >
-              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-            </button>
-          </div>
-
-          {/* Password Strength */}
           {formData.password && (
             <div className="mt-2">
               <div className="flex gap-1 mb-1">
@@ -171,14 +156,12 @@ export default function RegisterPage() {
                 ))}
               </div>
               <p className="text-xs text-gray-600">
-                Password strength:{' '}
-                <span className="font-medium">{strengthLabels[passwordStrength]}</span>
+                Password strength: <span className="font-medium">{strengthLabels[passwordStrength]}</span>
               </p>
             </div>
           )}
         </div>
 
-        {/* Terms */}
         <div>
           <label className="flex items-start">
             <input
@@ -200,14 +183,9 @@ export default function RegisterPage() {
           </label>
         </div>
 
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-primary-main text-white py-2 px-4 rounded-lg font-medium hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? 'Creating account...' : 'Create Account'}
-        </button>
+        <Button type="submit" variant="contained" color="primary" loading={loading} fullWidth size="lg">
+          Create Account
+        </Button>
       </form>
 
       <p className="text-center text-sm text-gray-600">
