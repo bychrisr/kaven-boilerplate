@@ -20,7 +20,6 @@ import {
   syncCustomization,
   saveAndSync,
   resetAndSync,
-  getCachedCustomization,
 } from '../persistence';
 
 // ============================================

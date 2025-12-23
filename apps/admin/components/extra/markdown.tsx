@@ -12,7 +12,8 @@ export interface MarkdownProps extends React.HTMLAttributes<HTMLDivElement> {
   components?: Record<string, React.ComponentType<unknown>>;
 }
 
-export const Markdown: React.FC<MarkdownProps> = ({ className, children, components, ...props }) => {
+export function Markdown({ children, className, ...props }: MarkdownProps) {
+  /* Removed unused content variable */
   const parseMarkdown = (text: string): React.ReactNode => {
     const lines = text.split('\n');
     const elements: React.ReactNode[] = [];

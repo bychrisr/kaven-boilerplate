@@ -9,7 +9,8 @@ interface ColorSwatchProps {
   variant?: 'main' | 'light' | 'dark' | 'contrastText';
 }
 
-const ColorSwatch: React.FC<ColorSwatchProps> = ({ color, name, value, variant: _variant = 'main' }) => {
+const ColorSwatch: React.FC<ColorSwatchProps> = ({ color, name, value,  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  variant: _variant = 'primary', }) => {
   const [copied, setCopied] = React.useState(false);
 
   const handleCopy = () => {

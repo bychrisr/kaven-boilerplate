@@ -29,9 +29,11 @@ export const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
   (
     {
       className,
-      columns = 3,
-      spacing = 4,
-      columnsCountBreakPoints = { xs: 1, sm: 2, md: 3, lg: 4, xl: 5 },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      columns: _columns = 3,
+      spacing = 2,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      columnsCountBreakPoints: _columnsCountBreakPoints = { 350: 1, 750: 2, 900: 3 },
       children,
       ...props
     },

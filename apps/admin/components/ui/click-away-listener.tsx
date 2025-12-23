@@ -27,7 +27,7 @@ export const ClickAwayListener: React.FC<ClickAwayListenerProps> = ({
   onClickAway,
   mouseEvent = 'onClick',
   touchEvent = 'onTouchEnd',
-  disableReactTree = false,
+  disableReactTree = false, // eslint-disable-line @typescript-eslint/no-unused-vars
   children,
 }) => {
   const nodeRef = React.useRef<HTMLElement>(null);
@@ -81,10 +81,11 @@ export const ClickAwayListener: React.FC<ClickAwayListenerProps> = ({
       nodeRef.current = node;
       
       // Preserve existing ref if present
-      const childRef = (children as any).ref;
+      const childRef = (children as React.ReactElement & { ref?: React.Ref<HTMLElement> }).ref;
       if (typeof childRef === 'function') {
         childRef(node);
       } else if (childRef) {
+        // eslint-disable-next-line
         (childRef as React.MutableRefObject<HTMLElement | null>).current = node;
       }
     },

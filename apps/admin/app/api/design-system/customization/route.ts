@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
 }
 
 // POST /api/design-system/customization
-export async function POST(request: NextRequest) {
+export async function POST(_request: Request) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
+    const body = await _request.json();
 
     // Upsert customization
     const customization = await prisma.designSystemCustomization.upsert({

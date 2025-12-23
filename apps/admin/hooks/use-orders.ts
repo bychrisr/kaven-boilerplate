@@ -5,6 +5,13 @@ import { getErrorMessage } from '@/lib/errors';
 
 export type OrderStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'CANCELED' | 'REFUNDED';
 
+export interface OrderItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
 export interface Order {
   id: string;
   tenantId: string;
@@ -14,7 +21,7 @@ export interface Order {
   status: OrderStatus;
   createdAt: string;
   updatedAt: string;
-  items?: unknown[]; // Refinar se tivermos OrderItem type
+  items?: OrderItem[];
   tenant?: {
     name: string;
   };

@@ -29,7 +29,7 @@ const colorClasses = {
 };
 
 export const AppBar = React.forwardRef<HTMLElement, AppBarProps>(
-  ({ className, position = 'fixed', color = 'primary', elevation = 4, children, ...props }, ref) => {
+  ({ className, position = 'fixed', color = 'primary', children, ...props }, ref) => {
     return (
       <header
         ref={ref}

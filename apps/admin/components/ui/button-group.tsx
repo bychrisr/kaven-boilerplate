@@ -85,7 +85,7 @@ export const ButtonGroup = React.forwardRef<HTMLDivElement, ButtonGroupProps>(
       >
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
-            return React.cloneElement(child as React.ReactElement, {
+            return React.cloneElement(child as React.ReactElement<{ variant?: string | null; color?: string | null; size?: string | null; orientation?: string | null }>, {
               variant,
               color,
               size,

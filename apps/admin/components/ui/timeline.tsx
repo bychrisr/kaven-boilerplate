@@ -135,7 +135,7 @@ export const TimelineDot = React.forwardRef<HTMLDivElement, TimelineDotProps>(
 
 TimelineDot.displayName = 'TimelineDot';
 
-export interface TimelineConnectorProps extends React.HTMLAttributes<HTMLDivElement> {}
+export type TimelineConnectorProps = React.HTMLAttributes<HTMLDivElement>;
 
 export const TimelineConnector = React.forwardRef<HTMLDivElement, TimelineConnectorProps>(
   ({ className, ...props }, ref) => {

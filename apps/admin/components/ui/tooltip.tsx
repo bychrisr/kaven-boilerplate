@@ -120,12 +120,13 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
   return (
     <div className="relative inline-block">
-      {React.cloneElement(children, {
+      {/* eslint-disable-next-line */}
+      {React.cloneElement(children as React.ReactElement<React.HTMLAttributes<HTMLElement>>, {
         onMouseEnter: handleMouseEnter,
         onMouseLeave: handleMouseLeave,
         onFocus: handleMouseEnter,
         onBlur: handleMouseLeave,
-      } as any)}
+      })}
 
       {isVisible && (
         <div

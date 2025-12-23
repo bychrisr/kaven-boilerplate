@@ -20,7 +20,8 @@ const DataTableContext = React.createContext<{
 }>({ size: 'md' });
 
 export const DataTable = React.forwardRef<HTMLTableElement, DataTableProps>(
-  ({ className, size = 'md', stickyHeader = false, children, ...props }, ref) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ({ className, size = 'md', stickyHeader: _stickyHeader = false, children, ...props }, ref) => {
     return (
       <DataTableContext.Provider value={{ size }}>
         <div className="w-full overflow-auto">

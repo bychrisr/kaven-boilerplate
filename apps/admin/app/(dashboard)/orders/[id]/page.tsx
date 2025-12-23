@@ -1,13 +1,13 @@
 'use client';
 
-import { useOrder } from '@/hooks/use-orders';
-import { OrderStatus } from '@/hooks/use-orders';
-import { ArrowLeft, Loader2, ShoppingBag, Calendar, Building2, CreditCard, CheckCircle2, AlertCircle, Clock, XCircle, RotateCcw } from 'lucide-react';
+import { useOrder, OrderStatus, type OrderItem } from '@/hooks/use-orders';
+import { ArrowLeft, Loader2, ShoppingBag, Calendar, Building2, CheckCircle2, Clock, XCircle, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import React from 'react'; // Added import for React
 
-const statusConfig: Record<OrderStatus, { label: string; color: string; icon: any }> = {
+const statusConfig: Record<OrderStatus, { label: string; color: string; icon: React.ElementType }> = {
   COMPLETED: { label: 'Concluído', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
   PROCESSING: { label: 'Processando', color: 'bg-blue-100 text-blue-700', icon: Loader2 },
   PENDING: { label: 'Pendente', color: 'bg-amber-100 text-amber-700', icon: Clock },
@@ -105,7 +105,7 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
                <div className="mt-6">
                  <h4 className="text-sm font-medium text-gray-900 mb-3">Itens</h4>
                  <div className="divide-y border rounded-lg overflow-hidden">
-                   {order.items.map((item: any, index: number) => (
+                   {order.items.map((item: OrderItem, index: number) => (
                      <div key={index} className="p-4 bg-gray-50 flex justify-between items-center text-sm">
                         <span>{item.name || `Item #${index + 1}`}</span>
                         <span className="font-medium">

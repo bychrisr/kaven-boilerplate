@@ -66,8 +66,10 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
       size = 'md',
       readOnly = false,
       disabled = false,
-      emptyIcon,
-      icon,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      emptyIcon: _emptyIcon,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      icon: _icon,
       ...props
     },
     ref
@@ -96,6 +98,8 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
     return (
       <div
         ref={ref}
+        role="group"
+        aria-label="Rating"
         className={cn('inline-flex items-center gap-0.5', className)}
         onMouseLeave={handleMouseLeave}
         {...props}
@@ -109,7 +113,8 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
             <button
               key={index}
               type="button"
-              onClick={() => handleClick(starValue)}
+              aria-label={`Rate ${starValue} stars`}
+              aria-pressed={hoverValue ? hoverValue >= starValue : (value || 0) >= starValue}
               onMouseEnter={() => handleMouseEnter(starValue)}
               onMouseMove={(e) => {
                 if (precision === 0.5 && !readOnly && !disabled) {
@@ -118,11 +123,17 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
                   handleMouseEnter(isHalf ? starValue - 0.5 : starValue);
                 }
               }}
-              disabled={disabled}
+              onClick={() => handleClick(starValue)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleClick(starValue);
+                }
+              }}
               className={cn(
-                'transition-colors',
+                'transition-transform',
                 !readOnly && !disabled && 'cursor-pointer hover:scale-110',
-                disabled && 'opacity-50 cursor-not-allowed',
+                disabled && 'cursor-not-allowed opacity-50',
                 readOnly && 'cursor-default'
               )}
             >

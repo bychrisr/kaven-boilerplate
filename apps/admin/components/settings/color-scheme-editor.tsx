@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Palette, RotateCcw } from 'lucide-react';
-import { cn } from '@/lib/utils';
+
 
 export interface ColorScheme {
   primary: string;

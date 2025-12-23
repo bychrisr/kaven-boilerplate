@@ -7,7 +7,7 @@
 
 import { MoreVertical, Edit, Trash2 } from 'lucide-react';
 import type { MockUser } from '@/lib/mock';
-import { fDate } from '@/lib/utils/format';
+import Image from 'next/image';
 
 type UserTableRowProps = {
   user: MockUser;
@@ -33,10 +33,13 @@ export function UserTableRow({ user }: UserTableRowProps) {
       {/* User Info */}
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center gap-3">
-          <img
+          <Image
             src={user.avatar}
             alt={user.name}
-            className="h-10 w-10 rounded-full"
+            width={40}
+            height={40}
+            className="rounded-full object-cover"
+            unoptimized
           />
           <div>
             <div className="text-sm font-medium text-gray-900">{user.name}</div>

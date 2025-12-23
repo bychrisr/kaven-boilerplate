@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ChevronDown } from 'lucide-react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 export interface MegaMenuColumn {
@@ -95,11 +96,14 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ label, icon, columns, featur
                           <span className="size-5 shrink-0 mt-0.5">{item.icon}</span>
                         )}
                         {item.image && (
-                          <img
-                            src={item.image}
-                            alt={item.label}
-                            className="size-12 object-cover rounded shrink-0"
-                          />
+                            <Image
+                              src={item.image}
+                              alt={item.label}
+                              width={224}
+                              height={224}
+                              className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
+                              unoptimized
+                            />
                         )}
                         <div className="flex-1 min-w-0">
                           <div className="text-sm font-medium text-text-primary">

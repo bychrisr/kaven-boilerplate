@@ -181,7 +181,8 @@ export interface SelectOptionProps<T = string> {
   children: React.ReactNode;
 }
 
-export function SelectOption<T = string>({ value, children }: SelectOptionProps<T>) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function SelectOption<T = string>(_props: SelectOptionProps<T>) {
   return null;
 }
 

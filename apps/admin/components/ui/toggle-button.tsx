@@ -73,7 +73,7 @@ const colorClasses = {
 };
 
 export const ToggleButton = React.forwardRef<HTMLButtonElement, ToggleButtonProps>(
-  ({ className, size = 'md', color = 'standard', selected = false, value, children, ...props }, ref) => {
+  ({ className, size = 'md', color = 'standard', selected = false, children, ...props }, ref) => {
     return (
       <button
         ref={ref}
