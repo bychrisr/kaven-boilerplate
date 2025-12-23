@@ -138,7 +138,7 @@ export const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            if (!disabled) onClick?.(e as any);
+            if (!disabled) onClick?.(e as unknown as React.MouseEvent<HTMLDivElement>);
           }
         }}
         {...props}
