@@ -9,7 +9,7 @@ export interface MarkdownProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * Custom components
    */
-  components?: Record<string, React.ComponentType<any>>;
+  components?: Record<string, React.ComponentType<unknown>>;
 }
 
 export const Markdown: React.FC<MarkdownProps> = ({ className, children, components, ...props }) => {
