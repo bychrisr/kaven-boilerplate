@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 
 interface SidebarItemProps {
   icon: LucideIcon;
@@ -61,11 +61,8 @@ export function SidebarItem({
 
   if (isCollapsed) {
     return (
-      <Tooltip delayDuration={0}>
-        <TooltipTrigger asChild>{content}</TooltipTrigger>
-        <TooltipContent side="right" className="font-medium">
-          {label}
-        </TooltipContent>
+      <Tooltip content={label} side="right">
+        {content}
       </Tooltip>
     );
   }

@@ -238,6 +238,10 @@ export interface SemanticDesignTokens {
   spacing: SemanticSpacing;
   radius: SemanticRadius;
   shadows: SemanticShadows;
+  transitions?: {
+    duration?: Record<string, string>;
+    easing?: Record<string, string>;
+  };
 }
 
 // ============================================
