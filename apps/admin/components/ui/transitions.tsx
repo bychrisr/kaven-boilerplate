@@ -21,6 +21,7 @@ export interface CollapseProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Collapse = React.forwardRef<HTMLDivElement, CollapseProps>(
   ({ className, in: isOpen = false, timeout = 300, unmountOnExit = false, children, ...props }, ref) => {
     const [shouldRender, setShouldRender] = React.useState(isOpen);
+    const [maxHeight, setMaxHeight] = React.useState<number | undefined>(undefined);
     const contentRef = React.useRef<HTMLDivElement>(null);
 
     React.useEffect(() => {
@@ -32,6 +33,13 @@ export const Collapse = React.forwardRef<HTMLDivElement, CollapseProps>(
       }
     }, [isOpen, unmountOnExit, timeout]);
 
+    // Use useLayoutEffect to measure DOM synchronously after render
+    React.useLayoutEffect(() => {
+      if (contentRef.current) {
+        setMaxHeight(isOpen ? contentRef.current.scrollHeight : 0);
+      }
+    }, [isOpen, children]);
+
     if (!shouldRender && unmountOnExit) {
       return null;
     }
@@ -41,7 +49,7 @@ export const Collapse = React.forwardRef<HTMLDivElement, CollapseProps>(
         ref={ref}
         className={cn('overflow-hidden transition-all', className)}
         style={{
-          maxHeight: isOpen ? contentRef.current?.scrollHeight : 0,
+          maxHeight,
           transitionDuration: `${timeout}ms`,
           opacity: isOpen ? 1 : 0,
         }}
