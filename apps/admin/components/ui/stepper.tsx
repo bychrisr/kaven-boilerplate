@@ -80,7 +80,7 @@ export const Step = React.forwardRef<HTMLDivElement, StepProps>(
       >
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
-            return React.cloneElement(child as React.ReactElement<any>, {
+            return React.cloneElement(child as React.ReactElement<{ completed?: boolean; disabled?: boolean }>, {
               completed,
               disabled,
             });
