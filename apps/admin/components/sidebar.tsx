@@ -13,7 +13,8 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useSidebar } from '@/hooks/use-sidebar';
-import { SidebarItem, SidebarSection } from '@/components/sidebar';
+import { SidebarItem } from '@/components/sidebar/sidebar-item';
+import { SidebarSection } from '@/components/sidebar/sidebar-section';
 
 const overviewNav = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
