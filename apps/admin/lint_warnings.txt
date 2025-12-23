@@ -1,0 +1,152 @@
+
+> admin@0.1.0 lint /home/bychrisr/projects/kaven-boilerplate/apps/admin
+> eslint
+
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/app/(dashboard)/observability/audit-log-table.tsx
+  18:10  warning  'getActionBadgeVariant' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/app/(dashboard)/orders/[id]/page.tsx
+    5:64  warning  'CreditCard' is defined but never used    @typescript-eslint/no-unused-vars
+    5:90  warning  'AlertCircle' is defined but never used   @typescript-eslint/no-unused-vars
+   10:79  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:44  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/app/api/design-system/customization/route.ts
+    7:27  warning  'request' is defined but never used  @typescript-eslint/no-unused-vars
+  139:30  warning  'request' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/extra/carousel.tsx
+  94:6  warning  React Hook React.useEffect has a missing dependency: 'goToNext'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/extra/chart.tsx
+  2:10  warning  'cn' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/extra/image.tsx
+   96:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  105:9   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/extra/lightbox.tsx
+   85:6   warning  React Hook React.useEffect has missing dependencies: 'goToNext', 'goToPrevious', and 'onClose'. Either include them or remove the dependency array. If 'onClose' changes too often, find the parent component that defines it and wrap that definition in useCallback                    react-hooks/exhaustive-deps
+  152:9   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  184:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/extra/map.tsx
+  3:10  warning  'cn' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/extra/markdown.tsx
+  15:74  warning  'components' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/extra/organization-chart.tsx
+   3:10  warning  'cn' is defined but never used                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+  36:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/extra/upload.tsx
+  207:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/foundation/color-palette.tsx
+    3:10  warning  'cn' is defined but never used                @typescript-eslint/no-unused-vars
+   12:72  warning  'variant' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  124:37  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/settings/color-scheme-editor.tsx
+  5:10  warning  'cn' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/ui/accordion.tsx
+   76:33  warning  'multiple' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   89:67  error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  141:28  error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/ui/app-bar.tsx
+  32:56  warning  'elevation' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/ui/autocomplete.tsx
+  81:3  warning  'multiple' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  82:3  warning  'freeSolo' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/ui/avatar.tsx
+  60:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/ui/click-away-listener.tsx
+   2:10  warning  'cn' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+  30:3   warning  'disableReactTree' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  83:39  error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/ui/click-away-listener.tsx:83:39
+  81 |   };
+  82 |
+> 83 |   return React.cloneElement(children, {
+     |                                       ^
+> 84 |     ref: handleRef,
+     | ^^^^^^^^^^^^^^^^^^^
+> 85 |   } as any);
+     | ^^^^^^^^^^^ Passing a ref to a function may read its value during render
+  86 | };
+  87 |
+  88 | ClickAwayListener.displayName = 'ClickAwayListener';  react-hooks/refs
+  85:8   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-explicit-any
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/ui/css-baseline.tsx
+  2:10  warning  'cn' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/ui/data-table.tsx
+  23:30  warning  'stickyHeader' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/ui/masonry.tsx
+  32:7  warning  'columns' is assigned a value but never used                  @typescript-eslint/no-unused-vars
+  34:7  warning  'columnsCountBreakPoints' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/ui/mega-menu.tsx
+  98:27  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/ui/rating.tsx
+  69:7  warning  'emptyIcon' is defined but never used  @typescript-eslint/no-unused-vars
+  70:7  warning  'icon' is defined but never used       @typescript-eslint/no-unused-vars
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/ui/select.tsx
+  184:44  warning  'value' is defined but never used     @typescript-eslint/no-unused-vars
+  184:51  warning  'children' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/ui/timeline.tsx
+  138:18  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/ui/toggle-button.tsx
+  76:68  warning  'value' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/ui/tooltip.tsx
+  123:37  error  Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/components/ui/tooltip.tsx:123:37
+  121 |   return (
+  122 |     <div className="relative inline-block">
+> 123 |       {React.cloneElement(children, {
+      |                                     ^
+> 124 |         onMouseEnter: handleMouseEnter,
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 125 |         onMouseLeave: handleMouseLeave,
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 126 |         onFocus: handleMouseEnter,
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 127 |         onBlur: handleMouseLeave,
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 128 |       } as any)}
+      | ^^^^^^^^^^^^^^^ Cannot access ref value during render
+  129 |
+  130 |       {isVisible && (
+  131 |         <div  react-hooks/refs
+  128:12  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/lib/design-system/provider/index.tsx
+  23:3  warning  'getCachedCustomization' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/bychrisr/projects/kaven-boilerplate/apps/admin/sections/user/user-table-row.tsx
+  10:10  warning  'fDate' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  36:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+✖ 50 problems (10 errors, 40 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.

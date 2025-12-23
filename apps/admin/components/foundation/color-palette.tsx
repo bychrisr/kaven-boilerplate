@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Check, Copy } from 'lucide-react';
-import { cn } from '@/lib/utils';
+
 
 interface ColorSwatchProps {
   color: string;
@@ -9,7 +9,7 @@ interface ColorSwatchProps {
   variant?: 'main' | 'light' | 'dark' | 'contrastText';
 }
 
-const ColorSwatch: React.FC<ColorSwatchProps> = ({ color, name, value, variant = 'main' }) => {
+const ColorSwatch: React.FC<ColorSwatchProps> = ({ color, name, value, variant: _variant = 'main' }) => {
   const [copied, setCopied] = React.useState(false);
 
   const handleCopy = () => {

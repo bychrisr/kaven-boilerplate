@@ -78,7 +78,10 @@ export function Autocomplete<T = unknown>({
   errorMessage,
   helperText,
   fullWidth = false,
+  getOptionLabel = (option: T) => String(option),
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   multiple = false,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   freeSolo = false,
   loading = false,
   noOptionsText = 'No options',

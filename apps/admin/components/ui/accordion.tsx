@@ -73,7 +73,7 @@ export const AccordionItem = React.forwardRef<HTMLDivElement, AccordionItemProps
       throw new Error('AccordionItem must be used within Accordion');
     }
 
-    const { expanded, onChange, multiple, disabled: accordionDisabled } = context;
+    const { expanded, onChange, multiple: _multiple, disabled: accordionDisabled } = context;
     const isExpanded = Array.isArray(expanded) ? expanded.includes(value) : expanded === value;
     const isDisabled = disabled || accordionDisabled;
 

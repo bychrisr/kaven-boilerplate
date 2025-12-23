@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { User } from 'lucide-react';
-import { cn } from '@/lib/utils';
+
 
 export interface OrgNode {
   id: string;
