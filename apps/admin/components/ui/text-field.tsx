@@ -73,7 +73,10 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
     },
     ref
   ) => {
-    const inputId = id || `textfield-${React.useId()}`;
+    // Generate ID unconditionally (React Hooks rule)
+    const generatedId = React.useId();
+    const inputId = id || generatedId;
+    
     const hasError = error || Boolean(errorMessage);
     const displayHelperText = errorMessage || helperText;
 
@@ -143,7 +146,7 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
           )}
 
           <InputComponent
-            ref={ref as any}
+            ref={ref as React.Ref<HTMLInputElement> & React.Ref<HTMLTextAreaElement>}
             id={inputId}
             className={baseClasses}
             disabled={disabled}
