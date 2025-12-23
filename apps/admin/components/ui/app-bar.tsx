@@ -35,13 +35,14 @@ export const AppBar = React.forwardRef<HTMLElement, AppBarProps>(
         ref={ref}
         className={cn(
           'w-full z-appbar',
+          // Minimals: shadow z8 (via elevation)
+          'shadow-[0_8px_16px_0_rgba(145,158,171,0.08)]',
           position === 'fixed' && 'fixed top-0 left-0 right-0',
           position === 'absolute' && 'absolute top-0 left-0 right-0',
           position === 'sticky' && 'sticky top-0',
           position === 'static' && 'static',
           position === 'relative' && 'relative',
           colorClasses[color],
-          elevation > 0 && `shadow-${elevation}`,
           className
         )}
         {...props}
@@ -74,7 +75,8 @@ export const Toolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
         ref={ref}
         className={cn(
           'flex items-center w-full',
-          variant === 'regular' && 'min-h-16',
+          // Minimals: height 72px for regular variant
+          variant === 'regular' && 'min-h-[72px]',
           variant === 'dense' && 'min-h-12',
           !disableGutters && 'px-4 md:px-6',
           className
