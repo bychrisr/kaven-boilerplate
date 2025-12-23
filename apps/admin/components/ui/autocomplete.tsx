@@ -65,6 +65,10 @@ export interface AutocompleteProps<T = unknown>
    * No options text
    */
   noOptionsText?: string;
+  /**
+   * Get option label
+   */
+  getOptionLabel?: (option: T) => string;
 }
 
 export function Autocomplete<T = unknown>({
@@ -79,10 +83,8 @@ export function Autocomplete<T = unknown>({
   helperText,
   fullWidth = false,
   getOptionLabel = (option: T) => String(option),
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  multiple = false,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  freeSolo = false,
+  multiple: _multiple = false,
+  freeSolo: _freeSolo = false,
   loading = false,
   noOptionsText = 'No options',
   disabled,
