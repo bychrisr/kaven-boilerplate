@@ -113,7 +113,7 @@ const Chip = React.forwardRef<HTMLDivElement, ChipProps>(
         tabIndex={isClickable ? 0 : undefined}
         onClick={onClick}
         className={cn(
-          chipVariants({ variant, color: color as any, size }),
+          chipVariants({ variant, color, size }),
           isClickable && 'cursor-pointer hover:opacity-80',
           className
         )}
