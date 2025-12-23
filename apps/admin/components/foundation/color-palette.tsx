@@ -121,7 +121,7 @@ export const ColorPalette: React.FC = () => {
                 color={value}
                 name={`${colorName}.${variant}`}
                 value={value}
-                variant={variant as any}
+                variant={variant as 'main' | 'light' | 'dark' | 'contrastText'}
               />
             ))}
           </div>

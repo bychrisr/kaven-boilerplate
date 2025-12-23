@@ -86,7 +86,7 @@ export const AccordionItem = React.forwardRef<HTMLDivElement, AccordionItemProps
       <div ref={ref} className={cn('', className)} {...props}>
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
-            return React.cloneElement(child as React.ReactElement<any>, {
+            return React.cloneElement(child as React.ReactElement<{ isExpanded?: boolean; onClick?: () => void; disabled?: boolean }>, {
               isExpanded,
               onClick: child.type === AccordionSummary ? handleClick : undefined,
               disabled: isDisabled,
@@ -138,7 +138,7 @@ export const AccordionSummary = React.forwardRef<HTMLDivElement, AccordionSummar
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            onClick?.(e as any);
+            onClick?.(e as unknown as React.MouseEvent<HTMLDivElement>);
           }
         }}
         className={cn(
