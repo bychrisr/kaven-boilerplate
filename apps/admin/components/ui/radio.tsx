@@ -52,7 +52,9 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
     },
     ref
   ) => {
-    const inputId = id || `radio-${value}-${React.useId()}`;
+    // Always call useId unconditionally (React Hooks rule)
+    const generatedId = React.useId();
+    const inputId = id || `radio-${value}-${generatedId}`;
 
     const radioElement = (
       <div className="relative inline-flex items-center">
