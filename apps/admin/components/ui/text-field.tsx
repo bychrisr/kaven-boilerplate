@@ -82,18 +82,19 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
       'text-text-primary placeholder:text-text-disabled',
       'disabled:opacity-50 disabled:cursor-not-allowed',
       {
-        // Variant styles
-        'border-2 rounded-md bg-background': variant === 'outlined',
+        // Variant styles - Minimals tokens
+        'border-2 rounded-[8px] bg-background': variant === 'outlined', // radius md
         'border-0 border-b-2 rounded-t-md bg-gray-100': variant === 'filled',
         'border-0 border-b-2 bg-transparent': variant === 'standard',
         // Size styles
         'px-3 py-2 text-sm': size === 'sm',
         'px-4 py-2.5 text-base': size === 'md',
         'px-5 py-3 text-lg': size === 'lg',
-        // Error styles
-        'border-error-main focus:border-error-main focus:ring-2 focus:ring-error-main/20':
+        // Error styles - Minimals error colors
+        'border-[#FF5630] focus:border-[#FF5630] focus:ring-2 focus:ring-[rgba(255,86,48,0.24)]':
           hasError,
-        'border-gray-300 focus:border-primary-main focus:ring-2 focus:ring-primary-main/20':
+        // Normal state - Minimals grey.300 and primary focus
+        'border-[#DFE3E8] focus:border-[#1877F2] focus:ring-2 focus:ring-[rgba(24,119,242,0.24)]':
           !hasError && variant === 'outlined',
         'border-gray-400 focus:border-primary-main': !hasError && variant !== 'outlined',
         // Adornment padding
@@ -150,7 +151,7 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
             rows={multiline ? rows : undefined}
             aria-invalid={hasError}
             aria-describedby={displayHelperText ? `${inputId}-helper` : undefined}
-            {...(props as any)}
+            {...(props as React.InputHTMLAttributes<HTMLInputElement> & React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
           />
 
           {endAdornment && (
