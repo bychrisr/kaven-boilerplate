@@ -2,12 +2,12 @@ import * as React from 'react';
 import { X, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export interface AutocompleteOption<T = any> {
+export interface AutocompleteOption<T = unknown> {
   label: string;
   value: T;
 }
 
-export interface AutocompleteProps<T = any>
+export interface AutocompleteProps<T = unknown>
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'defaultValue'> {
   /**
    * Options array
@@ -67,7 +67,7 @@ export interface AutocompleteProps<T = any>
   noOptionsText?: string;
 }
 
-export function Autocomplete<T = any>({
+export function Autocomplete<T = unknown>({
   options,
   value,
   defaultValue,
