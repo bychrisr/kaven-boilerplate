@@ -4,7 +4,8 @@ import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const alertVariants = cva(
-  'relative w-full rounded-lg p-4 flex items-start gap-3 [&>svg]:size-5 [&>svg]:shrink-0',
+  // Minimals: radius md (8px)
+  'relative w-full rounded-[8px] p-4 flex items-start gap-3 [&>svg]:size-5 [&>svg]:shrink-0',
   {
     variants: {
       variant: {
