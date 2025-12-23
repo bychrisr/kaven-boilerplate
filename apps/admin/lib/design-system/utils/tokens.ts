@@ -16,6 +16,16 @@ export const minimalTokens = {
     dropdown: 'shadow-[0_0_2px_0_rgba(145,158,171,0.2),0_20px_40px_-4px_rgba(145,158,171,0.12)]', // z20
   },
   
+  // Custom shadows by color (Minimals)
+  customShadows: {
+    primary: 'shadow-[0_8px_16px_0_rgba(24,119,242,0.24)]',
+    secondary: 'shadow-[0_8px_16px_0_rgba(142,51,255,0.24)]',
+    success: 'shadow-[0_8px_16px_0_rgba(34,197,94,0.24)]',
+    warning: 'shadow-[0_8px_16px_0_rgba(255,171,0,0.24)]',
+    error: 'shadow-[0_8px_16px_0_rgba(255,86,48,0.24)]',
+    info: 'shadow-[0_8px_16px_0_rgba(0,184,217,0.24)]',
+  },
+  
   // Radius (Minimals uses specific values)
   radius: {
     sm: 'rounded-[4px]',

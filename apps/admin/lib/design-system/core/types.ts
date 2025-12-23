@@ -193,30 +193,33 @@ export interface SemanticShadows {
   none: string;
   
   // Standard elevation levels (z-index based)
-  z0: string;
-  z1: string;
-  z2: string;
-  z4: string;
-  z6: string;
-  z8: string;
-  z12: string;
-  z16: string;
-  z20: string;
-  z24: string;
+  z0?: string;
+  z1?: string;
+  z2?: string;
+  z4?: string;
+  z6?: string;
+  z8?: string;
+  z12?: string;
+  z16?: string;
+  z20?: string;
+  z24?: string;
+  
+  // Custom shadows by color
+  customShadows?: {
+    primary?: string;
+    secondary?: string;
+    success?: string;
+    warning?: string;
+    error?: string;
+    info?: string;
+  };
   
   // Legacy (for compatibility)
-  sm: string;
-  md: string;
-  lg: string;
-  xl: string;
-  
-  // Custom color shadows
-  primary: string;
-  secondary: string;
-  info: string;
-  success: string;
-  warning: string;
-  error: string;
+  sm?: string;
+  md?: string;
+  lg?: string;
+  xl?: string;
+  '2xl'?: string;
 }
 
 // ============================================

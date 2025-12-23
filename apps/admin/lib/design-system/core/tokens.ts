@@ -152,32 +152,42 @@ export const defaultLightTokens: SemanticDesignTokens = {
     full: '9999px',
   },
   shadows: {
-    none: 'none',
-    // Standard elevation levels
+    // Standard elevation shadows (z0-z24)
     z0: 'none',
-    z1: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-    z2: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
-    z4: '0 4px 8px 0 rgb(0 0 0 / 0.08)',
-    z6: '0 4px 12px 0 rgb(0 0 0 / 0.08)',
-    z8: '0 8px 16px 0 rgb(0 0 0 / 0.08)',
-    z12: '0 12px 24px -4px rgb(0 0 0 / 0.08)',
-    z16: '0 16px 32px -4px rgb(0 0 0 / 0.08)',
-    z20: '0 20px 40px -4px rgb(0 0 0 / 0.08)',
-    z24: '0 24px 48px 0 rgb(0 0 0 / 0.08)',
+    z1: '0 1px 2px 0 rgb(145 158 171 / 0.08)',
+    z4: '0 4px 8px 0 rgb(145 158 171 / 0.08)',
+    z8: '0 8px 16px 0 rgb(145 158 171 / 0.08)',
+    z12: '0 0 2px 0 rgb(145 158 171 / 0.2), 0 12px 24px -4px rgb(145 158 171 / 0.12)',
+    z16: '0 0 2px 0 rgb(145 158 171 / 0.2), 0 16px 32px -4px rgb(145 158 171 / 0.12)',
+    z20: '0 0 2px 0 rgb(145 158 171 / 0.2), 0 20px 40px -4px rgb(145 158 171 / 0.12)',
+    z24: '0 0 4px 0 rgb(145 158 171 / 0.12), 0 24px 48px 0 rgb(145 158 171 / 0.12)',
     
-    // Legacy (keeping for compatibility)
-    sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-    md: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
-    lg: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
-    xl: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
-    
-    // Custom color shadows
-    primary: '0 8px 16px 0 rgb(24 119 242 / 0.24)',
-    secondary: '0 8px 16px 0 rgb(142 51 255 / 0.24)',
-    info: '0 8px 16px 0 rgb(0 184 217 / 0.24)',
-    success: '0 8px 16px 0 rgb(34 197 94 / 0.24)',
-    warning: '0 8px 16px 0 rgb(255 171 0 / 0.24)',
-    error: '0 8px 16px 0 rgb(255 86 48 / 0.24)',
+    // Custom shadows by color (Minimals)
+    customShadows: {
+      primary: '0 8px 16px 0 rgb(24 119 242 / 0.24)',
+      secondary: '0 8px 16px 0 rgb(142 51 255 / 0.24)',
+      success: '0 8px 16px 0 rgb(34 197 94 / 0.24)',
+      warning: '0 8px 16px 0 rgb(255 171 0 / 0.24)',
+      error: '0 8px 16px 0 rgb(255 86 48 / 0.24)',
+      info: '0 8px 16px 0 rgb(0 184 217 / 0.24)',
+    },
+  },
+  transitions: {
+    duration: {
+      shortest: '150ms',
+      shorter: '200ms',
+      short: '250ms',
+      standard: '300ms',
+      complex: '375ms',
+      enteringScreen: '225ms',
+      leavingScreen: '195ms',
+    },
+    easing: {
+      easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      easeOut: 'cubic-bezier(0.0, 0, 0.2, 1)',
+      easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
+      sharp: 'cubic-bezier(0.4, 0, 0.6, 1)',
+    },
   },
 };
 
