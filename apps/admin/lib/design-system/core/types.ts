@@ -190,7 +190,7 @@ export interface SemanticRadius {
 // ============================================
 
 export interface SemanticShadows {
-  none: string;
+  none?: string;
   
   // Standard elevation levels (z-index based)
   z0?: string;
