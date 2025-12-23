@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Upload as UploadIcon, X, File, Image as ImageIcon, FileText } from 'lucide-react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 export interface UploadFile {
@@ -204,10 +205,13 @@ export const Upload: React.FC<UploadProps> = ({
             >
               {/* Preview or icon */}
               {uploadFile.preview ? (
-                <img
+                <Image
                   src={uploadFile.preview}
                   alt={uploadFile.file.name}
-                  className="size-12 object-cover rounded"
+                  width={48}
+                  height={48}
+                  className="object-cover rounded"
+                  unoptimized
                 />
               ) : (
                 <div className="size-12 flex items-center justify-center bg-background-default rounded">

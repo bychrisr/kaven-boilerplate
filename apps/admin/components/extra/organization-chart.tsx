@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { User } from 'lucide-react';
+import Image from 'next/image';
 
 
 export interface OrgNode {
@@ -33,10 +34,13 @@ const OrgChartNode: React.FC<{
         className="flex flex-col items-center gap-2 p-4 bg-background-paper border border-divider rounded-lg hover:shadow-lg transition-all min-w-[160px]"
       >
         {node.avatar ? (
-          <img
+          <Image
             src={node.avatar}
             alt={node.name}
-            className="size-12 rounded-full object-cover"
+            width={48}
+            height={48}
+            className="rounded-full object-cover"
+            unoptimized
           />
         ) : (
           <div className="size-12 rounded-full bg-primary-main/10 flex items-center justify-center">

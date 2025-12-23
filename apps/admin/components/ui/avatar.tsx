@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -57,11 +58,13 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
         {...props}
       >
         {src && !imgError ? (
-          <img
+          <Image
             src={src}
             alt={alt || ''}
-            className="size-full object-cover"
+            fill
+            className="object-cover"
             onError={() => setImgError(true)}
+            unoptimized
           />
         ) : (
           children
