@@ -76,13 +76,24 @@ export const ClickAwayListener: React.FC<ClickAwayListenerProps> = ({
     };
   }, [onClickAway, mouseEvent, touchEvent]);
 
-  const handleRef = (node: HTMLElement | null) => {
-    nodeRef.current = node;
-  };
+  const handleRef = React.useCallback(
+    (node: HTMLElement | null) => {
+      nodeRef.current = node;
+      
+      // Preserve existing ref if present
+      const childRef = (children as any).ref;
+      if (typeof childRef === 'function') {
+        childRef(node);
+      } else if (childRef) {
+        (childRef as React.MutableRefObject<HTMLElement | null>).current = node;
+      }
+    },
+    [children]
+  );
 
   return React.cloneElement(children, {
     ref: handleRef,
-  } as any);
+  } as React.Attributes);
 };
 
 ClickAwayListener.displayName = 'ClickAwayListener';
