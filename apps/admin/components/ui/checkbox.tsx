@@ -59,7 +59,9 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     ref
   ) => {
     const inputRef = React.useRef<HTMLInputElement>(null);
-    const inputId = id || `checkbox-${React.useId()}`;
+    // Always call useId unconditionally (React Hooks rule)
+    const generatedId = React.useId();
+    const inputId = id || `checkbox-${generatedId}`;
 
     React.useImperativeHandle(ref, () => inputRef.current!);
 
