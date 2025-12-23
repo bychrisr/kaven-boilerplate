@@ -80,7 +80,9 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
     },
     ref
   ) => {
-    const inputId = id || `switch-${React.useId()}`;
+    // Always call useId unconditionally (React Hooks rule)
+    const generatedId = React.useId();
+    const inputId = id || `switch-${generatedId}`;
 
     const switchElement = (
       <label
