@@ -67,7 +67,8 @@ const alertVariants = cva(
       {
         variant: 'standard',
         severity: 'success',
-        className: 'bg-success-lighter border-success-main text-success-darker [&>svg]:text-success-main',
+        className:
+          'bg-success-lighter border-success-main text-success-darker [&>svg]:text-success-main',
       },
       {
         variant: 'standard',
@@ -77,7 +78,8 @@ const alertVariants = cva(
       {
         variant: 'standard',
         severity: 'warning',
-        className: 'bg-warning-lighter border-warning-main text-warning-darker [&>svg]:text-warning-main',
+        className:
+          'bg-warning-lighter border-warning-main text-warning-darker [&>svg]:text-warning-main',
       },
       {
         variant: 'standard',
@@ -93,8 +95,7 @@ const alertVariants = cva(
 );
 
 export interface AlertProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof alertVariants> {
+  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof alertVariants> {
   /**
    * Alert title
    */
@@ -141,21 +142,11 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         {...props}
       >
         {icon && <div className="mt-0.5">{icon}</div>}
-        
+
         <div className="flex-1 min-w-0">
-          {title && (
-            <h5 className="font-semibold mb-1 text-sm">
-              {title}
-            </h5>
-          )}
-          <div className="text-sm leading-relaxed">
-            {children}
-          </div>
-          {action && (
-            <div className="mt-3">
-              {action}
-            </div>
-          )}
+          {title && <h5 className="font-semibold mb-1 text-sm">{title}</h5>}
+          <div className="text-sm leading-relaxed">{children}</div>
+          {action && <div className="mt-3">{action}</div>}
         </div>
 
         {closable && onClose && (

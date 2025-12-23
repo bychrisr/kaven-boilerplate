@@ -192,12 +192,9 @@ Fonte geométrica para títulos e elementos de destaque.
 
 ```tsx
 <Card>
-  <h3 className="font-sans text-xl font-semibold text-grey-800 mb-2">
-    Título do Card
-  </h3>
+  <h3 className="font-sans text-xl font-semibold text-grey-800 mb-2">Título do Card</h3>
   <p className="text-base text-grey-600 leading-relaxed">
-    Descrição do card com texto secundário e line-height confortável para
-    leitura.
+    Descrição do card com texto secundário e line-height confortável para leitura.
   </p>
 </Card>
 ```
@@ -206,17 +203,13 @@ Fonte geométrica para títulos e elementos de destaque.
 
 ```tsx
 <div>
-  <label className="block text-sm font-medium text-grey-700 mb-1">
-    Nome Completo
-  </label>
+  <label className="block text-sm font-medium text-grey-700 mb-1">Nome Completo</label>
   <input
     type="text"
     className="text-base text-grey-900 placeholder:text-grey-500"
     placeholder="Digite seu nome"
   />
-  <p className="text-xs text-grey-500 mt-1">
-    Seu nome será usado para identificação
-  </p>
+  <p className="text-xs text-grey-500 mt-1">Seu nome será usado para identificação</p>
 </div>
 ```
 
@@ -224,19 +217,13 @@ Fonte geométrica para títulos e elementos de destaque.
 
 ```tsx
 <nav>
-  <h6 className="text-xs font-semibold text-grey-500 uppercase tracking-wider mb-2">
-    Menu
-  </h6>
+  <h6 className="text-xs font-semibold text-grey-500 uppercase tracking-wider mb-2">Menu</h6>
   <ul>
     <li>
-      <a className="text-sm font-medium text-grey-700 hover:text-primary-main">
-        Dashboard
-      </a>
+      <a className="text-sm font-medium text-grey-700 hover:text-primary-main">Dashboard</a>
     </li>
     <li>
-      <a className="text-sm font-medium text-grey-700 hover:text-primary-main">
-        Usuários
-      </a>
+      <a className="text-sm font-medium text-grey-700 hover:text-primary-main">Usuários</a>
     </li>
   </ul>
 </nav>

@@ -69,13 +69,17 @@ const arrowClasses: Record<TooltipPlacement, string> = {
   top: 'top-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-b-transparent',
   'top-start': 'top-full left-2 border-l-transparent border-r-transparent border-b-transparent',
   'top-end': 'top-full right-2 border-l-transparent border-r-transparent border-b-transparent',
-  bottom: 'bottom-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-t-transparent',
-  'bottom-start': 'bottom-full left-2 border-l-transparent border-r-transparent border-t-transparent',
-  'bottom-end': 'bottom-full right-2 border-l-transparent border-r-transparent border-t-transparent',
+  bottom:
+    'bottom-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-t-transparent',
+  'bottom-start':
+    'bottom-full left-2 border-l-transparent border-r-transparent border-t-transparent',
+  'bottom-end':
+    'bottom-full right-2 border-l-transparent border-r-transparent border-t-transparent',
   left: 'left-full top-1/2 -translate-y-1/2 border-t-transparent border-b-transparent border-r-transparent',
   'left-start': 'left-full top-2 border-t-transparent border-b-transparent border-r-transparent',
   'left-end': 'left-full bottom-2 border-t-transparent border-b-transparent border-r-transparent',
-  right: 'right-full top-1/2 -translate-y-1/2 border-t-transparent border-b-transparent border-l-transparent',
+  right:
+    'right-full top-1/2 -translate-y-1/2 border-t-transparent border-b-transparent border-l-transparent',
   'right-start': 'right-full top-2 border-t-transparent border-b-transparent border-l-transparent',
   'right-end': 'right-full bottom-2 border-t-transparent border-b-transparent border-l-transparent',
 };
@@ -140,10 +144,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
           {title}
           {arrow && (
             <div
-              className={cn(
-                'absolute w-0 h-0 border-4 border-gray-900',
-                arrowClasses[placement]
-              )}
+              className={cn('absolute w-0 h-0 border-4 border-gray-900', arrowClasses[placement])}
             />
           )}
         </div>

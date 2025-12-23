@@ -12,7 +12,13 @@ interface NodeMetricCardProps {
   status?: 'good' | 'warning' | 'critical';
 }
 
-function NodeMetricCard({ title, value, subtitle, icon: Icon, status = 'good' }: Readonly<NodeMetricCardProps>) {
+function NodeMetricCard({
+  title,
+  value,
+  subtitle,
+  icon: Icon,
+  status = 'good',
+}: Readonly<NodeMetricCardProps>) {
   const statusColors = {
     good: 'bg-emerald-50 text-emerald-600',
     warning: 'bg-amber-50 text-amber-600',

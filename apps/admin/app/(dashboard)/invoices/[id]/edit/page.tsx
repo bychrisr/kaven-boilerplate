@@ -23,7 +23,7 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
   const router = useRouter();
   const { data: invoice, isLoading: isLoadingInvoice } = useInvoice(id);
   const { updateInvoice } = useInvoices();
-  
+
   const {
     register,
     handleSubmit,
@@ -47,7 +47,7 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
   const onSubmit = async (data: EditInvoiceFormData) => {
     console.log('🔵 onSubmit chamado!');
     console.log('📦 Dados do formulário:', data);
-    
+
     try {
       console.log('🚀 Chamando updateInvoice.mutateAsync...');
       console.log('📝 Payload:', {
@@ -60,7 +60,7 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
           metadata: data.metadata,
         },
       });
-      
+
       await updateInvoice.mutateAsync({
         id,
         data: {
@@ -71,7 +71,7 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
           metadata: data.metadata,
         },
       });
-      
+
       console.log('✅ Mutation executada com sucesso!');
       console.log('🔄 Redirecionando para:', `/invoices/${id}`);
       router.push(`/invoices/${id}`);
@@ -129,12 +129,9 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
       <div className="rounded-lg border bg-white p-6 shadow-sm">
         <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-6 max-w-2xl">
           <div className="grid gap-6 md:grid-cols-2">
-            
             {/* Tenant Display (readonly) */}
             <div className="col-span-2">
-              <span className="block text-sm font-medium text-gray-700 mb-1">
-                Cliente / Tenant
-              </span>
+              <span className="block text-sm font-medium text-gray-700 mb-1">Cliente / Tenant</span>
               <div className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600">
                 {invoice.tenant?.name || invoice.tenantId}
               </div>

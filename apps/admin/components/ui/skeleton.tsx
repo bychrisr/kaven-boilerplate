@@ -24,15 +24,7 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
   (
-    {
-      className,
-      variant = 'rectangular',
-      width,
-      height,
-      animation = 'pulse',
-      style,
-      ...props
-    },
+    { className, variant = 'rectangular', width, height, animation = 'pulse', style, ...props },
     ref
   ) => {
     return (

@@ -78,7 +78,7 @@ export const Popover: React.FC<PopoverProps> = ({
   if (!open || !anchorEl) return null;
 
   const rect = anchorEl.getBoundingClientRect();
-  
+
   const getPosition = () => {
     let top = 0;
     let left = 0;

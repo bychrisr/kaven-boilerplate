@@ -3,7 +3,17 @@
 import { useUsers } from '@/hooks/use-users';
 import { Users, DollarSign, FileText, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from 'recharts';
 
 interface User {
   id: string;
@@ -35,9 +45,7 @@ export default function DashboardPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Visão geral do sistema
-        </p>
+        <p className="mt-1 text-sm text-gray-500">Visão geral do sistema</p>
       </div>
 
       {/* Metrics Cards */}
@@ -47,19 +55,14 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total de Usuários</p>
-              <p className="mt-2 text-3xl font-bold text-gray-900">
-                {metrics.totalUsers}
-              </p>
+              <p className="mt-2 text-3xl font-bold text-gray-900">{metrics.totalUsers}</p>
             </div>
             <div className="rounded-full bg-blue-100 p-3">
               <Users className="h-6 w-6 text-blue-600" />
             </div>
           </div>
           <div className="mt-4">
-            <Link
-              href="/users"
-              className="text-sm font-medium text-blue-600 hover:text-blue-700"
-            >
+            <Link href="/users" className="text-sm font-medium text-blue-600 hover:text-blue-700">
               Ver todos →
             </Link>
           </div>
@@ -88,9 +91,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Invoices Pendentes</p>
-              <p className="mt-2 text-3xl font-bold text-gray-900">
-                {metrics.invoices}
-              </p>
+              <p className="mt-2 text-3xl font-bold text-gray-900">{metrics.invoices}</p>
             </div>
             <div className="rounded-full bg-yellow-100 p-3">
               <FileText className="h-6 w-6 text-yellow-600" />
@@ -111,19 +112,14 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Pedidos do Mês</p>
-              <p className="mt-2 text-3xl font-bold text-gray-900">
-                {metrics.orders}
-              </p>
+              <p className="mt-2 text-3xl font-bold text-gray-900">{metrics.orders}</p>
             </div>
             <div className="rounded-full bg-purple-100 p-3">
               <ShoppingCart className="h-6 w-6 text-purple-600" />
             </div>
           </div>
           <div className="mt-4">
-            <Link
-              href="/orders"
-              className="text-sm font-medium text-blue-600 hover:text-blue-700"
-            >
+            <Link href="/orders" className="text-sm font-medium text-blue-600 hover:text-blue-700">
               Ver todos →
             </Link>
           </div>
@@ -138,14 +134,16 @@ export default function DashboardPage() {
           <p className="mt-1 text-sm text-gray-500">Últimos 6 meses</p>
           <div className="mt-6 h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={[
-                { name: 'Jul', value: 65 },
-                { name: 'Ago', value: 78 },
-                { name: 'Set', value: 82 },
-                { name: 'Out', value: 90 },
-                { name: 'Nov', value: 95 },
-                { name: 'Dez', value: 100 },
-              ]}>
+              <BarChart
+                data={[
+                  { name: 'Jul', value: 65 },
+                  { name: 'Ago', value: 78 },
+                  { name: 'Set', value: 82 },
+                  { name: 'Out', value: 90 },
+                  { name: 'Nov', value: 95 },
+                  { name: 'Dez', value: 100 },
+                ]}
+              >
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} />
                 <YAxis axisLine={false} tickLine={false} />
@@ -161,20 +159,28 @@ export default function DashboardPage() {
           <h3 className="text-lg font-semibold text-gray-900">Crescimento de Usuários</h3>
           <p className="mt-1 text-sm text-gray-500">Últimos 6 meses</p>
           <div className="mt-6 h-64">
-             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={[
-                { name: 'Jul', value: 45 },
-                { name: 'Ago', value: 52 },
-                { name: 'Set', value: 68 },
-                { name: 'Out', value: 75 },
-                { name: 'Nov', value: 85 },
-                { name: 'Dez', value: 100 },
-              ]}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={[
+                  { name: 'Jul', value: 45 },
+                  { name: 'Ago', value: 52 },
+                  { name: 'Set', value: 68 },
+                  { name: 'Out', value: 75 },
+                  { name: 'Nov', value: 85 },
+                  { name: 'Dez', value: 100 },
+                ]}
+              >
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} />
                 <YAxis axisLine={false} tickLine={false} />
                 <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#10B981" strokeWidth={2} activeDot={{ r: 8 }} />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#10B981"
+                  strokeWidth={2}
+                  activeDot={{ r: 8 }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -189,10 +195,7 @@ export default function DashboardPage() {
               <h3 className="text-lg font-semibold text-gray-900">Usuários Recentes</h3>
               <p className="mt-1 text-sm text-gray-500">Últimos 5 usuários cadastrados</p>
             </div>
-            <Link
-              href="/users"
-              className="text-sm font-medium text-blue-600 hover:text-blue-700"
-            >
+            <Link href="/users" className="text-sm font-medium text-blue-600 hover:text-blue-700">
               Ver todos
             </Link>
           </div>

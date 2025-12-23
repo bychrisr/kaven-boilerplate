@@ -49,17 +49,41 @@ export function Markdown({ children, className, ...props }: MarkdownProps) {
 
       // Headers
       if (line.startsWith('# ')) {
-        elements.push(<h1 key={i} className="text-4xl font-bold mt-6 mb-4">{line.slice(2)}</h1>);
+        elements.push(
+          <h1 key={i} className="text-4xl font-bold mt-6 mb-4">
+            {line.slice(2)}
+          </h1>
+        );
       } else if (line.startsWith('## ')) {
-        elements.push(<h2 key={i} className="text-3xl font-bold mt-5 mb-3">{line.slice(3)}</h2>);
+        elements.push(
+          <h2 key={i} className="text-3xl font-bold mt-5 mb-3">
+            {line.slice(3)}
+          </h2>
+        );
       } else if (line.startsWith('### ')) {
-        elements.push(<h3 key={i} className="text-2xl font-bold mt-4 mb-2">{line.slice(4)}</h3>);
+        elements.push(
+          <h3 key={i} className="text-2xl font-bold mt-4 mb-2">
+            {line.slice(4)}
+          </h3>
+        );
       } else if (line.startsWith('#### ')) {
-        elements.push(<h4 key={i} className="text-xl font-bold mt-3 mb-2">{line.slice(5)}</h4>);
+        elements.push(
+          <h4 key={i} className="text-xl font-bold mt-3 mb-2">
+            {line.slice(5)}
+          </h4>
+        );
       } else if (line.startsWith('##### ')) {
-        elements.push(<h5 key={i} className="text-lg font-bold mt-2 mb-1">{line.slice(6)}</h5>);
+        elements.push(
+          <h5 key={i} className="text-lg font-bold mt-2 mb-1">
+            {line.slice(6)}
+          </h5>
+        );
       } else if (line.startsWith('###### ')) {
-        elements.push(<h6 key={i} className="text-base font-bold mt-2 mb-1">{line.slice(7)}</h6>);
+        elements.push(
+          <h6 key={i} className="text-base font-bold mt-2 mb-1">
+            {line.slice(7)}
+          </h6>
+        );
       }
       // Lists
       else if (line.startsWith('- ') || line.startsWith('* ')) {
@@ -110,9 +134,15 @@ export function Markdown({ children, className, ...props }: MarkdownProps) {
     // Italic
     text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
     // Inline code
-    text = text.replace(/`(.+?)`/g, '<code class="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono">$1</code>');
+    text = text.replace(
+      /`(.+?)`/g,
+      '<code class="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono">$1</code>'
+    );
     // Links
-    text = text.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-primary-main hover:underline">$1</a>');
+    text = text.replace(
+      /\[(.+?)\]\((.+?)\)/g,
+      '<a href="$2" class="text-primary-main hover:underline">$1</a>'
+    );
 
     return <span dangerouslySetInnerHTML={{ __html: text }} />;
   };
@@ -130,6 +160,6 @@ export function Markdown({ children, className, ...props }: MarkdownProps) {
       {parseMarkdown(children)}
     </div>
   );
-};
+}
 
 Markdown.displayName = 'Markdown';

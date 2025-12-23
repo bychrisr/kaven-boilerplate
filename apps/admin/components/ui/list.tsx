@@ -16,11 +16,7 @@ export interface ListProps extends React.HTMLAttributes<HTMLUListElement> {
 export const List = React.forwardRef<HTMLUListElement, ListProps>(
   ({ className, dense = false, disablePadding = false, children, ...props }, ref) => {
     return (
-      <ul
-        ref={ref}
-        className={cn(!disablePadding && 'py-2', className)}
-        {...props}
-      >
+      <ul ref={ref} className={cn(!disablePadding && 'py-2', className)} {...props}>
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
             return React.cloneElement(child as React.ReactElement<ListItemProps>, { dense });
@@ -34,8 +30,7 @@ export const List = React.forwardRef<HTMLUListElement, ListProps>(
 
 List.displayName = 'List';
 
-export interface ListItemProps
-  extends Omit<React.HTMLAttributes<HTMLLIElement>, 'onClick'> {
+export interface ListItemProps extends Omit<React.HTMLAttributes<HTMLLIElement>, 'onClick'> {
   /**
    * Dense padding
    */
@@ -67,10 +62,7 @@ export interface ListItemProps
   children: React.ReactNode;
 }
 
-export const ListItem = React.forwardRef<
-  HTMLLIElement | HTMLButtonElement,
-  ListItemProps
->(
+export const ListItem = React.forwardRef<HTMLLIElement | HTMLButtonElement, ListItemProps>(
   (
     {
       className,
@@ -150,21 +142,9 @@ export interface ListItemTextProps extends React.HTMLAttributes<HTMLDivElement> 
 export const ListItemText = React.forwardRef<HTMLDivElement, ListItemTextProps>(
   ({ className, primary, secondary, inset = false, children, ...props }, ref) => {
     return (
-      <div
-        ref={ref}
-        className={cn('flex-1 min-w-0', inset && 'pl-14', className)}
-        {...props}
-      >
-        {primary && (
-          <div className="text-sm font-medium text-text-primary truncate">
-            {primary}
-          </div>
-        )}
-        {secondary && (
-          <div className="text-xs text-text-secondary truncate">
-            {secondary}
-          </div>
-        )}
+      <div ref={ref} className={cn('flex-1 min-w-0', inset && 'pl-14', className)} {...props}>
+        {primary && <div className="text-sm font-medium text-text-primary truncate">{primary}</div>}
+        {secondary && <div className="text-xs text-text-secondary truncate">{secondary}</div>}
         {children}
       </div>
     );
@@ -200,11 +180,7 @@ export interface ListItemAvatarProps extends React.HTMLAttributes<HTMLDivElement
 export const ListItemAvatar = React.forwardRef<HTMLDivElement, ListItemAvatarProps>(
   ({ className, children, ...props }, ref) => {
     return (
-      <div
-        ref={ref}
-        className={cn('flex items-center mr-4', className)}
-        {...props}
-      >
+      <div ref={ref} className={cn('flex items-center mr-4', className)} {...props}>
         {children}
       </div>
     );

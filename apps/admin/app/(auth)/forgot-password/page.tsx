@@ -17,7 +17,7 @@ export default function ForgotPasswordPage() {
       await fetch('http://localhost:8000/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email }),
       });
 
       setSuccess(true);
@@ -33,11 +33,21 @@ export default function ForgotPasswordPage() {
     return (
       <div className="space-y-6 text-center">
         <Logo size="large" className="justify-center" />
-        
+
         <div className="bg-success-lighter border border-success-main rounded-lg p-6">
           <div className="h-12 w-12 bg-success-main rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <svg
+              className="h-6 w-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
             </svg>
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-2">Check your email</h2>
@@ -61,9 +71,7 @@ export default function ForgotPasswordPage() {
       <Logo size="large" className="justify-center" />
 
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Forgot your password?
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Forgot your password?</h1>
         <p className="text-gray-600">
           Enter your email address and we&apos;ll send you a reset link
         </p>

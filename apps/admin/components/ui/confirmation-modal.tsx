@@ -59,16 +59,14 @@ export function ConfirmationModal({
         </button>
 
         <div className="text-center">
-          <div className={`mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full ${iconColors[variant]}`}>
+          <div
+            className={`mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full ${iconColors[variant]}`}
+          >
             <AlertTriangle className="h-6 w-6" />
           </div>
-          <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
-            {title}
-          </h3>
-          <p className="mb-6 text-gray-500 dark:text-gray-400">
-            {message}
-          </p>
-          
+          <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">{title}</h3>
+          <p className="mb-6 text-gray-500 dark:text-gray-400">{message}</p>
+
           <div className="flex items-center justify-center gap-3">
             <button
               onClick={onClose}

@@ -56,14 +56,16 @@ export function DashboardWidgetSummary({
         <div className={`h-12 w-12 rounded-lg ${colors.bg} flex items-center justify-center`}>
           <Icon className={`h-6 w-6 ${colors.icon}`} />
         </div>
-        <div className={`flex items-center gap-1 ${
-          trend === 'up' ? 'text-green-600' : 'text-red-600'
-        }`}>
+        <div
+          className={`flex items-center gap-1 ${
+            trend === 'up' ? 'text-green-600' : 'text-red-600'
+          }`}
+        >
           <TrendIcon className="h-4 w-4" />
           <span className="text-sm font-medium">{change}</span>
         </div>
       </div>
-      
+
       <div>
         <p className="text-sm text-gray-600 mb-1">{title}</p>
         <p className="text-2xl font-bold text-gray-900">{value}</p>

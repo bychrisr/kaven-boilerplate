@@ -160,9 +160,7 @@ customShadows: {
 
 ```tsx
 // Redução de elevação ao clicar
-<Button className="shadow-z8 active:shadow-z4 transition-shadow">
-  Click me
-</Button>
+<Button className="shadow-z8 active:shadow-z4 transition-shadow">Click me</Button>
 ```
 
 ## Best Practices

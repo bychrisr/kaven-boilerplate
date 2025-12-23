@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
-export interface SliderProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'onChange' | 'onScroll' | 'defaultValue' | 'value'> {
+export interface SliderProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'size' | 'onChange' | 'onScroll' | 'defaultValue' | 'value'
+> {
   /**
    * Current value
    */
@@ -86,13 +88,11 @@ export const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
     },
     ref
   ) => {
-    const [internalValue, setInternalValue] = React.useState(
-      (value ?? defaultValue) as number
-    );
+    const [internalValue, setInternalValue] = React.useState((value ?? defaultValue) as number);
     const [isDragging, setIsDragging] = React.useState(false);
 
     const currentValue = value ?? internalValue;
-    const percentage = ((currentValue as number - min) / (max - min)) * 100;
+    const percentage = (((currentValue as number) - min) / (max - min)) * 100;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const newValue = Number(e.target.value);
@@ -122,9 +122,7 @@ export const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
             className={cn(
               'absolute rounded-full',
               colorClasses[color],
-              orientation === 'vertical'
-                ? `w-full bottom-0`
-                : `h-full left-0`,
+              orientation === 'vertical' ? `w-full bottom-0` : `h-full left-0`,
               sizeClasses[size].track
             )}
             style={
@@ -182,11 +180,7 @@ export const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
             {marks.map((mark) => {
               const markPercentage = ((mark.value - min) / (max - min)) * 100;
               return (
-                <div
-                  key={mark.value}
-                  className="absolute"
-                  style={{ left: `${markPercentage}%` }}
-                >
+                <div key={mark.value} className="absolute" style={{ left: `${markPercentage}%` }}>
                   <div className="absolute -translate-x-1/2 size-2 bg-gray-400 rounded-full" />
                   {mark.label && (
                     <div className="absolute top-4 left-1/2 -translate-x-1/2 text-xs text-text-secondary whitespace-nowrap">

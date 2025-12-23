@@ -116,7 +116,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
       role="alert"
     >
       {Icon && <Icon className="size-5 shrink-0" />}
-      
+
       <div className="flex-1 text-sm font-medium">{message}</div>
 
       {action && <div className="shrink-0">{action}</div>}

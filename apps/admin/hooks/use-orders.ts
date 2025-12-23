@@ -52,11 +52,7 @@ export function useOrders(params?: OrdersParams) {
   const queryClient = useQueryClient();
   const queryParams = params ?? { page: 1, limit: 10 };
 
-  const {
-    data,
-    isLoading,
-    error,
-  } = useQuery<OrdersResponse>({
+  const { data, isLoading, error } = useQuery<OrdersResponse>({
     queryKey: ['orders', queryParams],
     queryFn: async () => {
       const response = await api.get('/api/orders', { params: queryParams });

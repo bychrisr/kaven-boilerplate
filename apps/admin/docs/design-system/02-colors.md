@@ -223,9 +223,7 @@ customShadows: {
 **Uso**:
 
 ```tsx
-<Button className="shadow-[0_8px_16px_0_rgba(24,119,242,0.24)]">
-  Botão com shadow primário
-</Button>
+<Button className="shadow-[0_8px_16px_0_rgba(24,119,242,0.24)]">Botão com shadow primário</Button>
 ```
 
 ## Acessibilidade

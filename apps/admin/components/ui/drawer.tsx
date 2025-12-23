@@ -131,7 +131,10 @@ export const DrawerHeader = React.forwardRef<HTMLDivElement, DrawerHeaderProps>(
     return (
       <div
         ref={ref}
-        className={cn('flex items-center justify-between px-6 py-4 border-b border-divider', className)}
+        className={cn(
+          'flex items-center justify-between px-6 py-4 border-b border-divider',
+          className
+        )}
         {...props}
       >
         <h2 className="text-xl font-semibold text-text-primary">{children}</h2>
@@ -154,11 +157,7 @@ export interface DrawerContentProps extends React.HTMLAttributes<HTMLDivElement>
 export const DrawerContent = React.forwardRef<HTMLDivElement, DrawerContentProps>(
   ({ className, children, ...props }, ref) => {
     return (
-      <div
-        ref={ref}
-        className={cn('px-6 py-4 overflow-y-auto', className)}
-        {...props}
-      >
+      <div ref={ref} className={cn('px-6 py-4 overflow-y-auto', className)} {...props}>
         {children}
       </div>
     );

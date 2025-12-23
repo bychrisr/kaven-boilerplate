@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
  */
 const buttonVariants = cva(
   // Minimals base styles
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[8px] text-sm font-bold transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\'size-\'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[8px] text-sm font-bold transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
   {
     variants: {
       variant: {
@@ -30,8 +30,7 @@ const buttonVariants = cva(
         default: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm',
         destructive:
           'bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 shadow-sm',
-        outline:
-          'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground',
+        outline: 'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground',
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
@@ -97,15 +96,13 @@ const buttonVariants = cva(
       {
         variant: 'contained',
         color: 'error',
-        className:
-          'bg-error-main text-white hover:bg-error-dark focus-visible:ring-error-main/30',
+        className: 'bg-error-main text-white hover:bg-error-dark focus-visible:ring-error-main/30',
       },
       // Contained + Info
       {
         variant: 'contained',
         color: 'info',
-        className:
-          'bg-info-main text-white hover:bg-info-dark focus-visible:ring-info-main/30',
+        className: 'bg-info-main text-white hover:bg-info-dark focus-visible:ring-info-main/30',
       },
       // Outlined + Primary
       {
@@ -239,7 +236,8 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'color'>,
+  extends
+    Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'color'>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   /**
@@ -299,4 +297,3 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = 'Button';
 
 export { Button, buttonVariants };
-

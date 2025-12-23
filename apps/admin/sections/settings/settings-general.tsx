@@ -9,7 +9,7 @@ export function SettingsGeneral() {
   return (
     <div className="bg-white rounded-xl border shadow-sm p-6">
       <h2 className="text-xl font-semibold mb-4">Configurações Gerais</h2>
-      
+
       <div className="space-y-6">
         {/* App Name */}
         <div>

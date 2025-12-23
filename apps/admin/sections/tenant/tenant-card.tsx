@@ -60,14 +60,18 @@ export function TenantCard({ tenant }: TenantCardProps) {
 
       {/* Badges */}
       <div className="flex items-center gap-2">
-        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-          planColors[tenant.plan as keyof typeof planColors] || planColors.free
-        }`}>
+        <span
+          className={`px-2 py-1 text-xs font-semibold rounded-full ${
+            planColors[tenant.plan as keyof typeof planColors] || planColors.free
+          }`}
+        >
           {tenant.plan}
         </span>
-        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-          statusColors[tenant.status as keyof typeof statusColors] || statusColors.inactive
-        }`}>
+        <span
+          className={`px-2 py-1 text-xs font-semibold rounded-full ${
+            statusColors[tenant.status as keyof typeof statusColors] || statusColors.inactive
+          }`}
+        >
           {tenant.status}
         </span>
       </div>

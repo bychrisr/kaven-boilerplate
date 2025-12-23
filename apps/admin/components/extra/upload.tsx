@@ -141,7 +141,7 @@ export const Upload: React.FC<UploadProps> = ({
   };
 
   const handleRemove = (id: string) => {
-    const newFiles = currentFiles.filter(f => f.id !== id);
+    const newFiles = currentFiles.filter((f) => f.id !== id);
     setFiles(newFiles);
     onChange?.(newFiles);
   };
@@ -151,7 +151,7 @@ export const Upload: React.FC<UploadProps> = ({
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${Math.round(bytes / Math.pow(k, i) * 100) / 100} ${sizes[i]}`;
+    return `${Math.round((bytes / Math.pow(k, i)) * 100) / 100} ${sizes[i]}`;
   };
 
   const getFileIcon = (file: File) => {
@@ -225,9 +225,7 @@ export const Upload: React.FC<UploadProps> = ({
                 <p className="text-xs text-text-secondary">
                   {formatFileSize(uploadFile.file.size)}
                 </p>
-                {uploadFile.error && (
-                  <p className="text-xs text-error-main">{uploadFile.error}</p>
-                )}
+                {uploadFile.error && <p className="text-xs text-error-main">{uploadFile.error}</p>}
                 {uploadFile.progress !== undefined && uploadFile.progress < 100 && (
                   <div className="mt-1 h-1 bg-gray-200 rounded-full overflow-hidden">
                     <div

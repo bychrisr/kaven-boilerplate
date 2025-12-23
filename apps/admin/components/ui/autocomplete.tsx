@@ -7,8 +7,10 @@ export interface AutocompleteOption<T = unknown> {
   value: T;
 }
 
-export interface AutocompleteProps<T = unknown>
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'defaultValue'> {
+export interface AutocompleteProps<T = unknown> extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'onChange' | 'value' | 'defaultValue'
+> {
   /**
    * Options array
    */
@@ -166,7 +168,12 @@ export function Autocomplete<T = unknown>({
   return (
     <div className={cn('relative', fullWidth && 'w-full', className)} ref={containerRef}>
       {label && (
-        <label className={cn('block text-sm font-medium mb-1.5', error ? 'text-error-main' : 'text-text-primary')}>
+        <label
+          className={cn(
+            'block text-sm font-medium mb-1.5',
+            error ? 'text-error-main' : 'text-text-primary'
+          )}
+        >
           {label}
         </label>
       )}

@@ -22,7 +22,7 @@ export function DashboardCurrentVisits({ data }: DashboardCurrentVisitsProps) {
   return (
     <div className="bg-white rounded-xl border shadow-sm p-6">
       <h2 className="text-xl font-semibold mb-4">Visitas Atuais</h2>
-      
+
       {/* Simple visualization - will be replaced with actual chart */}
       <div className="space-y-4">
         {data.map((item, index) => {
@@ -37,9 +37,7 @@ export function DashboardCurrentVisits({ data }: DashboardCurrentVisitsProps) {
                   />
                   <span className="text-sm text-gray-700">{item.label}</span>
                 </div>
-                <span className="text-sm font-medium text-gray-900">
-                  {percentage}%
-                </span>
+                <span className="text-sm font-medium text-gray-900">{percentage}%</span>
               </div>
               <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div
@@ -59,9 +57,7 @@ export function DashboardCurrentVisits({ data }: DashboardCurrentVisitsProps) {
       <div className="mt-6 pt-6 border-t">
         <div className="flex items-center justify-between">
           <span className="text-sm text-gray-600">Total</span>
-          <span className="text-lg font-bold text-gray-900">
-            {total.toLocaleString('pt-BR')}
-          </span>
+          <span className="text-lg font-bold text-gray-900">{total.toLocaleString('pt-BR')}</span>
         </div>
       </div>
     </div>

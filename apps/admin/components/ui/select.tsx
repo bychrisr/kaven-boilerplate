@@ -2,8 +2,10 @@ import * as React from 'react';
 import { ChevronDown, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export interface SelectProps<T = string>
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
+export interface SelectProps<T = string> extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'onChange' | 'defaultValue'
+> {
   /**
    * Selected value
    */
@@ -114,7 +116,12 @@ export function Select<T = string>({
   return (
     <div className={cn('relative', fullWidth && 'w-full', className)} ref={selectRef} {...props}>
       {label && (
-        <label className={cn('block text-sm font-medium mb-1.5', error ? 'text-error-main' : 'text-text-primary')}>
+        <label
+          className={cn(
+            'block text-sm font-medium mb-1.5',
+            error ? 'text-error-main' : 'text-text-primary'
+          )}
+        >
           {label}
         </label>
       )}
@@ -159,7 +166,9 @@ export function Select<T = string>({
               )}
             >
               <span>{option.props.children}</span>
-              {option.props.value === currentValue && <Check className="size-4 text-primary-main" />}
+              {option.props.value === currentValue && (
+                <Check className="size-4 text-primary-main" />
+              )}
             </div>
           ))}
         </div>

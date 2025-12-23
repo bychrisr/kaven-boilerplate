@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
-export interface TextFieldProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
+export interface TextFieldProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   /**
    * Variant style
    * @default 'outlined'
@@ -76,7 +75,7 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
     // Generate ID unconditionally (React Hooks rule)
     const generatedId = React.useId();
     const inputId = id || generatedId;
-    
+
     const hasError = error || Boolean(errorMessage);
     const displayHelperText = errorMessage || helperText;
 
@@ -154,7 +153,8 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
             rows={multiline ? rows : undefined}
             aria-invalid={hasError}
             aria-describedby={displayHelperText ? `${inputId}-helper` : undefined}
-            {...(props as React.InputHTMLAttributes<HTMLInputElement> & React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
+            {...(props as React.InputHTMLAttributes<HTMLInputElement> &
+              React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
           />
 
           {endAdornment && (
@@ -176,10 +176,7 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
         {displayHelperText && (
           <p
             id={`${inputId}-helper`}
-            className={cn(
-              'text-xs',
-              hasError ? 'text-error-main' : 'text-text-secondary'
-            )}
+            className={cn('text-xs', hasError ? 'text-error-main' : 'text-text-secondary')}
           >
             {displayHelperText}
           </p>

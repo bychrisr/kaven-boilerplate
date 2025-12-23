@@ -79,34 +79,38 @@ export default function ProfileSettingsPage() {
 
           {/* Name */}
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              Nome Completo
+            </label>
             <input
               id="name"
               type="text"
               {...register('name')}
               className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-                 errors.name ? 'border-error-main focus:border-error-main focus:ring-error-light/50' : 'border-gray-300 focus:ring-primary-main focus:border-primary-main'
+                errors.name
+                  ? 'border-error-main focus:border-error-main focus:ring-error-light/50'
+                  : 'border-gray-300 focus:ring-primary-main focus:border-primary-main'
               }`}
             />
-             {errors.name && (
-              <p className="mt-1 text-sm text-error-main">{errors.name.message}</p>
-            )}
+            {errors.name && <p className="mt-1 text-sm text-error-main">{errors.name.message}</p>}
           </div>
 
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
             <input
               id="email"
               type="email"
               {...register('email')}
               className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-                 errors.email ? 'border-error-main focus:border-error-main focus:ring-error-light/50' : 'border-gray-300 focus:ring-primary-main focus:border-primary-main'
+                errors.email
+                  ? 'border-error-main focus:border-error-main focus:ring-error-light/50'
+                  : 'border-gray-300 focus:ring-primary-main focus:border-primary-main'
               }`}
             />
-            {errors.email && (
-              <p className="mt-1 text-sm text-error-main">{errors.email.message}</p>
-            )}
+            {errors.email && <p className="mt-1 text-sm text-error-main">{errors.email.message}</p>}
           </div>
 
           {/* Role (Read Only) */}
@@ -127,7 +131,11 @@ export default function ProfileSettingsPage() {
               disabled={isUpdating}
               className="inline-flex items-center gap-2 bg-primary-main text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              {isUpdating ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
               {isUpdating ? 'Salvando...' : 'Salvar Alterações'}
             </button>
           </div>

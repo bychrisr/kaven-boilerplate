@@ -16,7 +16,7 @@ export default function RegisterPage() {
     name: '',
     email: '',
     password: '',
-    terms: false
+    terms: false,
   });
 
   // Redirect if already logged in
@@ -33,7 +33,6 @@ export default function RegisterPage() {
     return null;
   }
 
-
   const getPasswordStrength = (password: string) => {
     let strength = 0;
     if (password.length >= 8) strength++;
@@ -45,12 +44,18 @@ export default function RegisterPage() {
   };
 
   const passwordStrength = getPasswordStrength(formData.password);
-  const strengthColors = ['bg-gray-300', 'bg-error-main', 'bg-warning-main', 'bg-success-light', 'bg-success-main'];
+  const strengthColors = [
+    'bg-gray-300',
+    'bg-error-main',
+    'bg-warning-main',
+    'bg-success-light',
+    'bg-success-main',
+  ];
   const strengthLabels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.terms) {
       toast.error('You must accept the terms and conditions');
       return;
@@ -65,8 +70,8 @@ export default function RegisterPage() {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          password: formData.password
-        })
+          password: formData.password,
+        }),
       });
 
       if (response.ok) {
@@ -89,12 +94,8 @@ export default function RegisterPage() {
       <Logo size="large" className="justify-center" />
 
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Get started absolutely free
-        </h1>
-        <p className="text-gray-600">
-          Create your account to continue
-        </p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Get started absolutely free</h1>
+        <p className="text-gray-600">Create your account to continue</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -170,7 +171,8 @@ export default function RegisterPage() {
                 ))}
               </div>
               <p className="text-xs text-gray-600">
-                Password strength: <span className="font-medium">{strengthLabels[passwordStrength]}</span>
+                Password strength:{' '}
+                <span className="font-medium">{strengthLabels[passwordStrength]}</span>
               </p>
             </div>
           )}
@@ -189,8 +191,8 @@ export default function RegisterPage() {
               I agree to the{' '}
               <Link href="/terms" className="text-primary-main hover:text-primary-dark">
                 Terms of Service
-              </Link>
-              {' '}and{' '}
+              </Link>{' '}
+              and{' '}
               <Link href="/privacy" className="text-primary-main hover:text-primary-dark">
                 Privacy Policy
               </Link>

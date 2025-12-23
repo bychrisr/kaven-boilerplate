@@ -16,15 +16,15 @@ function DashboardLayoutInner({ children }: { children: ReactNode }) {
   return (
     <div className="flex h-screen overflow-hidden bg-[#F9FAFB]">
       <Sidebar />
-      
-      <div 
+
+      <div
         className={cn(
           'flex flex-1 flex-col overflow-hidden transition-all duration-300',
           isCollapsed ? 'ml-[72px]' : 'ml-[280px]'
         )}
       >
         <Header />
-        
+
         <main className="flex-1 overflow-y-auto">
           <div className="p-6">
             <Breadcrumbs>

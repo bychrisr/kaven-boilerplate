@@ -205,11 +205,7 @@ export function GridItem({
 
   return (
     <div
-      className={cn(
-        !responsive && spanClasses[span],
-        ...responsiveClasses,
-        className
-      )}
+      className={cn(!responsive && spanClasses[span], ...responsiveClasses, className)}
       {...props}
     >
       {children}

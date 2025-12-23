@@ -85,11 +85,7 @@ export function useInvoices(params?: InvoicesParams) {
 
   const queryParams = params ?? { page: 1, limit: 10 };
 
-  const {
-    data,
-    isLoading,
-    error,
-  } = useQuery<InvoicesResponse>({
+  const { data, isLoading, error } = useQuery<InvoicesResponse>({
     queryKey: ['invoices', queryParams],
     queryFn: async () => {
       const response = await api.get('/api/invoices', { params: queryParams });

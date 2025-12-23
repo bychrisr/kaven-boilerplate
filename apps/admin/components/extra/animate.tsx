@@ -59,17 +59,20 @@ export const Animate: React.FC<AnimateProps> = ({
 
   const getAnimationClasses = () => {
     const base = 'transition-all';
-    
+
     if (!isVisible) {
       switch (type) {
         case 'fade':
           return `${base} opacity-0`;
         case 'slide':
           return `${base} opacity-0 ${
-            direction === 'up' ? 'translate-y-8' :
-            direction === 'down' ? '-translate-y-8' :
-            direction === 'left' ? 'translate-x-8' :
-            '-translate-x-8'
+            direction === 'up'
+              ? 'translate-y-8'
+              : direction === 'down'
+                ? '-translate-y-8'
+                : direction === 'left'
+                  ? 'translate-x-8'
+                  : '-translate-x-8'
           }`;
         case 'zoom':
           return `${base} opacity-0 scale-95`;

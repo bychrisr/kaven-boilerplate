@@ -31,7 +31,7 @@ export const MultiLanguage: React.FC<MultiLanguageProps> = ({
   const [isOpen, setIsOpen] = React.useState(false);
   const menuRef = React.useRef<HTMLDivElement>(null);
 
-  const current = languages.find(lang => lang.code === currentLanguage);
+  const current = languages.find((lang) => lang.code === currentLanguage);
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

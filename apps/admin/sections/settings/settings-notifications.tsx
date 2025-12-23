@@ -9,10 +9,8 @@ export function SettingsNotifications() {
   return (
     <div className="bg-white rounded-xl border shadow-sm p-6">
       <h2 className="text-xl font-semibold mb-4">Notificações</h2>
-      <p className="text-sm text-gray-600 mb-6">
-        Gerencie como e quando você recebe notificações
-      </p>
-      
+      <p className="text-sm text-gray-600 mb-6">Gerencie como e quando você recebe notificações</p>
+
       <div className="space-y-6">
         {/* Email Notifications */}
         <div>
@@ -22,21 +20,27 @@ export function SettingsNotifications() {
               <input type="checkbox" defaultChecked className="h-4 w-4 text-blue-600 rounded" />
               <div>
                 <p className="font-medium text-sm">Novos usuários</p>
-                <p className="text-xs text-gray-500">Receba um email quando um novo usuário se cadastrar</p>
+                <p className="text-xs text-gray-500">
+                  Receba um email quando um novo usuário se cadastrar
+                </p>
               </div>
             </label>
             <label className="flex items-center gap-3">
               <input type="checkbox" defaultChecked className="h-4 w-4 text-blue-600 rounded" />
               <div>
                 <p className="font-medium text-sm">Novos pedidos</p>
-                <p className="text-xs text-gray-500">Receba um email quando um novo pedido for criado</p>
+                <p className="text-xs text-gray-500">
+                  Receba um email quando um novo pedido for criado
+                </p>
               </div>
             </label>
             <label className="flex items-center gap-3">
               <input type="checkbox" className="h-4 w-4 text-blue-600 rounded" />
               <div>
                 <p className="font-medium text-sm">Atualizações do sistema</p>
-                <p className="text-xs text-gray-500">Receba emails sobre atualizações e manutenções</p>
+                <p className="text-xs text-gray-500">
+                  Receba emails sobre atualizações e manutenções
+                </p>
               </div>
             </label>
           </div>
@@ -50,7 +54,9 @@ export function SettingsNotifications() {
               <input type="checkbox" defaultChecked className="h-4 w-4 text-blue-600 rounded" />
               <div>
                 <p className="font-medium text-sm">Atividade em tempo real</p>
-                <p className="text-xs text-gray-500">Receba notificações sobre atividades importantes</p>
+                <p className="text-xs text-gray-500">
+                  Receba notificações sobre atividades importantes
+                </p>
               </div>
             </label>
             <label className="flex items-center gap-3">

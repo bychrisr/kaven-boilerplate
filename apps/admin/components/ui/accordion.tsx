@@ -2,7 +2,10 @@ import * as React from 'react';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export interface AccordionProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "onScroll"> {
+export interface AccordionProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'onChange' | 'onScroll'
+> {
   /**
    * Expanded panel(s)
    */
@@ -54,7 +57,10 @@ export const Accordion = React.forwardRef<HTMLDivElement, AccordionProps>(
 
 Accordion.displayName = 'Accordion';
 
-export interface AccordionItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "onScroll"> {
+export interface AccordionItemProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'onChange' | 'onScroll'
+> {
   /**
    * Panel identifier
    */
@@ -73,8 +79,12 @@ export const AccordionItem = React.forwardRef<HTMLDivElement, AccordionItemProps
       throw new Error('AccordionItem must be used within Accordion');
     }
 
-    const { expanded, onChange,  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  multiple: _multiple = false, disabled: accordionDisabled } = context;
+    const {
+      expanded,
+      onChange, // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      multiple: _multiple = false,
+      disabled: accordionDisabled,
+    } = context;
     const isExpanded = Array.isArray(expanded) ? expanded.includes(value) : expanded === value;
     const isDisabled = disabled || accordionDisabled;
 
@@ -87,11 +97,18 @@ export const AccordionItem = React.forwardRef<HTMLDivElement, AccordionItemProps
       <div ref={ref} className={cn('', className)} {...props}>
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
-            return React.cloneElement(child as React.ReactElement<{ isExpanded?: boolean; onClick?: () => void; disabled?: boolean }>, {
-              isExpanded,
-              onClick: child.type === AccordionSummary ? handleClick : undefined,
-              disabled: isDisabled,
-            });
+            return React.cloneElement(
+              child as React.ReactElement<{
+                isExpanded?: boolean;
+                onClick?: () => void;
+                disabled?: boolean;
+              }>,
+              {
+                isExpanded,
+                onClick: child.type === AccordionSummary ? handleClick : undefined,
+                disabled: isDisabled,
+              }
+            );
           }
           return child;
         })}
@@ -102,7 +119,10 @@ export const AccordionItem = React.forwardRef<HTMLDivElement, AccordionItemProps
 
 AccordionItem.displayName = 'AccordionItem';
 
-export interface AccordionSummaryProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "onScroll"> {
+export interface AccordionSummaryProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'onChange' | 'onScroll'
+> {
   /**
    * Expand icon
    */
@@ -151,12 +171,7 @@ export const AccordionSummary = React.forwardRef<HTMLDivElement, AccordionSummar
         {...props}
       >
         <div className="flex-1">{children}</div>
-        <div
-          className={cn(
-            'transition-transform duration-200',
-            isExpanded && 'rotate-180'
-          )}
-        >
+        <div className={cn('transition-transform duration-200', isExpanded && 'rotate-180')}>
           {expandIcon}
         </div>
       </div>
@@ -166,7 +181,10 @@ export const AccordionSummary = React.forwardRef<HTMLDivElement, AccordionSummar
 
 AccordionSummary.displayName = 'AccordionSummary';
 
-export interface AccordionDetailsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "onScroll"> {
+export interface AccordionDetailsProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'onChange' | 'onScroll'
+> {
   /**
    * Internal props
    */
@@ -181,11 +199,7 @@ export const AccordionDetails = React.forwardRef<HTMLDivElement, AccordionDetail
     }
 
     return (
-      <div
-        ref={ref}
-        className={cn('px-4 py-3 text-sm text-text-secondary', className)}
-        {...props}
-      >
+      <div ref={ref} className={cn('px-4 py-3 text-sm text-text-secondary', className)} {...props}>
         {children}
       </div>
     );

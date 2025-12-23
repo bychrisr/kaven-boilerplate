@@ -25,11 +25,7 @@ export const DataTable = React.forwardRef<HTMLTableElement, DataTableProps>(
     return (
       <DataTableContext.Provider value={{ size }}>
         <div className="w-full overflow-auto">
-          <table
-            ref={ref}
-            className={cn('w-full border-collapse', className)}
-            {...props}
-          >
+          <table ref={ref} className={cn('w-full border-collapse', className)} {...props}>
             {children}
           </table>
         </div>
@@ -147,12 +143,7 @@ export const DataTableCell = React.forwardRef<HTMLTableCellElement, DataTableCel
     return (
       <td
         ref={ref}
-        className={cn(
-          paddingClasses[padding],
-          alignClasses[align],
-          'text-text-primary',
-          className
-        )}
+        className={cn(paddingClasses[padding], alignClasses[align], 'text-text-primary', className)}
         {...props}
       >
         {children}
@@ -184,7 +175,10 @@ export interface DataTableHeaderCellProps extends React.ThHTMLAttributes<HTMLTab
 }
 
 export const DataTableHeaderCell = React.forwardRef<HTMLTableCellElement, DataTableHeaderCellProps>(
-  ({ className, align = 'left', padding = 'normal', sortDirection, onSort, children, ...props }, ref) => {
+  (
+    { className, align = 'left', padding = 'normal', sortDirection, onSort, children, ...props },
+    ref
+  ) => {
     const context = React.useContext(DataTableContext);
     const { size } = context;
 
@@ -232,11 +226,7 @@ export const DataTableHeaderCell = React.forwardRef<HTMLTableCellElement, DataTa
         onClick={onSort}
         {...props}
       >
-        {onSort ? (
-          <div className="flex items-center gap-1">{content}</div>
-        ) : (
-          content
-        )}
+        {onSort ? <div className="flex items-center gap-1">{content}</div> : content}
       </th>
     );
   }

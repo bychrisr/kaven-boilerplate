@@ -43,7 +43,7 @@ export const FontSelector: React.FC<FontSelectorProps> = ({
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [selectedFont, setSelectedFont] = React.useState<Font | undefined>(
-    fonts.find(f => f.name === value) || fonts[0]
+    fonts.find((f) => f.name === value) || fonts[0]
   );
   const menuRef = React.useRef<HTMLDivElement>(null);
 
@@ -77,9 +77,7 @@ export const FontSelector: React.FC<FontSelectorProps> = ({
       >
         <div className="flex items-center gap-2">
           <Type className="size-5 text-text-secondary" />
-          <span style={{ fontFamily: selectedFont?.family }}>
-            {selectedFont?.name}
-          </span>
+          <span style={{ fontFamily: selectedFont?.family }}>{selectedFont?.name}</span>
         </div>
         <svg
           className={cn('size-4 transition-transform', isOpen && 'rotate-180')}
@@ -109,13 +107,14 @@ export const FontSelector: React.FC<FontSelectorProps> = ({
                   <div className="font-medium" style={{ fontFamily: font.family }}>
                     {font.name}
                   </div>
-                  <div className="text-xs text-text-secondary mt-0.5" style={{ fontFamily: font.family }}>
+                  <div
+                    className="text-xs text-text-secondary mt-0.5"
+                    style={{ fontFamily: font.family }}
+                  >
                     The quick brown fox jumps over the lazy dog
                   </div>
                 </div>
-                {selectedFont?.name === font.name && (
-                  <Check className="size-5 shrink-0" />
-                )}
+                {selectedFont?.name === font.name && <Check className="size-5 shrink-0" />}
               </button>
             ))}
           </div>

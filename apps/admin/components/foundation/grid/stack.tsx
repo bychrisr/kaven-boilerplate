@@ -130,9 +130,7 @@ export function Stack({
                 key={dividerKey}
                 className={cn(
                   'bg-divider',
-                  direction === 'row' || direction === 'row-reverse'
-                    ? 'w-px h-full'
-                    : 'h-px w-full'
+                  direction === 'row' || direction === 'row-reverse' ? 'w-px h-full' : 'h-px w-full'
                 )}
               />
             )
@@ -176,12 +174,7 @@ interface BoxProps extends Readonly<React.HTMLAttributes<HTMLDivElement>> {
   children: React.ReactNode;
 }
 
-export function Box({
-  as: Component = 'div',
-  className,
-  children,
-  ...props
-}: BoxProps) {
+export function Box({ as: Component = 'div', className, children, ...props }: BoxProps) {
   const ElementType = Component as React.ElementType;
   return (
     <ElementType className={cn(className)} {...props}>
@@ -191,4 +184,3 @@ export function Box({
 }
 
 Box.displayName = 'Box';
-

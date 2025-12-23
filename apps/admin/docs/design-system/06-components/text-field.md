@@ -7,12 +7,7 @@ Componente de input para formulários com suporte a validação e estados.
 ## Uso Básico
 
 ```tsx
-<TextField
-  label="Nome"
-  placeholder="Digite seu nome"
-  value={value}
-  onChange={handleChange}
-/>
+<TextField label="Nome" placeholder="Digite seu nome" value={value} onChange={handleChange} />
 ```
 
 ## Variantes

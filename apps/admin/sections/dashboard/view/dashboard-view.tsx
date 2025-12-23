@@ -57,9 +57,7 @@ export function DashboardView() {
       {/* Page Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-2 text-sm text-gray-600">
-          Visão geral do sistema
-        </p>
+        <p className="mt-2 text-sm text-gray-600">Visão geral do sistema</p>
       </div>
 
       {/* KPI Cards */}
@@ -105,9 +103,7 @@ export function DashboardView() {
                 <Users className="h-5 w-5 text-gray-600" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">
-                  Novo usuário cadastrado
-                </p>
+                <p className="text-sm font-medium text-gray-900">Novo usuário cadastrado</p>
                 <p className="text-xs text-gray-500">Há 2 horas</p>
               </div>
             </div>

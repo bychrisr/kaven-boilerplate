@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Check, Copy } from 'lucide-react';
 
-
 interface ColorSwatchProps {
   color: string;
   name: string;
@@ -9,8 +8,12 @@ interface ColorSwatchProps {
   variant?: 'main' | 'light' | 'dark' | 'contrastText';
 }
 
-const ColorSwatch: React.FC<ColorSwatchProps> = ({ color, name, value,  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  variant: _variant = 'primary', }) => {
+const ColorSwatch: React.FC<ColorSwatchProps> = ({
+  color,
+  name,
+  value, // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  variant: _variant = 'primary',
+}) => {
   const [copied, setCopied] = React.useState(false);
 
   const handleCopy = () => {
@@ -134,12 +137,7 @@ export const ColorPalette: React.FC = () => {
         <h3 className="text-lg font-semibold mb-4">Escala de Cinza</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-4">
           {Object.entries(grays).map(([shade, value]) => (
-            <ColorSwatch
-              key={shade}
-              color={value}
-              name={`gray.${shade}`}
-              value={value}
-            />
+            <ColorSwatch key={shade} color={value} name={`gray.${shade}`} value={value} />
           ))}
         </div>
       </div>

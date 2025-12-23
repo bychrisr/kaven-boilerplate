@@ -6,11 +6,7 @@ interface SidebarSectionProps {
   children: React.ReactNode;
 }
 
-export function SidebarSection({
-  title,
-  collapsed = false,
-  children,
-}: SidebarSectionProps) {
+export function SidebarSection({ title, collapsed = false, children }: SidebarSectionProps) {
   return (
     <div className="mb-6">
       {!collapsed && (

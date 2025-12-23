@@ -9,26 +9,28 @@ import { useTenants } from '@/hooks/use-tenants';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
-const userSchema = z.object({
-  name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
-  email: z.string().email('Email inválido'),
-  phone: z.string().optional(),
-  password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
-  role: z.enum(['USER', 'TENANT_ADMIN']),
-  tenantAssignment: z.enum(['create_own', 'existing']),
-  tenantId: z.string().optional(),
-}).refine(
-  (data) => {
-    if (data.tenantAssignment === 'existing') {
-      return !!data.tenantId;
+const userSchema = z
+  .object({
+    name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
+    email: z.string().email('Email inválido'),
+    phone: z.string().optional(),
+    password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
+    role: z.enum(['USER', 'TENANT_ADMIN']),
+    tenantAssignment: z.enum(['create_own', 'existing']),
+    tenantId: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.tenantAssignment === 'existing') {
+        return !!data.tenantId;
+      }
+      return true;
+    },
+    {
+      message: 'Selecione um tenant',
+      path: ['tenantId'],
     }
-    return true;
-  },
-  {
-    message: 'Selecione um tenant',
-    path: ['tenantId'],
-  }
-);
+  );
 
 type UserFormData = z.infer<typeof userSchema>;
 
@@ -84,17 +86,12 @@ export default function CreateUserPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link
-          href="/users"
-          className="rounded-lg p-2 hover:bg-gray-100"
-        >
+        <Link href="/users" className="rounded-lg p-2 hover:bg-gray-100">
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Novo Usuário</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Preencha os dados para criar um novo usuário
-          </p>
+          <p className="mt-1 text-sm text-gray-500">Preencha os dados para criar um novo usuário</p>
         </div>
       </div>
 
@@ -103,10 +100,7 @@ export default function CreateUserPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Name */}
           <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
               Nome completo
             </label>
             <input
@@ -116,17 +110,12 @@ export default function CreateUserPage() {
               className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               placeholder="João Silva"
             />
-            {errors.name && (
-              <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-            )}
+            {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
           </div>
 
           {/* Email */}
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
             </label>
             <input
@@ -136,17 +125,12 @@ export default function CreateUserPage() {
               className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               placeholder="joao@example.com"
             />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-            )}
+            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
           </div>
 
           {/* Phone */}
           <div>
-            <label
-              htmlFor="phone"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
               Telefone
             </label>
             <input
@@ -156,17 +140,12 @@ export default function CreateUserPage() {
               className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               placeholder="+55 11 99999-9999"
             />
-            {errors.phone && (
-              <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
-            )}
+            {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>}
           </div>
 
           {/* Password */}
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Senha
             </label>
             <input
@@ -177,18 +156,13 @@ export default function CreateUserPage() {
               placeholder="••••••••"
             />
             {errors.password && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.password.message}
-              </p>
+              <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
             )}
           </div>
 
           {/* Role */}
           <div>
-            <label
-              htmlFor="role"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="role" className="block text-sm font-medium text-gray-700">
               Permissão
             </label>
             <select
@@ -199,17 +173,12 @@ export default function CreateUserPage() {
               <option value="USER">Usuário</option>
               <option value="TENANT_ADMIN">Administrador</option>
             </select>
-            {errors.role && (
-              <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>
-            )}
+            {errors.role && <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>}
           </div>
 
           {/* Tenant Assignment */}
           <div>
-            <label
-              htmlFor="tenantAssignment"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="tenantAssignment" className="block text-sm font-medium text-gray-700">
               Associação de Tenant
             </label>
             <select
@@ -225,10 +194,7 @@ export default function CreateUserPage() {
           {/* Conditional: Tenant Selection */}
           {tenantAssignment === 'existing' && (
             <div>
-              <label
-                htmlFor="tenantId"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="tenantId" className="block text-sm font-medium text-gray-700">
                 Selecione o Tenant
               </label>
               {isLoadingTenants ? (

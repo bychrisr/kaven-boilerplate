@@ -8,10 +8,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-white px-6">
-      <button
-        onClick={toggleSidebar}
-        className="rounded-lg p-2 hover:bg-gray-100"
-      >
+      <button onClick={toggleSidebar} className="rounded-lg p-2 hover:bg-gray-100">
         <Menu className="h-5 w-5" />
       </button>
 

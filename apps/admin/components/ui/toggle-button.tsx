@@ -29,7 +29,8 @@ const toggleButtonVariants = cva(
 );
 
 export interface ToggleButtonProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'color'>,
+  extends
+    Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'color'>,
     VariantProps<typeof toggleButtonVariants> {
   /**
    * Selected state
@@ -95,7 +96,10 @@ export const ToggleButton = React.forwardRef<HTMLButtonElement, ToggleButtonProp
 
 ToggleButton.displayName = 'ToggleButton';
 
-export interface ToggleButtonGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
+export interface ToggleButtonGroupProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'onChange'
+> {
   /**
    * Selected value(s)
    */
@@ -172,8 +176,10 @@ export const ToggleButtonGroup = React.forwardRef<HTMLDivElement, ToggleButtonGr
           'inline-flex',
           orientation === 'horizontal' ? 'flex-row' : 'flex-col',
           fullWidth && 'w-full',
-          orientation === 'horizontal' && '[&>button]:rounded-none [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md [&>button:not(:first-child)]:-ml-0.5',
-          orientation === 'vertical' && '[&>button]:rounded-none [&>button:first-child]:rounded-t-md [&>button:last-child]:rounded-b-md [&>button:not(:first-child)]:-mt-0.5',
+          orientation === 'horizontal' &&
+            '[&>button]:rounded-none [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md [&>button:not(:first-child)]:-ml-0.5',
+          orientation === 'vertical' &&
+            '[&>button]:rounded-none [&>button:first-child]:rounded-t-md [&>button:last-child]:rounded-b-md [&>button:not(:first-child)]:-mt-0.5',
           className
         )}
         {...props}

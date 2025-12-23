@@ -26,15 +26,14 @@ export interface ImageListProps extends React.HTMLAttributes<HTMLUListElement> {
 }
 
 export const ImageList = React.forwardRef<HTMLUListElement, ImageListProps>(
-  ({ className, cols = 2, gap = 4, rowHeight = 'auto', variant = 'standard', children, ...props }, ref) => {
+  (
+    { className, cols = 2, gap = 4, rowHeight = 'auto', variant = 'standard', children, ...props },
+    ref
+  ) => {
     return (
       <ul
         ref={ref}
-        className={cn(
-          'grid',
-          variant === 'masonry' && 'auto-rows-auto',
-          className
-        )}
+        className={cn('grid', variant === 'masonry' && 'auto-rows-auto', className)}
         style={{
           gridTemplateColumns: `repeat(${cols}, 1fr)`,
           gap: `${gap * 4}px`,
@@ -82,7 +81,10 @@ export const ImageListItem = React.forwardRef<HTMLLIElement, ImageListItemProps>
 
 ImageListItem.displayName = 'ImageListItem';
 
-export interface ImageListItemBarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "onScroll" | "title"> {
+export interface ImageListItemBarProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'onChange' | 'onScroll' | 'title'
+> {
   /**
    * Title
    */
@@ -110,8 +112,10 @@ export const ImageListItemBar = React.forwardRef<HTMLDivElement, ImageListItemBa
         ref={ref}
         className={cn(
           'flex items-center justify-between px-4 py-2',
-          position === 'top' && 'absolute top-0 left-0 right-0 bg-gradient-to-b from-black/60 to-transparent',
-          position === 'bottom' && 'absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent',
+          position === 'top' &&
+            'absolute top-0 left-0 right-0 bg-gradient-to-b from-black/60 to-transparent',
+          position === 'bottom' &&
+            'absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent',
           position === 'below' && 'bg-background-paper',
           className
         )}
@@ -124,7 +128,12 @@ export const ImageListItemBar = React.forwardRef<HTMLDivElement, ImageListItemBa
             </div>
           )}
           {subtitle && (
-            <div className={cn('text-sm truncate', position !== 'below' ? 'text-white/80' : 'text-text-secondary')}>
+            <div
+              className={cn(
+                'text-sm truncate',
+                position !== 'below' ? 'text-white/80' : 'text-text-secondary'
+              )}
+            >
               {subtitle}
             </div>
           )}

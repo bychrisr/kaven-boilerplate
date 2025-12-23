@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-
 export interface CssBaselineProps {
   /**
    * Enable color scheme
@@ -13,14 +12,11 @@ export interface CssBaselineProps {
  * CssBaseline component
  * Provides a consistent baseline for styling across browsers
  */
-export const CssBaseline: React.FC<CssBaselineProps> = ({ 
-  enableColorScheme = true,
-  children 
-}) => {
+export const CssBaseline: React.FC<CssBaselineProps> = ({ enableColorScheme = true, children }) => {
   React.useEffect(() => {
     // Inject global styles
     const styleId = 'css-baseline-styles';
-    
+
     if (!document.getElementById(styleId)) {
       const style = document.createElement('style');
       style.id = styleId;

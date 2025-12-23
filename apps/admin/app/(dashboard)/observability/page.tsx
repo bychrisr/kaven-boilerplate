@@ -19,13 +19,13 @@ export default function ObservabilityPage() {
 
       <Tabs defaultValue="metrics" className="space-y-6">
         <TabsList className="border-b border-gray-200 bg-transparent p-0">
-          <TabsTrigger 
+          <TabsTrigger
             value="metrics"
             className="border-b-2 border-transparent px-4 py-3 text-sm font-medium text-gray-500 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600"
           >
             Métricas
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="audit"
             className="border-b-2 border-transparent px-4 py-3 text-sm font-medium text-gray-500 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600"
           >
@@ -48,9 +48,7 @@ export default function ObservabilityPage() {
                 <ShieldCheck className="h-5 w-5 text-gray-600" />
                 <h3 className="text-lg font-semibold text-gray-900">Logs de Auditoria</h3>
               </div>
-              <p className="mt-1 text-sm text-gray-500">
-                Histórico de ações críticas do sistema
-              </p>
+              <p className="mt-1 text-sm text-gray-500">Histórico de ações críticas do sistema</p>
             </div>
             <div className="p-6">
               <AuditLogTable />

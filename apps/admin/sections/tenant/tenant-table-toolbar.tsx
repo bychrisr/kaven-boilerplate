@@ -76,9 +76,7 @@ export function TenantTableToolbar({
           <button
             onClick={() => onViewModeChange('grid')}
             className={`p-2 rounded ${
-              viewMode === 'grid'
-                ? 'bg-blue-100 text-blue-600'
-                : 'text-gray-600 hover:bg-gray-100'
+              viewMode === 'grid' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-100'
             }`}
             title="Grid view"
           >
@@ -87,9 +85,7 @@ export function TenantTableToolbar({
           <button
             onClick={() => onViewModeChange('list')}
             className={`p-2 rounded ${
-              viewMode === 'list'
-                ? 'bg-blue-100 text-blue-600'
-                : 'text-gray-600 hover:bg-gray-100'
+              viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-100'
             }`}
             title="List view"
           >

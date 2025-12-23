@@ -16,11 +16,7 @@ import { DesignSystemType } from '../core/types';
 import { defaultLightTokens } from '../core/tokens';
 import { muiAdapter } from '../adapters/mui';
 import { higAdapter } from '../adapters/hig';
-import {
-  syncCustomization,
-  saveAndSync,
-  resetAndSync,
-} from '../persistence';
+import { syncCustomization, saveAndSync, resetAndSync } from '../persistence';
 
 // ============================================
 // ADAPTER REGISTRY
@@ -104,33 +100,36 @@ export function DesignSystemProvider({ children, userId }: DesignSystemProviderP
   }, [tokens, customization.mode, isLoading]);
 
   // Set design system
-  const setDesignSystem = useCallback(async (type: DesignSystemType) => {
-    try {
-      setIsSyncing(true);
+  const setDesignSystem = useCallback(
+    async (type: DesignSystemType) => {
+      try {
+        setIsSyncing(true);
 
-      const newCustomization: UserCustomization = {
-        ...customization,
-        designSystem: type,
-        updatedAt: new Date(),
-      };
+        const newCustomization: UserCustomization = {
+          ...customization,
+          designSystem: type,
+          updatedAt: new Date(),
+        };
 
-      // Save and sync
-      const saved = await saveAndSync(newCustomization);
-      if (saved) {
-        setCustomizationState(saved);
-        setDesignSystemState(type);
+        // Save and sync
+        const saved = await saveAndSync(newCustomization);
+        if (saved) {
+          setCustomizationState(saved);
+          setDesignSystemState(type);
 
-        // Apply new tokens
-        const adapter = adapters[type];
-        const newTokens = adapter.toSemanticTokens(saved);
-        setTokens(newTokens);
+          // Apply new tokens
+          const adapter = adapters[type];
+          const newTokens = adapter.toSemanticTokens(saved);
+          setTokens(newTokens);
+        }
+      } catch (error) {
+        console.error('Error setting design system:', error);
+      } finally {
+        setIsSyncing(false);
       }
-    } catch (error) {
-      console.error('Error setting design system:', error);
-    } finally {
-      setIsSyncing(false);
-    }
-  }, [customization]);
+    },
+    [customization]
+  );
 
   // Toggle mode
   const toggleMode = useCallback(async () => {
@@ -162,36 +161,39 @@ export function DesignSystemProvider({ children, userId }: DesignSystemProviderP
   }, [customization, designSystem]);
 
   // Update customization
-  const updateCustomization = useCallback(async (partial: Partial<UserCustomization>) => {
-    try {
-      setIsSyncing(true);
+  const updateCustomization = useCallback(
+    async (partial: Partial<UserCustomization>) => {
+      try {
+        setIsSyncing(true);
 
-      const newCustomization: UserCustomization = {
-        ...customization,
-        ...partial,
-        updatedAt: new Date(),
-      };
+        const newCustomization: UserCustomization = {
+          ...customization,
+          ...partial,
+          updatedAt: new Date(),
+        };
 
-      // Validate
-      const adapter = adapters[designSystem];
-      if (!adapter.validateCustomization(newCustomization)) {
-        throw new Error('Invalid customization');
+        // Validate
+        const adapter = adapters[designSystem];
+        if (!adapter.validateCustomization(newCustomization)) {
+          throw new Error('Invalid customization');
+        }
+
+        const saved = await saveAndSync(newCustomization);
+        if (saved) {
+          setCustomizationState(saved);
+
+          // Apply new tokens
+          const newTokens = adapter.toSemanticTokens(saved);
+          setTokens(newTokens);
+        }
+      } catch (error) {
+        console.error('Error updating customization:', error);
+      } finally {
+        setIsSyncing(false);
       }
-
-      const saved = await saveAndSync(newCustomization);
-      if (saved) {
-        setCustomizationState(saved);
-
-        // Apply new tokens
-        const newTokens = adapter.toSemanticTokens(saved);
-        setTokens(newTokens);
-      }
-    } catch (error) {
-      console.error('Error updating customization:', error);
-    } finally {
-      setIsSyncing(false);
-    }
-  }, [customization, designSystem]);
+    },
+    [customization, designSystem]
+  );
 
   // Reset customization
   const resetCustomization = useCallback(async () => {
@@ -231,11 +233,7 @@ export function DesignSystemProvider({ children, userId }: DesignSystemProviderP
     isSyncing,
   };
 
-  return (
-    <DesignSystemContext.Provider value={value}>
-      {children}
-    </DesignSystemContext.Provider>
-  );
+  return <DesignSystemContext.Provider value={value}>{children}</DesignSystemContext.Provider>;
 }
 
 // ============================================

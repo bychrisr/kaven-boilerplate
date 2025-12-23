@@ -18,11 +18,12 @@ export function UserView() {
 
   // Filter users
   const filteredUsers = MOCK_USERS.filter((user) => {
-    const matchesName = user.name.toLowerCase().includes(filterName.toLowerCase()) ||
-                       user.email.toLowerCase().includes(filterName.toLowerCase());
+    const matchesName =
+      user.name.toLowerCase().includes(filterName.toLowerCase()) ||
+      user.email.toLowerCase().includes(filterName.toLowerCase());
     const matchesRole = filterRole === 'all' || user.role === filterRole;
     const matchesStatus = filterStatus === 'all' || user.status === filterStatus;
-    
+
     return matchesName && matchesRole && matchesStatus;
   });
 
@@ -31,9 +32,7 @@ export function UserView() {
       {/* Page Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Usuários</h1>
-        <p className="mt-2 text-sm text-gray-600">
-          Gerencie todos os usuários do sistema
-        </p>
+        <p className="mt-2 text-sm text-gray-600">Gerencie todos os usuários do sistema</p>
       </div>
 
       {/* Toolbar */}
@@ -91,12 +90,8 @@ export function UserView() {
             <span className="font-medium">{MOCK_USERS.length}</span> usuários
           </div>
           <div className="flex gap-2">
-            <button className="px-3 py-1 text-sm border rounded hover:bg-gray-50">
-              Anterior
-            </button>
-            <button className="px-3 py-1 text-sm border rounded hover:bg-gray-50">
-              Próximo
-            </button>
+            <button className="px-3 py-1 text-sm border rounded hover:bg-gray-50">Anterior</button>
+            <button className="px-3 py-1 text-sm border rounded hover:bg-gray-50">Próximo</button>
           </div>
         </div>
       </div>

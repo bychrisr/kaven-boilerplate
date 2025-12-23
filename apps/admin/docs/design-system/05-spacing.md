@@ -104,9 +104,7 @@ spacing: {
 
 ```tsx
 // Container responsivo
-<div className="container mx-auto px-4 sm:px-6 lg:px-8">
-  Conteúdo centralizado
-</div>
+<div className="container mx-auto px-4 sm:px-6 lg:px-8">Conteúdo centralizado</div>
 ```
 
 ### Grid Layout

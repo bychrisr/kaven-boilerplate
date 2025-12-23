@@ -95,7 +95,11 @@ export interface SpeedDialActionProps {
   onClick?: () => void;
 }
 
-export const SpeedDialAction: React.FC<SpeedDialActionProps> = ({ icon, tooltipTitle, onClick }) => {
+export const SpeedDialAction: React.FC<SpeedDialActionProps> = ({
+  icon,
+  tooltipTitle,
+  onClick,
+}) => {
   return (
     <div className="flex items-center gap-2">
       {tooltipTitle && (

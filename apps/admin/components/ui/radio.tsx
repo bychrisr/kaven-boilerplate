@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
-export interface RadioProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
+export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   /**
    * Value
    */
@@ -39,19 +38,7 @@ const colorClasses = {
 };
 
 export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
-  (
-    {
-      className,
-      value,
-      size = 'md',
-      color = 'primary',
-      label,
-      disabled,
-      id,
-      ...props
-    },
-    ref
-  ) => {
+  ({ className, value, size = 'md', color = 'primary', label, disabled, id, ...props }, ref) => {
     // Always call useId unconditionally (React Hooks rule)
     const generatedId = React.useId();
     const inputId = id || `radio-${value}-${generatedId}`;
@@ -99,7 +86,10 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
 
 Radio.displayName = 'Radio';
 
-export interface RadioGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "onScroll"> {
+export interface RadioGroupProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'onChange' | 'onScroll'
+> {
   /**
    * Selected value
    */
@@ -125,19 +115,7 @@ export interface RadioGroupProps extends Omit<React.HTMLAttributes<HTMLDivElemen
 }
 
 export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
-  (
-    {
-      className,
-      value,
-      defaultValue,
-      onChange,
-      name,
-      row = false,
-      children,
-      ...props
-    },
-    ref
-  ) => {
+  ({ className, value, defaultValue, onChange, name, row = false, children, ...props }, ref) => {
     const [selectedValue, setSelectedValue] = React.useState(defaultValue || '');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -150,11 +128,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
       <div
         ref={ref}
         role="radiogroup"
-        className={cn(
-          'flex gap-3',
-          row ? 'flex-row' : 'flex-col',
-          className
-        )}
+        className={cn('flex gap-3', row ? 'flex-row' : 'flex-col', className)}
         {...props}
       >
         {React.Children.map(children, (child) => {

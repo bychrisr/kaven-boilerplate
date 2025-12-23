@@ -66,7 +66,7 @@ export function useUsers(params?: { page?: number; limit?: number; tenantId?: st
   const page = params?.page ?? 1;
   const limit = params?.limit ?? 10;
   const tenantId = params?.tenantId;
-  
+
   return useQuery<UsersResponse>({
     queryKey: ['users', page, limit, tenantId],
     queryFn: async () => {
@@ -162,4 +162,3 @@ export function useDeleteUser() {
     },
   });
 }
-

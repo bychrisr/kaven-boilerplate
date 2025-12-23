@@ -40,14 +40,7 @@ const colorClasses = {
 
 export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
   (
-    {
-      className,
-      variant = 'body1',
-      color = 'primary',
-      underline = 'hover',
-      children,
-      ...props
-    },
+    { className, variant = 'body1', color = 'primary', underline = 'hover', children, ...props },
     ref
   ) => {
     return (

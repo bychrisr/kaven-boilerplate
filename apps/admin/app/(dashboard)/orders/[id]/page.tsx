@@ -1,19 +1,30 @@
 'use client';
 
 import { useOrder, OrderStatus, type OrderItem } from '@/hooks/use-orders';
-import { ArrowLeft, Loader2, ShoppingBag, Calendar, Building2, CheckCircle2, Clock, XCircle, RotateCcw } from 'lucide-react';
+import {
+  ArrowLeft,
+  Loader2,
+  ShoppingBag,
+  Calendar,
+  Building2,
+  CheckCircle2,
+  Clock,
+  XCircle,
+  RotateCcw,
+} from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import React from 'react'; // Added import for React
 
-const statusConfig: Record<OrderStatus, { label: string; color: string; icon: React.ElementType }> = {
-  COMPLETED: { label: 'Concluído', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
-  PROCESSING: { label: 'Processando', color: 'bg-blue-100 text-blue-700', icon: Loader2 },
-  PENDING: { label: 'Pendente', color: 'bg-amber-100 text-amber-700', icon: Clock },
-  REFUNDED: { label: 'Reembolsado', color: 'bg-purple-100 text-purple-700', icon: RotateCcw },
-  CANCELED: { label: 'Cancelado', color: 'bg-slate-100 text-slate-700', icon: XCircle },
-};
+const statusConfig: Record<OrderStatus, { label: string; color: string; icon: React.ElementType }> =
+  {
+    COMPLETED: { label: 'Concluído', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
+    PROCESSING: { label: 'Processando', color: 'bg-blue-100 text-blue-700', icon: Loader2 },
+    PENDING: { label: 'Pendente', color: 'bg-amber-100 text-amber-700', icon: Clock },
+    REFUNDED: { label: 'Reembolsado', color: 'bg-purple-100 text-purple-700', icon: RotateCcw },
+    CANCELED: { label: 'Cancelado', color: 'bg-slate-100 text-slate-700', icon: XCircle },
+  };
 
 export default function OrderDetailsPage({ params }: { params: { id: string } }) {
   const { data: order, isLoading, error } = useOrder(params.id);
@@ -31,10 +42,7 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
       <div className="flex h-96 flex-col items-center justify-center gap-4">
         <h1 className="text-2xl font-bold text-gray-900">Pedido não encontrado</h1>
         <p className="text-gray-500">O pedido solicitado não existe ou foi removido.</p>
-        <Link
-          href="/orders"
-          className="text-primary-main hover:underline"
-        >
+        <Link href="/orders" className="text-primary-main hover:underline">
           Voltar para listagem
         </Link>
       </div>
@@ -58,13 +66,20 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-gray-900">Pedido #{order.id.slice(0, 8)}</h1>
-              <div className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${status.color}`}>
-                <StatusIcon className={`h-3.5 w-3.5 ${order.status === 'PROCESSING' ? 'animate-spin' : ''}`} />
+              <div
+                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${status.color}`}
+              >
+                <StatusIcon
+                  className={`h-3.5 w-3.5 ${order.status === 'PROCESSING' ? 'animate-spin' : ''}`}
+                />
                 {status.label}
               </div>
             </div>
             <p className="text-sm text-gray-500 mt-1">
-              Realizado em {format(new Date(order.createdAt), "d 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}
+              Realizado em{' '}
+              {format(new Date(order.createdAt), "d 'de' MMMM 'de' yyyy 'às' HH:mm", {
+                locale: ptBR,
+              })}
             </p>
           </div>
         </div>
@@ -78,7 +93,7 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
               <ShoppingBag className="h-5 w-5 text-gray-500" />
               Resumo do Pedido
             </h3>
-            
+
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <p className="text-sm font-medium text-gray-500 mb-1">Valor Total</p>
@@ -89,36 +104,42 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
                   }).format(order.totalAmount)}
                 </p>
               </div>
-              
+
               <div>
                 <p className="text-sm font-medium text-gray-500 mb-1 flex items-center gap-1.5">
                   <Calendar className="h-4 w-4" />
                   Atualizado em
                 </p>
                 <p className="text-base text-gray-900">
-                  {format(new Date(order.updatedAt), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                  {format(new Date(order.updatedAt), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
                 </p>
               </div>
             </div>
 
             {order.items && order.items.length > 0 ? (
-               <div className="mt-6">
-                 <h4 className="text-sm font-medium text-gray-900 mb-3">Itens</h4>
-                 <div className="divide-y border rounded-lg overflow-hidden">
-                   {order.items.map((item: OrderItem, index: number) => (
-                     <div key={index} className="p-4 bg-gray-50 flex justify-between items-center text-sm">
-                        <span>{item.name || `Item #${index + 1}`}</span>
-                        <span className="font-medium">
-                          {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: order.currency }).format(item.price || 0)}
-                        </span>
-                     </div>
-                   ))}
-                 </div>
-               </div>
-            ) : (
-                <div className="mt-8 p-8 text-center bg-gray-50 rounded-lg border border-dashed border-gray-200">
-                  <p className="text-gray-500 text-sm">Detalhes dos itens não disponíveis.</p>
+              <div className="mt-6">
+                <h4 className="text-sm font-medium text-gray-900 mb-3">Itens</h4>
+                <div className="divide-y border rounded-lg overflow-hidden">
+                  {order.items.map((item: OrderItem, index: number) => (
+                    <div
+                      key={index}
+                      className="p-4 bg-gray-50 flex justify-between items-center text-sm"
+                    >
+                      <span>{item.name || `Item #${index + 1}`}</span>
+                      <span className="font-medium">
+                        {new Intl.NumberFormat('pt-BR', {
+                          style: 'currency',
+                          currency: order.currency,
+                        }).format(item.price || 0)}
+                      </span>
+                    </div>
+                  ))}
                 </div>
+              </div>
+            ) : (
+              <div className="mt-8 p-8 text-center bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                <p className="text-gray-500 text-sm">Detalhes dos itens não disponíveis.</p>
+              </div>
             )}
           </div>
         </div>
@@ -133,30 +154,32 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
             </h3>
             {order.tenant ? (
               <div className="space-y-3">
-                 <div>
+                <div>
                   <p className="text-sm text-gray-400">Nome</p>
                   <p className="font-medium text-gray-900">{order.tenant.name}</p>
-                 </div>
-                 {/* ID is tenantId */}
-                 <div>
+                </div>
+                {/* ID is tenantId */}
+                <div>
                   <p className="text-sm text-gray-400">ID do Tenant</p>
                   <p className="text-xs font-mono bg-gray-100 p-1 rounded inline-block text-gray-600">
                     {order.tenantId}
                   </p>
-                 </div>
+                </div>
               </div>
             ) : (
-                 <div className="space-y-3">
-                    <p className="text-sm text-gray-500 italic">Informações do cliente indisponíveis.</p>
-                     <div>
-                      <p className="text-sm text-gray-400">ID do Cliente</p>
-                      <p className="text-xs font-mono bg-gray-100 p-1 rounded inline-block text-gray-600">
-                        {order.customerId || '-'}
-                      </p>
-                     </div>
-                 </div>
+              <div className="space-y-3">
+                <p className="text-sm text-gray-500 italic">
+                  Informações do cliente indisponíveis.
+                </p>
+                <div>
+                  <p className="text-sm text-gray-400">ID do Cliente</p>
+                  <p className="text-xs font-mono bg-gray-100 p-1 rounded inline-block text-gray-600">
+                    {order.customerId || '-'}
+                  </p>
+                </div>
+              </div>
             )}
-            
+
             <div className="mt-6 pt-4 border-t">
               <Link
                 href="/tenants"

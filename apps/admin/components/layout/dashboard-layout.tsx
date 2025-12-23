@@ -22,9 +22,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
 
         {/* Page Content */}
-        <main className="p-6">
-          {children}
-        </main>
+        <main className="p-6">{children}</main>
       </div>
     </div>
   );

@@ -1,10 +1,16 @@
 import { cn } from '@/lib/utils';
 
-export function Logo({ size = 'medium', className }: { size?: 'small' | 'medium' | 'large'; className?: string }) {
+export function Logo({
+  size = 'medium',
+  className,
+}: {
+  size?: 'small' | 'medium' | 'large';
+  className?: string;
+}) {
   const sizes = {
     small: 'h-6',
     medium: 'h-8',
-    large: 'h-12'
+    large: 'h-12',
   };
 
   return (
@@ -15,19 +21,10 @@ export function Logo({ size = 'medium', className }: { size?: 'small' | 'medium'
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path
-          d="M16 2L2 9L16 16L30 9L16 2Z"
-          fill="currentColor"
-          fillOpacity="0.24"
-        />
-        <path
-          d="M2 23L16 30L30 23V9L16 16L2 9V23Z"
-          fill="currentColor"
-        />
+        <path d="M16 2L2 9L16 16L30 9L16 2Z" fill="currentColor" fillOpacity="0.24" />
+        <path d="M2 23L16 30L30 23V9L16 16L2 9V23Z" fill="currentColor" />
       </svg>
-      {size !== 'small' && (
-        <span className="font-bold text-xl text-gray-900">Kaven</span>
-      )}
+      {size !== 'small' && <span className="font-bold text-xl text-gray-900">Kaven</span>}
     </div>
   );
 }

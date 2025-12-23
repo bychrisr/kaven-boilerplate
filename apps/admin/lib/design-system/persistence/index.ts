@@ -18,7 +18,7 @@ export function getCachedCustomization(): UserCustomization | null {
     if (!cached) return null;
 
     const customization = JSON.parse(cached) as UserCustomization;
-    
+
     // Convert date strings back to Date objects
     if (customization.createdAt) {
       customization.createdAt = new Date(customization.createdAt);
@@ -37,7 +37,10 @@ export function getCachedCustomization(): UserCustomization | null {
 export function setCachedCustomization(customization: UserCustomization): void {
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify(customization));
-    localStorage.setItem(CACHE_VERSION_KEY, customization.updatedAt?.toISOString() || new Date().toISOString());
+    localStorage.setItem(
+      CACHE_VERSION_KEY,
+      customization.updatedAt?.toISOString() || new Date().toISOString()
+    );
   } catch (error) {
     console.error('Error writing cache:', error);
   }
@@ -62,12 +65,15 @@ export function getCacheVersion(): string | null {
 
 export async function loadCustomizationFromDB(userId?: string): Promise<UserCustomization | null> {
   try {
-    const response = await fetch(`/api/design-system/customization${userId ? `?userId=${userId}` : ''}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = await fetch(
+      `/api/design-system/customization${userId ? `?userId=${userId}` : ''}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
 
     if (!response.ok) {
       if (response.status === 404) {
@@ -77,7 +83,7 @@ export async function loadCustomizationFromDB(userId?: string): Promise<UserCust
     }
 
     const data = await response.json();
-    
+
     // Convert date strings to Date objects
     if (data.createdAt) data.createdAt = new Date(data.createdAt);
     if (data.updatedAt) data.updatedAt = new Date(data.updatedAt);
@@ -89,7 +95,9 @@ export async function loadCustomizationFromDB(userId?: string): Promise<UserCust
   }
 }
 
-export async function saveCustomizationToDB(customization: UserCustomization): Promise<UserCustomization | null> {
+export async function saveCustomizationToDB(
+  customization: UserCustomization
+): Promise<UserCustomization | null> {
   try {
     const response = await fetch('/api/design-system/customization', {
       method: 'POST',
@@ -104,7 +112,7 @@ export async function saveCustomizationToDB(customization: UserCustomization): P
     }
 
     const data = await response.json();
-    
+
     // Convert date strings to Date objects
     if (data.createdAt) data.createdAt = new Date(data.createdAt);
     if (data.updatedAt) data.updatedAt = new Date(data.updatedAt);
@@ -118,9 +126,12 @@ export async function saveCustomizationToDB(customization: UserCustomization): P
 
 export async function deleteCustomizationFromDB(userId?: string): Promise<boolean> {
   try {
-    const response = await fetch(`/api/design-system/customization${userId ? `?userId=${userId}` : ''}`, {
-      method: 'DELETE',
-    });
+    const response = await fetch(
+      `/api/design-system/customization${userId ? `?userId=${userId}` : ''}`,
+      {
+        method: 'DELETE',
+      }
+    );
 
     return response.ok;
   } catch (error) {
@@ -136,7 +147,7 @@ export async function deleteCustomizationFromDB(userId?: string): Promise<boolea
 export async function syncCustomization(userId?: string): Promise<UserCustomization | null> {
   // 1. Try to load from database
   const dbCustomization = await loadCustomizationFromDB(userId);
-  
+
   // 2. Get cached version
   const cachedCustomization = getCachedCustomization();
   const cacheVersion = getCacheVersion();
@@ -171,10 +182,12 @@ export async function syncCustomization(userId?: string): Promise<UserCustomizat
   }
 }
 
-export async function saveAndSync(customization: UserCustomization): Promise<UserCustomization | null> {
+export async function saveAndSync(
+  customization: UserCustomization
+): Promise<UserCustomization | null> {
   // 1. Save to database
   const saved = await saveCustomizationToDB(customization);
-  
+
   if (saved) {
     // 2. Update cache with DB response (includes server timestamps)
     setCachedCustomization(saved);
@@ -193,7 +206,7 @@ export async function saveAndSync(customization: UserCustomization): Promise<Use
 export async function resetAndSync(userId?: string): Promise<void> {
   // 1. Delete from database
   await deleteCustomizationFromDB(userId);
-  
+
   // 2. Clear cache
   clearCachedCustomization();
 }

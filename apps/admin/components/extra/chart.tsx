@@ -32,7 +32,7 @@ export const Chart: React.FC<ChartProps> = ({
   height = 300,
   showLegend = true,
 }) => {
-  const maxValue = Math.max(...data.map(d => d.value));
+  const maxValue = Math.max(...data.map((d) => d.value));
   const colors = ['#1976d2', '#9c27b0', '#4caf50', '#ff9800', '#f44336', '#00bcd4'];
 
   const renderBar = () => (
@@ -43,7 +43,10 @@ export const Chart: React.FC<ChartProps> = ({
 
         return (
           <div key={index} className="flex-1 flex flex-col items-center gap-2">
-            <div className="relative w-full flex items-end justify-center" style={{ height: '100%' }}>
+            <div
+              className="relative w-full flex items-end justify-center"
+              style={{ height: '100%' }}
+            >
               <div
                 className="w-full rounded-t transition-all hover:opacity-80"
                 style={{
@@ -64,11 +67,13 @@ export const Chart: React.FC<ChartProps> = ({
   );
 
   const renderLine = () => {
-    const points = data.map((item, index) => {
-      const x = (index / (data.length - 1)) * 100;
-      const y = 100 - (item.value / maxValue) * 100;
-      return `${x},${y}`;
-    }).join(' ');
+    const points = data
+      .map((item, index) => {
+        const x = (index / (data.length - 1)) * 100;
+        const y = 100 - (item.value / maxValue) * 100;
+        return `${x},${y}`;
+      })
+      .join(' ');
 
     return (
       <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -108,15 +113,15 @@ export const Chart: React.FC<ChartProps> = ({
           const angle = percentage * 360;
           const startAngle = currentAngle;
           const endAngle = currentAngle + angle;
-          
-          const x1 = 50 + 40 * Math.cos((startAngle - 90) * Math.PI / 180);
-          const y1 = 50 + 40 * Math.sin((startAngle - 90) * Math.PI / 180);
-          const x2 = 50 + 40 * Math.cos((endAngle - 90) * Math.PI / 180);
-          const y2 = 50 + 40 * Math.sin((endAngle - 90) * Math.PI / 180);
-          
+
+          const x1 = 50 + 40 * Math.cos(((startAngle - 90) * Math.PI) / 180);
+          const y1 = 50 + 40 * Math.sin(((startAngle - 90) * Math.PI) / 180);
+          const x2 = 50 + 40 * Math.cos(((endAngle - 90) * Math.PI) / 180);
+          const y2 = 50 + 40 * Math.sin(((endAngle - 90) * Math.PI) / 180);
+
           const largeArc = angle > 180 ? 1 : 0;
           const color = item.color || colors[index % colors.length];
-          
+
           currentAngle += angle;
 
           return (
@@ -146,10 +151,7 @@ export const Chart: React.FC<ChartProps> = ({
             const color = item.color || colors[index % colors.length];
             return (
               <div key={index} className="flex items-center gap-2">
-                <div
-                  className="size-3 rounded-full"
-                  style={{ backgroundColor: color }}
-                />
+                <div className="size-3 rounded-full" style={{ backgroundColor: color }} />
                 <span className="text-sm text-text-secondary">
                   {item.label}: {item.value}
                 </span>

@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  Area,
-  AreaChart,
-  ResponsiveContainer,
-  Tooltip,
-} from 'recharts';
+import { Area, AreaChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { LucideIcon } from 'lucide-react';
 
 interface StatsChartProps {

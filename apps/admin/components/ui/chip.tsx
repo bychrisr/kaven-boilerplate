@@ -39,7 +39,11 @@ const chipVariants = cva(
       // Outlined variants
       { variant: 'outlined', color: 'default', className: 'border-gray-600 text-gray-600' },
       { variant: 'outlined', color: 'primary', className: 'border-primary-main text-primary-main' },
-      { variant: 'outlined', color: 'secondary', className: 'border-secondary-main text-secondary-main' },
+      {
+        variant: 'outlined',
+        color: 'secondary',
+        className: 'border-secondary-main text-secondary-main',
+      },
       { variant: 'outlined', color: 'success', className: 'border-success-main text-success-main' },
       { variant: 'outlined', color: 'warning', className: 'border-warning-main text-warning-main' },
       { variant: 'outlined', color: 'error', className: 'border-error-main text-error-main' },
@@ -47,7 +51,11 @@ const chipVariants = cva(
       // Soft variants
       { variant: 'soft', color: 'default', className: 'bg-gray-200 text-gray-800' },
       { variant: 'soft', color: 'primary', className: 'bg-primary-lighter text-primary-darker' },
-      { variant: 'soft', color: 'secondary', className: 'bg-secondary-lighter text-secondary-darker' },
+      {
+        variant: 'soft',
+        color: 'secondary',
+        className: 'bg-secondary-lighter text-secondary-darker',
+      },
       { variant: 'soft', color: 'success', className: 'bg-success-lighter text-success-darker' },
       { variant: 'soft', color: 'warning', className: 'bg-warning-lighter text-warning-darker' },
       { variant: 'soft', color: 'error', className: 'bg-error-lighter text-error-darker' },
@@ -62,8 +70,7 @@ const chipVariants = cva(
 );
 
 export interface ChipProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'color'>,
-    VariantProps<typeof chipVariants> {
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'color'>, VariantProps<typeof chipVariants> {
   /**
    * Avatar or icon at the start
    */

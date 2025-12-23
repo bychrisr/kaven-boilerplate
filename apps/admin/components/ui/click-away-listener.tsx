@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-
 export interface ClickAwayListenerProps {
   /**
    * Callback when clicked outside
@@ -79,7 +78,7 @@ export const ClickAwayListener: React.FC<ClickAwayListenerProps> = ({
   const handleRef = React.useCallback(
     (node: HTMLElement | null) => {
       nodeRef.current = node;
-      
+
       // Preserve existing ref if present
       const childRef = (children as React.ReactElement & { ref?: React.Ref<HTMLElement> }).ref;
       if (typeof childRef === 'function') {

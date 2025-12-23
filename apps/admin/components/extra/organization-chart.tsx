@@ -2,7 +2,6 @@ import * as React from 'react';
 import { User } from 'lucide-react';
 import Image from 'next/image';
 
-
 export interface OrgNode {
   id: string;
   name: string;
@@ -77,10 +76,7 @@ const OrgChartNode: React.FC<{
   );
 };
 
-export const OrganizationChart: React.FC<OrganizationChartProps> = ({
-  data,
-  onNodeClick,
-}) => {
+export const OrganizationChart: React.FC<OrganizationChartProps> = ({ data, onNodeClick }) => {
   return (
     <div className="overflow-auto p-8">
       <div className="inline-block min-w-full">

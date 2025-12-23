@@ -11,7 +11,8 @@ import Link from 'next/link';
 
 const updateTenantSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
-  slug: z.string()
+  slug: z
+    .string()
     .min(2, 'Slug deve ter pelo menos 2 caracteres')
     .regex(/^[a-z0-9-]+$/, 'Slug deve conter apenas letras minúsculas, números e hífens'),
   domain: z.string().optional().or(z.literal('')),
@@ -24,9 +25,9 @@ export default function EditTenantPage({ params }: { params: Promise<{ id: strin
   const { id } = use(params);
   const router = useRouter();
   const { tenants, isLoading: isLoadingTenants, updateTenant } = useTenants();
-  
+
   const tenant = tenants?.find((t) => t.id === id);
-  
+
   const {
     register,
     handleSubmit,
@@ -77,10 +78,7 @@ export default function EditTenantPage({ params }: { params: Promise<{ id: strin
     return (
       <div className="flex h-96 flex-col items-center justify-center gap-4">
         <h1 className="text-2xl font-bold text-gray-900">Tenant não encontrado</h1>
-        <Link
-          href="/tenants"
-          className="text-primary-main hover:underline"
-        >
+        <Link href="/tenants" className="text-primary-main hover:underline">
           Voltar para listagem
         </Link>
       </div>
@@ -98,9 +96,7 @@ export default function EditTenantPage({ params }: { params: Promise<{ id: strin
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Editar Tenant</h1>
-          <p className="text-sm text-gray-500">
-            Atualize as informações de {tenant.name}
-          </p>
+          <p className="text-sm text-gray-500">Atualize as informações de {tenant.name}</p>
         </div>
       </div>
 
@@ -122,9 +118,7 @@ export default function EditTenantPage({ params }: { params: Promise<{ id: strin
                     : 'border-gray-300 focus:border-primary-main focus:ring-primary-main/50'
                 }`}
               />
-              {errors.name && (
-                <p className="mt-1 text-sm text-error-main">{errors.name.message}</p>
-              )}
+              {errors.name && <p className="mt-1 text-sm text-error-main">{errors.name.message}</p>}
             </div>
 
             {/* Slug */}
@@ -147,9 +141,7 @@ export default function EditTenantPage({ params }: { params: Promise<{ id: strin
                   }`}
                 />
               </div>
-              {errors.slug && (
-                <p className="mt-1 text-sm text-error-main">{errors.slug.message}</p>
-              )}
+              {errors.slug && <p className="mt-1 text-sm text-error-main">{errors.slug.message}</p>}
             </div>
 
             {/* Domain */}

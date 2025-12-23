@@ -140,11 +140,7 @@ export type TimelineConnectorProps = React.HTMLAttributes<HTMLDivElement>;
 export const TimelineConnector = React.forwardRef<HTMLDivElement, TimelineConnectorProps>(
   ({ className, ...props }, ref) => {
     return (
-      <div
-        ref={ref}
-        className={cn('w-0.5 h-full bg-gray-300 min-h-6', className)}
-        {...props}
-      />
+      <div ref={ref} className={cn('w-0.5 h-full bg-gray-300 min-h-6', className)} {...props} />
     );
   }
 );
@@ -171,14 +167,15 @@ export interface TimelineOppositeContentProps extends React.HTMLAttributes<HTMLD
   children: React.ReactNode;
 }
 
-export const TimelineOppositeContent = React.forwardRef<HTMLDivElement, TimelineOppositeContentProps>(
-  ({ className, children, ...props }, ref) => {
-    return (
-      <div ref={ref} className={cn('text-sm text-text-secondary', className)} {...props}>
-        {children}
-      </div>
-    );
-  }
-);
+export const TimelineOppositeContent = React.forwardRef<
+  HTMLDivElement,
+  TimelineOppositeContentProps
+>(({ className, children, ...props }, ref) => {
+  return (
+    <div ref={ref} className={cn('text-sm text-text-secondary', className)} {...props}>
+      {children}
+    </div>
+  );
+});
 
 TimelineOppositeContent.displayName = 'TimelineOppositeContent';

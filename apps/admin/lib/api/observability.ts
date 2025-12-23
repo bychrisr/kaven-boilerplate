@@ -66,8 +66,8 @@ export interface AuditLog {
   entityId: string;
   userId: string;
   user?: {
-      name: string;
-      email: string;
+    name: string;
+    email: string;
   };
   metadata: Record<string, unknown>;
   createdAt: string;

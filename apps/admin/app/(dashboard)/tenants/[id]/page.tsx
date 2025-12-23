@@ -23,9 +23,9 @@ import { ptBR } from 'date-fns/locale';
 export default function TenantDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const { data: tenant, isLoading: isLoadingTenant } = useTenant(id);
-  const { data: usersData, isLoading: isLoadingUsers } = useUsers({ 
+  const { data: usersData, isLoading: isLoadingUsers } = useUsers({
     tenantId: id,
-    limit: 100 // Listar todos ou muitos
+    limit: 100, // Listar todos ou muitos
   });
 
   const users = usersData?.users || [];
@@ -42,10 +42,7 @@ export default function TenantDetailsPage({ params }: { params: Promise<{ id: st
     return (
       <div className="flex h-96 flex-col items-center justify-center gap-4">
         <h2 className="text-xl font-semibold text-gray-900">Tenant não encontrado</h2>
-        <Link
-          href="/tenants"
-          className="text-primary-main hover:underline"
-        >
+        <Link href="/tenants" className="text-primary-main hover:underline">
           Voltar para listagem
         </Link>
       </div>
@@ -92,15 +89,17 @@ export default function TenantDetailsPage({ params }: { params: Promise<{ id: st
             </div>
             <h3 className="font-medium text-gray-900">Status & Domínio</h3>
           </div>
-          
+
           <div className="space-y-4">
             <div>
               <p className="text-xs text-gray-500 mb-1">Status Atual</p>
-              <div className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                tenant.status === 'ACTIVE'
-                  ? 'bg-emerald-50 text-emerald-700' 
-                  : 'bg-gray-100 text-gray-600'
-              }`}>
+              <div
+                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                  tenant.status === 'ACTIVE'
+                    ? 'bg-emerald-50 text-emerald-700'
+                    : 'bg-gray-100 text-gray-600'
+                }`}
+              >
                 {tenant.status === 'ACTIVE' ? (
                   <>
                     <CheckCircle2 className="h-3.5 w-3.5" />
@@ -120,10 +119,10 @@ export default function TenantDetailsPage({ params }: { params: Promise<{ id: st
               {tenant.domain ? (
                 <div className="flex items-center gap-2 text-sm text-gray-700">
                   <Globe className="h-4 w-4 text-gray-400" />
-                  <a 
+                  <a
                     href={`https://${tenant.domain}`}
                     target="_blank"
-                    rel="noopener noreferrer" 
+                    rel="noopener noreferrer"
                     className="hover:text-primary-main hover:underline"
                   >
                     {tenant.domain}
@@ -144,7 +143,7 @@ export default function TenantDetailsPage({ params }: { params: Promise<{ id: st
             </div>
             <h3 className="font-medium text-gray-900">Identidade</h3>
           </div>
-          
+
           <div className="space-y-4">
             <div>
               <p className="text-xs text-gray-500 mb-1">Nome da Organização</p>
@@ -152,7 +151,9 @@ export default function TenantDetailsPage({ params }: { params: Promise<{ id: st
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-1">Slug (Identificador)</p>
-              <code className="text-sm bg-gray-50 px-2 py-1 rounded text-gray-700">{tenant.slug}</code>
+              <code className="text-sm bg-gray-50 px-2 py-1 rounded text-gray-700">
+                {tenant.slug}
+              </code>
             </div>
           </div>
         </div>
@@ -165,7 +166,7 @@ export default function TenantDetailsPage({ params }: { params: Promise<{ id: st
             </div>
             <h3 className="font-medium text-gray-900">Metadados</h3>
           </div>
-          
+
           <div className="space-y-4">
             <div>
               <p className="text-xs text-gray-500 mb-1">Data de Criação</p>
@@ -173,7 +174,7 @@ export default function TenantDetailsPage({ params }: { params: Promise<{ id: st
                 {format(new Date(tenant.createdAt), "d 'de' MMMM 'de' yyyy", { locale: ptBR })}
               </p>
               <p className="text-xs text-gray-400">
-                às {format(new Date(tenant.createdAt), "HH:mm", { locale: ptBR })}
+                às {format(new Date(tenant.createdAt), 'HH:mm', { locale: ptBR })}
               </p>
             </div>
             <div>
@@ -196,7 +197,7 @@ export default function TenantDetailsPage({ params }: { params: Promise<{ id: st
               {users.length}
             </span>
           </h2>
-          
+
           <Link
             href="/users/create"
             className="text-sm font-medium text-primary-main hover:text-primary-dark hover:underline"
@@ -260,25 +261,29 @@ export default function TenantDetailsPage({ params }: { params: Promise<{ id: st
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                            user.role === 'TENANT_ADMIN' 
-                              ? 'bg-purple-50 text-purple-700' 
-                              : 'bg-blue-50 text-blue-700'
-                          }`}>
+                          <span
+                            className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                              user.role === 'TENANT_ADMIN'
+                                ? 'bg-purple-50 text-purple-700'
+                                : 'bg-blue-50 text-blue-700'
+                            }`}
+                          >
                             {user.role === 'TENANT_ADMIN' ? 'Admin' : 'Usuário'}
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                            user.status === 'ACTIVE'
-                              ? 'bg-emerald-50 text-emerald-700'
-                              : 'bg-amber-50 text-amber-700'
-                          }`}>
+                          <span
+                            className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                              user.status === 'ACTIVE'
+                                ? 'bg-emerald-50 text-emerald-700'
+                                : 'bg-amber-50 text-amber-700'
+                            }`}
+                          >
                             {user.status === 'ACTIVE' ? 'Ativo' : user.status}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-gray-500">
-                          {format(new Date(user.createdAt), "d MMM, yyyy", { locale: ptBR })}
+                          {format(new Date(user.createdAt), 'd MMM, yyyy', { locale: ptBR })}
                         </td>
                         <td className="px-6 py-4 text-right">
                           <Link

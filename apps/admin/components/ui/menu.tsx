@@ -72,8 +72,18 @@ export const Menu: React.FC<MenuProps> = ({
 
   const rect = anchorEl.getBoundingClientRect();
   const position = {
-    top: anchorOrigin.vertical === 'top' ? rect.top : anchorOrigin.vertical === 'bottom' ? rect.bottom : rect.top + rect.height / 2,
-    left: anchorOrigin.horizontal === 'left' ? rect.left : anchorOrigin.horizontal === 'right' ? rect.right : rect.left + rect.width / 2,
+    top:
+      anchorOrigin.vertical === 'top'
+        ? rect.top
+        : anchorOrigin.vertical === 'bottom'
+          ? rect.bottom
+          : rect.top + rect.height / 2,
+    left:
+      anchorOrigin.horizontal === 'left'
+        ? rect.left
+        : anchorOrigin.horizontal === 'right'
+          ? rect.right
+          : rect.left + rect.width / 2,
   };
 
   return (
@@ -120,7 +130,10 @@ export interface MenuItemProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
-  ({ className, disabled = false, selected = false, divider = false, children, onClick, ...props }, ref) => {
+  (
+    { className, disabled = false, selected = false, divider = false, children, onClick, ...props },
+    ref
+  ) => {
     return (
       <div
         ref={ref}

@@ -35,7 +35,7 @@ export const MOCK_TENANTS: MockTenant[] = Array.from({ length: 12 }, (_, index) 
   phone: _mock.phone(index),
   status: _mock.status(index),
   plan: plans[index % plans.length],
-  usersCount: 5 + (index * 3),
+  usersCount: 5 + index * 3,
   createdAt: _mock.time(index),
   address: _mock.address(index),
 }));

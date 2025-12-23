@@ -38,13 +38,19 @@ export default function BookingDashboardPage() {
             <div key={i} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
               <div>
                 <p className="font-medium text-gray-900">Booking #{String(i).padStart(4, '0')}</p>
-                <p className="text-sm text-gray-600">Customer {i} • 2025-02-{10 + i}</p>
+                <p className="text-sm text-gray-600">
+                  Customer {i} • 2025-02-{10 + i}
+                </p>
               </div>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                i % 3 === 0 ? 'bg-success-light text-success-dark' :
-                i % 3 === 1 ? 'bg-warning-light text-warning-dark' :
-                'bg-secondary-light text-secondary-dark'
-              }`}>
+              <span
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  i % 3 === 0
+                    ? 'bg-success-light text-success-dark'
+                    : i % 3 === 1
+                      ? 'bg-warning-light text-warning-dark'
+                      : 'bg-secondary-light text-secondary-dark'
+                }`}
+              >
                 {i % 3 === 0 ? 'Confirmed' : i % 3 === 1 ? 'Pending' : 'Completed'}
               </span>
             </div>

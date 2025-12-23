@@ -68,7 +68,11 @@ export function fData(bytes: number): string {
  * @example fShortenNumber(1234567) => "1.23M"
  */
 export function fShortenNumber(number: number): string {
-  const format = number ? Math.floor(number).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '0';
+  const format = number
+    ? Math.floor(number)
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    : '0';
 
   return format;
 }

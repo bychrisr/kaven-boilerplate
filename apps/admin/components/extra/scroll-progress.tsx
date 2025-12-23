@@ -40,10 +40,7 @@ export const ScrollProgress: React.FC<ScrollProgressProps> = ({
 
   return (
     <div
-      className={cn(
-        'fixed left-0 right-0 z-[9999]',
-        position === 'top' ? 'top-0' : 'bottom-0'
-      )}
+      className={cn('fixed left-0 right-0 z-[9999]', position === 'top' ? 'top-0' : 'bottom-0')}
       style={{ height: `${height}px` }}
     >
       <div

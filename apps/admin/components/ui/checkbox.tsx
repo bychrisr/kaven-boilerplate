@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export interface CheckboxProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
+export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   /**
    * Checked state
    */

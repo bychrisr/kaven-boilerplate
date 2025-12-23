@@ -3,23 +3,23 @@ export default function HelpCenterPage() {
     {
       title: 'Getting Started',
       icon: '🚀',
-      articles: ['Quick Start Guide', 'Account Setup', 'First Steps']
+      articles: ['Quick Start Guide', 'Account Setup', 'First Steps'],
     },
     {
       title: 'User Management',
       icon: '👥',
-      articles: ['Creating Users', 'Roles & Permissions', 'User Settings']
+      articles: ['Creating Users', 'Roles & Permissions', 'User Settings'],
     },
     {
       title: 'Billing & Payments',
       icon: '💳',
-      articles: ['Payment Methods', 'Invoices', 'Subscriptions']
+      articles: ['Payment Methods', 'Invoices', 'Subscriptions'],
     },
     {
       title: 'Security',
       icon: '🔒',
-      articles: ['Two-Factor Authentication', 'Password Security', 'API Keys']
-    }
+      articles: ['Two-Factor Authentication', 'Password Security', 'API Keys'],
+    },
   ];
 
   return (
@@ -39,7 +39,10 @@ export default function HelpCenterPage() {
       {/* Categories */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {categories.map((category, i) => (
-          <div key={i} className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div
+            key={i}
+            className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
+          >
             <div className="text-4xl mb-3">{category.icon}</div>
             <h3 className="font-bold text-gray-900 mb-3">{category.title}</h3>
             <ul className="space-y-2">
@@ -57,7 +60,9 @@ export default function HelpCenterPage() {
 
       {/* Contact Support */}
       <div className="mt-8 bg-gray-50 p-6 rounded-lg border border-gray-200">
-        <h3 className="font-bold text-gray-900 mb-2">Can&apos;t find what you&apos;re looking for?</h3>
+        <h3 className="font-bold text-gray-900 mb-2">
+          Can&apos;t find what you&apos;re looking for?
+        </h3>
         <p className="text-gray-600 mb-4">Our support team is here to help</p>
         <a
           href="/contact"

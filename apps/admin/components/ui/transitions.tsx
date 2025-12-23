@@ -19,7 +19,10 @@ export interface CollapseProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Collapse = React.forwardRef<HTMLDivElement, CollapseProps>(
-  ({ className, in: isOpen = false, timeout = 300, unmountOnExit = false, children, ...props }, ref) => {
+  (
+    { className, in: isOpen = false, timeout = 300, unmountOnExit = false, children, ...props },
+    ref
+  ) => {
     const [shouldRender, setShouldRender] = React.useState(isOpen);
     const [maxHeight, setMaxHeight] = React.useState<number | undefined>(undefined);
     const contentRef = React.useRef<HTMLDivElement>(null);
@@ -81,7 +84,10 @@ export interface FadeProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Fade = React.forwardRef<HTMLDivElement, FadeProps>(
-  ({ className, in: isOpen = false, timeout = 300, unmountOnExit = false, children, ...props }, ref) => {
+  (
+    { className, in: isOpen = false, timeout = 300, unmountOnExit = false, children, ...props },
+    ref
+  ) => {
     const [shouldRender, setShouldRender] = React.useState(isOpen);
 
     React.useEffect(() => {
@@ -133,7 +139,10 @@ export interface GrowProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Grow = React.forwardRef<HTMLDivElement, GrowProps>(
-  ({ className, in: isOpen = false, timeout = 300, unmountOnExit = false, children, ...props }, ref) => {
+  (
+    { className, in: isOpen = false, timeout = 300, unmountOnExit = false, children, ...props },
+    ref
+  ) => {
     const [shouldRender, setShouldRender] = React.useState(isOpen);
 
     React.useEffect(() => {
@@ -261,7 +270,10 @@ export interface ZoomProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Zoom = React.forwardRef<HTMLDivElement, ZoomProps>(
-  ({ className, in: isOpen = false, timeout = 300, unmountOnExit = false, children, ...props }, ref) => {
+  (
+    { className, in: isOpen = false, timeout = 300, unmountOnExit = false, children, ...props },
+    ref
+  ) => {
     const [shouldRender, setShouldRender] = React.useState(isOpen);
 
     React.useEffect(() => {

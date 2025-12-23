@@ -22,7 +22,7 @@ export default function CreateInvoicePage() {
   const router = useRouter();
   const { createInvoice } = useInvoices();
   const { tenants, isLoading: isLoadingTenants } = useTenants();
-  
+
   const {
     register,
     handleSubmit,
@@ -60,16 +60,13 @@ export default function CreateInvoicePage() {
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Nova Fatura</h1>
-          <p className="text-sm text-gray-500">
-            Crie uma nova cobrança para um cliente
-          </p>
+          <p className="text-sm text-gray-500">Crie uma nova cobrança para um cliente</p>
         </div>
       </div>
 
       <div className="rounded-lg border bg-white p-6 shadow-sm">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
           <div className="grid gap-6 md:grid-cols-2">
-            
             {/* Tenant Selection */}
             <div className="col-span-2">
               <label htmlFor="tenantId" className="block text-sm font-medium text-gray-700 mb-1">
@@ -103,7 +100,11 @@ export default function CreateInvoicePage() {
               )}
               {tenants?.length === 0 && !isLoadingTenants && (
                 <p className="mt-1 text-sm text-amber-600">
-                  Nenhum tenant encontrado. <Link href="/tenants/create" className="underline font-medium">Crie um tenant primeiro</Link>.
+                  Nenhum tenant encontrado.{' '}
+                  <Link href="/tenants/create" className="underline font-medium">
+                    Crie um tenant primeiro
+                  </Link>
+                  .
                 </p>
               )}
             </div>
@@ -155,9 +156,10 @@ export default function CreateInvoicePage() {
             </div>
 
             <div className="col-span-2">
-               <p className="text-xs text-gray-500">
-                 * Campos obrigatórios. A fatura será gerada com status &quot;Rascunho&quot; ou &quot;Pendente&quot; dependendo da configuração.
-               </p>
+              <p className="text-xs text-gray-500">
+                * Campos obrigatórios. A fatura será gerada com status &quot;Rascunho&quot; ou
+                &quot;Pendente&quot; dependendo da configuração.
+              </p>
             </div>
           </div>
 

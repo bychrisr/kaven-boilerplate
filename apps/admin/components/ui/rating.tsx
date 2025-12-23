@@ -107,7 +107,8 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
         {Array.from({ length: max }, (_, index) => {
           const starValue = index + 1;
           const filled = displayValue >= starValue;
-          const halfFilled = precision === 0.5 && displayValue >= starValue - 0.5 && displayValue < starValue;
+          const halfFilled =
+            precision === 0.5 && displayValue >= starValue - 0.5 && displayValue < starValue;
 
           return (
             <button

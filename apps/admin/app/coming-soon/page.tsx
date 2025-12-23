@@ -6,7 +6,7 @@ export default function ComingSoonPage() {
         <p className="text-xl mb-8 opacity-90">
           We&apos;re working on something awesome. Stay tuned!
         </p>
-        
+
         {/* Email Signup */}
         <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg">
           <p className="text-sm mb-4">Get notified when we launch</p>

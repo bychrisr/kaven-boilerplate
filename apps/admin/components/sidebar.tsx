@@ -55,11 +55,7 @@ export function Sidebar() {
           )}
           aria-label={isCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'}
         >
-          {isCollapsed ? (
-            <ChevronRight className="w-5 h-5" />
-          ) : (
-            <ChevronLeft className="w-5 h-5" />
-          )}
+          {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
         </button>
       </div>
 

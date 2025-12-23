@@ -45,7 +45,7 @@ export function ThemeProvider({
       try {
         // Check localStorage first
         const storedMode = localStorage.getItem(storageKey) as 'light' | 'dark' | null;
-        
+
         if (storedMode) {
           setModeState(storedMode);
           setTheme(createTheme(storedMode));
@@ -76,7 +76,7 @@ export function ThemeProvider({
   // Listen to system theme changes
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
+
     const handleChange = (e: MediaQueryListEvent) => {
       // Only update if user hasn't manually set a preference
       const hasManualPreference = localStorage.getItem(storageKey);
@@ -97,7 +97,7 @@ export function ThemeProvider({
 
     // Set data-theme attribute for CSS
     document.documentElement.setAttribute('data-theme', mode);
-    
+
     // Inject CSS variables
     injectCSSVariables(theme);
   }, [theme, mode, isLoading]);
@@ -111,16 +111,19 @@ export function ThemeProvider({
   }, [mode, storageKey]);
 
   // Set specific mode
-  const setMode = useCallback((newMode: 'light' | 'dark') => {
-    setModeState(newMode);
-    setTheme(createTheme(newMode));
-    localStorage.setItem(storageKey, newMode);
-  }, [storageKey]);
+  const setMode = useCallback(
+    (newMode: 'light' | 'dark') => {
+      setModeState(newMode);
+      setTheme(createTheme(newMode));
+      localStorage.setItem(storageKey, newMode);
+    },
+    [storageKey]
+  );
 
   // Update theme with custom values
   const updateTheme = useCallback((customTheme: Partial<ThemeConfig>) => {
     setTheme((prevTheme) => mergeTheme(prevTheme, customTheme));
-    
+
     // TODO: Save custom theme to database
     // saveUserTheme(customTheme);
   }, []);
@@ -128,7 +131,7 @@ export function ThemeProvider({
   // Reset theme to defaults
   const resetTheme = useCallback(() => {
     setTheme(createTheme(mode));
-    
+
     // TODO: Clear custom theme from database
     // clearUserTheme();
   }, [mode]);
@@ -143,11 +146,7 @@ export function ThemeProvider({
     isLoading,
   };
 
-  return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
 // ============================================
@@ -156,11 +155,11 @@ export function ThemeProvider({
 
 export function useTheme(): ThemeContextValue {
   const context = useContext(ThemeContext);
-  
+
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
-  
+
   return context;
 }
 

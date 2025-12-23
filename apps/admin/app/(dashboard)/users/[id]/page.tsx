@@ -18,7 +18,7 @@ export default function UserProfilePage() {
     const fetchUser = async () => {
       try {
         const response = await fetch(`http://localhost:8000/api/users/${userId}`, {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
         });
         if (response.ok) {
           const data = await response.json();
@@ -58,7 +58,7 @@ export default function UserProfilePage() {
         <div className="lg:col-span-2">
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
             <h3 className="text-lg font-bold text-gray-900 mb-4">User Information</h3>
-            
+
             <div className="space-y-3">
               <div className="flex justify-between py-2 border-b border-gray-200">
                 <span className="text-gray-600">User ID</span>

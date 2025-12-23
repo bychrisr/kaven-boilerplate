@@ -38,11 +38,7 @@ interface TenantsResponse {
 export function useTenants(page: number = 1, limit: number = 100) {
   const queryClient = useQueryClient();
 
-  const {
-    data,
-    isLoading,
-    error,
-  } = useQuery<TenantsResponse>({
+  const { data, isLoading, error } = useQuery<TenantsResponse>({
     queryKey: ['tenants', page, limit],
     queryFn: async () => {
       const response = await api.get('/api/tenants', {

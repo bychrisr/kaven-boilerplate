@@ -2,7 +2,10 @@ import * as React from 'react';
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export interface DatePickerProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'defaultValue'> {
+export interface DatePickerProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'value' | 'onChange' | 'defaultValue'
+> {
   /**
    * Selected date
    */
@@ -51,8 +54,18 @@ export interface DatePickerProps extends Omit<React.InputHTMLAttributes<HTMLInpu
 
 const DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 const MONTHS = [
-  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+  'Janeiro',
+  'Fevereiro',
+  'Março',
+  'Abril',
+  'Maio',
+  'Junho',
+  'Julho',
+  'Agosto',
+  'Setembro',
+  'Outubro',
+  'Novembro',
+  'Dezembro',
 ];
 
 export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
@@ -91,10 +104,11 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
     const isDateDisabled = (date: Date) => {
       if (minDate && date < minDate) return true;
       if (maxDate && date > maxDate) return true;
-      return disabledDates.some(d => 
-        d.getDate() === date.getDate() &&
-        d.getMonth() === date.getMonth() &&
-        d.getFullYear() === date.getFullYear()
+      return disabledDates.some(
+        (d) =>
+          d.getDate() === date.getDate() &&
+          d.getMonth() === date.getMonth() &&
+          d.getFullYear() === date.getFullYear()
       );
     };
 
@@ -107,12 +121,12 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
       const startingDayOfWeek = firstDay.getDay();
 
       const days: (Date | null)[] = [];
-      
+
       // Add empty cells for days before month starts
       for (let i = 0; i < startingDayOfWeek; i++) {
         days.push(null);
       }
-      
+
       // Add days of month
       for (let i = 1; i <= daysInMonth; i++) {
         days.push(new Date(year, month, i));
@@ -155,7 +169,12 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
     return (
       <div className={cn('relative', fullWidth && 'w-full', className)} ref={containerRef}>
         {label && (
-          <label className={cn('block text-sm font-medium mb-1.5', error ? 'text-error-main' : 'text-text-primary')}>
+          <label
+            className={cn(
+              'block text-sm font-medium mb-1.5',
+              error ? 'text-error-main' : 'text-text-primary'
+            )}
+          >
             {label}
           </label>
         )}
@@ -205,7 +224,7 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
 
             {/* Day headers */}
             <div className="grid grid-cols-7 gap-1 mb-2">
-              {DAYS.map(day => (
+              {DAYS.map((day) => (
                 <div key={day} className="text-center text-xs font-medium text-text-secondary p-1">
                   {day}
                 </div>
@@ -219,12 +238,13 @@ export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
                   return <div key={`empty-${index}`} />;
                 }
 
-                const isSelected = currentValue && 
+                const isSelected =
+                  currentValue &&
                   day.getDate() === currentValue.getDate() &&
                   day.getMonth() === currentValue.getMonth() &&
                   day.getFullYear() === currentValue.getFullYear();
 
-                const isToday = 
+                const isToday =
                   day.getDate() === new Date().getDate() &&
                   day.getMonth() === new Date().getMonth() &&
                   day.getFullYear() === new Date().getFullYear();

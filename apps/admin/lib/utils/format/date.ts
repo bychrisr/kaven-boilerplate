@@ -23,7 +23,10 @@ export function fDate(date: Date | string | number, formatStr: string = 'dd/MM/y
  * Format date and time
  * @example fDateTime('2024-01-15T10:30:00') => "15/01/2024 10:30"
  */
-export function fDateTime(date: Date | string | number, formatStr: string = 'dd/MM/yyyy HH:mm'): string {
+export function fDateTime(
+  date: Date | string | number,
+  formatStr: string = 'dd/MM/yyyy HH:mm'
+): string {
   const parsedDate = typeof date === 'string' ? parseISO(date) : new Date(date);
   return format(parsedDate, formatStr, { locale: ptBR });
 }

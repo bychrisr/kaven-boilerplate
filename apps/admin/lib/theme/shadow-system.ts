@@ -51,10 +51,7 @@ export const darkShadows: ShadowSystem = {
 /**
  * Get shadow by elevation level
  */
-export function getShadow(
-  elevation: keyof ShadowSystem,
-  mode: 'light' | 'dark' = 'light'
-): string {
+export function getShadow(elevation: keyof ShadowSystem, mode: 'light' | 'dark' = 'light'): string {
   return mode === 'light' ? lightShadows[elevation] : darkShadows[elevation];
 }
 
@@ -71,7 +68,8 @@ export const customShadows = {
   dialog: '0px 8px 16px 0px rgba(145, 158, 171, 0.24)',
 
   // Dropdown shadows
-  dropdown: '0px 0px 2px 0px rgba(145, 158, 171, 0.24), 0px 20px 40px -4px rgba(145, 158, 171, 0.24)',
+  dropdown:
+    '0px 0px 2px 0px rgba(145, 158, 171, 0.24), 0px 20px 40px -4px rgba(145, 158, 171, 0.24)',
 
   // Primary color shadows
   primary: '0px 8px 16px 0px rgba(0, 171, 85, 0.24)',
@@ -88,7 +86,8 @@ export const customShadows = {
 export const neumorphicShadows = {
   light: {
     raised: '8px 8px 16px rgba(145, 158, 171, 0.2), -8px -8px 16px rgba(255, 255, 255, 0.8)',
-    inset: 'inset 8px 8px 16px rgba(145, 158, 171, 0.2), inset -8px -8px 16px rgba(255, 255, 255, 0.8)',
+    inset:
+      'inset 8px 8px 16px rgba(145, 158, 171, 0.2), inset -8px -8px 16px rgba(255, 255, 255, 0.8)',
   },
   dark: {
     raised: '8px 8px 16px rgba(0, 0, 0, 0.4), -8px -8px 16px rgba(255, 255, 255, 0.05)',

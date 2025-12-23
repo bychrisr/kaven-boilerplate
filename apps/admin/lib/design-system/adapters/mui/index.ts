@@ -30,35 +30,35 @@ export class MUIAdapter implements DesignSystemAdapter {
           primaryLighter: '#C8FAD6',
           primaryDark: '#007867',
           primaryDarker: '#004B50',
-          
+
           // Secondary (Minimals Blue - 5 tones)
           secondary: '#3366ff',
           secondaryLight: '#84A9FF',
           secondaryLighter: '#D6E4FF',
           secondaryDark: '#1939B7',
           secondaryDarker: '#091A7A',
-          
+
           // Success (5 tones)
           success: '#22c55e',
           successLight: '#77ED8B',
           successLighter: '#D3FCD2',
           successDark: '#118D57',
           successDarker: '#065E49',
-          
+
           // Warning (5 tones)
           warning: '#ffab00',
           warningLight: '#FFD666',
           warningLighter: '#FFF5CC',
           warningDark: '#B76E00',
           warningDarker: '#7A4100',
-          
+
           // Error (5 tones)
           error: '#ff5630',
           errorLight: '#FFAC82',
           errorLighter: '#FFE9D5',
           errorDark: '#B71D18',
           errorDarker: '#7A0916',
-          
+
           // Info (5 tones)
           info: '#00b8d9',
           infoLight: '#61F3F3',
@@ -107,8 +107,11 @@ export class MUIAdapter implements DesignSystemAdapter {
     if (customization.typography?.fontSize) {
       const scale = customization.typography.fontSize;
       Object.keys(tokens.typography.fontSize).forEach((key) => {
-        const currentSize = parseFloat(tokens.typography.fontSize[key as keyof typeof tokens.typography.fontSize]);
-        tokens.typography.fontSize[key as keyof typeof tokens.typography.fontSize] = `${currentSize * scale}rem`;
+        const currentSize = parseFloat(
+          tokens.typography.fontSize[key as keyof typeof tokens.typography.fontSize]
+        );
+        tokens.typography.fontSize[key as keyof typeof tokens.typography.fontSize] =
+          `${currentSize * scale}rem`;
       });
     }
 
@@ -146,15 +149,24 @@ export class MUIAdapter implements DesignSystemAdapter {
     }
 
     // Validate scale values
-    if (customization.typography?.fontSize && (customization.typography.fontSize < 0.5 || customization.typography.fontSize > 2)) {
+    if (
+      customization.typography?.fontSize &&
+      (customization.typography.fontSize < 0.5 || customization.typography.fontSize > 2)
+    ) {
       return false;
     }
 
-    if (customization.spacing?.scale && (customization.spacing.scale < 0.5 || customization.spacing.scale > 2)) {
+    if (
+      customization.spacing?.scale &&
+      (customization.spacing.scale < 0.5 || customization.spacing.scale > 2)
+    ) {
       return false;
     }
 
-    if (customization.radius?.scale && (customization.radius.scale < 0.5 || customization.radius.scale > 2)) {
+    if (
+      customization.radius?.scale &&
+      (customization.radius.scale < 0.5 || customization.radius.scale > 2)
+    ) {
       return false;
     }
 

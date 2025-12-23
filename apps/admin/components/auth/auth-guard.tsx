@@ -20,18 +20,18 @@ export function AuthGuard({ children, allowedRoles }: Readonly<AuthGuardProps>) 
     // Verificar localStorage diretamente para hidratação inicial se necessário
     // Mas o Zustand persist deve lidar com isso.
     // Vamos confiar no isAuthenticated do store, mas verificar se houve falha de hidratação.
-    
+
     const checkAuth = () => {
       // Se não autenticado
       if (!isAuthenticated) {
         // Tentar recuperar do localStorage caso o store tenha perdido (ex: refresh)
         const token = localStorage.getItem('accessToken');
         const userData = localStorage.getItem('user');
-        
+
         if (!token || !userData) {
-             const returnUrl = encodeURIComponent(pathname);
-             router.replace(`/login?returnUrl=${returnUrl}`);
-             return;
+          const returnUrl = encodeURIComponent(pathname);
+          router.replace(`/login?returnUrl=${returnUrl}`);
+          return;
         }
       }
 
@@ -48,7 +48,6 @@ export function AuthGuard({ children, allowedRoles }: Readonly<AuthGuardProps>) 
     // ou usar onRehydrateStorage do persist
     const timer = setTimeout(checkAuth, 100);
     return () => clearTimeout(timer);
-
   }, [isAuthenticated, user, router, pathname, allowedRoles]);
 
   if (isChecking) {

@@ -12,9 +12,18 @@ export const _id = (index: number) => `${Date.now()}-${index.toString().padStart
 
 export const _times = (index: number) => {
   const dates = [
-    '2024-01-15', '2024-02-20', '2024-03-10', '2024-04-05',
-    '2024-05-12', '2024-06-18', '2024-07-22', '2024-08-30',
-    '2024-09-14', '2024-10-08', '2024-11-25', '2024-12-03',
+    '2024-01-15',
+    '2024-02-20',
+    '2024-03-10',
+    '2024-04-05',
+    '2024-05-12',
+    '2024-06-18',
+    '2024-07-22',
+    '2024-08-30',
+    '2024-09-14',
+    '2024-10-08',
+    '2024-11-25',
+    '2024-12-03',
   ];
   return dates[index % dates.length];
 };
@@ -113,8 +122,8 @@ export const _domain = (index: number) => {
 
 export const _price = (index: number) => {
   const prices = [
-    99.90, 149.90, 199.90, 299.90, 399.90, 499.90, 599.90, 699.90,
-    799.90, 899.90, 999.90, 1499.90, 1999.90, 2499.90, 2999.90,
+    99.9, 149.9, 199.9, 299.9, 399.9, 499.9, 599.9, 699.9, 799.9, 899.9, 999.9, 1499.9, 1999.9,
+    2499.9, 2999.9,
   ];
   return prices[index % prices.length];
 };
@@ -158,7 +167,7 @@ export const _address = (index: number) => {
     'Fortaleza',
   ];
   const states = ['SP', 'RJ', 'MG', 'PR', 'RS', 'DF', 'BA', 'CE'];
-  
+
   return {
     street: `${streets[index % streets.length]}, ${100 + index * 10}`,
     city: cities[index % cities.length],

@@ -17,9 +17,7 @@ export function AuthLayout({ children, illustration, variant = 'classic' }: Auth
             <div className="text-white text-center">
               <Logo size="large" className="mb-6 justify-center" />
               <h2 className="text-4xl font-bold mb-4">Bem-vindo ao Kaven</h2>
-              <p className="text-xl opacity-90">
-                Multi-tenant SaaS Boilerplate
-              </p>
+              <p className="text-xl opacity-90">Multi-tenant SaaS Boilerplate</p>
             </div>
           )}
         </div>
@@ -27,9 +25,7 @@ export function AuthLayout({ children, illustration, variant = 'classic' }: Auth
 
       {/* Right Side - Form */}
       <div className="flex-1 flex items-center justify-center p-8 bg-gray-50">
-        <div className="w-full max-w-md">
-          {children}
-        </div>
+        <div className="w-full max-w-md">{children}</div>
       </div>
     </div>
   );

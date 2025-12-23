@@ -17,7 +17,15 @@ interface IconProps extends Readonly<Omit<React.SVGProps<SVGSVGElement>, 'ref'>>
   /**
    * Icon color (uses theme colors)
    */
-  color?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'inherit' | 'currentColor';
+  color?:
+    | 'primary'
+    | 'secondary'
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'info'
+    | 'inherit'
+    | 'currentColor';
   /**
    * Accessibility label
    */

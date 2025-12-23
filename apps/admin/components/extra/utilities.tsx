@@ -72,11 +72,7 @@ export interface SvgColorProps extends React.SVGProps<SVGSVGElement> {
 
 export const SvgColor: React.FC<SvgColorProps> = ({ src, color, className, ...props }) => {
   return (
-    <svg
-      className={cn('inline-block', className)}
-      style={{ color }}
-      {...props}
-    >
+    <svg className={cn('inline-block', className)} style={{ color }} {...props}>
       <use href={src} />
     </svg>
   );
@@ -90,12 +86,7 @@ export interface IconifyProps {
   color?: string;
 }
 
-export const Iconify: React.FC<IconifyProps> = ({
-  icon,
-  width = 24,
-  height = 24,
-  color,
-}) => {
+export const Iconify: React.FC<IconifyProps> = ({ icon, width = 24, height = 24, color }) => {
   return (
     <span
       className="inline-flex items-center justify-center"

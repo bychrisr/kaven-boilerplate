@@ -26,7 +26,17 @@ const StepperContext = React.createContext<{
 } | null>(null);
 
 export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
-  ({ className, activeStep, orientation = 'horizontal', alternativeLabel = false, children, ...props }, ref) => {
+  (
+    {
+      className,
+      activeStep,
+      orientation = 'horizontal',
+      alternativeLabel = false,
+      children,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <StepperContext.Provider value={{ activeStep, orientation, alternativeLabel }}>
         <div
@@ -80,10 +90,13 @@ export const Step = React.forwardRef<HTMLDivElement, StepProps>(
       >
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
-            return React.cloneElement(child as React.ReactElement<{ completed?: boolean; disabled?: boolean }>, {
-              completed,
-              disabled,
-            });
+            return React.cloneElement(
+              child as React.ReactElement<{ completed?: boolean; disabled?: boolean }>,
+              {
+                completed,
+                disabled,
+              }
+            );
           }
           return child;
         })}
@@ -112,7 +125,10 @@ export interface StepLabelProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const StepLabel = React.forwardRef<HTMLDivElement, StepLabelProps>(
-  ({ className, optional, error = false, completed = false, disabled = false, children, ...props }, ref) => {
+  (
+    { className, optional, error = false, completed = false, disabled = false, children, ...props },
+    ref
+  ) => {
     const context = React.useContext(StepperContext);
     if (!context) {
       throw new Error('StepLabel must be used within Stepper');
@@ -125,7 +141,9 @@ export const StepLabel = React.forwardRef<HTMLDivElement, StepLabelProps>(
         ref={ref}
         className={cn(
           'flex',
-          orientation === 'horizontal' && alternativeLabel ? 'flex-col items-center' : 'flex-row items-center gap-2',
+          orientation === 'horizontal' && alternativeLabel
+            ? 'flex-col items-center'
+            : 'flex-row items-center gap-2',
           className
         )}
         {...props}
@@ -142,9 +160,7 @@ export const StepLabel = React.forwardRef<HTMLDivElement, StepLabelProps>(
           >
             {children}
           </span>
-          {optional && (
-            <span className="text-xs text-text-secondary">{optional}</span>
-          )}
+          {optional && <span className="text-xs text-text-secondary">{optional}</span>}
         </div>
       </div>
     );
@@ -172,7 +188,12 @@ export interface StepIconProps {
   error?: boolean;
 }
 
-export const StepIcon: React.FC<StepIconProps> = ({ icon, active = false, completed = false, error = false }) => {
+export const StepIcon: React.FC<StepIconProps> = ({
+  icon,
+  active = false,
+  completed = false,
+  error = false,
+}) => {
   return (
     <div
       className={cn(
@@ -183,7 +204,11 @@ export const StepIcon: React.FC<StepIconProps> = ({ icon, active = false, comple
         !active && !completed && !error && 'border-gray-300 text-text-secondary'
       )}
     >
-      {completed ? <Check className="size-4" /> : <span className="text-sm font-medium">{icon}</span>}
+      {completed ? (
+        <Check className="size-4" />
+      ) : (
+        <span className="text-sm font-medium">{icon}</span>
+      )}
     </div>
   );
 };

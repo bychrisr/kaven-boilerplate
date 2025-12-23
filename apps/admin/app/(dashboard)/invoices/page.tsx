@@ -64,8 +64,6 @@ export default function InvoicesPage() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [invoiceToDelete, setInvoiceToDelete] = useState<string | null>(null);
 
-
-
   const { data: statsData } = useInvoiceStats();
 
   // Calculate stats from API data
@@ -127,7 +125,7 @@ export default function InvoicesPage() {
   // Tabs with counts
   const tabs = useMemo(() => {
     if (!statsData) return [];
-    
+
     return [
       { label: 'Todos', count: statsData.total.count, value: null },
       { label: 'Pago', count: statsData.paid.count, value: 'PAID' as InvoiceStatus },
@@ -155,8 +153,6 @@ export default function InvoicesPage() {
   };
 
   const debouncedSearch = useDebounce(searchQuery, 500);
-
-
 
   const { invoices, isLoading, pagination, deleteInvoice } = useInvoices({
     page,
@@ -198,9 +194,7 @@ export default function InvoicesPage() {
               {(invoice.tenant?.name || 'U').charAt(0).toUpperCase()}
             </div>
             <div>
-              <p className="font-medium text-gray-900">
-                {invoice.tenant?.name || 'Desconhecido'}
-              </p>
+              <p className="font-medium text-gray-900">{invoice.tenant?.name || 'Desconhecido'}</p>
               <p className="text-xs text-gray-500">{invoice.invoiceNumber}</p>
             </div>
           </div>
@@ -372,9 +366,7 @@ export default function InvoicesPage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
-              {renderTableContent()}
-            </tbody>
+            <tbody className="divide-y divide-gray-200">{renderTableContent()}</tbody>
           </table>
         </div>
 
@@ -420,7 +412,6 @@ export default function InvoicesPage() {
           </div>
         )}
       </div>
-
 
       <ConfirmationModal
         isOpen={deleteModalOpen}

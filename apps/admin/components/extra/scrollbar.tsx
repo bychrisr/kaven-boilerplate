@@ -37,7 +37,8 @@ export const Scrollbar = React.forwardRef<HTMLDivElement, ScrollbarProps>(
           '[&::-webkit-scrollbar-thumb]:rounded-full',
           '[&::-webkit-scrollbar-thumb:hover]:bg-gray-500',
           sizeClasses[size],
-          autoHide && '[&::-webkit-scrollbar]:opacity-0 hover:[&::-webkit-scrollbar]:opacity-100 [&::-webkit-scrollbar]:transition-opacity',
+          autoHide &&
+            '[&::-webkit-scrollbar]:opacity-0 hover:[&::-webkit-scrollbar]:opacity-100 [&::-webkit-scrollbar]:transition-opacity',
           className
         )}
         style={{

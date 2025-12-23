@@ -10,7 +10,8 @@ import Link from 'next/link';
 
 const createTenantSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
-  slug: z.string()
+  slug: z
+    .string()
     .min(2, 'Slug deve ter pelo menos 2 caracteres')
     .regex(/^[a-z0-9-]+$/, 'Slug deve conter apenas letras minúsculas, números e hífens'),
   domain: z.string().optional().or(z.literal('')),
@@ -21,7 +22,7 @@ type CreateTenantFormData = z.infer<typeof createTenantSchema>;
 export default function CreateTenantPage() {
   const router = useRouter();
   const { createTenant } = useTenants();
-  
+
   const {
     register,
     handleSubmit,
@@ -43,9 +44,16 @@ export default function CreateTenantPage() {
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
     setValue('name', newName);
-    
+
     // Only auto-generate if slug hasn't been manually edited or is empty
-    if (!slug || slug === name?.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-').replaceAll(/(^-+)|(-+$)/g, '')) {
+    if (
+      !slug ||
+      slug ===
+        name
+          ?.toLowerCase()
+          .replaceAll(/[^a-z0-9]+/g, '-')
+          .replaceAll(/(^-+)|(-+$)/g, '')
+    ) {
       const newSlug = newName
         .toLowerCase()
         .replaceAll(/[^a-z0-9]+/g, '-')
@@ -79,9 +87,7 @@ export default function CreateTenantPage() {
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Novo Tenant</h1>
-          <p className="text-sm text-gray-500">
-            Cadastre uma nova organização no sistema
-          </p>
+          <p className="text-sm text-gray-500">Cadastre uma nova organização no sistema</p>
         </div>
       </div>
 
@@ -105,9 +111,7 @@ export default function CreateTenantPage() {
                 }`}
                 placeholder="Ex: Acme Corporation"
               />
-              {errors.name && (
-                <p className="mt-1 text-sm text-error-main">{errors.name.message}</p>
-              )}
+              {errors.name && <p className="mt-1 text-sm text-error-main">{errors.name.message}</p>}
             </div>
 
             {/* Slug */}
@@ -131,9 +135,7 @@ export default function CreateTenantPage() {
                   placeholder="acme-corp"
                 />
               </div>
-              {errors.slug && (
-                <p className="mt-1 text-sm text-error-main">{errors.slug.message}</p>
-              )}
+              {errors.slug && <p className="mt-1 text-sm text-error-main">{errors.slug.message}</p>}
             </div>
 
             {/* Domain */}
@@ -156,8 +158,6 @@ export default function CreateTenantPage() {
                 <p className="mt-1 text-sm text-error-main">{errors.domain.message}</p>
               )}
             </div>
-
-
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-4 border-t">

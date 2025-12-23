@@ -9,14 +9,17 @@ export function SettingsSecurity() {
   return (
     <div className="bg-white rounded-xl border shadow-sm p-6">
       <h2 className="text-xl font-semibold mb-4">Segurança</h2>
-      
+
       <div className="space-y-6">
         {/* Change Password */}
         <div>
           <h3 className="text-lg font-medium mb-4">Alterar Senha</h3>
           <div className="space-y-4">
             <div>
-              <label htmlFor="current-password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="current-password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Senha Atual
               </label>
               <input
@@ -26,7 +29,10 @@ export function SettingsSecurity() {
               />
             </div>
             <div>
-              <label htmlFor="new-password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="new-password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Nova Senha
               </label>
               <input
@@ -36,7 +42,10 @@ export function SettingsSecurity() {
               />
             </div>
             <div>
-              <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="confirm-password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Confirmar Nova Senha
               </label>
               <input

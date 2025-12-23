@@ -96,14 +96,14 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
       ...(siblingsStart > boundaryCount + 2
         ? ['start-ellipsis']
         : boundaryCount + 1 < count - boundaryCount
-        ? [boundaryCount + 1]
-        : []),
+          ? [boundaryCount + 1]
+          : []),
       ...range(siblingsStart, siblingsEnd),
       ...(siblingsEnd < count - boundaryCount - 1
         ? ['end-ellipsis']
         : count - boundaryCount > boundaryCount
-        ? [count - boundaryCount]
-        : []),
+          ? [count - boundaryCount]
+          : []),
       ...endPages,
       'next',
       ...(showLastButton ? ['last'] : []),

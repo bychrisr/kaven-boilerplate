@@ -83,10 +83,10 @@ export const TreeView: React.FC<TreeViewProps> = ({
 
   const handleSelect = (nodeId: string) => {
     let newSelected: string[];
-    
+
     if (multiSelect) {
       newSelected = selected.includes(nodeId)
-        ? selected.filter(id => id !== nodeId)
+        ? selected.filter((id) => id !== nodeId)
         : [...selected, nodeId];
     } else {
       newSelected = [nodeId];
@@ -98,7 +98,7 @@ export const TreeView: React.FC<TreeViewProps> = ({
 
   const handleToggle = (nodeId: string) => {
     const newExpanded = expanded.includes(nodeId)
-      ? expanded.filter(id => id !== nodeId)
+      ? expanded.filter((id) => id !== nodeId)
       : [...expanded, nodeId];
 
     setInternalExpanded(newExpanded);
@@ -118,7 +118,7 @@ export const TreeView: React.FC<TreeViewProps> = ({
       }}
     >
       <div className="py-2">
-        {data.map(node => (
+        {data.map((node) => (
           <TreeNode key={node.id} node={node} level={0} />
         ))}
       </div>
@@ -158,10 +158,17 @@ const TreeNode: React.FC<TreeNodeProps> = ({ node, level }) => {
     }
   };
 
-  const icon = node.icon || (hasChildren 
-    ? (isExpanded ? <FolderOpen className="size-4" /> : defaultFolderIcon)
-    : defaultFileIcon
-  );
+  const icon =
+    node.icon ||
+    (hasChildren ? (
+      isExpanded ? (
+        <FolderOpen className="size-4" />
+      ) : (
+        defaultFolderIcon
+      )
+    ) : (
+      defaultFileIcon
+    ));
 
   return (
     <div>
@@ -181,23 +188,19 @@ const TreeNode: React.FC<TreeNodeProps> = ({ node, level }) => {
             onClick={handleToggle}
             className="p-0.5 hover:bg-action-hover rounded"
           >
-            {isExpanded ? (
-              <ChevronDown className="size-4" />
-            ) : (
-              <ChevronRight className="size-4" />
-            )}
+            {isExpanded ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
           </button>
         ) : (
           <span className="w-5" />
         )}
-        
+
         <span className="shrink-0">{icon}</span>
         <span className="text-sm truncate">{node.label}</span>
       </div>
 
       {hasChildren && isExpanded && (
         <div>
-          {node.children!.map(child => (
+          {node.children!.map((child) => (
             <TreeNode key={child.id} node={child} level={level + 1} />
           ))}
         </div>

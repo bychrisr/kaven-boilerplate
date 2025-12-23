@@ -66,9 +66,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ label, icon, columns, featur
       >
         {icon && <span className="size-5">{icon}</span>}
         <span>{label}</span>
-        <ChevronDown
-          className={cn('size-4 transition-transform', isOpen && 'rotate-180')}
-        />
+        <ChevronDown className={cn('size-4 transition-transform', isOpen && 'rotate-180')} />
       </button>
 
       {/* Mega Menu Dropdown */}
@@ -79,9 +77,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ label, icon, columns, featur
               {/* Columns */}
               {columns.map((column, colIndex) => (
                 <div key={colIndex}>
-                  <h3 className="text-sm font-semibold text-text-primary mb-3">
-                    {column.title}
-                  </h3>
+                  <h3 className="text-sm font-semibold text-text-primary mb-3">{column.title}</h3>
                   <div className="space-y-2">
                     {column.items.map((item, itemIndex) => (
                       <button
@@ -92,23 +88,19 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ label, icon, columns, featur
                         }}
                         className="w-full flex items-start gap-3 p-2 rounded-lg hover:bg-action-hover transition-colors text-left"
                       >
-                        {item.icon && (
-                          <span className="size-5 shrink-0 mt-0.5">{item.icon}</span>
-                        )}
+                        {item.icon && <span className="size-5 shrink-0 mt-0.5">{item.icon}</span>}
                         {item.image && (
-                            <Image
-                              src={item.image}
-                              alt={item.label}
-                              width={224}
-                              height={224}
-                              className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
-                              unoptimized
-                            />
+                          <Image
+                            src={item.image}
+                            alt={item.label}
+                            width={224}
+                            height={224}
+                            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
+                            unoptimized
+                          />
                         )}
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-text-primary">
-                            {item.label}
-                          </div>
+                          <div className="text-sm font-medium text-text-primary">{item.label}</div>
                           {item.description && (
                             <div className="text-xs text-text-secondary mt-0.5 line-clamp-2">
                               {item.description}
@@ -123,9 +115,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ label, icon, columns, featur
 
               {/* Featured Content */}
               {featured && (
-                <div className="md:col-span-1 border-l border-divider pl-6">
-                  {featured}
-                </div>
+                <div className="md:col-span-1 border-l border-divider pl-6">{featured}</div>
               )}
             </div>
           </div>

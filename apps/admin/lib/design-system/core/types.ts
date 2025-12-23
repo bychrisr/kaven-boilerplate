@@ -26,35 +26,35 @@ export interface SemanticColorToken {
   primaryLighter: string;
   primaryDark: string;
   primaryDarker: string;
-  
+
   // Secondary (5 tones)
   secondary: string;
   secondaryLight: string;
   secondaryLighter: string;
   secondaryDark: string;
   secondaryDarker: string;
-  
+
   // Success (5 tones)
   success: string;
   successLight: string;
   successLighter: string;
   successDark: string;
   successDarker: string;
-  
+
   // Warning (5 tones)
   warning: string;
   warningLight: string;
   warningLighter: string;
   warningDark: string;
   warningDarker: string;
-  
+
   // Error (5 tones)
   error: string;
   errorLight: string;
   errorLighter: string;
   errorDark: string;
   errorDarker: string;
-  
+
   // Info (5 tones)
   info: string;
   infoLight: string;
@@ -109,7 +109,7 @@ export interface SemanticTypographyScale {
   h4: string;
   h5: string;
   h6: string;
-  
+
   // Body sizes
   xs: string;
   sm: string;
@@ -191,7 +191,7 @@ export interface SemanticRadius {
 
 export interface SemanticShadows {
   none?: string;
-  
+
   // Standard elevation levels (z-index based)
   z0?: string;
   z1?: string;
@@ -203,7 +203,7 @@ export interface SemanticShadows {
   z16?: string;
   z20?: string;
   z24?: string;
-  
+
   // Custom shadows by color
   customShadows?: {
     primary?: string;
@@ -213,7 +213,7 @@ export interface SemanticShadows {
     error?: string;
     info?: string;
   };
-  
+
   // Legacy (for compatibility)
   sm?: string;
   md?: string;
@@ -293,9 +293,7 @@ export interface DesignSystemAdapter {
   /**
    * Convert user customization to semantic tokens
    */
-  toSemanticTokens(
-    customization: UserCustomization
-  ): SemanticDesignTokens;
+  toSemanticTokens(customization: UserCustomization): SemanticDesignTokens;
 
   /**
    * Get default tokens for this design system

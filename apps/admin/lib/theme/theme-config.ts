@@ -333,8 +333,7 @@ export const defaultDarkPalette: ColorPalette = {
 export const defaultTypography: Typography = {
   fontFamily:
     "'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif",
-  fontFamilyMonospace:
-    "'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace",
+  fontFamilyMonospace: "'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace",
   h1: {
     fontSize: '48px',
     lineHeight: '60px',
@@ -505,10 +504,7 @@ export function createTheme(mode: 'light' | 'dark' = 'light'): ThemeConfig {
 // THEME CUSTOMIZATION HELPERS
 // ============================================
 
-export function mergeTheme(
-  baseTheme: ThemeConfig,
-  customTheme: Partial<ThemeConfig>
-): ThemeConfig {
+export function mergeTheme(baseTheme: ThemeConfig, customTheme: Partial<ThemeConfig>): ThemeConfig {
   return {
     ...baseTheme,
     ...customTheme,

@@ -20,7 +20,10 @@ export interface PaperProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Paper = React.forwardRef<HTMLDivElement, PaperProps>(
-  ({ className, elevation = 1, variant = 'elevation', square = false, children, ...props }, ref) => {
+  (
+    { className, elevation = 1, variant = 'elevation', square = false, children, ...props },
+    ref
+  ) => {
     return (
       <div
         ref={ref}

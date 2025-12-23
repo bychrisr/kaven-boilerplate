@@ -2,7 +2,10 @@ import * as React from 'react';
 import { Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export interface TimePickerProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
+export interface TimePickerProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'value' | 'onChange'
+> {
   /**
    * Selected time
    */
@@ -89,13 +92,20 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>(
       };
     }, [isOpen]);
 
-    const hourOptions = format24h ? Array.from({ length: 24 }, (_, i) => i) : Array.from({ length: 12 }, (_, i) => i + 1);
+    const hourOptions = format24h
+      ? Array.from({ length: 24 }, (_, i) => i)
+      : Array.from({ length: 12 }, (_, i) => i + 1);
     const minuteOptions = Array.from({ length: 60 }, (_, i) => i);
 
     return (
       <div className={cn('relative', fullWidth && 'w-full', className)} ref={containerRef}>
         {label && (
-          <label className={cn('block text-sm font-medium mb-1.5', error ? 'text-error-main' : 'text-text-primary')}>
+          <label
+            className={cn(
+              'block text-sm font-medium mb-1.5',
+              error ? 'text-error-main' : 'text-text-primary'
+            )}
+          >
             {label}
           </label>
         )}
@@ -126,7 +136,7 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>(
             <div className="flex flex-col">
               <div className="text-xs font-medium text-text-secondary mb-2 text-center">Horas</div>
               <div className="h-48 overflow-y-auto scrollbar-thin">
-                {hourOptions.map(hour => (
+                {hourOptions.map((hour) => (
                   <button
                     key={hour}
                     type="button"
@@ -144,21 +154,25 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>(
 
             {/* Minutes */}
             <div className="flex flex-col">
-              <div className="text-xs font-medium text-text-secondary mb-2 text-center">Minutos</div>
+              <div className="text-xs font-medium text-text-secondary mb-2 text-center">
+                Minutos
+              </div>
               <div className="h-48 overflow-y-auto scrollbar-thin">
-                {minuteOptions.filter(m => m % 5 === 0).map(minute => (
-                  <button
-                    key={minute}
-                    type="button"
-                    onClick={() => handleTimeChange(hours, minute)}
-                    className={cn(
-                      'w-12 py-1.5 text-sm rounded hover:bg-action-hover transition-colors',
-                      minutes === minute && 'bg-primary-main text-white hover:bg-primary-dark'
-                    )}
-                  >
-                    {String(minute).padStart(2, '0')}
-                  </button>
-                ))}
+                {minuteOptions
+                  .filter((m) => m % 5 === 0)
+                  .map((minute) => (
+                    <button
+                      key={minute}
+                      type="button"
+                      onClick={() => handleTimeChange(hours, minute)}
+                      className={cn(
+                        'w-12 py-1.5 text-sm rounded hover:bg-action-hover transition-colors',
+                        minutes === minute && 'bg-primary-main text-white hover:bg-primary-dark'
+                      )}
+                    >
+                      {String(minute).padStart(2, '0')}
+                    </button>
+                  ))}
               </div>
             </div>
           </div>

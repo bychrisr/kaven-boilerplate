@@ -30,35 +30,35 @@ export class HIGAdapter implements DesignSystemAdapter {
           primaryLighter: '#B3D9FF',
           primaryDark: '#0051D5',
           primaryDarker: '#003D99',
-          
+
           // Secondary (iOS Purple - 5 tones)
           secondary: '#5856D6',
           secondaryLight: '#8E8CFF',
           secondaryLighter: '#C7C6FF',
           secondaryDark: '#3634A3',
           secondaryDarker: '#1E1D5F',
-          
+
           // Success (iOS Green - 5 tones)
           success: '#34C759',
           successLight: '#6EE77B',
           successLighter: '#B7F3BD',
           successDark: '#248A3D',
           successDarker: '#155724',
-          
+
           // Warning (iOS Orange - 5 tones)
           warning: '#FF9500',
           warningLight: '#FFB340',
           warningLighter: '#FFD699',
           warningDark: '#CC7700',
           warningDarker: '#995900',
-          
+
           // Error (iOS Red - 5 tones)
           error: '#FF3B30',
           errorLight: '#FF6B63',
           errorLighter: '#FFB3AF',
           errorDark: '#CC2F26',
           errorDarker: '#99231C',
-          
+
           // Info (iOS Teal - 5 tones)
           info: '#5AC8FA',
           infoLight: '#8DDBFB',
@@ -69,17 +69,18 @@ export class HIGAdapter implements DesignSystemAdapter {
       },
       typography: {
         ...baseTokens.typography,
-        fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif",
+        fontFamily:
+          "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif",
       },
       spacing: {
-        xs: '0.5rem',    // 8px - HIG uses larger base spacing
-        sm: '0.75rem',   // 12px
-        md: '1.25rem',   // 20px
-        lg: '2rem',      // 32px
-        xl: '2.5rem',    // 40px
+        xs: '0.5rem', // 8px - HIG uses larger base spacing
+        sm: '0.75rem', // 12px
+        md: '1.25rem', // 20px
+        lg: '2rem', // 32px
+        xl: '2.5rem', // 40px
         '2xl': '3.5rem', // 56px
-        '3xl': '5rem',   // 80px
-        '4xl': '7rem',   // 112px
+        '3xl': '5rem', // 80px
+        '4xl': '7rem', // 112px
       },
       radius: {
         none: '0',

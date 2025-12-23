@@ -19,11 +19,12 @@ export function TenantView() {
 
   // Filter tenants
   const filteredTenants = MOCK_TENANTS.filter((tenant) => {
-    const matchesName = tenant.name.toLowerCase().includes(filterName.toLowerCase()) ||
-                       tenant.domain.toLowerCase().includes(filterName.toLowerCase());
+    const matchesName =
+      tenant.name.toLowerCase().includes(filterName.toLowerCase()) ||
+      tenant.domain.toLowerCase().includes(filterName.toLowerCase());
     const matchesPlan = filterPlan === 'all' || tenant.plan === filterPlan;
     const matchesStatus = filterStatus === 'all' || tenant.status === filterStatus;
-    
+
     return matchesName && matchesPlan && matchesStatus;
   });
 
@@ -33,9 +34,7 @@ export function TenantView() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Tenants</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Gerencie todos os tenants do sistema
-          </p>
+          <p className="mt-2 text-sm text-gray-600">Gerencie todos os tenants do sistema</p>
         </div>
         <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
           <Plus className="h-5 w-5" />
@@ -106,9 +105,13 @@ export function TenantView() {
                       {tenant.usersCount} usuários
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        tenant.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                      }`}>
+                      <span
+                        className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                          tenant.status === 'active'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
                         {tenant.status}
                       </span>
                     </td>

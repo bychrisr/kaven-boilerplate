@@ -10,13 +10,13 @@ export default function ResetPasswordPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams?.get('token');
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
 
   const getPasswordStrength = (password: string) => {
@@ -30,7 +30,13 @@ export default function ResetPasswordPage() {
   };
 
   const passwordStrength = getPasswordStrength(formData.password);
-  const strengthColors = ['bg-gray-300', 'bg-error-main', 'bg-warning-main', 'bg-success-light', 'bg-success-main'];
+  const strengthColors = [
+    'bg-gray-300',
+    'bg-error-main',
+    'bg-warning-main',
+    'bg-success-light',
+    'bg-success-main',
+  ];
   const strengthLabels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,7 +48,6 @@ export default function ResetPasswordPage() {
     }
 
     if (!token) {
-
       toast.error('Invalid reset token');
       return;
     }
@@ -55,8 +60,8 @@ export default function ResetPasswordPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           token,
-          password: formData.password
-        })
+          password: formData.password,
+        }),
       });
 
       if (response.ok) {
@@ -78,12 +83,8 @@ export default function ResetPasswordPage() {
       <Logo size="large" className="justify-center" />
 
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Reset your password
-        </h1>
-        <p className="text-gray-600">
-          Enter your new password below
-        </p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Reset your password</h1>
+        <p className="text-gray-600">Enter your new password below</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -126,7 +127,8 @@ export default function ResetPasswordPage() {
                 ))}
               </div>
               <p className="text-xs text-gray-600">
-                Password strength: <span className="font-medium">{strengthLabels[passwordStrength]}</span>
+                Password strength:{' '}
+                <span className="font-medium">{strengthLabels[passwordStrength]}</span>
               </p>
             </div>
           )}

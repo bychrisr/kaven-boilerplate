@@ -16,11 +16,7 @@ export interface PortalProps {
   disablePortal?: boolean;
 }
 
-export const Portal: React.FC<PortalProps> = ({
-  children,
-  container,
-  disablePortal = false,
-}) => {
+export const Portal: React.FC<PortalProps> = ({ children, container, disablePortal = false }) => {
   const [mountNode, setMountNode] = React.useState<Element | null>(null);
 
   React.useEffect(() => {

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { MapPin, ZoomIn, ZoomOut } from 'lucide-react';
 
-
 export interface MapMarker {
   id: string;
   lat: number;

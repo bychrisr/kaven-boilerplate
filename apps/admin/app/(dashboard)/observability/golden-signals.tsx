@@ -13,7 +13,14 @@ interface GoldenSignalCardProps {
   color: string;
 }
 
-function GoldenSignalCard({ title, value, subtitle, icon: Icon, trend, color }: Readonly<GoldenSignalCardProps>) {
+function GoldenSignalCard({
+  title,
+  value,
+  subtitle,
+  icon: Icon,
+  trend,
+  color,
+}: Readonly<GoldenSignalCardProps>) {
   const trendColors = {
     up: 'text-emerald-600',
     down: 'text-rose-600',
@@ -65,7 +72,9 @@ export function GoldenSignals() {
     <div className="space-y-4">
       <div>
         <h2 className="text-lg font-semibold text-gray-900">Golden Signals</h2>
-        <p className="text-sm text-gray-500">Métricas essenciais de saúde do sistema (Google SRE)</p>
+        <p className="text-sm text-gray-500">
+          Métricas essenciais de saúde do sistema (Google SRE)
+        </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">

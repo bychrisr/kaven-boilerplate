@@ -27,11 +27,11 @@ const statusConfig: Record<OrderStatus, { label: string; color: string; icon: Lu
 export default function OrdersPage() {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<OrderStatus | ''>('');
-  
-  const { orders, isLoading, pagination } = useOrders({ 
-    page, 
+
+  const { orders, isLoading, pagination } = useOrders({
+    page,
     limit: 10,
-    status: statusFilter || undefined
+    status: statusFilter || undefined,
   });
 
   return (
@@ -39,9 +39,7 @@ export default function OrdersPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Pedidos</h1>
-          <p className="text-sm text-gray-500">
-            Acompanhe os pedidos realizados no sistema
-          </p>
+          <p className="text-sm text-gray-500">Acompanhe os pedidos realizados no sistema</p>
         </div>
       </div>
 
@@ -121,13 +119,19 @@ export default function OrdersPage() {
                         }).format(order.totalAmount)}
                       </td>
                       <td className="px-6 py-4">
-                        <div className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${status.color}`}>
-                          <StatusIcon className={`h-3.5 w-3.5 ${order.status === 'PROCESSING' ? 'animate-spin' : ''}`} />
+                        <div
+                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${status.color}`}
+                        >
+                          <StatusIcon
+                            className={`h-3.5 w-3.5 ${order.status === 'PROCESSING' ? 'animate-spin' : ''}`}
+                          />
                           {status.label}
                         </div>
                       </td>
                       <td className="px-6 py-4 text-gray-600">
-                        {format(new Date(order.createdAt), "d 'de' MMM, yyyy HH:mm", { locale: ptBR })}
+                        {format(new Date(order.createdAt), "d 'de' MMM, yyyy HH:mm", {
+                          locale: ptBR,
+                        })}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
@@ -147,7 +151,7 @@ export default function OrdersPage() {
             </tbody>
           </table>
         </div>
-        
+
         {/* Pagination */}
         {pagination && pagination.totalPages > 1 && (
           <div className="flex items-center justify-between border-t px-6 py-4">

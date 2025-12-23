@@ -27,12 +27,7 @@ export interface LightboxProps {
   initialIndex?: number;
 }
 
-export const Lightbox: React.FC<LightboxProps> = ({
-  images,
-  open,
-  onClose,
-  initialIndex = 0,
-}) => {
+export const Lightbox: React.FC<LightboxProps> = ({ images, open, onClose, initialIndex = 0 }) => {
   const [currentIndex, setCurrentIndex] = React.useState(initialIndex);
   const [zoom, setZoom] = React.useState(1);
 
@@ -181,11 +176,7 @@ export const Lightbox: React.FC<LightboxProps> = ({
                   : 'border-white/30 hover:border-white/60'
               )}
             >
-              <img
-                src={image.src}
-                alt={image.alt || ''}
-                className="w-full h-full object-cover"
-              />
+              <img src={image.src} alt={image.alt || ''} className="w-full h-full object-cover" />
             </button>
           ))}
         </div>

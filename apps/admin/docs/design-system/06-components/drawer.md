@@ -30,9 +30,7 @@ Sidebar de navegação lateral colapsável.
 const { isCollapsed, toggle } = useSidebar();
 
 <Drawer collapsed={isCollapsed}>
-  <IconButton onClick={toggle}>
-    {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
-  </IconButton>
+  <IconButton onClick={toggle}>{isCollapsed ? <ChevronRight /> : <ChevronLeft />}</IconButton>
   {/* ... */}
 </Drawer>;
 ```

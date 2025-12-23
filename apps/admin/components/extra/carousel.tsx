@@ -59,7 +59,7 @@ export const Carousel: React.FC<CarouselProps> = ({
 
   const goToSlide = (index: number) => {
     let newIndex = index;
-    
+
     if (infinite) {
       if (index < 0) newIndex = slides.length - 1;
       else if (index >= slides.length) newIndex = 0;
@@ -156,9 +156,7 @@ export const Carousel: React.FC<CarouselProps> = ({
               onClick={() => goToSlide(index)}
               className={cn(
                 'size-2 rounded-full transition-all',
-                index === currentIndex
-                  ? 'bg-white w-8'
-                  : 'bg-white/50 hover:bg-white/75'
+                index === currentIndex ? 'bg-white w-8' : 'bg-white/50 hover:bg-white/75'
               )}
               aria-label={`Ir para slide ${index + 1}`}
             />

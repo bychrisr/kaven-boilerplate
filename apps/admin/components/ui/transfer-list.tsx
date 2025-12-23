@@ -51,14 +51,14 @@ export const TransferList: React.FC<TransferListProps> = ({
 
   const currentSelected = controlledSelected.length > 0 ? controlledSelected : selected;
 
-  const leftItems = items.filter(item => !currentSelected.includes(item.id));
-  const rightItems = items.filter(item => currentSelected.includes(item.id));
+  const leftItems = items.filter((item) => !currentSelected.includes(item.id));
+  const rightItems = items.filter((item) => currentSelected.includes(item.id));
 
-  const filteredLeftItems = leftItems.filter(item =>
+  const filteredLeftItems = leftItems.filter((item) =>
     item.label.toLowerCase().includes(leftSearch.toLowerCase())
   );
 
-  const filteredRightItems = rightItems.filter(item =>
+  const filteredRightItems = rightItems.filter((item) =>
     item.label.toLowerCase().includes(rightSearch.toLowerCase())
   );
 
@@ -67,7 +67,7 @@ export const TransferList: React.FC<TransferListProps> = ({
     const setChecked = side === 'left' ? setLeftChecked : setRightChecked;
 
     const newChecked = checked.includes(id)
-      ? checked.filter(itemId => itemId !== id)
+      ? checked.filter((itemId) => itemId !== id)
       : [...checked, id];
 
     setChecked(newChecked);
@@ -81,7 +81,7 @@ export const TransferList: React.FC<TransferListProps> = ({
   };
 
   const handleMoveLeft = () => {
-    const newSelected = currentSelected.filter(id => !rightChecked.includes(id));
+    const newSelected = currentSelected.filter((id) => !rightChecked.includes(id));
     setSelected(newSelected);
     onChange?.(newSelected);
     setRightChecked([]);
@@ -90,7 +90,7 @@ export const TransferList: React.FC<TransferListProps> = ({
   const handleSelectAll = (side: 'left' | 'right') => {
     const itemsToSelect = side === 'left' ? filteredLeftItems : filteredRightItems;
     const setChecked = side === 'left' ? setLeftChecked : setRightChecked;
-    setChecked(itemsToSelect.filter(item => !item.disabled).map(item => item.id));
+    setChecked(itemsToSelect.filter((item) => !item.disabled).map((item) => item.id));
   };
 
   const handleDeselectAll = (side: 'left' | 'right') => {
@@ -147,7 +147,7 @@ export const TransferList: React.FC<TransferListProps> = ({
             Nenhum item
           </div>
         ) : (
-          listItems.map(item => (
+          listItems.map((item) => (
             <label
               key={item.id}
               className={cn(

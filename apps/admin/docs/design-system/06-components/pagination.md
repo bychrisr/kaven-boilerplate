@@ -13,13 +13,7 @@ Componente para navegar entre páginas de dados.
 ## Com Informações
 
 ```tsx
-<Pagination
-  page={1}
-  count={10}
-  showFirstButton
-  showLastButton
-  siblingCount={1}
-/>
+<Pagination page={1} count={10} showFirstButton showLastButton siblingCount={1} />
 ```
 
 ## Estilos

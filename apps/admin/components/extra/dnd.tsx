@@ -75,9 +75,7 @@ export const Dnd: React.FC<DndProps> = ({ items: initialItems, onReorder, render
             )}
           >
             <GripVertical className="size-5 text-text-secondary shrink-0" />
-            <div className="flex-1">
-              {renderItem ? renderItem(item, isDragging) : item.content}
-            </div>
+            <div className="flex-1">{renderItem ? renderItem(item, isDragging) : item.content}</div>
           </div>
         );
       })}

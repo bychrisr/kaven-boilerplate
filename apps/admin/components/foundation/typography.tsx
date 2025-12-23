@@ -151,9 +151,7 @@ export function Typography({
         colorClasses[color],
         align && alignClasses[align],
         fontWeight &&
-          (typeof fontWeight === 'number'
-            ? `font-[${fontWeight}]`
-            : fontWeightClasses[fontWeight]),
+          (typeof fontWeight === 'number' ? `font-[${fontWeight}]` : fontWeightClasses[fontWeight]),
         noWrap && 'truncate',
         gutterBottom && 'mb-2',
         className

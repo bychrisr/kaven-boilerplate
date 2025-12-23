@@ -18,14 +18,14 @@ export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    remember: false
+    remember: false,
   });
   const { setAuth, isAuthenticated } = useAuthStore();
 
   // Redirect if already logged in
   useEffect(() => {
     if (isAuthenticated) {
-        router.replace(returnUrl ? decodeURIComponent(returnUrl) : '/');
+      router.replace(returnUrl ? decodeURIComponent(returnUrl) : '/');
     } else {
       setIsChecking(false);
     }
@@ -45,18 +45,18 @@ export default function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: formData.email,
-          password: formData.password
-        })
+          password: formData.password,
+        }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        
+
         // Update store (which also handles localStorage)
         setAuth(data.user, data.accessToken, data.refreshToken);
-        
+
         toast.success('Login successful!');
-        
+
         // Redirect
         router.refresh();
         router.push(returnUrl ? decodeURIComponent(returnUrl) : '/');
@@ -78,12 +78,8 @@ export default function LoginPage() {
 
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Sign in to Kaven
-        </h1>
-        <p className="text-gray-600">
-          Enter your details below
-        </p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Sign in to Kaven</h1>
+        <p className="text-gray-600">Enter your details below</p>
       </div>
 
       {/* Form */}
@@ -140,7 +136,10 @@ export default function LoginPage() {
             />
             <span className="ml-2 text-sm text-gray-700">Remember me</span>
           </label>
-          <Link href="/forgot-password" className="text-sm text-primary-main hover:text-primary-dark">
+          <Link
+            href="/forgot-password"
+            className="text-sm text-primary-main hover:text-primary-dark"
+          >
             Forgot password?
           </Link>
         </div>

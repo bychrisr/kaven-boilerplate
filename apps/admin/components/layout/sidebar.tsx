@@ -14,7 +14,7 @@ import {
   Settings,
   ChevronDown,
   Activity,
-  LucideIcon
+  LucideIcon,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -46,8 +46,8 @@ const navigation: NavigationItem[] = [
     children: [
       { name: 'List', href: '/users' },
       { name: 'Create', href: '/users/create' },
-      { name: 'Cards', href: '/users/cards' }
-    ]
+      { name: 'Cards', href: '/users/cards' },
+    ],
   },
   { name: 'Tenants', href: '/tenants', icon: Building2, role: 'SUPER_ADMIN' },
   { name: 'Orders', href: '/orders', icon: ShoppingCart },
@@ -61,10 +61,10 @@ const navigation: NavigationItem[] = [
       { name: 'Grafana', href: 'http://localhost:3001', external: true },
       { name: 'Prometheus', href: 'http://localhost:9090', external: true },
       { name: 'System Health', href: '/dashboard/observability' },
-      { name: 'Audit Logs', href: '/dashboard/observability?tab=audit' }
-    ]
+      { name: 'Audit Logs', href: '/dashboard/observability?tab=audit' },
+    ],
   },
-  { name: 'Settings', href: '/settings', icon: Settings }
+  { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
 export function Sidebar({ open, onClose }: Readonly<SidebarProps>) {
@@ -72,8 +72,8 @@ export function Sidebar({ open, onClose }: Readonly<SidebarProps>) {
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const toggleExpand = (name: string) => {
-    setExpandedItems(prev =>
-      prev.includes(name) ? prev.filter(item => item !== name) : [...prev, name]
+    setExpandedItems((prev) =>
+      prev.includes(name) ? prev.filter((item) => item !== name) : [...prev, name]
     );
   };
 
@@ -104,7 +104,8 @@ export function Sidebar({ open, onClose }: Readonly<SidebarProps>) {
         {/* Navigation */}
         <nav className="p-4 space-y-1">
           {navigation.map((item) => {
-            const isActive = pathname === item.href || item.children?.some(child => pathname === child.href);
+            const isActive =
+              pathname === item.href || item.children?.some((child) => pathname === child.href);
             const isExpanded = expandedItems.includes(item.name);
             const Icon = item.icon;
 
@@ -115,9 +116,7 @@ export function Sidebar({ open, onClose }: Readonly<SidebarProps>) {
                     onClick={() => toggleExpand(item.name)}
                     className={cn(
                       'w-full flex items-center justify-between px-4 py-2 text-sm font-medium rounded-lg transition-colors',
-                      isActive
-                        ? 'bg-primary-main text-white'
-                        : 'text-gray-700 hover:bg-gray-100'
+                      isActive ? 'bg-primary-main text-white' : 'text-gray-700 hover:bg-gray-100'
                     )}
                   >
                     <div className="flex items-center gap-3">
@@ -125,10 +124,7 @@ export function Sidebar({ open, onClose }: Readonly<SidebarProps>) {
                       <span>{item.name}</span>
                     </div>
                     <ChevronDown
-                      className={cn(
-                        'h-4 w-4 transition-transform',
-                        isExpanded && 'rotate-180'
-                      )}
+                      className={cn('h-4 w-4 transition-transform', isExpanded && 'rotate-180')}
                     />
                   </button>
                   {isExpanded && (
@@ -161,9 +157,7 @@ export function Sidebar({ open, onClose }: Readonly<SidebarProps>) {
                 href={item.href}
                 className={cn(
                   'flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg transition-colors',
-                  isActive
-                    ? 'bg-primary-main text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                  isActive ? 'bg-primary-main text-white' : 'text-gray-700 hover:bg-gray-100'
                 )}
               >
                 <Icon className="h-5 w-5" />
