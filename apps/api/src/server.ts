@@ -5,6 +5,7 @@ import multipart from '@fastify/multipart';
 import fastifyHelmet from '@fastify/helmet';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
+import { env } from './config/env';
 import { authRoutes } from './modules/auth/routes/auth.routes';
 import { userRoutes } from './modules/users/routes/user.routes';
 import { tenantRoutes } from './modules/tenants/routes/tenant.routes';
@@ -15,10 +16,13 @@ import { fileRoutes } from './modules/files/routes/file.routes';
 import { healthRoutes } from './routes/health.routes';
 import { metricsMiddleware } from './middleware/metrics.middleware';
 import { tenantMiddleware } from './middleware/tenant.middleware';
+import { auditRoutes } from './modules/audit/routes/audit.routes';
+import { observabilityRoutes } from './modules/observability/routes/observability.routes';
+import { advancedMetricsMiddleware, onResponseMetricsHook } from './middleware/advanced-metrics.middleware';
 
 const fastify = Fastify({
   logger: {
-    level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+    level: env.NODE_ENV === 'production' ? 'info' : 'debug',
   },
 });
 
@@ -65,7 +69,6 @@ fastify.register(swaggerUi, {
 });
 
 // Plugins
-// Plugins
 fastify.register(fastifyHelmet, {
   contentSecurityPolicy: {
     directives: {
@@ -82,7 +85,7 @@ fastify.register(cors, {
   origin: [
     'http://localhost:3000',
     'http://localhost:3002', // Frontend admin panel
-    process.env.FRONTEND_URL || 'http://localhost:3000',
+    env.FRONTEND_URL,
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD'],
@@ -97,56 +100,25 @@ fastify.register(multipart, {
 });
 
 // Rate Limiting (global) - SOLUÇÃO ROBUSTA COM REDIS
-fastify.register(rateLimit, {
-  max: 100, // 100 requests
-  timeWindow: 60000, // 1 minuto em ms
-  cache: 10000, // cache de 10k IPs
-  allowList: ['127.0.0.1'], // whitelist localhost
-  // Redis para rate limiting distribuído (produção)
-  redis: process.env.REDIS_URL 
-    ? (() => {
-        const Redis = require('ioredis');
-        const client = new Redis(process.env.REDIS_URL, {
-          enableOfflineQueue: false,
-          maxRetriesPerRequest: 1,
-        });
-        
-        client.on('error', (err: Error) => {
-          console.warn('⚠️  Redis rate limit error:', err.message);
-        });
-        
-        return client;
-      })()
-    : undefined,
-  keyGenerator: (req) => {
-    // Usar IP ou user ID se autenticado
-    return req.user?.id || req.ip || 'anonymous';
-  },
-  errorResponseBuilder: (req, context) => {
-    return {
-      error: 'Rate limit excedido',
-      message: `Muitas requisições. Tente novamente em ${Math.ceil(Number(context.after) / 1000)} segundos.`,
-      retryAfter: context.after,
-    };
-  },
-});
+import { rateLimitConfig } from './middleware/rate-limit.middleware';
+fastify.register(rateLimit, rateLimitConfig);
 
 // Metrics middleware (aplicado globalmente)
 fastify.addHook('onRequest', metricsMiddleware);
 
 // Advanced metrics middleware (coleta latência e status codes)
-import { advancedMetricsMiddleware, onResponseMetricsHook } from './middleware/advanced-metrics.middleware';
 fastify.addHook('onRequest', advancedMetricsMiddleware);
 fastify.addHook('onResponse', onResponseMetricsHook);
 
 // Tenant detection middleware (Camaleão)
 fastify.addHook('onRequest', tenantMiddleware);
 
+// CSRF Protection (Global)
+import { csrfMiddleware } from './middleware/csrf.middleware';
+fastify.addHook('onRequest', csrfMiddleware);
+
 // Health checks e Metrics
 fastify.register(healthRoutes);
-
-import { auditRoutes } from './modules/audit/routes/audit.routes';
-import { observabilityRoutes } from './modules/observability/routes/observability.routes';
 
 // Rotas
 fastify.register(authRoutes, { prefix: '/api/auth' });
@@ -160,11 +132,53 @@ fastify.register(fileRoutes, { prefix: '/api/files' });
 fastify.register(auditRoutes, { prefix: '/api/audit-logs' });
 fastify.register(observabilityRoutes, { prefix: '/api/observability' });
 
+// 🕵️ FORENSIC AUDIT: Global Request Tracer
+import { randomUUID } from 'node:crypto';
+import { secureLog } from './utils/secure-logger';
+
+fastify.addHook('onRequest', async (request, reply) => {
+  const reqId = (request.headers['x-request-id'] as string) || randomUUID();
+  request.id = reqId; // Override Fastify's default ID with our UUID
+  request.headers['x-request-id'] = reqId;
+  
+  secureLog.info('[REQ_START]', {
+    reqId,
+    method: request.method,
+    url: request.url,
+    ip: request.ip,
+    userAgent: request.headers['user-agent']
+  });
+});
+
+// 🕵️ FORENSIC AUDIT: Global Error Interceptor
+fastify.setErrorHandler((error: any, request, reply) => {
+  const reqId = request.id;
+  
+  secureLog.error('[FATAL_ERROR]', {
+    reqId,
+    error: error.message,
+    statusCode: error.statusCode,
+    validation: error.validation,
+    stack: env.NODE_ENV !== 'production' ? error.stack : undefined,
+    // input: request.body // Body might not be parsed yet or could be huge. Use with caution.
+    // SecureLog will redact sensitive fields if present.
+    input: request.body
+  });
+
+  // Default Fastify error response
+  reply.status(error.statusCode || 500).send({
+    statusCode: error.statusCode || 500,
+    error: error.name || 'Internal Server Error',
+    message: error.message,
+    validation: error.validation
+  });
+});
+
 
 // Start server
 const start = async () => {
   try {
-    const port = Number.parseInt(process.env.PORT || '8000');
+    const port = env.PORT;
     await fastify.listen({ port, host: '0.0.0.0' });
     console.log(`🚀 Server running on http://localhost:${port}`);
     console.log(`📚 API Documentation: http://localhost:${port}/api/auth`);

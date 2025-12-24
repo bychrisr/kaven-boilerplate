@@ -6,7 +6,6 @@ import '@fontsource/barlow/600.css';
 import '@fontsource/barlow/700.css';
 import '@fontsource/barlow/800.css';
 import './globals.css';
-// import { DesignSystemProvider } from "@/lib/design-system";
 
 export const metadata: Metadata = {
   title: 'Kaven Admin Panel',
@@ -15,16 +14,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body suppressHydrationWarning>
-        {/* <DesignSystemProvider> */}
-        {children}
-        {/* </DesignSystemProvider> */}
-      </body>
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }

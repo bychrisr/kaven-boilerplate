@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { toast } from 'sonner';
 import { getErrorMessage } from '@/lib/errors';
+import { useAuthStore } from '@/stores/auth.store';
 
 export interface Tenant {
   id: string;
@@ -36,6 +37,7 @@ interface TenantsResponse {
 }
 
 export function useTenants(page: number = 1, limit: number = 100) {
+  const isInitialized = useAuthStore((state) => state.isInitialized);
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery<TenantsResponse>({
@@ -46,6 +48,7 @@ export function useTenants(page: number = 1, limit: number = 100) {
       });
       return response.data;
     },
+    enabled: isInitialized,
   });
 
   const createTenant = useMutation({
@@ -101,12 +104,14 @@ export function useTenants(page: number = 1, limit: number = 100) {
 }
 
 export function useTenant(id: string) {
+  const isInitialized = useAuthStore((state) => state.isInitialized);
+  
   return useQuery<Tenant>({
     queryKey: ['tenant', id],
     queryFn: async () => {
       const response = await api.get(`/api/tenants/${id}`);
       return response.data;
     },
-    enabled: !!id,
+    enabled: isInitialized && !!id,
   });
 }

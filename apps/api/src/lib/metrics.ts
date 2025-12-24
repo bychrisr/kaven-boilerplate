@@ -1,4 +1,5 @@
 import client from 'prom-client';
+import { env } from '../config/env';
 
 // Criar registry
 const register = new client.Registry();
@@ -6,7 +7,7 @@ const register = new client.Registry();
 // Labels padrão
 register.setDefaultLabels({
   app: 'kaven-api',
-  env: process.env.NODE_ENV || 'development',
+  env: env.NODE_ENV,
 });
 
 // Coletar métricas padrão do Node.js

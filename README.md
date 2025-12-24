@@ -81,11 +81,14 @@ Turborepo Monorepo
 
 ## 🔐 Segurança
 
-- **JWT** com access tokens (15min) + refresh tokens (7 dias)
-- **bcrypt** para hash de senhas (cost factor 12)
+- **JWT** com access tokens (15min) + refresh tokens (7 dias) (Standard `sub` claim)
+- **Password Hardening** com validação de força e hash seguro
 - **2FA TOTP** com QR codes + backup codes
-- **Zod** para validação de inputs
-- **CORS** configurado
+- **Zod** para validação de inputs e Environment Variables
+- **Security Middlewares:** Rate Limiting (Redis), CSRF Protection, IDOR Prevention
+- **Secure Logger** com redação de dados sensíveis
+- **Input Sanitization** contra XSS e Injection
+- **CORS** e **Helmet** configurados
 - **Soft deletes** para auditoria
 
 ---

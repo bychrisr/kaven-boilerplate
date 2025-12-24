@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { toast } from 'sonner';
 import { getErrorMessage } from '@/lib/errors';
+import { useAuthStore } from '@/stores/auth.store';
 
 interface User {
   id: string;
@@ -52,17 +53,21 @@ interface UserStats {
 }
 
 export function useUserStats() {
+  const isInitialized = useAuthStore((state) => state.isInitialized);
+  
   return useQuery<UserStats>({
     queryKey: ['user-stats'],
     queryFn: async () => {
       const response = await api.get('/api/users/stats');
       return response.data;
     },
+    enabled: isInitialized,
   });
 }
 
 // Query: Listar usuários
 export function useUsers(params?: { page?: number; limit?: number; tenantId?: string }) {
+  const isInitialized = useAuthStore((state) => state.isInitialized);
   const page = params?.page ?? 1;
   const limit = params?.limit ?? 10;
   const tenantId = params?.tenantId;
@@ -75,29 +80,35 @@ export function useUsers(params?: { page?: number; limit?: number; tenantId?: st
       });
       return response.data;
     },
+    enabled: isInitialized,
   });
 }
 
 // Query: Buscar usuário por ID
 export function useUser(id: string) {
+  const isInitialized = useAuthStore((state) => state.isInitialized);
+  
   return useQuery<User>({
     queryKey: ['user', id],
     queryFn: async () => {
       const response = await api.get(`/api/users/${id}`);
       return response.data;
     },
-    enabled: !!id,
+    enabled: isInitialized && !!id,
   });
 }
 
 // Query: Usuário atual
 export function useCurrentUser() {
+  const isInitialized = useAuthStore((state) => state.isInitialized);
+  
   return useQuery<User>({
     queryKey: ['user', 'me'],
     queryFn: async () => {
       const response = await api.get('/api/users/me');
       return response.data;
     },
+    enabled: isInitialized,
   });
 }
 

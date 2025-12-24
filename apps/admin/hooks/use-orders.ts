@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { toast } from 'sonner';
 import { getErrorMessage } from '@/lib/errors';
+import { useAuthStore } from '@/stores/auth.store';
 
 export type OrderStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'CANCELED' | 'REFUNDED';
 
@@ -49,6 +50,7 @@ export interface OrdersParams {
 }
 
 export function useOrders(params?: OrdersParams) {
+  const isInitialized = useAuthStore((state) => state.isInitialized);
   const queryClient = useQueryClient();
   const queryParams = params ?? { page: 1, limit: 10 };
 
@@ -58,6 +60,7 @@ export function useOrders(params?: OrdersParams) {
       const response = await api.get('/api/orders', { params: queryParams });
       return response.data;
     },
+    enabled: isInitialized,
   });
 
   const updateOrderStatus = useMutation({
@@ -84,12 +87,14 @@ export function useOrders(params?: OrdersParams) {
 }
 
 export function useOrder(id: string) {
+  const isInitialized = useAuthStore((state) => state.isInitialized);
+  
   return useQuery<Order>({
     queryKey: ['order', id],
     queryFn: async () => {
       const response = await api.get(`/api/orders/${id}`);
       return response.data;
     },
-    enabled: !!id,
+    enabled: isInitialized && !!id,
   });
 }

@@ -1,8 +1,16 @@
 import Stripe from 'stripe';
 import prisma from '../../lib/prisma';
+import { env } from '../../config/env';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-12-15.clover',
+const stripeKey = env.STRIPE_SECRET_KEY || 'sk_test_placeholder';
+
+if (stripeKey === 'sk_test_placeholder') {
+  console.warn('⚠️  Stripe not configured (using placeholder key). Payment features will fail.');
+}
+
+const stripe = new Stripe(stripeKey, {
+  apiVersion: '2025-12-15.clover' as any, // Cast to any because 2024+ API might not be in types yet or just for safety
+  typescript: true,
 });
 
 export class StripeService {
@@ -156,7 +164,7 @@ export class StripeService {
    * Processar webhook do Stripe
    */
   async handleWebhook(body: string | Buffer, signature: string) {
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    const webhookSecret = env.STRIPE_WEBHOOK_SECRET;
 
     if (!webhookSecret) {
       throw new Error('STRIPE_WEBHOOK_SECRET não configurado');

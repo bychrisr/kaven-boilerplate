@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { toast } from 'sonner';
 import { getErrorMessage } from '@/lib/errors';
+import { useAuthStore } from '@/stores/auth.store';
 
 export type InvoiceStatus = 'DRAFT' | 'PENDING' | 'PAID' | 'OVERDUE' | 'CANCELED';
 
@@ -63,12 +64,15 @@ export interface InvoiceStats {
 }
 
 export function useInvoiceStats() {
+  const isInitialized = useAuthStore((state) => state.isInitialized);
+  
   return useQuery<InvoiceStats>({
     queryKey: ['invoice-stats'],
     queryFn: async () => {
       const response = await api.get('/api/invoices/stats');
       return response.data;
     },
+    enabled: isInitialized,
   });
 }
 
@@ -81,6 +85,7 @@ export interface InvoicesParams {
 }
 
 export function useInvoices(params?: InvoicesParams) {
+  const isInitialized = useAuthStore((state) => state.isInitialized);
   const queryClient = useQueryClient();
 
   const queryParams = params ?? { page: 1, limit: 10 };
@@ -91,6 +96,7 @@ export function useInvoices(params?: InvoicesParams) {
       const response = await api.get('/api/invoices', { params: queryParams });
       return response.data;
     },
+    enabled: isInitialized,
   });
 
   const createInvoice = useMutation({
@@ -162,12 +168,14 @@ export function useInvoices(params?: InvoicesParams) {
 }
 
 export function useInvoice(id: string) {
+  const isInitialized = useAuthStore((state) => state.isInitialized);
+  
   return useQuery<Invoice>({
     queryKey: ['invoice', id],
     queryFn: async () => {
       const response = await api.get(`/api/invoices/${id}`);
       return response.data;
     },
-    enabled: !!id,
+    enabled: isInitialized && !!id,
   });
 }

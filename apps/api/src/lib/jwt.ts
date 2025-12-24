@@ -1,14 +1,13 @@
 import * as jose from 'jose';
+import { env } from '../config/env';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'change-me-in-production'
-);
+const JWT_SECRET = new TextEncoder().encode(env.JWT_SECRET);
 
 const ACCESS_TOKEN_EXPIRY = '15m'; // 15 minutos
 const REFRESH_TOKEN_EXPIRY = '7d'; // 7 dias
 
 export interface JWTPayload {
-  userId: string;
+  sub: string; // Subject (User ID)
   email: string;
   role: string;
   tenantId?: string;
@@ -39,9 +38,17 @@ export function generateRefreshToken(): string {
  */
 export async function verifyToken(token: string): Promise<JWTPayload> {
   try {
-    const { payload } = await jose.jwtVerify(token, JWT_SECRET);
+    const secretFingerprint = `${env.JWT_SECRET.substring(0, 3)}...(${env.JWT_SECRET.length})`;
+    console.log(`🔍 VERIFY - Token len: ${token.length}, Secret: ${secretFingerprint}`);
+    
+    // Default verify (permissive) to fix stability issues
+    const { payload } = await jose.jwtVerify(token, JWT_SECRET); 
     return payload as unknown as JWTPayload;
-  } catch (error) {
+  } catch (error: any) {
+    console.error('❌ JWT Verification Error:', error);
+    if (error?.code === 'ERR_JWS_SIGNATURE_VERIFICATION_FAILED') {
+        console.error('❌ Signature Mismatch! Secret might have changed or token is forged.');
+    }
     throw new Error('Token inválido ou expirado');
   }
 }

@@ -114,6 +114,13 @@ model User {
   deletedAt         DateTime?  // Soft delete
   lastLoginAt       DateTime?
   
+  // Security fields (Axisor Port)
+  loginAttempts      Int       @default(0)
+  lockedUntil        DateTime?
+  lastLoginIp        String?
+  lastLoginUserAgent String?
+  sessionExpiresAt   DateTime?
+  
   // Relations
   tenant        Tenant?        @relation(fields: [tenantId], references: [id])
   refreshTokens RefreshToken[]
@@ -122,6 +129,10 @@ model User {
   verificationTokens VerificationToken[]
   passwordResetTokens PasswordResetToken[]
   designSystemCustomization DesignSystemCustomization?
+  
+  // Security Relations
+  securityAuditLogs SecurityAuditLog[]
+  securityConfigsUpdated SecurityConfig[]
   
   @@index([email])
   @@index([tenantId])
@@ -366,3 +377,43 @@ model DesignSystemCustomization {
   @@index([designSystem])
 }
 
+// ===========================
+// SECURITY MODELS (Axisor Port)
+// ===========================
+
+model SecurityConfig {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       String
+  description String?
+  category    String   @default("authentication")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  updatedBy   String?
+  
+  // Relations
+  updatedByUser User?    @relation(fields: [updatedBy], references: [id])
+  
+  @@index([key])
+  @@index([isActive])
+}
+
+model SecurityAuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  action     String
+  resource   String?
+  ipAddress  String?
+  userAgent  String?
+  success    Boolean  @default(true)
+  details    Json?
+  createdAt  DateTime @default(now())
+  
+  // Relations
+  user       User?    @relation(fields: [userId], references: [id])
+  
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}

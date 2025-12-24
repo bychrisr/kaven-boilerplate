@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../lib/prisma';
+import { env } from '../config/env';
 
 /**
  * Middleware Camaleão - Detecção automática de tenant
@@ -93,7 +94,7 @@ export async function tenantMiddleware(
   let tenantSlug: string | null = null;
 
   // Modo SINGLE TENANT (via env var)
-  const isSingleTenant = process.env.MULTI_TENANT_MODE !== 'true';
+  const isSingleTenant = env.MULTI_TENANT_MODE !== 'true';
   
   if (isSingleTenant) {
     // Em modo single tenant, não detecta tenant

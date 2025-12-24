@@ -1,6 +1,6 @@
 import prisma from '../../../lib/prisma';
 import crypto from 'node:crypto';
-import { hashPassword, comparePassword } from '../../../lib/bcrypt';
+import { hashPassword, comparePassword, validatePasswordStrength } from '../../../lib/password';
 import { generateAccessToken, generateRefreshToken, getRefreshTokenExpiry } from '../../../lib/jwt';
 import { generate2FASecret, verify2FACode, generateBackupCodes } from '../../../lib/2fa';
 import { emailService } from '../../../lib/email.service';
@@ -60,6 +60,12 @@ export class AuthService {
       });
 
       tenantId = tenant.id;
+    }
+    
+    // Validar força da senha
+    const passwordValidation = validatePasswordStrength(data.password);
+    if (!passwordValidation.isValid) {
+      throw new Error(passwordValidation.message || 'Senha fraca');
     }
 
     // Hash da senha
@@ -171,19 +177,67 @@ export class AuthService {
    * POST /api/auth/login
    * Realiza login e retorna access token + refresh token
    */
-  async login(data: LoginInput) {
+  async login(data: LoginInput, ip?: string, userAgent?: string) {
     // Buscar usuário
     const user = await prisma.user.findUnique({
       where: { email: data.email },
     });
 
-    if (!user) {
+    if (!user || user.deletedAt) {
+      // Log Security Audit (Tentativa em conta inexistente ou deletada)
+      // Mas aqui apenas lançamos erro genérico
       throw new Error('Credenciais inválidas');
+    }
+
+    // [SECURITY] Verificar Bloqueio
+    if (user.lockedUntil && user.lockedUntil > new Date()) {
+      await prisma.securityAuditLog.create({
+        data: {
+          action: 'auth.login.locked_attempt',
+          userId: user.id,
+          ipAddress: ip,
+          userAgent: userAgent,
+          success: false,
+          details: { reason: 'Account locked' }
+        }
+      });
+      throw new Error('Conta temporariamente bloqueada. Tente novamente em 15 minutos.');
     }
 
     // Verificar senha
     const isPasswordValid = await comparePassword(data.password, user.password);
+    
     if (!isPasswordValid) {
+      // [SECURITY] Incrementar tentativas falhas
+      const newAttempts = (user.loginAttempts || 0) + 1;
+      let lockedUntil: Date | null = null;
+      
+      // Bloquear após 5 tentativas (Hardcoded por enquanto, depois usar SecurityConfig)
+      if (newAttempts >= 5) {
+        lockedUntil = new Date();
+        lockedUntil.setMinutes(lockedUntil.getMinutes() + 15);
+      }
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          loginAttempts: newAttempts,
+          lockedUntil
+        }
+      });
+
+      // Log Security Audit
+      await prisma.securityAuditLog.create({
+        data: {
+          action: 'auth.login.failed',
+          userId: user.id,
+          ipAddress: ip,
+          userAgent: userAgent,
+          success: false,
+          details: { attempt: newAttempts }
+        }
+      });
+
       throw new Error('Credenciais inválidas');
     }
 
@@ -198,13 +252,32 @@ export class AuthService {
 
       const isCodeValid = verify2FACode(user.twoFactorSecret!, data.twoFactorCode);
       if (!isCodeValid) {
+        // [SECURITY] Também contar falha de 2FA como tentativa inválida
+         const newAttempts = (user.loginAttempts || 0) + 1;
+         await prisma.user.update({
+            where: { id: user.id },
+            data: { loginAttempts: newAttempts }
+         });
+         
         throw new Error('Código 2FA inválido');
       }
     }
 
+    // [SECURITY] Resetar tentativas e atualizar info de login
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { 
+        lastLoginAt: new Date(),
+        loginAttempts: 0,
+        lockedUntil: null,
+        lastLoginIp: ip,
+        lastLoginUserAgent: userAgent
+      },
+    });
+
     // Gerar tokens
     const accessToken = await generateAccessToken({
-      userId: user.id,
+      sub: user.id,
       email: user.email,
       role: user.role,
       tenantId: user.tenantId || undefined,
@@ -222,13 +295,19 @@ export class AuthService {
       },
     });
 
-    // Atualizar último login
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { lastLoginAt: new Date() },
+    // Log Security Audit Success
+    await prisma.securityAuditLog.create({
+      data: {
+        action: 'auth.login.success',
+        userId: user.id,
+        ipAddress: ip,
+        userAgent: userAgent,
+        success: true,
+        details: { method: 'password', has2FA: user.twoFactorEnabled }
+      }
     });
 
-    // Log Audit
+    // Log Business Audit (Manter compatibilidade com auditlog existente)
     await auditService.log({
       action: 'auth.login.success',
       entity: 'User',
@@ -267,7 +346,7 @@ export class AuthService {
 
     // Gerar novo access token
     const accessToken = await generateAccessToken({
-      userId: tokenRecord.user.id,
+      sub: tokenRecord.user.id,
       email: tokenRecord.user.email,
       role: tokenRecord.user.role,
       tenantId: tokenRecord.user.tenantId || undefined,
@@ -343,6 +422,11 @@ export class AuthService {
 
     if (resetTokenRecord.expiresAt < new Date()) {
       throw new Error('Token expirado');
+    }
+
+    const passwordValidation = validatePasswordStrength(newPassword);
+    if (!passwordValidation.isValid) {
+      throw new Error(passwordValidation.message || 'Senha fraca');
     }
 
     const hashedPassword = await hashPassword(newPassword);

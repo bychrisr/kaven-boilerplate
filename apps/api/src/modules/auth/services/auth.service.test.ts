@@ -22,9 +22,10 @@ vi.mock('../../../lib/prisma', () => ({
   default: prismaMock,
 }));
 
-vi.mock('../../../lib/bcrypt', () => ({
+vi.mock('../../../lib/password', () => ({
   hashPassword: vi.fn().mockResolvedValue('hashed_password'),
   comparePassword: vi.fn(),
+  validatePasswordStrength: vi.fn().mockReturnValue({ isValid: true }),
 }));
 
 vi.mock('../../../lib/jwt', () => ({
@@ -41,7 +42,7 @@ vi.mock('../../../lib/email.service', () => ({
   },
 }));
 
-import { hashPassword, comparePassword } from '../../../lib/bcrypt';
+import { hashPassword, comparePassword } from '../../../lib/password';
 import { emailService } from '../../../lib/email.service';
 
 describe('AuthService', () => {

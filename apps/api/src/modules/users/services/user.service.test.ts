@@ -16,11 +16,11 @@ vi.mock('../../../lib/prisma', () => ({
   default: prismaMock,
 }));
 
-vi.mock('../../../lib/bcrypt', () => ({
+vi.mock('../../../lib/password', () => ({
   hashPassword: vi.fn().mockResolvedValue('hashed_password'),
 }));
 
-import { hashPassword } from '../../../lib/bcrypt';
+import { hashPassword } from '../../../lib/password';
 
 describe('UserService', () => {
   let userService: UserService;

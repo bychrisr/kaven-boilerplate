@@ -1,5 +1,5 @@
 import prisma from '../../../lib/prisma';
-import { hashPassword } from '../../../lib/bcrypt';
+import { hashPassword } from '../../../lib/password';
 import type { CreateUserInput, UpdateUserInput } from '../../../lib/validation';
 import { auditService } from '../../audit/services/audit.service';
 

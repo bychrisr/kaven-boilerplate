@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client';
+import { env } from '../config/env';
+import { secureLog } from '../utils/secure-logger';
 
 // Singleton pattern para Prisma Client
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
@@ -6,10 +8,24 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 export const prisma =
   globalForPrisma.prisma ||
   new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    log: [
+      { emit: 'event', level: 'query' },
+      { emit: 'stdout', level: 'error' },
+      { emit: 'stdout', level: 'info' },
+      { emit: 'stdout', level: 'warn' },
+    ],
   });
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+// @ts-ignore
+prisma.$on('query', (e: any) => {
+  secureLog.debug('[DB_QUERY]', {
+    query: e.query,
+    params: e.params,
+    duration: `${e.duration}ms`,
+  });
+});
+
+if (env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
 // ===========================
 // PRISMA RLS MIDDLEWARE

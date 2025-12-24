@@ -1,0 +1,35 @@
+import { z } from 'zod';
+
+export const envSchema = z.object({
+  NODE_ENV: z.enum(['development', 'production', 'test', 'staging']).default('development'),
+  PORT: z.string().transform(Number).default(8000),
+  DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
+  REDIS_URL: z.string().min(1, 'REDIS_URL is required'),
+  JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
+  JWT_EXPIRES_IN: z.string().default('2h'),
+  REFRESH_TOKEN_SECRET: z.string().min(32, 'REFRESH_TOKEN_SECRET must be at least 32 characters'),
+  ENCRYPTION_KEY: z.string().min(32, 'ENCRYPTION_KEY must be at least 32 characters').optional(),
+  RATE_LIMIT_MAX: z.union([z.string().transform(Number), z.number()]).default(100),
+  CORS_ORIGIN: z.string().default('http://localhost:3000'),
+  FRONTEND_URL: z.string().default('http://localhost:3000'),
+
+  // Stripe
+  STRIPE_SECRET_KEY: z.string().optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().optional(),
+
+  // SMTP
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.string().transform(Number).default(587),
+  SMTP_SECURE: z.string().transform(v => v === 'true').default(false),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  EMAIL_FROM: z.string().default('Kaven <noreply@kaven.com>'),
+  
+  // App Config
+  MULTI_TENANT_MODE: z.string().default('true'),
+
+  // Logging
+  LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
+});
+
+export type Environment = z.infer<typeof envSchema>;

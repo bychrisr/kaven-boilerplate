@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useAuthStore } from '@/stores/auth.store';
 
 interface DashboardStats {
   totalUsers: number;
@@ -17,6 +18,8 @@ interface MonthlyData {
 
 // Query: Dashboard stats
 export function useDashboardStats() {
+  const isInitialized = useAuthStore((state) => state.isInitialized);
+  
   return useQuery<DashboardStats>({
     queryKey: ['dashboard', 'stats'],
     queryFn: async () => {
@@ -31,11 +34,14 @@ export function useDashboardStats() {
         revenueGrowth: 0,
       };
     },
+    enabled: isInitialized,
   });
 }
 
 // Query: Monthly data for charts
 export function useMonthlyData() {
+  const isInitialized = useAuthStore((state) => state.isInitialized);
+  
   return useQuery<MonthlyData[]>({
     queryKey: ['dashboard', 'monthly'],
     queryFn: async () => {
@@ -48,5 +54,6 @@ export function useMonthlyData() {
         users: 20 + index * 5 + Math.floor(Math.random() * 10),
       }));
     },
+    enabled: isInitialized,
   });
 }

@@ -26,15 +26,24 @@ declare module 'fastify' {
 /**
  * Middleware de autenticação JWT
  */
+import { secureLog } from '../utils/secure-logger';
+
+// ... (existing code)
+
 export async function authMiddleware(
   request: FastifyRequest,
   reply: FastifyReply
 ): Promise<void> {
+  const reqId = request.id;
+  // secureLog.debug('[MW_ENTER: Auth]', { reqId, url: request.url }); // Too verbose maybe? No, "MAXIMUM LOGS" requested.
+  secureLog.debug('[MW_ENTER: Auth]', { reqId });
+
   try {
     // Extrair token do header Authorization
     const authHeader = request.headers.authorization;
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      secureLog.warn('[MW_BLOCK: Auth]', { reqId, reason: 'Missing Token' });
       reply.status(401).send({
         error: 'Token não fornecido',
         message: 'Header Authorization com Bearer token é obrigatório',
@@ -42,12 +51,13 @@ export async function authMiddleware(
       return;
     }
 
-    const token = authHeader.substring(7); // Remove "Bearer "
+    const token = authHeader.substring(7).trim(); // Remove "Bearer " and whitespace
 
     // Verificar token JWT
     const payload = await verifyToken(token);
 
-    if (!payload || !payload.userId) {
+    if (!payload || !payload.sub) {
+      secureLog.warn('[MW_BLOCK: Auth]', { reqId, reason: 'Invalid Token Payload' });
       reply.status(401).send({
         error: 'Token inválido',
         message: 'Token JWT inválido ou expirado',
@@ -57,7 +67,7 @@ export async function authMiddleware(
 
     // Buscar usuário no banco
     const user = await prisma.user.findUnique({
-      where: { id: payload.userId },
+      where: { id: payload.sub },
       select: {
         id: true,
         email: true,
@@ -68,6 +78,7 @@ export async function authMiddleware(
     });
 
     if (!user || user.deletedAt) {
+      secureLog.warn('[MW_BLOCK: Auth]', { reqId, reason: 'User Not Found', userId: payload.sub });
       reply.status(401).send({
         error: 'Usuário não encontrado',
         message: 'Usuário não existe ou foi deletado',
@@ -76,6 +87,7 @@ export async function authMiddleware(
     }
 
     // Injetar user no request
+    secureLog.debug('[MW_SUCCESS: Auth]', { reqId, userId: user.id });
     request.user = {
       id: user.id,
       email: user.email,
@@ -86,9 +98,16 @@ export async function authMiddleware(
 
     // Continuar para próximo handler
   } catch (error) {
+    // Error logged by global handler or catch block here?
+    // Catch block here sends 401. User wants visibility.
+    secureLog.error('[MW_ERROR: Auth]', { reqId, error });
+    
+    // Original behavior
+    /*
     if (request.log) {
         request.log.error({ error }, 'Erro no auth middleware');
     }
+    */
     reply.status(401).send({
       error: 'Erro de autenticação',
       message: 'Falha ao verificar token',
@@ -117,13 +136,13 @@ export async function optionalAuthMiddleware(
     const token = authHeader.substring(7);
     const payload = await verifyToken(token);
 
-    if (!payload || !payload.userId) {
+    if (!payload || !payload.sub) {
       // Token inválido, continua sem user
       return;
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: payload.userId },
+      where: { id: payload.sub },
       select: {
         id: true,
         email: true,

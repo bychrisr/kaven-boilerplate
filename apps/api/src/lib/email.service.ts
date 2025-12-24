@@ -1,5 +1,7 @@
 import nodemailer, { Transporter } from 'nodemailer';
 import type { User, Invoice } from '@prisma/client';
+import { env } from '../config/env';
+import { secureLog } from '../utils/secure-logger';
 
 /**
  * Email Service - Envio de emails transacionais
@@ -29,13 +31,13 @@ class EmailService {
   private isConfigured: boolean;
 
   constructor() {
-    this.from = process.env.EMAIL_FROM || 'Kaven <noreply@kaven.com>';
+    this.from = env.EMAIL_FROM;
     this.isConfigured = this.checkConfiguration();
 
     if (this.isConfigured) {
       this.transporter = this.createTransporter();
     } else {
-      console.warn('⚠️  Email service não configurado. Emails não serão enviados.');
+      secureLog.warn('Email service não configurado. Emails não serão enviados.');
       // Criar transporter fake para desenvolvimento
       this.transporter = nodemailer.createTransport({
         jsonTransport: true,
@@ -47,14 +49,10 @@ class EmailService {
    * Verifica se variáveis de ambiente estão configuradas
    */
   private checkConfiguration(): boolean {
-    const required = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS'];
-    const missing = required.filter(key => !process.env[key]);
-
-    if (missing.length > 0) {
-      console.warn(`⚠️  Variáveis de email faltando: ${missing.join(', ')}`);
+    if (!env.SMTP_HOST || !env.SMTP_USER || !env.SMTP_PASS) {
+      secureLog.warn('Variáveis de email (SMTP) faltando.');
       return false;
     }
-
     return true;
   }
 
@@ -63,12 +61,12 @@ class EmailService {
    */
   private createTransporter(): Transporter {
     const config: EmailConfig = {
-      host: process.env.SMTP_HOST!,
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_SECURE === 'true', // true para 465, false para outros
+      host: env.SMTP_HOST!,
+      port: env.SMTP_PORT, // Already number
+      secure: env.SMTP_SECURE, // Already boolean
       auth: {
-        user: process.env.SMTP_USER!,
-        pass: process.env.SMTP_PASS!,
+        user: env.SMTP_USER!,
+        pass: env.SMTP_PASS!,
       },
     };
 
@@ -88,17 +86,17 @@ class EmailService {
       });
 
       if (!this.isConfigured) {
-        console.log('📧 [DEV] Email que seria enviado:', {
+        secureLog.info('[DEV] Email que seria enviado:', {
           to,
           subject,
           messageId: info.messageId,
           preview: nodemailer.getTestMessageUrl(info),
         });
       } else {
-        console.log('✅ Email enviado:', { to, subject, messageId: info.messageId });
+        secureLog.info('Email enviado:', { to, subject, messageId: info.messageId });
       }
     } catch (error) {
-      console.error('❌ Erro ao enviar email:', error);
+      secureLog.error('Erro ao enviar email:', error);
       throw new Error('Falha ao enviar email');
     }
   }
@@ -117,7 +115,7 @@ class EmailService {
    */
   async sendVerificationEmail(user: Pick<User, 'email' | 'name'>, token: string): Promise<void> {
     const subject = 'Verifique seu email';
-    const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
+    const verificationUrl = `${env.FRONTEND_URL}/verify-email?token=${token}`;
     const html = this.getVerificationTemplate(user.name, verificationUrl);
     await this.sendEmail(user.email, subject, html);
   }
@@ -127,7 +125,7 @@ class EmailService {
    */
   async sendPasswordResetEmail(user: Pick<User, 'email' | 'name'>, token: string): Promise<void> {
     const subject = 'Redefinir sua senha';
-    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    const resetUrl = `${env.FRONTEND_URL}/reset-password?token=${token}`;
     const html = this.getPasswordResetTemplate(user.name, resetUrl);
     await this.sendEmail(user.email, subject, html);
   }
@@ -184,7 +182,7 @@ class EmailService {
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td align="center">
-                    <a href="${process.env.FRONTEND_URL}/dashboard" 
+                    <a href="${env.FRONTEND_URL}/dashboard" 
                        style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; padding: 14px 40px; border-radius: 6px; font-size: 16px; font-weight: bold;">
                       Acessar Dashboard
                     </a>
@@ -404,7 +402,7 @@ class EmailService {
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td align="center">
-                    <a href="${process.env.FRONTEND_URL}/invoices/${invoice.invoiceNumber}" 
+                    <a href="${env.FRONTEND_URL}/invoices/${invoice.invoiceNumber}" 
                        style="display: inline-block; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: #ffffff; text-decoration: none; padding: 14px 40px; border-radius: 6px; font-size: 16px; font-weight: bold;">
                       Ver Invoice
                     </a>

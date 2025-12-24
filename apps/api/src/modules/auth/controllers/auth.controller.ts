@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { authService } from '../services/auth.service';
+import { sanitizer } from '../../../utils/sanitizer';
 import { 
   registerSchema, 
   loginSchema, 
@@ -18,6 +19,10 @@ export class AuthController {
   async register(request: FastifyRequest, reply: FastifyReply) {
     try {
       const data = registerSchema.parse(request.body);
+      
+      // 🛡️ SECURITY: Sanitize inputs against XSS
+      if (data.name) data.name = sanitizer.clean(data.name);
+      
       const result = await authService.register(data);
       reply.status(201).send(result);
     } catch (error: any) {
@@ -60,7 +65,11 @@ export class AuthController {
   async login(request: FastifyRequest, reply: FastifyReply) {
     try {
       const data = loginSchema.parse(request.body);
-      const result = await authService.login(data);
+      
+      const ip = request.ip;
+      const userAgent = request.headers['user-agent'];
+
+      const result = await authService.login(data, ip, userAgent);
       
       if ('requires2FA' in result) {
         return reply.status(200).send(result);
