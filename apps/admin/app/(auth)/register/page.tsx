@@ -91,109 +91,161 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <Logo size="large" className="justify-center" />
-
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Get started absolutely free</h1>
-        <p className="text-gray-600">Create your account to continue</p>
+    <div className="bg-[#212B36] rounded-2xl p-8 shadow-2xl border border-gray-700/50">
+      <div className="mb-8">
+        <Logo size="large" className="mb-6" />
+        <h4 className="text-2xl font-bold text-white mb-2">Get started absolutely free</h4>
+        <p className="text-gray-400 text-sm">
+          Already have an account?{' '}
+          <Link href="/login" className="text-primary-main hover:text-primary-light font-semibold transition-colors">
+            Sign in
+          </Link>
+        </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <TextField
-          id="name"
-          type="text"
-          label="Full name"
-          placeholder="John Doe"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          required
-          fullWidth
-        />
-
-        <TextField
-          id="email"
-          type="email"
-          label="Email address"
-          placeholder="you@example.com"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          required
-          fullWidth
-        />
-
-        <div>
-          <TextField
-            id="password"
-            type={showPassword ? 'text' : 'password'}
-            label="Password"
-            placeholder="••••••••"
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            required
-            fullWidth
-            endAdornment={
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              </button>
-            }
-          />
-
-          {formData.password && (
-            <div className="mt-2">
-              <div className="flex gap-1 mb-1">
-                {[1, 2, 3, 4, 5].map((level) => (
-                  <div
-                    key={level}
-                    className={`h-1 flex-1 rounded ${
-                      level <= passwordStrength ? strengthColors[passwordStrength] : 'bg-gray-200'
-                    }`}
-                  />
-                ))}
-              </div>
-              <p className="text-xs text-gray-600">
-                Password strength: <span className="font-medium">{strengthLabels[passwordStrength]}</span>
-              </p>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <TextField
+                  id="firstName"
+                  type="text"
+                  label="First name"
+                  placeholder="John"
+                  value={formData.name.split(' ')[0] || ''}
+                  onChange={(e) => {
+                     const lastName = formData.name.split(' ').slice(1).join(' ');
+                     setFormData({ ...formData, name: `${e.target.value} ${lastName}`.trim() });
+                  }}
+                  required
+                  fullWidth
+                  className="bg-[#161C24] border-gray-700 text-white placeholder-gray-500 focus:border-primary-main focus:ring-primary-main/20"
+                  labelClassName="text-gray-400"
+                />
+                 <TextField
+                  id="lastName"
+                  type="text"
+                  label="Last name"
+                  placeholder="Doe"
+                  value={formData.name.split(' ').slice(1).join(' ') || ''}
+                  onChange={(e) => {
+                     const firstName = formData.name.split(' ')[0];
+                     setFormData({ ...formData, name: `${firstName} ${e.target.value}`.trim() });
+                  }}
+                  required
+                  fullWidth
+                  className="bg-[#161C24] border-gray-700 text-white placeholder-gray-500 focus:border-primary-main focus:ring-primary-main/20"
+                  labelClassName="text-gray-400"
+                />
             </div>
-          )}
-        </div>
 
-        <div>
-          <label className="flex items-start">
-            <input
-              type="checkbox"
-              checked={formData.terms}
-              onChange={(e) => setFormData({ ...formData, terms: e.target.checked })}
-              className="h-4 w-4 mt-0.5 text-primary-main border-gray-300 rounded focus:ring-primary-main"
+            <TextField
+              id="email"
+              type="email"
+              label="Email address"
+              placeholder="demo@minimals.cc"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              required
+              fullWidth
+              className="bg-[#161C24] border-gray-700 text-white placeholder-gray-500 focus:border-primary-main focus:ring-primary-main/20"
+              labelClassName="text-gray-400"
             />
-            <span className="ml-2 text-sm text-gray-700">
-              I agree to the{' '}
-              <Link href="/terms" className="text-primary-main hover:text-primary-dark">
-                Terms of Service
-              </Link>{' '}
-              and{' '}
-              <Link href="/privacy" className="text-primary-main hover:text-primary-dark">
-                Privacy Policy
-              </Link>
-            </span>
-          </label>
+
+            <div>
+              <TextField
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                label="Password"
+                placeholder="6+ characters"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                required
+                fullWidth
+                className="bg-[#161C24] border-gray-700 text-white placeholder-gray-500 focus:border-primary-main focus:ring-primary-main/20"
+                labelClassName="text-gray-400"
+                endAdornment={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-gray-500 hover:text-gray-300 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                }
+              />
+
+              {formData.password && (
+                <div className="mt-2">
+                  <div className="flex gap-1 mb-1">
+                    {[1, 2, 3, 4, 5].map((level) => (
+                      <div
+                        key={level}
+                        className={`h-1 flex-1 rounded ${
+                          level <= passwordStrength ? strengthColors[passwordStrength] : 'bg-[#161C24]'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-xs text-right text-gray-500">
+                    {strengthLabels[passwordStrength]}
+                  </p>
+                </div>
+              )}
+            </div>
         </div>
 
-        <Button type="submit" variant="contained" color="primary" loading={loading} fullWidth size="lg">
-          Create Account
+        <Button 
+            type="submit" 
+            variant="contained" 
+            color="primary" 
+            loading={loading} 
+            fullWidth 
+            size="lg"
+            className="h-12 text-md font-bold shadow-lg shadow-primary-main/25 hover:shadow-primary-main/40 transition-all"
+        >
+          Create account
         </Button>
-      </form>
 
-      <p className="text-center text-sm text-gray-600">
-        Already have an account?{' '}
-        <Link href="/login" className="text-primary-main hover:text-primary-dark font-medium">
-          Sign in
-        </Link>
-      </p>
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-700" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="px-3 bg-[#212B36] text-gray-500 font-bold">OR</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-3">
+          <button disabled type="button" className="flex items-center justify-center h-10 rounded-lg bg-[#161C24] border border-gray-700 opacity-50 cursor-not-allowed transition-all">
+             <svg className="w-5 h-5 grayscale" viewBox="0 0 24 24">
+                <path fill="#EA4335" d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .533 5.333.533 12S5.867 24 12.48 24c3.44 0 6.32-1.133 8.4-3.253 2.16-2.16 2.827-5.467 2.827-8.2 0-.8-.08-1.573-.24-2.32H12.48z" />
+             </svg>
+          </button>
+          <button disabled type="button" className="flex items-center justify-center h-10 rounded-lg bg-[#161C24] border border-gray-700 opacity-50 cursor-not-allowed transition-all">
+            <svg className="w-5 h-5 text-gray-400 grayscale" viewBox="0 0 24 24" fill="currentColor">
+               <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+            </svg>
+          </button>
+          <button disabled type="button" className="flex items-center justify-center h-10 rounded-lg bg-[#161C24] border border-gray-700 opacity-50 cursor-not-allowed transition-all">
+            <svg className="w-5 h-5 text-[#1C9CEA] grayscale" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+            </svg>
+          </button>
+        </div>
+
+        <div className="text-center mt-6">
+            <p className="text-xs text-gray-400">
+                By signing up, I agree to{' '}
+                <Link href="/terms" className="underline text-gray-300 hover:text-white transition-colors">
+                    Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link href="/privacy" className="underline text-gray-300 hover:text-white transition-colors">
+                    Privacy Policy
+                </Link>.
+            </p>
+        </div>
+      </form>
     </div>
   );
 }
