@@ -1,12 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Logo } from '@/components/logo';
 import { TextField } from '@/components/ui/text-field';
 import { Button } from '@/components/ui/button';
-import { Alert } from '@/components/ui/alert';
 import Link from 'next/link';
 
+// 🎨 UI: Forgot Password Page (Dark Glassmorphism)
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,7 +25,7 @@ export default function ForgotPasswordPage() {
       setSuccess(true);
     } catch (error) {
       console.error('Forgot password error:', error);
-      setSuccess(true); // Always show success to prevent email enumeration
+      setSuccess(true);
     } finally {
       setLoading(false);
     }
@@ -34,41 +33,55 @@ export default function ForgotPasswordPage() {
 
   if (success) {
     return (
-      <div className="space-y-6 text-center">
-        <Logo size="large" className="justify-center" />
+     <div className="bg-[#212B36] rounded-2xl p-8 shadow-2xl border border-gray-700/50 text-center max-w-md w-full mx-auto">
+        <div className="mx-auto w-20 h-20 bg-[#161C24] rounded-full flex items-center justify-center mb-6">
+           <svg className="w-10 h-10 text-primary-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+           </svg>
+        </div>
 
-        <Alert severity="success" title="Check your email">
-          If an account exists for {email}, we&apos;ve sent a password reset link.
-        </Alert>
+        <h3 className="text-2xl font-bold text-white mb-2">Request sent successfully!</h3>
+        <p className="text-gray-400 mb-8">
+          We&apos;ve sent a confirmation email to <br /> 
+          <span className="text-white font-medium">{email}</span>
+          <br />
+          Please check your email.
+        </p>
 
-        <Button variant="text" color="primary" asChild>
-          <Link href="/login">Back to Sign In</Link>
+        <Button variant="contained" color="primary" fullWidth size="lg" asChild className="mb-4">
+            <Link href="/login">Back to Sign In</Link>
         </Button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <Logo size="large" className="justify-center" />
+    <div className="bg-[#212B36] rounded-2xl p-8 shadow-2xl border border-gray-700/50 max-w-md w-full mx-auto">
+      <div className="text-center mb-8">
+        <div className="mx-auto w-20 h-20 bg-[#161C24] rounded-full flex items-center justify-center mb-6">
+            <svg className="w-10 h-10 text-primary-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+        </div>
 
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Forgot your password?</h1>
-        <p className="text-gray-600">
-          Enter your email address and we&apos;ll send you a reset link
+        <h3 className="text-2xl font-bold text-white mb-2">Forgot your password?</h3>
+        <p className="text-gray-400">
+          Please enter the email address associated with your account and we&apos;ll email you a link to reset your password.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <TextField
           id="email"
           type="email"
           label="Email address"
-          placeholder="you@example.com"
+          placeholder="example@gmail.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
           fullWidth
+          className="bg-[#161C24] border-gray-700 text-white placeholder-gray-500 focus:border-primary-main focus:ring-primary-main/20"
+          labelClassName="text-gray-400"
         />
 
         <Button
@@ -78,12 +91,18 @@ export default function ForgotPasswordPage() {
           loading={loading}
           fullWidth
           size="lg"
+          className="h-12 text-md font-bold shadow-lg shadow-primary-main/25 hover:shadow-primary-main/40 transition-all"
         >
-          Send Reset Link
+          Send Request
         </Button>
 
-        <Button variant="text" color="primary" fullWidth asChild>
-          <Link href="/login">Back to Sign In</Link>
+        <Button variant="text" className="w-full text-gray-400 hover:text-white" asChild>
+          <Link href="/login" className="flex items-center justify-center gap-2">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Return to sign in
+          </Link>
         </Button>
       </form>
     </div>
