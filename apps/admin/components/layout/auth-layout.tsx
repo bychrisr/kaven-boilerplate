@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import { Logo } from '@/components/logo';
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -7,26 +6,18 @@ interface AuthLayoutProps {
   variant?: 'classic' | 'illustration' | 'cover';
 }
 
-export function AuthLayout({ children, illustration, variant = 'classic' }: AuthLayoutProps) {
+// 🎨 UI: Centered Glassmorphism Layout
+export function AuthLayout({ children }: AuthLayoutProps) {
   return (
-    <div className="min-h-screen flex">
-      {/* Left Side - Illustration (hidden on mobile) */}
-      {variant !== 'classic' && (
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-main to-primary-dark items-center justify-center p-12">
-          {illustration || (
-            <div className="text-white text-center">
-              <Logo size="large" className="mb-6 justify-center" />
-              <h2 className="text-4xl font-bold mb-4">Bem-vindo ao Kaven</h2>
-              <p className="text-xl opacity-90">Multi-tenant SaaS Boilerplate</p>
-            </div>
-          )}
-        </div>
-      )}
+    <div className="min-h-screen w-full flex items-center justify-center bg-[#161C24] relative overflow-hidden">
+        {/* Background Gradients/Blobs */}
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-main/20 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-primary-dark/20 blur-[120px]" />
 
-      {/* Right Side - Form */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-gray-50">
-        <div className="w-full max-w-md">{children}</div>
-      </div>
+        {/* Content Card */}
+        <div className="z-10 w-full max-w-[480px] p-4">
+            {children}
+        </div>
     </div>
   );
 }

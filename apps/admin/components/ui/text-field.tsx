@@ -17,6 +17,10 @@ export interface TextFieldProps extends Omit<React.InputHTMLAttributes<HTMLInput
    */
   label?: string;
   /**
+   * Additional label classes
+   */
+  labelClassName?: string;
+  /**
    * Helper text below input
    */
   helperText?: string;
@@ -56,6 +60,7 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
       variant = 'outlined',
       size = 'md',
       label,
+      labelClassName,
       helperText,
       error = false,
       errorMessage,
@@ -93,10 +98,10 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
         'px-4 py-2.5 text-base': size === 'md',
         'px-5 py-3 text-lg': size === 'lg',
         // Error styles - Minimals error colors
-        'border-[#FF5630] focus:border-[#FF5630] focus:ring-2 focus:ring-[rgba(255,86,48,0.24)]':
+        'border-error-main focus:border-error-main focus:ring-2 focus:ring-error-main/24':
           hasError,
-        // Normal state - Minimals grey.300 and primary focus
-        'border-[#DFE3E8] focus:border-[#1877F2] focus:ring-2 focus:ring-[rgba(24,119,242,0.24)]':
+        // Normal state - Minimals grey.300 and primary focus (verde)
+        'border-[#DFE3E8] focus:border-primary-main focus:ring-2 focus:ring-primary-main/24':
           !hasError && variant === 'outlined',
         'border-gray-400 focus:border-primary-main': !hasError && variant !== 'outlined',
         // Adornment padding
@@ -120,7 +125,8 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
             className={cn(
               'text-sm font-medium',
               hasError ? 'text-error-main' : 'text-text-primary',
-              disabled && 'opacity-50'
+              disabled && 'opacity-50',
+              labelClassName // Allow override
             )}
           >
             {label}
