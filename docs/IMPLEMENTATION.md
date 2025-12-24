@@ -1,8 +1,8 @@
 # Kaven Boilerplate - Documentação de Implementação
 
-> **Data:** 2025-12-19  
-> **Status:** MVP Parcial Implementado (~30%)  
-> **Tempo:** ~2 horas
+> **Data:** 2025-12-24
+> **Status:** MVP Implementado + Axisor Security Hardening
+> **Tempo:** ~14 horas
 
 ---
 
@@ -13,10 +13,11 @@
 3. [Backend API](#backend-api)
 4. [Frontend](#frontend)
 5. [Database](#database)
-6. [Segurança](#segurança)
-7. [Como Executar](#como-executar)
-8. [Estrutura de Arquivos](#estrutura-de-arquivos)
-9. [Próximos Passos](#próximos-passos)
+6. [Segurança & Hardening](SECURITY_ARCHITECTURE.md)
+7. [UI Design](UI_DESIGN.md)
+8. [Como Executar](#como-executar)
+9. [Estrutura de Arquivos](#estrutura-de-arquivos)
+10. [Próximos Passos](#próximos-passos)
 
 ---
 
