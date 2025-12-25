@@ -83,15 +83,25 @@ export function useUsers(params?: {
   return useQuery<UsersResponse>({
     queryKey: ['users', page, limit, tenantId, search, status],
     queryFn: async () => {
-      const response = await api.get('/api/users', {
-        params: { 
-          page, 
-          limit, 
-          tenantId,
-          search: search || undefined,
-          status: status && status !== 'all' ? status : undefined,
-        },
+      const params = { 
+        page, 
+        limit, 
+        tenantId,
+        search: search || undefined,
+        status: status && status !== 'all' ? status : undefined,
+      };
+      
+      console.log('🔍 [useUsers] Params received:', { page, limit, tenantId, search, status });
+      console.log('🔍 [useUsers] Params to send:', params);
+      
+      const response = await api.get('/api/users', { params });
+      
+      console.log('✅ [useUsers] Response:', {
+        total: response.data.pagination?.total,
+        returned: response.data.users?.length,
+        filters: { search, status }
       });
+      
       return response.data;
     },
     enabled: isInitialized,
