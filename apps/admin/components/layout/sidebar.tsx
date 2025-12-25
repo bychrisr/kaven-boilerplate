@@ -243,11 +243,12 @@ export function Sidebar() {
       <aside
         className={cn(
           'fixed top-0 left-0 z-[200] h-screen bg-sidebar border-r border-border transition-all duration-300',
+          'flex flex-col', // Flexbox container
           isCollapsed ? 'w-[88px]' : 'w-[280px]',
           isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
       >
-        {/* Toggle Button - Outside scroll container */}
+        {/* Toggle Button */}
         <button
             onClick={toggle}
             className="hidden lg:flex absolute top-8 -right-3 w-6 h-6 bg-sidebar border border-border rounded-full items-center justify-center text-muted-foreground hover:text-foreground z-[201] cursor-pointer shadow-md transition-transform hover:scale-110"
@@ -255,12 +256,15 @@ export function Sidebar() {
              {isCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
         </button>
 
-        <Scrollbar>
-          <div className="flex flex-col">
-            {/* Logo */}
-            <div className={cn("h-20 flex items-center px-6 min-h-[80px] shrink-0", isCollapsed ? "justify-center px-0" : "")}>
-              <Logo size={isCollapsed ? "small" : "medium"} />
-            </div>
+        {/* Logo - Fixo no topo */}
+        <div className={cn("h-20 flex items-center px-6 min-h-[80px] shrink-0", isCollapsed ? "justify-center px-0" : "")}>
+          <Logo size={isCollapsed ? "small" : "medium"} />
+        </div>
+
+        {/* Scrollbar - Área scrollável com flex-1 */}
+        <div className="flex-1 min-h-0">
+          <Scrollbar>
+            <div className="flex flex-col">
 
             {/* User Card */}
             <div className="px-5 mb-6 shrink-0">
@@ -324,6 +328,7 @@ export function Sidebar() {
             </nav>
           </div>
         </Scrollbar>
+        </div>
       </aside>
     </>
   );
