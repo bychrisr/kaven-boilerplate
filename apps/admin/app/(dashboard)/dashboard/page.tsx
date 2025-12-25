@@ -3,6 +3,7 @@
 
 import { useUsers } from '@/hooks/use-users';
 import { useDashboardSummary, useDashboardCharts } from '@/hooks/use-dashboard';
+import { DashboardSkeleton } from '@/components/skeletons/dashboard-skeleton';
 import { Users, DollarSign, FileText, ArrowUp, ArrowDown } from 'lucide-react';
 import {
   BarChart,
@@ -64,12 +65,9 @@ export default function DashboardPage() {
   const { data: summary, isLoading: isLoadingSummary } = useDashboardSummary();
   const { data: charts, isLoading: isLoadingCharts } = useDashboardCharts();
 
+  // ✅ Skeleton loader com tema Glassmorphism
   if (isLoadingSummary || isLoadingCharts) {
-      return (
-          <div className="flex justify-center items-center h-full min-h-[400px]">
-             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-main"></div>
-          </div>
-      );
+    return <DashboardSkeleton />;
   }
 
   const metrics = summary || {
