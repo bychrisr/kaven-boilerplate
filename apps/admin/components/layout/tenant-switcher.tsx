@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { ChevronDown, Plus } from 'lucide-react';
 import { useTenant } from '@/hooks/use-tenant';
 import { useSpaces } from '@/hooks/use-spaces';
