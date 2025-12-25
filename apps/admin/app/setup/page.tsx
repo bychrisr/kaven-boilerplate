@@ -247,47 +247,52 @@ export default function SetupPage() {
 
           {/* Step 2: Arquitetura */}
           {currentStep === 1 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Escolha a Arquitetura</CardTitle>
-                <CardDescription>Defina como seu sistema irá operar</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-4">
-                  <ArchitectureCard
-                    title="Single Tenant"
-                    description="Uma aplicação, uma organização"
-                    icon={<Building2 className="w-6 h-6" />}
-                    selected={config.mode === 'SINGLE_TENANT'}
-                    onClick={() => updateConfig('mode', 'SINGLE_TENANT')}
-                  >
-                    <ul className="text-sm text-muted-foreground space-y-1">
-                      <li>✓ Ideal para ferramentas internas</li>
-                      <li>✓ Mais simples de gerenciar</li>
-                      <li>✓ Sem isolamento de dados</li>
-                    </ul>
-                  </ArchitectureCard>
+            <div>
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-white mb-2">Escolha a Arquitetura</h2>
+                <p className="text-gray-400 text-sm">Defina como seu sistema irá operar</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <ArchitectureCard
+                  title="Single Tenant"
+                  description="Uma aplicação, uma organização"
+                  icon={<Building2 className="w-6 h-6" />}
+                  selected={config.mode === 'SINGLE_TENANT'}
+                  onClick={() => updateConfig('mode', 'SINGLE_TENANT')}
+                >
+                  <ul className="text-sm text-gray-400 space-y-1">
+                    <li>✓ Ideal para ferramentas internas</li>
+                    <li>✓ Mais simples de gerenciar</li>
+                    <li>✓ Sem isolamento de dados</li>
+                  </ul>
+                </ArchitectureCard>
 
-                  <ArchitectureCard
-                    title="Multi-Tenant (Camaleão)"
-                    description="SaaS com múltiplos clientes"
-                    icon={<Users className="w-6 h-6" />}
-                    selected={config.mode === 'MULTI_TENANT'}
-                    onClick={() => updateConfig('mode', 'MULTI_TENANT')}
-                  >
-                    <ul className="text-sm text-muted-foreground space-y-1">
-                      <li>✓ Ideal para SaaS</li>
-                      <li>✓ Isolamento por tenant</li>
-                      <li>✓ Subdomínios automáticos</li>
-                    </ul>
-                  </ArchitectureCard>
-                </div>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="outline" onClick={handleBack}>Voltar</Button>
-                <Button onClick={handleNext}>Próximo</Button>
-              </CardFooter>
-            </Card>
+                <ArchitectureCard
+                  title="Multi-Tenant (Camaleão)"
+                  description="SaaS com múltiplos clientes"
+                  icon={<Users className="w-6 h-6" />}
+                  selected={config.mode === 'MULTI_TENANT'}
+                  onClick={() => updateConfig('mode', 'MULTI_TENANT')}
+                >
+                  <ul className="text-sm text-gray-400 space-y-1">
+                    <li>✓ Ideal para SaaS</li>
+                    <li>✓ Isolamento por tenant</li>
+                    <li>✓ Subdomínios automáticos</li>
+                  </ul>
+                </ArchitectureCard>
+              </div>
+              <div className="flex justify-between mt-8">
+                <Button variant="outlined" onClick={handleBack} className="border-gray-700 text-gray-400">Voltar</Button>
+                <Button 
+                  onClick={handleNext}
+                  variant="contained"
+                  color="primary"
+                  className="shadow-lg shadow-primary-main/25 hover:shadow-primary-main/40"
+                >
+                  Próximo
+                </Button>
+              </div>
+            </div>
           )}
 
           {/* Step 3: Time */}
