@@ -290,27 +290,32 @@ export function Sidebar() {
                       <button
                         onClick={() => toggleSection(section.title)}
                         className={cn(
-                          "w-full flex items-center justify-between px-3 mb-2",
+                          "w-full flex items-center gap-2 px-3 mb-2",
                           "text-[11px] font-bold text-[#919EAB] uppercase tracking-wider",
                           "hover:text-white transition-colors cursor-pointer"
                         )}
                       >
-                        <span>{section.title}</span>
                         <ChevronDown
                           className={cn(
-                            "h-3 w-3 transition-transform",
+                            "h-3 w-3 transition-transform duration-300",
                             isSectionExpanded ? "rotate-0" : "-rotate-90"
                           )}
                         />
+                        <span>{section.title}</span>
                       </button>
                     )}
                     
-                    {/* Items da seção */}
-                    {isSectionExpanded && (
-                      <div className="space-y-1">
-                        {section.items.map((item) => renderNavItem(item))}
-                      </div>
-                    )}
+                    {/* Items da seção com transição suave */}
+                    <div
+                      className={cn(
+                        "space-y-1 overflow-hidden transition-all duration-300 ease-in-out",
+                        isSectionExpanded 
+                          ? "max-h-[1000px] opacity-100" 
+                          : "max-h-0 opacity-0"
+                      )}
+                    >
+                      {section.items.map((item) => renderNavItem(item))}
+                    </div>
                   </div>
                 );
               })}
