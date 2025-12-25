@@ -31,9 +31,9 @@ interface User {
 }
 
 const getRoleBadgeClasses = (role: string) => {
-  if (role === 'SUPER_ADMIN') return 'bg-error-main/10 text-error-main border border-error-main/20';
-  if (role === 'TENANT_ADMIN') return 'bg-warning-main/10 text-warning-main border border-warning-main/20';
-  return 'bg-info-main/10 text-info-main border border-info-main/20';
+  if (role === 'SUPER_ADMIN') return 'bg-destructive/10 text-destructive border border-destructive/20';
+  if (role === 'TENANT_ADMIN') return 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20';
+  return 'bg-blue-500/10 text-blue-500 border border-blue-500/20';
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -61,7 +61,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-const CHART_COLORS = ['#00A76F', '#FFAB00', '#00B8D9', '#FF5630'];
+const CHART_COLORS = ['hsl(var(--primary))', '#FFAB00', '#00B8D9', '#FF5630'];
 
 export default function DashboardPage() {
   const { data: usersData } = useUsers({ page: 1, limit: 5 });
@@ -100,7 +100,7 @@ export default function DashboardPage() {
     <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
-         <h1 className="text-2xl font-bold tracking-tight">{spaceConfig.name} Dashboard</h1>
+         <h1 className="text-2xl font-bold tracking-tight text-foreground">{spaceConfig.name} Dashboard</h1>
       </div>
 
       {/* Metrics Cards Grid */}
@@ -109,8 +109,8 @@ export default function DashboardPage() {
         {showCard('users') && (
             <div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
                 <div className="flex items-center gap-4 mb-4">
-                     <div className="p-3 bg-primary-main/10 rounded-full">
-                        <Users className="h-6 w-6 text-primary-main" />
+                     <div className="p-3 bg-primary/10 rounded-full">
+                        <Users className="h-6 w-6 text-primary" />
                      </div>
                      <span className="text-sm font-bold text-foreground uppercase tracking-wider">Total Active Users</span>
                 </div>
@@ -118,17 +118,17 @@ export default function DashboardPage() {
                     <div>
                          <h3 className="text-3xl font-bold text-foreground mb-2">{metrics.totalUsers.toLocaleString()}</h3>
                          <div className="flex items-center gap-2 text-sm">
-                            <span className="flex items-center text-success-main font-semibold bg-success-main/10 px-1.5 py-0.5 rounded">
+                            <span className="flex items-center text-green-500 font-semibold bg-green-500/10 px-1.5 py-0.5 rounded">
                                 <ArrowUp className="h-3 w-3 mr-1" />
                                 +2.6%
                             </span>
-                            <span className="text-gray-500">last 7 days</span>
+                            <span className="text-muted-foreground">last 7 days</span>
                          </div>
                     </div>
                      <div className="h-12 w-24">
                          <ResponsiveContainer width="100%" height="100%">
                              <BarChart data={[{v:20},{v:40},{v:30},{v:70},{v:50}]}>
-                                 <Bar dataKey="v" fill="#00A76F" radius={[2,2,0,0]} />
+                                 <Bar dataKey="v" fill="hsl(var(--primary))" radius={[2,2,0,0]} />
                              </BarChart>
                          </ResponsiveContainer>
                      </div>
@@ -140,8 +140,8 @@ export default function DashboardPage() {
         {showCard('revenue') && (
              <div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
                 <div className="flex items-center gap-4 mb-4">
-                     <div className="p-3 bg-info-main/10 rounded-full">
-                        <DollarSign className="h-6 w-6 text-info-main" />
+                     <div className="p-3 bg-blue-500/10 rounded-full">
+                        <DollarSign className="h-6 w-6 text-blue-500" />
                      </div>
                      <span className="text-sm font-bold text-foreground uppercase tracking-wider">Total Revenue</span>
                 </div>
@@ -149,11 +149,11 @@ export default function DashboardPage() {
                     <div>
                          <h3 className="text-3xl font-bold text-foreground mb-2">{metrics.revenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</h3>
                          <div className="flex items-center gap-2 text-sm">
-                            <span className="flex items-center text-success-main font-semibold bg-success-main/10 px-1.5 py-0.5 rounded">
+                            <span className="flex items-center text-green-500 font-semibold bg-green-500/10 px-1.5 py-0.5 rounded">
                                  <ArrowUp className="h-3 w-3 mr-1" />
                                 +0.2%
                             </span>
-                            <span className="text-gray-500">last 7 days</span>
+                            <span className="text-muted-foreground">last 7 days</span>
                          </div>
                     </div>
                      <div className="h-12 w-24">
@@ -171,8 +171,8 @@ export default function DashboardPage() {
         {showCard('invoices') && (
              <div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
                 <div className="flex items-center gap-4 mb-4">
-                     <div className="p-3 bg-warning-main/10 rounded-full">
-                        <FileText className="h-6 w-6 text-warning-main" />
+                     <div className="p-3 bg-yellow-500/10 rounded-full">
+                        <FileText className="h-6 w-6 text-yellow-500" />
                      </div>
                      <span className="text-sm font-bold text-foreground uppercase tracking-wider">Total Invoices</span>
                 </div>
@@ -180,11 +180,11 @@ export default function DashboardPage() {
                     <div>
                          <h3 className="text-3xl font-bold text-foreground mb-2">{metrics.invoices}</h3>
                          <div className="flex items-center gap-2 text-sm">
-                            <span className="flex items-center text-error-main font-semibold bg-error-main/10 px-1.5 py-0.5 rounded">
+                            <span className="flex items-center text-destructive font-semibold bg-destructive/10 px-1.5 py-0.5 rounded">
                                  <ArrowDown className="h-3 w-3 mr-1" />
                                 -0.1%
                             </span>
-                            <span className="text-gray-500">last 7 days</span>
+                            <span className="text-muted-foreground">last 7 days</span>
                          </div>
                     </div>
                       <div className="h-12 w-24">
@@ -202,9 +202,9 @@ export default function DashboardPage() {
         {spaceConfig.dashboardCards
             .filter(card => !['users', 'revenue', 'invoices'].includes(card))
             .map(card => (
-                <div key={card} className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-dashed border-gray-700 flex flex-col items-center justify-center text-center">
-                    <div className="p-3 bg-gray-800 rounded-full mb-3">
-                        <FileText className="h-6 w-6 text-gray-400" />
+                <div key={card} className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-dashed border-border flex flex-col items-center justify-center text-center">
+                    <div className="p-3 bg-muted rounded-full mb-3">
+                        <FileText className="h-6 w-6 text-muted-foreground" />
                     </div>
                     <h3 className="text-lg font-bold text-foreground capitalize">{card.replace('_', ' ')}</h3>
                     <p className="text-sm text-muted-foreground mt-1">Coming soon for {spaceConfig.name}</p>
@@ -278,9 +278,9 @@ export default function DashboardPage() {
                     <thead className="bg-muted/50">
                     <tr>
                         <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">User</th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">Role</th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">Joined</th>
-                        <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-gray-400">Action</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Role</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Joined</th>
+                        <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">Action</th>
                     </tr>
                     </thead>
                     <tbody className="divide-y divide-border/50 bg-card">
@@ -288,7 +288,7 @@ export default function DashboardPage() {
                         <tr key={user.id} className="hover:bg-muted/50 transition-colors">
                         <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-main to-primary-dark flex items-center justify-center text-white font-bold text-sm">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-primary-foreground font-bold text-sm">
                                 {user.name.charAt(0)}
                             </div>
                             <div>
