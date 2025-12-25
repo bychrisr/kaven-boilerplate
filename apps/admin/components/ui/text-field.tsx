@@ -94,9 +94,9 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
         'border-0 border-b-2 rounded-t-md bg-gray-100': variant === 'filled',
         'border-0 border-b-2 bg-transparent': variant === 'standard',
         // Size styles
-        'px-3 py-2 text-sm': size === 'sm',
-        'px-4 py-2.5 text-base': size === 'md',
-        'px-5 py-3 text-lg': size === 'lg',
+        'h-8 px-3 text-sm': size === 'sm',
+        'h-10 px-4 text-base': size === 'md',
+        'h-12 px-5 text-lg': size === 'lg',
         // Error styles - Minimals error colors
         'border-error-main focus:border-error-main focus:ring-2 focus:ring-error-main/24':
           hasError,

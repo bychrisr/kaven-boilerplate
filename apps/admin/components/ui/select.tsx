@@ -109,8 +109,8 @@ export function Select<T = string>({
 
   const sizeClasses = {
     sm: 'h-8 text-sm px-3',
-    md: 'h-9 text-base px-4',
-    lg: 'h-10 text-lg px-5',
+    md: 'h-10 text-base px-4',
+    lg: 'h-12 text-lg px-5',
   };
 
   return (
