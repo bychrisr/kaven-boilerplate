@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import { useSidebar } from '@/hooks/use-sidebar';
+import { useUIStore } from '@/stores/ui.store';
 
 interface NavigationChild {
   name: string;
@@ -38,9 +39,9 @@ export function Sidebar() {
   const { user } = useAuthStore();
   const { currentSpace } = useSpaces();
   const { isCollapsed, toggle } = useSidebar();
+  const { sidebarOpen: isMobileOpen, setSidebarOpen } = useUIStore();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // Derive navigation sections based on current space
   const navSections = useMemo(() => {
@@ -81,7 +82,7 @@ export function Sidebar() {
   // Close mobile sidebar on path change
   useEffect(() => {
     if (isMobileOpen) {
-      setIsMobileOpen(false);
+      setSidebarOpen(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
@@ -188,21 +189,12 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile Toggle Button (Visible only on small screens) */}
-      <button
-          type="button"
-          onClick={() => setIsMobileOpen(true)}
-          className="lg:hidden fixed bottom-4 right-4 z-50 p-3 bg-primary-main text-white rounded-full shadow-lg"
-      >
-          <ChevronRight className="h-6 w-6" />
-      </button>
-
       {/* Mobile Overlay */}
       {isMobileOpen && (
         <button
           type="button"
           className="fixed inset-0 bg-black/50 z-40 lg:hidden w-full h-full cursor-default focus:outline-none backdrop-blur-sm"
-          onClick={() => setIsMobileOpen(false)}
+          onClick={() => setSidebarOpen(false)}
           aria-label="Close sidebar"
         />
       )}

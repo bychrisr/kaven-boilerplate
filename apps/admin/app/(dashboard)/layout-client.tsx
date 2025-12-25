@@ -7,7 +7,6 @@ import { QueryProvider } from '@/providers/query-provider';
 import { ToastProvider } from '@/providers/toast-provider';
 import { AuthGuard } from '@/components/auth/auth-guard';
 import { useSidebar } from '@/hooks/use-sidebar';
-import { useSettings } from '@/stores/settings.store';
 import { ThemeConfigurator } from '@/components/settings/theme-configurator';
 import { SettingsDrawer } from '@/components/settings/settings-drawer';
 import { cn } from '@/lib/utils';
@@ -19,7 +18,6 @@ import { cn } from '@/lib/utils';
  * Usa hooks do Zustand para acessar estado de tema e sidebar.
  */
 function DashboardLayoutInner({ children }: { children: ReactNode }) {
-  const { theme } = useSettings();
   const { isCollapsed } = useSidebar();
 
   return (
@@ -34,7 +32,7 @@ function DashboardLayoutInner({ children }: { children: ReactNode }) {
       <div
         className={cn(
           'flex flex-1 flex-col overflow-hidden transition-all duration-300',
-          isCollapsed ? 'ml-[88px]' : 'ml-[280px]'
+          isCollapsed ? 'lg:ml-[88px]' : 'lg:ml-[280px]'
         )}
       >
         <Header />
