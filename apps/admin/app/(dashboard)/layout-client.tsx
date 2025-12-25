@@ -38,8 +38,8 @@ function DashboardLayoutInner({ children }: { children: ReactNode }) {
         <Header />
 
         <main className="flex-1 overflow-y-auto">
-          <div className="p-6">
-            <div className="mt-6">{children}</div>
+          <div className="p-4 md:p-6">
+            <div className="mt-4 md:mt-6">{children}</div>
           </div>
         </main>
       </div>

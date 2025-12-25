@@ -13,7 +13,7 @@ export function Header() {
   return (
     <header 
         className={cn(
-            "sticky top-0 z-30 flex h-[72px] items-center justify-between px-6 transition-colors duration-300",
+            "sticky top-0 z-30 flex h-[72px] items-center justify-between px-4 md:px-6 transition-colors duration-300",
             // Glassmorphism effect with semantic tokens
             "backdrop-blur-xl bg-background/80 border-b border-border text-foreground"
         )}
