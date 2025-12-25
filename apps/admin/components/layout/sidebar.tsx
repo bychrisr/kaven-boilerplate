@@ -31,10 +31,7 @@ interface NavigationItem {
   children?: NavigationChild[];
 }
 
-interface NavigationSection {
-  title: string;
-  items: NavigationItem[];
-}
+
 
 export function Sidebar() {
   const pathname = usePathname();

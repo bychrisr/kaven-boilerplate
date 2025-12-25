@@ -11,7 +11,7 @@ import {
   Headphones,
   UserCheck,
   Shield,
-  TrendingUp,
+  // TrendingUp,
   Mail,
   Target,
   Server,
@@ -24,6 +24,11 @@ export interface NavItem {
   icon: LucideIcon;
   label: string;
   href: string;
+  children?: {
+    label: string;
+    href: string;
+    external?: boolean;
+  }[];
 }
 
 export interface NavSection {
