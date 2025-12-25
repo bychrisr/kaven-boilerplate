@@ -118,7 +118,7 @@ export function Sidebar() {
             className={cn(
               'w-full flex items-center justify-between px-3 py-2.5 text-[0.875rem] font-medium rounded-lg transition-colors min-h-[44px]',
               isActive || (isExpanded && !isCollapsed)
-                ? 'text-primary-main bg-primary-main/10'
+                ? 'text-primary bg-primary/10'
                 : 'text-muted-foreground hover:bg-muted/10 hover:text-foreground',
               isCollapsed && 'justify-center px-2'
             )}
@@ -153,7 +153,7 @@ export function Sidebar() {
                     <div className="w-[24px] flex justify-center flex-shrink-0">
                        <span className={cn(
                            "flex-shrink-0 rounded-full transition-all bg-current",
-                           isChildActive ? "w-2 h-2 scale-100 bg-primary-main" : "w-1 h-1 bg-[#919EAB] group-hover:bg-white"
+                           isChildActive ? "w-2 h-2 scale-100 bg-primary" : "w-1 h-1 bg-muted-foreground group-hover:bg-foreground"
                        )} />
                     </div>
                     <span>{child.name}</span>
@@ -174,7 +174,7 @@ export function Sidebar() {
         className={cn(
           'flex items-center gap-4 px-3 py-2.5 text-[0.875rem] font-medium rounded-lg transition-colors min-h-[44px]',
            isActive
-            ? 'text-primary-main bg-primary-main/10'
+            ? 'text-primary bg-primary/10'
             : 'text-muted-foreground hover:bg-muted/10 hover:text-foreground',
            isCollapsed && 'justify-center px-2 gap-0'
         )}
@@ -236,10 +236,10 @@ export function Sidebar() {
             {/* User Card */}
             <div className="px-5 mb-6 shrink-0">
                <div className={cn(
-                   "flex items-center rounded-2xl bg-[rgba(145,158,171,0.12)] transition-colors cursor-pointer border border-transparent hover:border-r-[rgba(145,158,171,0.24)]",
+                   "flex items-center rounded-2xl bg-sidebar-accent/50 transition-colors cursor-pointer border border-transparent hover:border-r-border",
                    isCollapsed ? "p-2 justify-center bg-transparent" : "p-3 gap-3"
                )}>
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-main to-primary-dark overflow-hidden flex items-center justify-center text-white shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-dark overflow-hidden flex items-center justify-center text-primary-foreground shrink-0">
                     {/* User Avatar Img or Icon */}
                     <Users className="h-5 w-5" />
                   </div>
@@ -264,8 +264,8 @@ export function Sidebar() {
                         onClick={() => toggleSection(section.title)}
                         className={cn(
                           "w-full flex items-center gap-2 px-3 mb-2",
-                          "text-[11px] font-bold text-[#919EAB] uppercase tracking-wider",
-                          "hover:text-white transition-colors cursor-pointer"
+                          "text-[11px] font-bold text-muted-foreground uppercase tracking-wider",
+                          "hover:text-foreground transition-colors cursor-pointer"
                         )}
                       >
                         <ChevronDown
