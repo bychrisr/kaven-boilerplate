@@ -34,9 +34,26 @@ const STATUS_OPTIONS = [
 ];
 
 export function UserView() {
+  // Filters
   const [filterName, setFilterName] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  
+  // Pagination
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
   const [selected, setSelected] = useState<string[]>([]);
+
+  // Filter handlers
+  const handleFilterName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterName(e.target.value);
+    setPage(0);
+  };
+
+  const handleFilterStatus = (value: string) => {
+    setFilterStatus(value);
+    setPage(0);
+  };
 
   // Filter users
   const filteredUsers = MOCK_USERS.filter((user) => {
@@ -48,6 +65,11 @@ export function UserView() {
     return matchesName && matchesStatus;
   });
 
+  const paginatedUsers = filteredUsers.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+  
   const getStatusCount = (status: string) => {
     if (status === 'all') return MOCK_USERS.length;
     return MOCK_USERS.filter((user) => user.status === status).length;
@@ -105,7 +127,7 @@ export function UserView() {
           <Tabs 
             defaultValue="all" 
             value={filterStatus} 
-            onValueChange={setFilterStatus}
+            onValueChange={handleFilterStatus}
             className="w-full"
           >
             <div className="flex flex-col md:flex-row items-center w-full border-b border-border/40 gap-4">
@@ -187,7 +209,7 @@ export function UserView() {
                     <Input
                       placeholder="Search..."
                       value={filterName}
-                      onChange={(e) => setFilterName(e.target.value)}
+                      onChange={handleFilterName}
                       className="w-full bg-transparent border-none focus-visible:ring-0 pl-9 placeholder:text-muted-foreground h-10"
                     />
                  </div>
@@ -205,7 +227,7 @@ export function UserView() {
                 <TableRow className="border-b border-dashed border-border/50 hover:bg-transparent">
                   <TableHead className="w-[40px] pl-4 h-16 font-semibold bg-transparent first:rounded-tl-none text-foreground dark:text-white">
                     <Checkbox 
-                      checked={filteredUsers.length > 0 && selected.length === filteredUsers.length}
+                      checked={paginatedUsers.length > 0 && selected.length === paginatedUsers.length}
                       onCheckedChange={(checked: boolean | 'indeterminate') => handleSelectAll(checked === true)}
                     />
                   </TableHead>
@@ -218,11 +240,11 @@ export function UserView() {
                 </TableRow>
               </TableHeader>
             <TableBody>
-              {filteredUsers.length > 0 ? (
-                filteredUsers.map((user) => (
-                  <UserTableRow 
-                    key={user.id} 
-                    row={user} 
+              {paginatedUsers.length > 0 ? (
+                paginatedUsers.map((user) => (
+                  <UserTableRow
+                    key={user.id}
+                    row={user}
                     selected={selected.includes(user.id)}
                     onSelectRow={() => handleSelectRow(user.id)}
                   />
@@ -238,26 +260,39 @@ export function UserView() {
           </Table>
         </div>
 
-        {/* Pagination (Visual only for mock) */}
-        <div className="flex items-center justify-end p-4 border-t border-border">
+        {/* Pagination */}
+        <div className="flex items-center justify-end p-4 border-t border-border/40">
             <div className="flex items-center gap-6 lg:gap-8">
               <div className="flex items-center space-x-2">
                 <p className="text-sm font-medium text-muted-foreground">Rows per page</p>
-                <select className="h-8 w-[70px] rounded-md border border-input bg-transparent px-2 py-1 text-sm">
-                  <option>10</option>
-                  <option>20</option>
-                  <option>50</option>
+                <select 
+                  className="h-8 w-[70px] rounded-md border border-input bg-transparent px-2 py-1 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  value={rowsPerPage}
+                  onChange={(e) => {
+                    setRowsPerPage(Number(e.target.value));
+                    setPage(0);
+                  }}
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
                 </select>
               </div>
               <div className="flex w-[100px] items-center justify-center text-sm font-medium text-muted-foreground">
-                1-10 of {filteredUsers.length}
+                {filteredUsers.length > 0 ? (
+                  `${page * rowsPerPage + 1}-${Math.min((page + 1) * rowsPerPage, filteredUsers.length)} of ${filteredUsers.length}`
+                ) : (
+                  "0-0 of 0"
+                )}
               </div>
               <div className="flex items-center space-x-2">
                 <Button
                   variant="outline"
                   size="icon"
                   className="h-8 w-8"
-                  disabled
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  disabled={page === 0}
                 >
                   <span className="sr-only">Go to previous page</span>
                   {'<'}
@@ -266,6 +301,8 @@ export function UserView() {
                   variant="outline"
                   size="icon"
                   className="h-8 w-8"
+                  onClick={() => setPage((p) => p + 1)}
+                  disabled={(page + 1) * rowsPerPage >= filteredUsers.length}
                 >
                   <span className="sr-only">Go to next page</span>
                   {'>'}
