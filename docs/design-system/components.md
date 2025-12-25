@@ -529,4 +529,33 @@ Ao criar/usar componentes:
 
 ---
 
-**Anterior:** [Arquitetura](./architecture.md) | **Próximo:** [Acessibilidade](./accessibility.md)
+## 💎 Componentes Estilizados
+
+### Hamburger Menu (App Style)
+
+Para um visual mais "premium" (Minimals), usamos um SVG customizado com traços arredondados em vez do ícone padrão.
+
+```tsx
+<svg
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+>
+  <path d="M5 7H19" strokeWidth="2.5" strokeLinecap="round" />
+  <path d="M5 12H19" strokeWidth="2.5" strokeLinecap="round" />
+  <path d="M5 17H19" strokeWidth="2.5" strokeLinecap="round" />
+</svg>
+```
+
+### Tenant Switcher (Responsivo)
+
+Adapta-se automaticamente ao espaço disponível.
+
+- **Mobile:** Apenas Avatar + Chevron (Compacto)
+- **Desktop:** Avatar + Nome + Role + Chevron (Completo)
+
+---
+
+**Anterior:** [Arquitetura](./architecture.md) | **Próximo:** [Design Tokens](./TOKENS.md)

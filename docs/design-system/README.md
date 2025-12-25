@@ -10,24 +10,27 @@
 ### Fundamentos
 
 1. **[Princípios de Design](./principles.md)**
-   - Paleta de cores
-   - Tipografia
    - Glassmorphism
-   - Espaçamento e grid
    - Animações e transições
 
-2. **[Arquitetura de Componentes](./architecture.md)**
+2. **[Design Tokens](./TOKENS.md)**
+   - Paleta de Cores Semântica (Dark/Light)
+   - Tipografia e Breakpoints
+
+3. **[Responsividade e Mobile](./RESPONSIVENESS.md)**
+   - Mobile-First Strategy
+   - Grid System & Patterns
+
+4. **[Arquitetura de Componentes](./architecture.md)**
    - Server vs Client Components
    - Padrão Server Layout + Client Wrapper
    - Estrutura de pastas
-   - Performance best practices
 
-3. **[Guia de Componentes](./components.md)**
+5. **[Guia de Componentes](./components.md)**
    - Skeleton Loaders
-   - Botões e Forms
-   - Cards e Layouts
+   - Botões, Forms, Cards
+   - Componentes Estilizados (Mobile)
    - Feedback (Toasts, Alerts)
-   - Exemplos práticos (Do vs Don't)
 
 ---
 
