@@ -2,6 +2,7 @@
 
 import { Menu, Search, Bell, User } from 'lucide-react';
 import { useState } from 'react';
+import { useAuthStore } from '@/stores/auth.store';
 
 interface NavbarProps {
   onMenuClick: () => void;
@@ -9,6 +10,7 @@ interface NavbarProps {
 
 export function Navbar({ onMenuClick }: NavbarProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const { user } = useAuthStore();
 
   return (
     <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
@@ -49,8 +51,8 @@ export function Navbar({ onMenuClick }: NavbarProps) {
             <User className="h-5 w-5 text-white" />
           </div>
           <div className="hidden md:block text-left">
-            <p className="text-sm font-medium text-gray-900">Admin User</p>
-            <p className="text-xs text-gray-500">admin@kaven.com</p>
+            <p className="text-sm font-medium text-gray-900">{user?.name || 'User'}</p>
+            <p className="text-xs text-gray-500">{user?.email || 'user@kaven.com'}</p>
           </div>
         </button>
       </div>
