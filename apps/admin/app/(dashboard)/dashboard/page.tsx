@@ -89,7 +89,9 @@ export default function DashboardPage() {
     { name: 'Android', value: metrics.invoices * 0.1 },
   ];
 
-  const spaceId = currentSpace?.id || 'ARCHITECT';
+  let spaceId = currentSpace?.id || 'ADMIN';
+  if ((spaceId as string) === 'ARCHITECT') spaceId = 'ADMIN';
+
   const spaceConfig = SPACES[spaceId];
   
   if (!spaceConfig) return null;

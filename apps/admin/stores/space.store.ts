@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export interface Space {
-  id: 'ARCHITECT' | 'FINANCE' | 'SUPPORT' | 'MARKETING' | 'DEVOPS';
+  id: 'ADMIN' | 'FINANCE' | 'SUPPORT' | 'MARKETING' | 'DEVOPS';
   name: string;
   icon: string;
   color: string;

@@ -37,7 +37,7 @@ export interface NavSection {
 }
 
 export interface SpaceConfig {
-  id: 'ARCHITECT' | 'FINANCE' | 'SUPPORT' | 'MARKETING' | 'DEVOPS';
+  id: 'ADMIN' | 'FINANCE' | 'SUPPORT' | 'MARKETING' | 'DEVOPS';
   name: string;
   icon: string;
   color: string;
@@ -49,8 +49,8 @@ export interface SpaceConfig {
  * Configuração de cada Space (Workspace)
  */
 export const SPACES: Record<string, SpaceConfig> = {
-  ARCHITECT: {
-    id: 'ARCHITECT',
+  ADMIN: {
+    id: 'ADMIN',
     name: 'Admin',
     icon: 'Crown',
     color: 'purple',

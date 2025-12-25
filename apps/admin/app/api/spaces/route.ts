@@ -4,14 +4,14 @@ import { NextRequest, NextResponse } from 'next/server';
  * GET /api/spaces
  * Retorna lista de spaces disponíveis para o usuário logado
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // TODO: Pegar user do token JWT
     // Por enquanto, vamos retornar todos os spaces (Super Admin)
     
     const spaces = [
       {
-        id: 'ARCHITECT',
+        id: 'ADMIN',
         name: 'Admin',
         icon: 'Crown',
         color: 'purple'

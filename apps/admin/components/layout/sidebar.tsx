@@ -45,7 +45,9 @@ export function Sidebar() {
 
   // Derive navigation sections based on current space
   const navSections = useMemo(() => {
-    const spaceId = currentSpace?.id || 'ARCHITECT';
+    let spaceId = currentSpace?.id || 'ADMIN';
+    if ((spaceId as string) === 'ARCHITECT') spaceId = 'ADMIN';
+    
     const config = SPACES[spaceId];
     
     if (!config) return [];
