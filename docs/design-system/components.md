@@ -590,3 +590,62 @@ Componente principal de navegação lateral.
 ---
 
 **Anterior:** [Arquitetura](./architecture.md) | **Próximo:** [Design Tokens](./TOKENS.md)
+
+---
+
+## 📊 Tabelas (Lists)
+
+### Padrão Visual (User List Style)
+
+Para garantir legibilidade máxima e hierarquia visual, seguimos um padrão estrito de espaçamento e contraste em 3 camadas:
+
+1.  **Fundo da Página**: `bg-background` (Cor base)
+2.  **Card Container**: `bg-card` (Elevado, ex: `#212B36` em dark mode)
+3.  **Header da Tabela**: `bg-muted/50` (Sutil distinção)
+
+### Espaçamento e Tipografia
+
+- **Header Height**: Fixado em `h-16` (64px) para respiro vertical.
+- **Padding**: `px-4` (16px) em todas as células (Header e Body).
+- **Header Text**: **Branco Puro** (`text-foreground` / `dark:text-white`) e `font-semibold`.
+- **Body Text**: `text-sm font-medium` para densidade equilibrada.
+
+```tsx
+<TableHeader className="bg-muted/50">
+  <TableRow className="border-b border-dashed border-border/50">
+    <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">
+      Nome da Coluna
+    </TableHead>
+  </TableRow>
+</TableHeader>
+```
+
+---
+
+## 🏷️ Badges e Status
+
+### Geometria e Alinhamento
+
+- **Formato**: Retângulo arredondado (`rounded-[6px]`), evitando o formato de pílula total (`rounded-full`).
+- **Layout**: `inline-flex items-center justify-center` para centralização perfeita de texto e números.
+- **Capitalização**: Sempre usar classe `capitalize` para nomes de status (ex: "active" -> "Active").
+
+### Cores Semânticas (Ativo vs Inativo)
+
+Usamos lógica de preenchimento para indicar estado ativo em filtros:
+
+- **Filtro Inativo (Default)**: Fundo translúcido (`bg-emerald-500/15 text-emerald-500`).
+- **Filtro Ativo (Selected)**: Fundo sólido/vibrante (`bg-emerald-500 text-white`).
+
+```tsx
+<Badge
+  className={cn(
+    'rounded-[6px] font-bold capitalize inline-flex items-center justify-center',
+    isActive
+      ? 'bg-emerald-500 text-white' // Ativo
+      : 'bg-emerald-500/15 text-emerald-500', // Inativo
+  )}
+>
+  Active
+</Badge>
+```
