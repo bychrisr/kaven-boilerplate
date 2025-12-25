@@ -157,51 +157,34 @@ export function UserView() {
                   const count = getStatusCount(tab.value);
                   const isActive = filterStatus === tab.value;
                   
-                  // Determine Badge styling based on status
-                  // Fixed radius to 6px (rounded-[6px]) and used inline-flex for better centering
-                  let badgeClass = "ml-2 h-5 px-1.5 text-xs min-w-[20px] rounded-[6px] inline-flex items-center justify-center pointer-events-none";
-                  const badgeVariant: "default" | "secondary" | "destructive" | "outline" = "secondary";
-                  
-                  if (isActive) {
-                    // Active State: "Lighter" / Filled for highlight
-                    switch(tab.value) {
-                        case 'all':
-                            badgeClass += " bg-foreground text-background font-bold"; 
-                            break;
-                        case 'active':
-                            badgeClass += " bg-emerald-500 text-white dark:text-gray-900 font-bold";
-                            break;
-                        case 'pending':
-                             badgeClass += " bg-amber-500 text-white dark:text-gray-900 font-bold";
-                            break;
-                        case 'banned':
-                            badgeClass += " bg-red-500 text-white dark:text-gray-900 font-bold";
-                            break;
-                        case 'rejected':
-                            badgeClass += " bg-slate-500 text-white dark:text-gray-900 font-bold";
-                            break;
+                  // Badge configuration by status
+                  const badgeStyles: Record<string, { active: string; inactive: string }> = {
+                    all: {
+                      active: "bg-foreground text-background font-bold",
+                      inactive: "bg-muted-foreground/20 text-muted-foreground"
+                    },
+                    active: {
+                      active: "bg-emerald-500 text-white dark:text-gray-900 font-bold",
+                      inactive: "bg-emerald-500/15 text-emerald-500 dark:text-emerald-400"
+                    },
+                    pending: {
+                      active: "bg-amber-500 text-white dark:text-gray-900 font-bold",
+                      inactive: "bg-amber-500/15 text-amber-600 dark:text-amber-400"
+                    },
+                    banned: {
+                      active: "bg-red-500 text-white dark:text-gray-900 font-bold",
+                      inactive: "bg-red-500/15 text-red-600 dark:text-red-400"
+                    },
+                    rejected: {
+                      active: "bg-slate-500 text-white dark:text-gray-900 font-bold",
+                      inactive: "bg-slate-500/15 text-slate-600 dark:text-slate-400"
                     }
-                  } else {
-                    // Inactive State: Subtle / Transparent
-                    switch(tab.value) {
-                        case 'all':
-                            badgeClass += " bg-muted-foreground/20 text-muted-foreground"; 
-                            break;
-                        case 'active':
-                            badgeClass += " bg-emerald-500/15 text-emerald-500 dark:text-emerald-400";
-                            break;
-                        case 'pending':
-                             badgeClass += " bg-amber-500/15 text-amber-600 dark:text-amber-400";
-                            break;
-                        case 'banned':
-                            badgeClass += " bg-red-500/15 text-red-600 dark:text-red-400";
-                            break;
-                        case 'rejected':
-                            badgeClass += " bg-slate-500/15 text-slate-600 dark:text-slate-400";
-                            break;
-                    }
-                  }
-  
+                  };
+
+                  const badgeClass = cn(
+                    "ml-2 h-5 px-1.5 text-xs min-w-[20px] rounded-[6px] inline-flex items-center justify-center pointer-events-none",
+                    isActive ? badgeStyles[tab.value]?.active : badgeStyles[tab.value]?.inactive
+                  );
                   return (
                     <TabsTrigger 
                       key={tab.value} 
@@ -210,13 +193,13 @@ export function UserView() {
                           "relative h-14 rounded-none bg-transparent px-0 pb-3 pt-3 font-semibold text-muted-foreground shadow-none transition-none cursor-pointer",
                           "!bg-transparent !shadow-none !border-0 hover:text-foreground",
                           "data-[state=active]:!bg-transparent data-[state=active]:!shadow-none data-[state=active]:!text-foreground data-[state=active]:!border-none",
-                          "dark:data-[state=active]:!bg-transparent dark:data-[state=active]:!border-none", // Explicit override for dark mode border
+                          "dark:data-[state=active]:!bg-transparent dark:data-[state=active]:!border-none",
                           "after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:bg-foreground after:transition-transform after:duration-300 data-[state=active]:after:scale-x-100",
                           isActive && "text-foreground after:bg-primary"
                       )}
                     >
                       <span className="capitalize">{tab.label}</span>
-                      <Badge variant={badgeVariant} className={badgeClass}>
+                      <Badge className={badgeClass}>
                         {count}
                       </Badge>
                     </TabsTrigger>
@@ -238,8 +221,6 @@ export function UserView() {
             </div>
           </Tabs>
         </div>
-        
-        {/* Toolbar Removed */}
 
         {/* Table */}
         <div className="relative mx-0 rounded-none border-none text-card-foreground shadow-none bg-transparent overflow-x-auto">
