@@ -23,16 +23,7 @@ export function TenantSwitcher() {
     );
   }
 
-  const getPlanBadgeColor = (plan: string) => {
-    switch (plan) {
-      case 'PRO':
-        return 'bg-blue-500/20 text-blue-400';
-      case 'ENTERPRISE':
-        return 'bg-purple-500/20 text-purple-400';
-      default:
-        return 'bg-gray-500/20 text-gray-400';
-    }
-  };
+
 
   return (
     <div className="relative hidden md:block">
@@ -103,19 +94,16 @@ export function TenantSwitcher() {
                       {space.name[0]}
                     </div>
                     
-                    {/* Space Info */}
+                      {/* Space Info */}
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-semibold truncate">
-                        {space.name}
+                      <div className="text-sm font-semibold truncate leading-none">
+                        {space.name.toUpperCase()}
                       </div>
                     </div>
                     
-                    {/* Plan Badge */}
-                    <span className={cn(
-                      "text-[10px] font-medium px-2 py-0.5 rounded-full",
-                      getPlanBadgeColor(tenant.plan)
-                    )}>
-                      {tenant.plan}
+                    {/* Tenant Badge (was Plan) */}
+                    <span className="text-[10px] font-bold text-gray-400 bg-white/5 px-2 py-0.5 rounded-full border border-white/5 uppercase">
+                      {tenant.name}
                     </span>
                   </button>
                 );
