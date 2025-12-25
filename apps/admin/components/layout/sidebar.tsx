@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/logo';
+import { Scrollbar } from '@/components/scrollbar/scrollbar';
 import { cn } from '@/lib/utils';
 import {
   Home,
@@ -254,7 +255,8 @@ export function Sidebar() {
              {isCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
         </button>
 
-        <div className="h-full flex flex-col overflow-y-auto overflow-x-hidden pr-2">
+        <Scrollbar>
+          <div className="flex flex-col">
             {/* Logo */}
             <div className={cn("h-20 flex items-center px-6 min-h-[80px] shrink-0", isCollapsed ? "justify-center px-0" : "")}>
               <Logo size={isCollapsed ? "small" : "medium"} />
@@ -320,7 +322,8 @@ export function Sidebar() {
                 );
               })}
             </nav>
-        </div>
+          </div>
+        </Scrollbar>
       </aside>
     </>
   );
