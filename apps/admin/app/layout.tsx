@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   description: 'Admin panel for Kaven Boilerplate',
 };
 
+import { ThemeProvider } from '@/providers/theme-provider';
+
 export default function RootLayout({
   children,
 }: {
@@ -19,7 +21,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        <ThemeProvider defaultMode="dark">
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

@@ -98,6 +98,13 @@ export function ThemeProvider({
     // Set data-theme attribute for CSS
     document.documentElement.setAttribute('data-theme', mode);
 
+    // Set class for Tailwind dark mode
+    if (mode === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
     // Inject CSS variables
     injectCSSVariables(theme);
   }, [theme, mode, isLoading]);
