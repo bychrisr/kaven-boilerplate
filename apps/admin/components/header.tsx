@@ -1,15 +1,14 @@
 'use client';
 
-import { Search, Bell, Settings, Menu, ChevronDown, Command } from 'lucide-react';
+import { Search, Bell, Settings, Menu, Command } from 'lucide-react';
 import { useUIStore } from '@/stores/ui.store';
 import { useSettings } from '@/stores/settings.store';
-import { useAuthStore } from '@/stores/auth.store';
+import { TenantSwitcher } from '@/components/layout/tenant-switcher';
 import { cn } from '@/lib/utils';
 
 export function Header() {
   const { toggleSidebar } = useUIStore();
   const { theme } = useSettings();
-  const { user } = useAuthStore();
 
   return (
     <header 
@@ -25,17 +24,8 @@ export function Header() {
             <Menu className="h-6 w-6" />
         </button>
         
-        {/* Team Switcher (Mock) */}
-        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary-main to-primary-dark flex items-center justify-center text-white text-xs font-bold">
-                K
-            </div>
-            <div className="flex flex-col">
-                <span className="text-sm font-semibold leading-tight">{user?.tenantId || 'Kaven'}</span>
-                <span className="text-[10px] text-gray-400 font-medium">Admin</span>
-            </div>
-            <ChevronDown className="w-4 h-4 text-gray-400 ml-1" />
-        </div>
+        {/* Tenant Switcher */}
+        <TenantSwitcher />
       </div>
 
       <div className="flex items-center gap-2 sm:gap-4">
