@@ -86,24 +86,24 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
 
     const baseClasses = cn(
       'w-full transition-all duration-200 outline-none',
-      'text-text-primary placeholder:text-text-disabled',
+      'text-foreground placeholder:text-muted-foreground',
       'disabled:opacity-50 disabled:cursor-not-allowed',
       {
-        // Variant styles - Minimals tokens
+        // Variant styles - Minimals -> Semantic Tokens
         'border-2 rounded-[8px] bg-background': variant === 'outlined', // radius md
-        'border-0 border-b-2 rounded-t-md bg-gray-100': variant === 'filled',
+        'border-0 border-b-2 rounded-t-md bg-muted': variant === 'filled',
         'border-0 border-b-2 bg-transparent': variant === 'standard',
         // Size styles
         'px-3 py-2 text-sm': size === 'sm',
         'px-4 py-2.5 text-base': size === 'md',
         'px-5 py-3 text-lg': size === 'lg',
-        // Error styles - Minimals error colors
-        'border-error-main focus:border-error-main focus:ring-2 focus:ring-error-main/24':
+        // Error styles
+        'border-destructive focus:border-destructive focus:ring-2 focus:ring-destructive/24':
           hasError,
-        // Normal state - Minimals grey.300 and primary focus (verde)
-        'border-[#DFE3E8] focus:border-primary-main focus:ring-2 focus:ring-primary-main/24':
+        // Normal state
+        'border-input focus:border-primary focus:ring-2 focus:ring-ring/24':
           !hasError && variant === 'outlined',
-        'border-gray-400 focus:border-primary-main': !hasError && variant !== 'outlined',
+        'border-input focus:border-primary': !hasError && variant !== 'outlined',
         // Adornment padding
         'pl-10': startAdornment && size === 'sm',
         'pl-12': startAdornment && size === 'md',
@@ -124,13 +124,13 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
             htmlFor={inputId}
             className={cn(
               'text-sm font-medium',
-              hasError ? 'text-error-main' : 'text-text-primary',
+              hasError ? 'text-destructive' : 'text-foreground',
               disabled && 'opacity-50',
               labelClassName // Allow override
             )}
           >
             {label}
-            {required && <span className="text-error-main ml-1">*</span>}
+            {required && <span className="text-destructive ml-1">*</span>}
           </label>
         )}
 
@@ -138,7 +138,7 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
           {startAdornment && (
             <div
               className={cn(
-                'absolute left-0 top-1/2 -translate-y-1/2 flex items-center text-text-secondary',
+                'absolute left-0 top-1/2 -translate-y-1/2 flex items-center text-muted-foreground',
                 {
                   'left-3': size === 'sm',
                   'left-4': size === 'md',
@@ -166,7 +166,7 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
           {endAdornment && (
             <div
               className={cn(
-                'absolute right-0 top-1/2 -translate-y-1/2 flex items-center text-text-secondary',
+                'absolute right-0 top-1/2 -translate-y-1/2 flex items-center text-muted-foreground',
                 {
                   'right-3': size === 'sm',
                   'right-4': size === 'md',
@@ -182,7 +182,7 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
         {displayHelperText && (
           <p
             id={`${inputId}-helper`}
-            className={cn('text-xs', hasError ? 'text-error-main' : 'text-text-secondary')}
+            className={cn('text-xs', hasError ? 'text-destructive' : 'text-muted-foreground')}
           >
             {displayHelperText}
           </p>
