@@ -1,99 +1,91 @@
-/**
- * User Table Row
- * Individual row component for users table
- */
 
 'use client';
 
-import { MoreVertical, Edit, Trash2 } from 'lucide-react';
+import { MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import type { MockUser } from '@/lib/mock';
-import Image from 'next/image';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { TableCell, TableRow } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 type UserTableRowProps = {
-  user: MockUser;
+  row: MockUser;
+  selected: boolean;
+  onSelectRow: () => void;
 };
 
-const statusColors = {
-  active: 'bg-green-100 text-green-800',
-  inactive: 'bg-gray-100 text-gray-800',
-  pending: 'bg-yellow-100 text-yellow-800',
-  suspended: 'bg-red-100 text-red-800',
-};
+export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
+  const { name, email, avatar, company, role, status, phone } = row;
 
-const roleLabels = {
-  ADMIN: 'Admin',
-  USER: 'Usuário',
-  MANAGER: 'Gerente',
-  VIEWER: 'Visualizador',
-};
-
-export function UserTableRow({ user }: UserTableRowProps) {
   return (
-    <tr className="hover:bg-gray-50 transition-colors">
-      {/* User Info */}
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="flex items-center gap-3">
-          <Image
-            src={user.avatar}
-            alt={user.name}
-            width={40}
-            height={40}
-            className="rounded-full object-cover"
-            unoptimized
-          />
-          <div>
-            <div className="text-sm font-medium text-gray-900">{user.name}</div>
-            <div className="text-sm text-gray-500">{user.email}</div>
-          </div>
+    <TableRow data-state={selected ? 'selected' : undefined} aria-checked={selected} className="hover:bg-transparent">
+      <TableCell className="w-[40px] pl-4 py-4">
+        <Checkbox checked={selected} onCheckedChange={onSelectRow} />
+      </TableCell>
+
+      <TableCell className="flex items-center gap-3 py-4 px-4">
+        <Avatar>
+          <AvatarImage src={avatar} alt={name} />
+          <AvatarFallback>{name.charAt(0).toUpperCase()}</AvatarFallback>
+        </Avatar>
+        <div className="flex flex-col">
+          <span className="text-sm font-semibold text-foreground">{name}</span>
+          <span className="text-xs text-muted-foreground">{email}</span>
         </div>
-      </td>
+      </TableCell>
 
-      {/* Company */}
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-sm text-gray-900">{user.company}</div>
-      </td>
+      <TableCell className="whitespace-nowrap py-4 px-4 text-sm font-medium">{phone}</TableCell>
 
-      {/* Role */}
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-sm text-gray-900">
-          {roleLabels[user.role as keyof typeof roleLabels] || user.role}
-        </div>
-      </td>
+      <TableCell className="whitespace-nowrap py-4 px-4 text-sm font-medium">{company}</TableCell>
 
-      {/* Status */}
-      <td className="px-6 py-4 whitespace-nowrap">
-        <span
-          className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-            statusColors[user.status as keyof typeof statusColors] || statusColors.inactive
-          }`}
+      <TableCell className="whitespace-nowrap py-4 px-4 text-sm font-medium">{role}</TableCell>
+
+      <TableCell className="py-4 px-4">
+        <Badge
+          variant="secondary"
+          className={cn(
+             "rounded-[6px] font-bold capitalize",
+             status === 'active'
+              ? 'bg-emerald-500/15 text-emerald-500 hover:bg-emerald-500/25'
+              : status === 'pending'
+              ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 hover:bg-amber-500/25'
+              : status === 'banned'
+              ? 'bg-red-500/15 text-red-600 dark:text-red-400 hover:bg-red-500/25'
+              : 'bg-slate-500/15 text-slate-600 dark:text-slate-400 hover:bg-slate-500/25'
+          )}
         >
-          {user.status}
-        </span>
-      </td>
+          {status}
+        </Badge>
+      </TableCell>
 
-      {/* Actions */}
-      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-        <div className="flex items-center gap-2">
-          <button
-            className="text-blue-600 hover:text-blue-900 p-1 hover:bg-blue-50 rounded"
-            title="Editar"
-          >
-            <Edit className="h-4 w-4" />
-          </button>
-          <button
-            className="text-red-600 hover:text-red-900 p-1 hover:bg-red-50 rounded"
-            title="Excluir"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
-          <button
-            className="text-gray-600 hover:text-gray-900 p-1 hover:bg-gray-50 rounded"
-            title="Mais opções"
-          >
-            <MoreVertical className="h-4 w-4" />
-          </button>
+      <TableCell align="right" className="py-4 px-4 pr-4">
+        <div className="flex items-center justify-end gap-1">
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+              <Pencil className="h-4 w-4" />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem className="text-destructive">
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
         </div>
-      </td>
-    </tr>
+      </TableCell>
+    </TableRow>
   );
 }
