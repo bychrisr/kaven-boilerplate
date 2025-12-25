@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Building2, Users, Crown, DollarSign, Headphones, TrendingUp, Server } from 'lucide-react';
 import { Logo } from '@/components/logo';
@@ -128,6 +128,14 @@ export default function SetupPage() {
     if (config.modules.createDevOps) count++;
     return count;
   };
+
+  // Aplicar tema dark na página /setup
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    return () => {
+      document.documentElement.removeAttribute('data-theme');
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#161C24] via-[#1C252E] to-[#212B36] flex items-center justify-center p-4">
