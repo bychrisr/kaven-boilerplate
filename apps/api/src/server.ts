@@ -18,6 +18,7 @@ import { metricsMiddleware } from './middleware/metrics.middleware';
 import { tenantMiddleware } from './middleware/tenant.middleware';
 import { auditRoutes } from './modules/audit/routes/audit.routes';
 import { observabilityRoutes } from './modules/observability/routes/observability.routes';
+import { dashboardRoutes } from './modules/dashboard/dashboard.routes';
 import { advancedMetricsMiddleware, onResponseMetricsHook } from './middleware/advanced-metrics.middleware';
 
 const fastify = Fastify({
@@ -131,6 +132,7 @@ fastify.register(webhookRoutes, { prefix: '/api/webhooks' });
 fastify.register(fileRoutes, { prefix: '/api/files' });
 fastify.register(auditRoutes, { prefix: '/api/audit-logs' });
 fastify.register(observabilityRoutes, { prefix: '/api/observability' });
+fastify.register(dashboardRoutes, { prefix: '/api/dashboard' });
 
 // 🕵️ FORENSIC AUDIT: Global Request Tracer
 import { randomUUID } from 'node:crypto';
