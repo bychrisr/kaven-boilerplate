@@ -146,42 +146,51 @@
 }
 
 .dark {
-  /* Minimals Dark Mode Reference - Forced Hex */
-  --background: #141b21;
+  /* Minimals Dark Mode - Original Colors Restored */
+  --background: #161c24;
+  --foreground: #ffffff;
 
-  --foreground: oklch(0.985 0 0);
-
-  /* Force Hex */
-  /* Using standard Minimals Dark Paper color for better contrast against #141B21 */
   --card: #212b36;
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --card-foreground: #ffffff;
+
+  --popover: #212b36;
+  --popover-foreground: #ffffff;
+
+  --primary: #00a76f; /* Green Minimals */
+  --primary-foreground: #ffffff;
+
+  --secondary: #8e33ff;
+  --secondary-foreground: #ffffff;
+
+  --muted: rgba(145, 158, 171, 0.12);
+  --muted-foreground: #637381;
+
+  --accent: rgba(145, 158, 171, 0.12);
+  --accent-foreground: #ffffff;
+
+  --destructive: #ff5630;
+  --destructive-foreground: #ffffff;
+
+  --border: rgba(145, 158, 171, 0.24);
+  --input: rgba(145, 158, 171, 0.24);
+  --ring: rgba(0, 167, 111, 0.3);
+
+  /* Charts - Mantendo oklch ou hex compatível */
+  --chart-1: #00a76f;
+  --chart-2: #ffab00;
+  --chart-3: #ff5630;
+  --chart-4: #00b8d9;
+  --chart-5: #8e33ff;
+
+  /* Sidebar Specifics to match Card */
+  --sidebar: #212b36;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #00a76f;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(145, 158, 171, 0.12);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(145, 158, 171, 0.24);
+  --sidebar-ring: rgba(0, 167, 111, 0.3);
 }
 
 @layer base {
