@@ -127,7 +127,7 @@ export function UserView() {
           </div>
         </div>
         <Button 
-          className="bg-[#00ab55] hover:bg-[#007b55] text-white shadow-md font-bold"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md font-bold"
         >
           <Plus className="mr-2 h-4 w-4" />
           New User
