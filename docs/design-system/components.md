@@ -556,6 +556,26 @@ Adapta-se automaticamente ao espaço disponível.
 - **Mobile:** Apenas Avatar + Chevron (Compacto)
 - **Desktop:** Avatar + Nome + Role + Chevron (Completo)
 
+### User Dropdown (Radix UI)
+
+Menu de perfil robusto utilizando primitives do Radix UI.
+
+**Features:**
+
+- ✅ **Auto-Posicionamento:** Usa `@radix-ui/react-dropdown-menu` para evitar cortes na tela (mobile).
+- ✅ **Alinhamento Inteligente:** `align="end"` garante ancoragem à direita.
+- ✅ **Visual Premium:** Dark Glassmorphism com Avatar expandido e botão de Logout destacado.
+- ✅ **Acessibilidade:** Navegação completa por teclado.
+
+```tsx
+import { UserMenu } from '@/components/layout/user-menu';
+
+// Uso no Header
+<div className="flex items-center gap-4">
+  <UserMenu />
+</div>;
+```
+
 ---
 
 **Anterior:** [Arquitetura](./architecture.md) | **Próximo:** [Design Tokens](./TOKENS.md)

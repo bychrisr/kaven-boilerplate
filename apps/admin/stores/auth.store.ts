@@ -169,7 +169,7 @@ export const useAuthStore = create<AuthState>()(
                 console.groupEnd();
               })
               .catch(error => {
-                console.error('5. ❌ Validation error:', error.message);
+                console.warn('5. ℹ️ Session validation failed (likely expired):', error.message);
                 
                 if (error.message === 'Unauthorized') {
                    console.log('6. 🔒 Token expired/invalid. Executing logout.');

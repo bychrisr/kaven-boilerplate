@@ -4,6 +4,7 @@ import { Search, Bell, Settings, Menu, Command } from 'lucide-react';
 import { useUIStore } from '@/stores/ui.store';
 import { useSettings } from '@/stores/settings.store';
 import { TenantSwitcher } from '@/components/layout/tenant-switcher';
+import { UserMenu } from '@/components/layout/user-menu';
 import { cn } from '@/lib/utils';
 
 export function Header() {
@@ -70,16 +71,7 @@ export function Header() {
         </button>
 
         {/* User Profile */}
-        <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-yellow-400 to-orange-500 p-[2px] cursor-pointer hover:scale-105 transition-transform">
-             <div className="w-full h-full rounded-full bg-background flex items-center justify-center overflow-hidden border-2 border-background">
-                 <img 
-                    src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" 
-                    alt="User" 
-                    width={36} 
-                    height={36}
-                />
-             </div>
-        </div>
+        <UserMenu />
       </div>
     </header>
   );

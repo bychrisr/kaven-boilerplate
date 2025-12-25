@@ -108,6 +108,9 @@ export const Popover: React.FC<PopoverProps> = ({
           'animate-in fade-in-0 zoom-in-95'
         )}
         style={{
+          transform: `translate(${transformOrigin.horizontal === 'center' ? '-50%' : transformOrigin.horizontal === 'right' ? '-100%' : '0'}, ${
+            transformOrigin.vertical === 'center' ? '-50%' : transformOrigin.vertical === 'bottom' ? '-100%' : '0'
+          })`,
           top: position.top,
           left: position.left,
           transformOrigin: `${transformOrigin.horizontal} ${transformOrigin.vertical}`,
