@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Building2, Users, Crown, DollarSign, Headphones, TrendingUp, Server } from 'lucide-react';
+import { Logo } from '@/components/logo';
+import { TextField } from '@/components/ui/text-field';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -129,71 +131,80 @@ export default function SetupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#161C24] via-[#1C252E] to-[#212B36] flex items-center justify-center p-4">
       <div className="w-full max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Kaven Boilerplate</h1>
-          <p className="text-muted-foreground">Configure seu SaaS em minutos</p>
+          <Logo size="large" className="mb-6 mx-auto" />
+          <h1 className="text-3xl font-bold text-white mb-2">Kaven Boilerplate</h1>
+          <p className="text-gray-400">Configure seu SaaS em minutos</p>
         </div>
 
         {/* Stepper */}
-        <Stepper steps={STEPS} currentStep={currentStep} />
+        <div className="mb-6">
+          <Stepper steps={STEPS} currentStep={currentStep} />
+        </div>
 
-        {/* Content */}
-        <div className="mt-8">
+        {/* Content Card */}
+        <div className="bg-[#212B36] rounded-2xl p-8 shadow-2xl border border-gray-700/50">
           {/* Step 1: Branding */}
           {currentStep === 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Configurações Básicas</CardTitle>
-                <CardDescription>Defina as informações principais do seu projeto</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="companyName">Nome do Projeto *</Label>
-                  <Input
-                    id="companyName"
-                    placeholder="Meu SaaS Inc"
-                    value={config.companyName}
-                    onChange={(e) => updateConfig('companyName', e.target.value)}
-                  />
-                </div>
+            <div>
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-white mb-2">Configurações Básicas</h2>
+                <p className="text-gray-400 text-sm">Defina as informações principais do seu projeto</p>
+              </div>
+              <div className="space-y-5">
+                <TextField
+                  id="companyName"
+                  label="Nome do Projeto"
+                  placeholder="Meu SaaS Inc"
+                  value={config.companyName}
+                  onChange={(e) => updateConfig('companyName', e.target.value)}
+                  required
+                  fullWidth
+                  className="bg-[#161C24] border-gray-700 text-white placeholder-gray-500 focus:border-primary-main focus:ring-primary-main/20"
+                  labelClassName="text-gray-400"
+                />
 
-                <div>
-                  <Label htmlFor="adminEmail">Email do Administrador *</Label>
-                  <Input
-                    id="adminEmail"
-                    type="email"
-                    placeholder="admin@example.com"
-                    value={config.adminEmail}
-                    onChange={(e) => updateConfig('adminEmail', e.target.value)}
-                  />
-                </div>
+                <TextField
+                  id="adminEmail"
+                  type="email"
+                  label="Email do Administrador"
+                  placeholder="admin@example.com"
+                  value={config.adminEmail}
+                  onChange={(e) => updateConfig('adminEmail', e.target.value)}
+                  required
+                  fullWidth
+                  className="bg-[#161C24] border-gray-700 text-white placeholder-gray-500 focus:border-primary-main focus:ring-primary-main/20"
+                  labelClassName="text-gray-400"
+                />
 
-                <div>
-                  <Label htmlFor="adminPassword">Senha do Administrador *</Label>
-                  <Input
-                    id="adminPassword"
-                    type="password"
-                    placeholder="Mínimo 8 caracteres"
-                    value={config.adminPassword}
-                    onChange={(e) => updateConfig('adminPassword', e.target.value)}
-                  />
-                </div>
+                <TextField
+                  id="adminPassword"
+                  type="password"
+                  label="Senha do Administrador"
+                  placeholder="Mínimo 8 caracteres"
+                  value={config.adminPassword}
+                  onChange={(e) => updateConfig('adminPassword', e.target.value)}
+                  required
+                  fullWidth
+                  className="bg-[#161C24] border-gray-700 text-white placeholder-gray-500 focus:border-primary-main focus:ring-primary-main/20"
+                  labelClassName="text-gray-400"
+                />
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label>Idioma Padrão</Label>
-                    <Select value={config.language} onChange={(v: 'pt-BR' | 'en-US') => updateConfig('language', v)}>
+                    <Label className="text-gray-400 text-sm font-medium mb-1.5 block">Idioma Padrão</Label>
+                    <Select value={config.language} onChange={(v: 'pt-BR' | 'en-US') => updateConfig('language', v)} fullWidth>
                       <SelectOption value="pt-BR">🇧🇷 Português (Brasil)</SelectOption>
                       <SelectOption value="en-US">🇺🇸 English (US)</SelectOption>
                     </Select>
                   </div>
 
                   <div>
-                    <Label>Moeda Padrão</Label>
-                    <Select value={config.currency} onChange={(v: 'BRL' | 'USD') => updateConfig('currency', v)}>
+                    <Label className="text-gray-400 text-sm font-medium mb-1.5 block">Moeda Padrão</Label>
+                    <Select value={config.currency} onChange={(v: 'BRL' | 'USD') => updateConfig('currency', v)} fullWidth>
                       <SelectOption value="BRL">R$ Real (BRL)</SelectOption>
                       <SelectOption value="USD">$ Dollar (USD)</SelectOption>
                     </Select>
@@ -201,34 +212,37 @@ export default function SetupPage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="primaryColor">Cor Primária</Label>
+                  <Label htmlFor="primaryColor" className="text-gray-400 text-sm font-medium mb-1.5 block">Cor Primária</Label>
                   <div className="flex gap-2">
                     <Input
                       id="primaryColor"
                       type="color"
                       value={config.primaryColor}
                       onChange={(e) => updateConfig('primaryColor', e.target.value)}
-                      className="w-20 h-10"
+                      className="w-20 h-10 bg-[#161C24] border-gray-700"
                     />
                     <Input
                       value={config.primaryColor}
                       onChange={(e) => updateConfig('primaryColor', e.target.value)}
                       placeholder="#6366f1"
-                      className="flex-1"
+                      className="flex-1 bg-[#161C24] border-gray-700 text-white placeholder-gray-500 focus:border-primary-main focus:ring-primary-main/20"
                     />
                   </div>
                 </div>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="outline" disabled>Voltar</Button>
+              </div>
+              <div className="flex justify-between mt-8">
+                <Button variant="outlined" disabled className="border-gray-700 text-gray-500">Voltar</Button>
                 <Button 
                   onClick={handleNext}
                   disabled={!config.companyName || !config.adminEmail || !config.adminPassword}
+                  variant="contained"
+                  color="primary"
+                  className="shadow-lg shadow-primary-main/25 hover:shadow-primary-main/40"
                 >
                   Próximo
                 </Button>
-              </CardFooter>
-            </Card>
+              </div>
+            </div>
           )}
 
           {/* Step 2: Arquitetura */}
