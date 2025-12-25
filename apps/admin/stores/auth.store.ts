@@ -26,11 +26,12 @@ interface AuthState {
   updateTokens: (accessToken: string, refreshToken: string) => void;
   clearError: () => void;
   setLoading: (loading: boolean) => void;
+  set: (state: Partial<AuthState>) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       // Initial state
       user: null,
       isAuthenticated: false,
@@ -101,6 +102,9 @@ export const useAuthStore = create<AuthState>()(
       
       // Set loading
       setLoading: (loading) => set({ isLoading: loading }),
+
+      // Generic set action
+      set: (state) => set(state),
     }),
     {
       name: 'kaven-auth',

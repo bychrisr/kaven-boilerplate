@@ -34,7 +34,7 @@ api.interceptors.request.use(
           config.headers['X-Tenant-ID'] = state.user.tenantId;
           console.log('✅ AXIOS REQUEST - Tenant ID header set');
         }
-      } catch (e) {
+      } catch {
         console.log('⚠️ AXIOS REQUEST - Failed to parse user data');
       }
     }
@@ -60,14 +60,14 @@ api.interceptors.response.use(
 
     // Se não é 401 ou já tentou retry, rejeitar
     if (error.response?.status !== 401 || originalRequest._retry) {
-      return Promise.reject(error);
+      throw error;
     }
 
     // Evitar retry em endpoints de auth
     if (originalRequest.url?.includes('/auth/login') || 
         originalRequest.url?.includes('/auth/register') ||
         originalRequest.url?.includes('/auth/refresh')) {
-      return Promise.reject(error);
+      throw error;
     }
 
     originalRequest._retry = true;
@@ -79,8 +79,8 @@ api.interceptors.response.use(
       console.log('❌ AXIOS - No refresh token, redirecting to login');
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
-      window.location.href = '/login';
-      return Promise.reject(error);
+      globalThis.location.href = '/login';
+      throw error;
     }
 
     try {
@@ -107,9 +107,9 @@ api.interceptors.response.use(
       // Refresh falhou, limpar tudo e redirecionar
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
-      window.location.href = '/login';
+      globalThis.location.href = '/login';
       
-      return Promise.reject(refreshError);
+      throw refreshError;
     }
   }
 );

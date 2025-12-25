@@ -1,7 +1,8 @@
 import * as React from 'react';
+import NextImage, { ImageProps as NextImageProps } from 'next/image';
 import { cn } from '@/lib/utils';
 
-export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+export interface ImageProps extends Omit<NextImageProps, 'src' | 'alt' | 'objectFit' | 'placeholder' | 'blurDataURL'> {
   /**
    * Image source
    */
@@ -93,24 +94,27 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
       >
         {/* Blur placeholder */}
         {blurDataURL && !isLoaded && (
-          <img
+          <NextImage
             src={blurDataURL}
             alt=""
-            className="absolute inset-0 w-full h-full object-cover blur-lg scale-110"
+            fill
+            className="object-cover blur-lg scale-110"
             aria-hidden="true"
           />
         )}
 
         {/* Main image */}
-        <img
+        <NextImage
+          // ref works with next/image now
           ref={ref}
           src={currentSrc}
           alt={alt}
-          loading={lazy ? 'lazy' : 'eager'}
+          fill
+          priority={!lazy}
           onLoad={handleLoad}
           onError={handleError}
           className={cn(
-            'w-full h-full transition-all duration-300',
+            'transition-all duration-300',
             objectFitClasses[objectFit],
             !isLoaded && 'opacity-0',
             isLoaded && 'opacity-100',

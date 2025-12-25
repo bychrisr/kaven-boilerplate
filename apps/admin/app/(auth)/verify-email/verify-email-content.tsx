@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Alert } from '@/components/ui/alert';
+// Alert removed (unused)
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 

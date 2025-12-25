@@ -14,15 +14,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
-// Helper para determinar cor do badge baseado na ação
-function getActionBadgeVariant(
-  action: string
-): 'default' | 'destructive' | 'secondary' | 'outline' {
-  if (action.includes('delete') || action.includes('failed')) return 'destructive';
-  if (action.includes('create') || action.includes('success')) return 'default';
-  if (action.includes('update')) return 'secondary';
-  return 'outline';
-}
+// getActionBadgeVariant removed (unused)
 
 // Helper para cores de badges (seguindo padrão da aplicação)
 function getActionBadgeClasses(action: string): string {

@@ -57,7 +57,7 @@ export const Carousel: React.FC<CarouselProps> = ({
   const slides = React.Children.toArray(children);
   const currentIndex = controlledIndex ?? internalIndex;
 
-  const goToSlide = (index: number) => {
+  const goToSlide = React.useCallback((index: number) => {
     let newIndex = index;
 
     if (infinite) {
@@ -69,15 +69,15 @@ export const Carousel: React.FC<CarouselProps> = ({
 
     setInternalIndex(newIndex);
     onChange?.(newIndex);
-  };
+  }, [infinite, slides.length, onChange]);
 
-  const goToPrevious = () => {
+  const goToPrevious = React.useCallback(() => {
     goToSlide(currentIndex - 1);
-  };
+  }, [goToSlide, currentIndex]);
 
-  const goToNext = () => {
+  const goToNext = React.useCallback(() => {
     goToSlide(currentIndex + 1);
-  };
+  }, [goToSlide, currentIndex]);
 
   React.useEffect(() => {
     if (autoPlay) {
@@ -91,7 +91,7 @@ export const Carousel: React.FC<CarouselProps> = ({
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [autoPlay, interval, currentIndex]);
+  }, [autoPlay, interval, goToNext]);
 
   const canGoPrevious = infinite || currentIndex > 0;
   const canGoNext = infinite || currentIndex < slides.length - 1;

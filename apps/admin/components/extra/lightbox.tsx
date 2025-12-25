@@ -33,23 +33,23 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, open, onClose, initi
 
   const currentImage = images[currentIndex];
 
-  const goToPrevious = () => {
+  const goToPrevious = React.useCallback(() => {
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
     setZoom(1);
-  };
+  }, [images.length]);
 
-  const goToNext = () => {
+  const goToNext = React.useCallback(() => {
     setCurrentIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
     setZoom(1);
-  };
+  }, [images.length]);
 
-  const handleZoomIn = () => {
+  const handleZoomIn = React.useCallback(() => {
     setZoom((prev) => Math.min(prev + 0.5, 3));
-  };
+  }, []);
 
-  const handleZoomOut = () => {
+  const handleZoomOut = React.useCallback(() => {
     setZoom((prev) => Math.max(prev - 0.5, 1));
-  };
+  }, []);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -77,7 +77,7 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, open, onClose, initi
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [open, currentIndex]);
+  }, [open, onClose, goToPrevious, goToNext, handleZoomIn, handleZoomOut]);
 
   if (!open) return null;
 
@@ -144,6 +144,7 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, open, onClose, initi
 
       {/* Main image */}
       <div className="relative w-full h-full flex items-center justify-center p-16">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={currentImage.src}
           alt={currentImage.alt || ''}
@@ -164,7 +165,7 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, open, onClose, initi
         <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 flex gap-2 max-w-screen-lg overflow-x-auto px-4">
           {images.map((image, index) => (
             <button
-              key={index}
+              key={`${image.src}-${index}`}
               onClick={() => {
                 setCurrentIndex(index);
                 setZoom(1);
@@ -176,7 +177,8 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, open, onClose, initi
                   : 'border-white/30 hover:border-white/60'
               )}
             >
-              <img src={image.src} alt={image.alt || ''} className="w-full h-full object-cover" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={image.src} alt={image.alt || ''} className="w-full h-full object-cover" />
             </button>
           ))}
         </div>
