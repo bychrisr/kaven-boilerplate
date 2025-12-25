@@ -45,7 +45,9 @@ cd apps/admin && pnpm dev
 ### Frontend
 
 - ✅ **Login funcional** com integração API
-- ✅ **Dashboard** com auth guard
+- ✅ **Dashboard Analytics** (Real Data) com Gráficos Recharts
+- ✅ **UI Minimalista** (Dark/Light Mode) com Persistência
+- ✅ **Design System** refinado (Header Glassmorphism, Collapsible Sidebar)
 - ✅ **UI responsiva** com Tailwind CSS
 
 ### Database

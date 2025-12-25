@@ -175,6 +175,28 @@ function Sidebar() {
 - `setSidebarOpen(open: boolean)`
 - `setTheme(theme)`
 
+### Settings Store (Zustand)
+
+```typescript
+import { useSettings } from '@/stores/settings.store';
+
+function ThemeToggle() {
+  const { theme, toggleTheme } = useSettings();
+
+  return (
+    <button onClick={toggleTheme}>
+      {theme === 'dark' ? '🌙' : '☀️'}
+    </button>
+  );
+}
+```
+
+**Features:**
+
+- ✅ Persistência de tema (Dark/Light)
+- ✅ Sincronização automática com Layout
+- ✅ Integração com Tailwind classes
+
 ---
 
 ## 📝 Formulários (React Hook Form + Zod)
