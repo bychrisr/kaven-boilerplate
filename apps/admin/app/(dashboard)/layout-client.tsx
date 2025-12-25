@@ -26,7 +26,7 @@ function DashboardLayoutInner({ children }: { children: ReactNode }) {
     <div 
       className={cn(
         "flex h-screen overflow-hidden transition-colors duration-300",
-        theme === 'dark' ? "bg-[#1C252E] text-white" : "bg-[#F9FAFB] text-gray-900"
+        "bg-background text-foreground"
       )}
     >
       <Sidebar />
