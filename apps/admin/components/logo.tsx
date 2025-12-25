@@ -24,7 +24,7 @@ export function Logo({
         <path d="M16 2L2 9L16 16L30 9L16 2Z" fill="currentColor" fillOpacity="0.24" />
         <path d="M2 23L16 30L30 23V9L16 16L2 9V23Z" fill="currentColor" />
       </svg>
-      {size !== 'small' && <span className="font-bold text-xl text-gray-900">Kaven</span>}
+      {size !== 'small' && <span className="font-bold text-xl text-foreground">Kaven</span>}
     </div>
   );
 }

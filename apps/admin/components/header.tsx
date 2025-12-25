@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 
 export function Header() {
   const { toggleSidebar } = useUIStore();
-  const { theme, toggleTheme } = useSettings();
+  const { theme } = useSettings();
 
   return (
     <header 
@@ -62,9 +62,9 @@ export function Header() {
             <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-[#1C252E]" />
         </button>
 
-        {/* Settings (Theme Toggle) */}
+        {/* Settings (Drawer Trigger) */}
         <button 
-            onClick={toggleTheme}
+            onClick={() => window.dispatchEvent(new Event('open-settings-drawer'))}
             className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 transition-colors animate-spin-slow group"
         >
             <Settings className={cn(
