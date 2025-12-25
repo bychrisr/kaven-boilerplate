@@ -3,6 +3,9 @@
 
 @import '../styles/theme.css';
 
+/* SimpleBar Scrollbar Customization (Minimals Style) */
+@import 'simplebar-react/dist/simplebar.min.css';
+
 @layer base {
   * {
     @apply border-border;
@@ -209,5 +212,24 @@
   }
   *:hover::-webkit-scrollbar-thumb:hover {
     background: rgba(145, 158, 171, 0.4);
+  }
+
+  /* SimpleBar Scrollbar - Invisível por padrão, aparece no hover */
+  .simplebar-scrollbar:before {
+    background-color: rgba(145, 158, 171, 0.48);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .simplebar-scrollbar.simplebar-visible:before {
+    opacity: 0.48;
+  }
+
+  .simplebar-track.simplebar-vertical {
+    width: 6px;
+  }
+
+  .simplebar-track.simplebar-horizontal {
+    height: 6px;
   }
 }
