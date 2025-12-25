@@ -1,100 +1,279 @@
-/**
- * User View (Main Container)
- * Inspired by Minimals.cc sections pattern
- * This is the main container for the Users page
- */
 
 'use client';
 
 import { useState } from 'react';
 import { MOCK_USERS } from '@/lib/mock';
-import { UserTableToolbar } from '../user-table-toolbar';
+
 import { UserTableRow } from '../user-table-row';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Table, 
+  TableBody, 
+  TableHead, 
+  TableHeader, 
+  TableRow,
+  TableCell
+} from '@/components/ui/table';
+import { Plus } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
+
+const STATUS_OPTIONS = [
+  { value: 'all', label: 'All' },
+  { value: 'active', label: 'Active' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'banned', label: 'Banned' },
+  { value: 'rejected', label: 'Rejected' },
+];
 
 export function UserView() {
   const [filterName, setFilterName] = useState('');
-  const [filterRole, setFilterRole] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [selected, setSelected] = useState<string[]>([]);
 
   // Filter users
   const filteredUsers = MOCK_USERS.filter((user) => {
     const matchesName =
       user.name.toLowerCase().includes(filterName.toLowerCase()) ||
       user.email.toLowerCase().includes(filterName.toLowerCase());
-    const matchesRole = filterRole === 'all' || user.role === filterRole;
     const matchesStatus = filterStatus === 'all' || user.status === filterStatus;
 
-    return matchesName && matchesRole && matchesStatus;
+    return matchesName && matchesStatus;
   });
+
+  const getStatusCount = (status: string) => {
+    if (status === 'all') return MOCK_USERS.length;
+    return MOCK_USERS.filter((user) => user.status === status).length;
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelected(filteredUsers.map((user) => user.id));
+    } else {
+      setSelected([]);
+    }
+  };
+
+  const handleSelectRow = (id: string) => {
+    if (selected.includes(id)) {
+      setSelected(selected.filter((item) => item !== id));
+    } else {
+      setSelected([...selected, id]);
+    }
+  };
 
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Usuários</h1>
-        <p className="mt-2 text-sm text-gray-600">Gerencie todos os usuários do sistema</p>
-      </div>
-
-      {/* Toolbar */}
-      <UserTableToolbar
-        filterName={filterName}
-        onFilterName={setFilterName}
-        filterRole={filterRole}
-        onFilterRole={setFilterRole}
-        filterStatus={filterStatus}
-        onFilterStatus={setFilterStatus}
-      />
-
-      {/* Table */}
-      <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Usuário
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Empresa
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Função
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ações
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {filteredUsers.map((user) => (
-                <UserTableRow key={user.id} user={user} />
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Empty State */}
-        {filteredUsers.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">Nenhum usuário encontrado</p>
-          </div>
-        )}
-
-        {/* Pagination */}
-        <div className="px-6 py-4 border-t flex items-center justify-between">
-          <div className="text-sm text-gray-700">
-            Mostrando <span className="font-medium">{filteredUsers.length}</span> de{' '}
-            <span className="font-medium">{MOCK_USERS.length}</span> usuários
-          </div>
-          <div className="flex gap-2">
-            <button className="px-3 py-1 text-sm border rounded hover:bg-gray-50">Anterior</button>
-            <button className="px-3 py-1 text-sm border rounded hover:bg-gray-50">Próximo</button>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">All Users</h1>
+          <div className="mt-2">
+            <Breadcrumbs>
+              <BreadcrumbItem>
+                <Link href="/dashboard" className="transition-colors hover:text-foreground">
+                  Dashboard
+                </Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link href="#" className="transition-colors hover:text-foreground">
+                  User
+                </Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem current>List</BreadcrumbItem>
+            </Breadcrumbs>
           </div>
         </div>
+        <Button 
+          className="bg-[#00ab55] hover:bg-[#007b55] text-white shadow-md font-bold"
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          New User
+        </Button>
       </div>
+
+      <Card className="!p-0 !gap-0 block overflow-hidden border-none shadow-md bg-card dark:bg-[#212B36]">
+        {/* Status Tabs */}
+        <div className="p-0 pb-0">
+          <Tabs 
+            defaultValue="all" 
+            value={filterStatus} 
+            onValueChange={setFilterStatus}
+            className="w-full"
+          >
+            <div className="flex flex-col md:flex-row items-center w-full border-b border-border/40 gap-4">
+              <TabsList className="bg-transparent p-0 h-auto gap-8 justify-start px-4 w-auto flex-none border-b-0">
+                {STATUS_OPTIONS.map((tab) => {
+                  const count = getStatusCount(tab.value);
+                  const isActive = filterStatus === tab.value;
+                  
+                  // Determine Badge styling based on status
+                  // Fixed radius to 6px (rounded-[6px]) and used inline-flex for better centering
+                  let badgeClass = "ml-2 h-5 px-1.5 text-xs min-w-[20px] rounded-[6px] inline-flex items-center justify-center pointer-events-none";
+                  const badgeVariant: "default" | "secondary" | "destructive" | "outline" = "secondary";
+                  
+                  if (isActive) {
+                    // Active State: "Lighter" / Filled for highlight
+                    switch(tab.value) {
+                        case 'all':
+                            badgeClass += " bg-foreground text-background font-bold"; 
+                            break;
+                        case 'active':
+                            badgeClass += " bg-emerald-500 text-white dark:text-gray-900 font-bold";
+                            break;
+                        case 'pending':
+                             badgeClass += " bg-amber-500 text-white dark:text-gray-900 font-bold";
+                            break;
+                        case 'banned':
+                            badgeClass += " bg-red-500 text-white dark:text-gray-900 font-bold";
+                            break;
+                        case 'rejected':
+                            badgeClass += " bg-slate-500 text-white dark:text-gray-900 font-bold";
+                            break;
+                    }
+                  } else {
+                    // Inactive State: Subtle / Transparent
+                    switch(tab.value) {
+                        case 'all':
+                            badgeClass += " bg-muted-foreground/20 text-muted-foreground"; 
+                            break;
+                        case 'active':
+                            badgeClass += " bg-emerald-500/15 text-emerald-500 dark:text-emerald-400";
+                            break;
+                        case 'pending':
+                             badgeClass += " bg-amber-500/15 text-amber-600 dark:text-amber-400";
+                            break;
+                        case 'banned':
+                            badgeClass += " bg-red-500/15 text-red-600 dark:text-red-400";
+                            break;
+                        case 'rejected':
+                            badgeClass += " bg-slate-500/15 text-slate-600 dark:text-slate-400";
+                            break;
+                    }
+                  }
+  
+                  return (
+                    <TabsTrigger 
+                      key={tab.value} 
+                      value={tab.value}
+                      className={cn(
+                          "relative h-14 rounded-none bg-transparent px-0 pb-3 pt-3 font-semibold text-muted-foreground shadow-none transition-none cursor-pointer",
+                          "!bg-transparent !shadow-none !border-0 hover:text-foreground",
+                          "data-[state=active]:!bg-transparent data-[state=active]:!shadow-none data-[state=active]:!text-foreground data-[state=active]:!border-none",
+                          "dark:data-[state=active]:!bg-transparent dark:data-[state=active]:!border-none", // Explicit override for dark mode border
+                          "after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:bg-foreground after:transition-transform after:duration-300 data-[state=active]:after:scale-x-100",
+                          isActive && "text-foreground after:bg-primary"
+                      )}
+                    >
+                      <span className="capitalize">{tab.label}</span>
+                      <Badge variant={badgeVariant} className={badgeClass}>
+                        {count}
+                      </Badge>
+                    </TabsTrigger>
+                  );
+                })}
+              </TabsList>
+              
+              <div className="flex-1 w-full px-4 md:px-0 md:pr-4 py-2 md:py-0">
+                 <div className="relative w-full">
+                    <Search className="absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search..."
+                      value={filterName}
+                      onChange={(e) => setFilterName(e.target.value)}
+                      className="w-full bg-transparent border-none focus-visible:ring-0 pl-9 placeholder:text-muted-foreground h-10"
+                    />
+                 </div>
+              </div>
+            </div>
+          </Tabs>
+        </div>
+        
+        {/* Toolbar Removed */}
+
+        {/* Table */}
+        <div className="relative mx-0 rounded-none border-none text-card-foreground shadow-none bg-transparent overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-muted/50">
+                <TableRow className="border-b border-dashed border-border/50 hover:bg-transparent">
+                  <TableHead className="w-[40px] pl-4 h-16 font-semibold bg-transparent first:rounded-tl-none text-foreground dark:text-white">
+                    <Checkbox 
+                      checked={filteredUsers.length > 0 && selected.length === filteredUsers.length}
+                      onCheckedChange={(checked: boolean | 'indeterminate') => handleSelectAll(checked === true)}
+                    />
+                  </TableHead>
+                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Name</TableHead>
+                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Phone Number</TableHead>
+                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Tenant</TableHead>
+                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Role</TableHead>
+                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Status</TableHead>
+                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-right last:rounded-tr-none"></TableHead>
+                </TableRow>
+              </TableHeader>
+            <TableBody>
+              {filteredUsers.length > 0 ? (
+                filteredUsers.map((user) => (
+                  <UserTableRow 
+                    key={user.id} 
+                    row={user} 
+                    selected={selected.includes(user.id)}
+                    onSelectRow={() => handleSelectRow(user.id)}
+                  />
+                ))
+              ) : (
+                <TableRow>
+                   <TableCell colSpan={7} className="h-24 text-center">
+                    No results found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        {/* Pagination (Visual only for mock) */}
+        <div className="flex items-center justify-end p-4 border-t border-border">
+            <div className="flex items-center gap-6 lg:gap-8">
+              <div className="flex items-center space-x-2">
+                <p className="text-sm font-medium text-muted-foreground">Rows per page</p>
+                <select className="h-8 w-[70px] rounded-md border border-input bg-transparent px-2 py-1 text-sm">
+                  <option>10</option>
+                  <option>20</option>
+                  <option>50</option>
+                </select>
+              </div>
+              <div className="flex w-[100px] items-center justify-center text-sm font-medium text-muted-foreground">
+                1-10 of {filteredUsers.length}
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8"
+                  disabled
+                >
+                  <span className="sr-only">Go to previous page</span>
+                  {'<'}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8"
+                >
+                  <span className="sr-only">Go to next page</span>
+                  {'>'}
+                </Button>
+              </div>
+            </div>
+        </div>
+      </Card>
     </div>
   );
 }
