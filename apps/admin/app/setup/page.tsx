@@ -226,7 +226,7 @@ export default function SetupPage() {
                       type="color"
                       value={config.primaryColor}
                       onChange={(e) => updateConfig('primaryColor', e.target.value)}
-                      className="w-20 h-10 bg-[#161C24] border-gray-700"
+                      className="w-20 bg-[#161C24] border-gray-700"
                     />
                     <Input
                       value={config.primaryColor}
