@@ -10,6 +10,7 @@
     "lint": "turbo run lint",
     "db:generate": "npx prisma generate",
     "db:migrate": "npx prisma migrate dev",
+    "db:seed": "npx tsx prisma/seed.ts",
     "db:studio": "npx prisma studio",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down"
