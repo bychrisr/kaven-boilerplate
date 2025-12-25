@@ -19,8 +19,13 @@ export function Header() {
         )}
     >
       <div className="flex items-center gap-4">
-        <button onClick={toggleSidebar} className="lg:hidden p-1 hover:bg-accent rounded-full text-muted-foreground hover:text-foreground">
-            <Menu className="h-6 w-6" />
+        {/* Stylized Hamburger */}
+        <button onClick={toggleSidebar} className="lg:hidden p-1 hover:bg-accent rounded-full text-muted-foreground hover:text-foreground transition-colors">
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 7H19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                <path d="M5 12H19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                <path d="M5 17H19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+             </svg>
         </button>
         
         {/* Tenant Switcher */}

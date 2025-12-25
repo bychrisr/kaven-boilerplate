@@ -16,9 +16,9 @@ export function TenantSwitcher() {
 
   if (!tenant || !currentSpace) {
     return (
-      <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5">
+      <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5">
         <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary-main to-primary-dark animate-pulse" />
-        <div className="flex flex-col gap-1">
+        <div className="hidden md:flex flex-col gap-1">
           <div className="h-3 w-16 bg-white/10 rounded animate-pulse" />
           <div className="h-2 w-12 bg-white/10 rounded animate-pulse" />
         </div>
@@ -29,19 +29,19 @@ export function TenantSwitcher() {
   const role = user?.role || 'USER';
 
   return (
-    <div className="relative hidden md:block" ref={dropdownRef}>
+    <div className="relative block" ref={dropdownRef}>
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-accent transition-colors"
+        className="flex items-center gap-2 px-1.5 py-1.5 md:px-3 rounded-lg hover:bg-accent transition-colors"
       >
         {/* Tenant Avatar */}
         <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary-main to-primary-dark flex items-center justify-center text-white text-xs font-bold">
           {tenant.name[0]}
         </div>
         
-        {/* Tenant Info */}
-        <div className="flex flex-col items-start">
+        {/* Tenant Info - Hidden on mobile */}
+        <div className="hidden md:flex flex-col items-start">
           <span className="text-sm font-semibold leading-tight text-foreground">
             {currentSpace.name}
           </span>
