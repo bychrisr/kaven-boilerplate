@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ZodError } from 'zod';
 import { setupConfigSchema } from '@/lib/validations/setup';
-import { SetupService } from '../../../../../../api/src/services/setup.service';
+import { SetupService } from '@/lib/services/setup.service';
+import type { User } from '@prisma/client';
 
 /**
  * POST /api/setup/init
@@ -34,7 +35,7 @@ export async function POST(request: NextRequest) {
         tenantId: result.tenant.id,
         tenantName: result.tenant.name,
         usersCreated: result.users.length,
-        users: result.users.map(u => ({
+        users: result.users.map((u: User) => ({
           email: u.email,
           role: u.role
         }))
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: 'Invalid configuration',
-        details: error.errors.map(e => ({
+        details: error.issues.map((e) => ({
           field: e.path.join('.'),
           message: e.message
         }))
