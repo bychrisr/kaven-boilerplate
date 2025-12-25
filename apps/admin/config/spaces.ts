@@ -75,15 +75,14 @@ export const SPACES: Record<string, SpaceConfig> = {
               { label: 'Cards', href: '/users/cards' }
             ]
           },
-          { icon: Building2, label: 'Tenant', href: '/tenants' },
-          { icon: ShoppingCart, label: 'Order', href: '/orders' },
-          { icon: FileText, label: 'Invoice', href: '/invoices' }
+          { icon: Building2, label: 'Tenant', href: '/tenants' }
         ]
       },
       {
         title: 'FINANCE',
         items: [
           { icon: DollarSign, label: 'Revenue', href: '/finance/revenue' },
+          { icon: ShoppingCart, label: 'Orders', href: '/orders' },
           { icon: FileText, label: 'Invoices', href: '/invoices' },
           { icon: CreditCard, label: 'Payments', href: '/finance/payments' },
           { icon: Receipt, label: 'Billing', href: '/finance/billing' }
@@ -100,7 +99,6 @@ export const SPACES: Record<string, SpaceConfig> = {
       {
         title: 'MARKETING',
         items: [
-          { icon: BarChart3, label: 'Analytics (Mkt)', href: '/analytics' },
           { icon: Users, label: 'CRM', href: '/marketing/crm' },
           { icon: Mail, label: 'Campaigns', href: '/marketing/campaigns' },
           { icon: Target, label: 'Goals', href: '/marketing/goals' }
@@ -128,11 +126,11 @@ export const SPACES: Record<string, SpaceConfig> = {
       }
     ],
     dashboardCards: [
-        'users', 'tenants', 'revenue', 'activity', // Original
-        'invoices', 'payments', 'mrr', // Finance
-        'tickets', 'response_time', 'satisfaction', 'active_users', // Support
-        'conversions', 'campaigns', 'leads', 'engagement', // Marketing
-        'uptime', 'errors', 'cpu_usage' // DevOps
+        'users', 'tenants', 'revenue', 'activity',
+        'invoices', 'payments', 'mrr',
+        'tickets', 'response_time', 'satisfaction', 'active_users',
+        'conversions', 'campaigns', 'leads', 'engagement',
+        'uptime', 'errors', 'cpu_usage'
     ]
   },
   
