@@ -304,7 +304,7 @@ export function UserView() {
                     setRowsPerPage(Number(e.target.value));
                     setPage(0);
                   }}
-                  className="h-8 w-[70px] rounded-md border border-border bg-background text-foreground px-2 py-1 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
+                  className="h-8 w-[70px] rounded-md border border-input bg-card text-foreground px-2.5 py-1.5 text-sm shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer"
                 >
                   <option value={5}>5</option>
                   <option value={10}>10</option>
