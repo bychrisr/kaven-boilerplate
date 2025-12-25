@@ -12,6 +12,7 @@ import { Select, SelectOption } from '@/components/ui/select';
 import { Stepper } from '@/components/setup/stepper';
 import { ArchitectureCard } from '@/components/setup/architecture-card';
 import { RoleToggle } from '@/components/setup/role-toggle';
+import { PasswordRequirements } from '@/components/setup/password-requirements';
 import { toast } from 'sonner';
 
 interface SetupConfig {
@@ -209,6 +210,8 @@ export default function SetupPage() {
                     </button>
                   }
                 />
+                
+                <PasswordRequirements password={config.adminPassword} />
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
