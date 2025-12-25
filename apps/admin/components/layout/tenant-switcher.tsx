@@ -76,15 +76,15 @@ export function TenantSwitcher() {
                     "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-left",
                     isActive 
                       ? "bg-primary-main/10 text-primary-main" 
-                      : "hover:bg-accent hover:text-accent-foreground text-foreground"
+                      : "hover:bg-accent text-foreground/80 hover:text-foreground"
                   )}
                 >
                   {/* Space Avatar */}
                   <div className={cn(
-                    "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold",
+                    "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0",
                     isActive 
                       ? "bg-gradient-to-tr from-primary-main to-primary-dark text-white"
-                      : "bg-muted text-foreground"
+                      : "bg-muted text-foreground/60"
                   )}>
                     {space.name[0]}
                   </div>
@@ -96,10 +96,12 @@ export function TenantSwitcher() {
                     </div>
                   </div>
                   
-                  {/* Role Badge */}
-                  <span className="text-[10px] font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-full border border-border uppercase">
-                    {role}
-                  </span>
+                  {/* Role Badge - Show ONLY for active space to avoid confusion about global role */}
+                  {isActive && (
+                     <span className="text-[10px] font-bold text-primary-main bg-primary-main/10 px-2 py-0.5 rounded-full border border-primary-main/20 uppercase">
+                      {role}
+                    </span>
+                  )}
                 </button>
               );
             })}
