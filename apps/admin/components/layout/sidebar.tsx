@@ -116,16 +116,17 @@ export function Sidebar() {
             onClick={() => toggleExpand(item.name)}
             data-tooltip={isCollapsed ? item.name : undefined}
             className={cn(
-              'w-full flex items-center justify-between px-3 py-2.5 text-[0.875rem] font-medium rounded-lg transition-colors min-h-[44px]',
+              'w-full flex items-center justify-between px-3 py-2.5 text-sm rounded-lg transition-colors min-h-[44px]',
+              // Typography & Colors match reference
               isActive || (isExpanded && !isCollapsed)
-                ? 'text-primary bg-primary/10'
-                : 'text-muted-foreground hover:bg-muted/10 hover:text-foreground',
+                ? 'bg-primary/10 text-primary font-semibold'
+                : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground font-medium',
               isCollapsed && 'justify-center px-2'
             )}
           >
-            <div className={cn("flex items-center gap-4", isCollapsed ? "gap-0" : "")}>
+            <div className={cn("flex items-center gap-4 min-w-0", isCollapsed ? "gap-0" : "")}>
               <Icon className="h-6 w-6 flex-shrink-0" />
-              {!isCollapsed && <span>{item.name}</span>}
+              {!isCollapsed && <span className="truncate">{item.name}</span>}
             </div>
             {!isCollapsed && (
               <ChevronDown
@@ -144,19 +145,19 @@ export function Sidebar() {
                     target={child.external ? '_blank' : undefined}
                     rel={child.external ? 'noopener noreferrer' : undefined}
                     className={cn(
-                        'flex items-center gap-2 py-2 text-[0.875rem] rounded-lg transition-colors relative min-h-[36px]',
+                        'flex items-center gap-2 py-2 text-sm rounded-lg transition-colors relative min-h-[36px]',
                         isChildActive
                         ? 'text-foreground font-semibold'
-                        : 'text-muted-foreground hover:text-foreground'
+                        : 'text-sidebar-foreground/70 hover:text-foreground font-medium'
                     )}
                     >
                     <div className="w-[24px] flex justify-center flex-shrink-0">
                        <span className={cn(
                            "flex-shrink-0 rounded-full transition-all bg-current",
-                           isChildActive ? "w-2 h-2 scale-100 bg-primary" : "w-1 h-1 bg-muted-foreground group-hover:bg-foreground"
+                           isChildActive ? "w-2 h-2 scale-100 bg-primary" : "w-1 h-1 bg-sidebar-foreground/40 group-hover:bg-foreground"
                        )} />
                     </div>
-                    <span>{child.name}</span>
+                    <span className="truncate">{child.name}</span>
                     </Link>
                 );
               })}
@@ -172,15 +173,15 @@ export function Sidebar() {
         href={item.href}
         data-tooltip={isCollapsed ? item.name : undefined}
         className={cn(
-          'flex items-center gap-4 px-3 py-2.5 text-[0.875rem] font-medium rounded-lg transition-colors min-h-[44px]',
+          'flex items-center gap-4 px-3 py-2.5 text-sm rounded-lg transition-colors min-h-[44px]',
            isActive
-            ? 'text-primary bg-primary/10'
-            : 'text-muted-foreground hover:bg-muted/10 hover:text-foreground',
+            ? 'bg-primary/10 text-primary font-semibold'
+            : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground font-medium',
            isCollapsed && 'justify-center px-2 gap-0'
         )}
       >
         <Icon className="h-6 w-6 flex-shrink-0" />
-        {!isCollapsed && <span>{item.name}</span>}
+        {!isCollapsed && <span className="truncate">{item.name}</span>}
       </Link>
     );
   };
