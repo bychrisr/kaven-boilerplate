@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Building2, Users, Crown, DollarSign, Headphones, TrendingUp, Server } from 'lucide-react';
+import { Building2, Users, Crown, DollarSign, Headphones, TrendingUp, Server, Eye, EyeOff } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { TextField } from '@/components/ui/text-field';
 import { Button } from '@/components/ui/button';
@@ -189,7 +189,7 @@ export default function SetupPage() {
 
                 <TextField
                   id="adminPassword"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   label="Senha do Administrador"
                   placeholder="Mínimo 8 caracteres"
                   value={config.adminPassword}
@@ -198,6 +198,15 @@ export default function SetupPage() {
                   fullWidth
                   className="bg-[#161C24] border-gray-700 text-white placeholder-gray-500 focus:border-primary-main focus:ring-primary-main/20"
                   labelClassName="text-gray-400"
+                  endAdornment={
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="text-gray-500 hover:text-gray-300 transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  }
                 />
 
                 <div className="grid grid-cols-2 gap-4">
