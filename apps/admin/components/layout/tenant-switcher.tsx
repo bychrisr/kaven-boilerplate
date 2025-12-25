@@ -29,11 +29,12 @@ export function TenantSwitcher() {
   const role = user?.role || 'USER';
 
   return (
+  return (
     <div className="relative hidden md:block" ref={dropdownRef}>
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+        className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-accent transition-colors"
       >
         {/* Tenant Avatar */}
         <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary-main to-primary-dark flex items-center justify-center text-white text-xs font-bold">
@@ -42,24 +43,24 @@ export function TenantSwitcher() {
         
         {/* Tenant Info */}
         <div className="flex flex-col items-start">
-          <span className="text-sm font-semibold leading-tight text-gray-900 dark:text-white">
+          <span className="text-sm font-semibold leading-tight text-foreground">
             {currentSpace.name}
           </span>
-          <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium uppercase">
+          <span className="text-[10px] text-muted-foreground font-medium uppercase">
             {role}
           </span>
         </div>
         
         {/* Chevron */}
         <ChevronDown className={cn(
-          "w-4 h-4 text-gray-400 ml-1 transition-transform",
+          "w-4 h-4 text-muted-foreground ml-1 transition-transform",
           isOpen && "rotate-180"
         )} />
       </button>
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-80 bg-white dark:bg-[#212B36] border border-gray-200 dark:border-gray-700/50 rounded-lg shadow-2xl z-50 overflow-hidden">
+        <div className="absolute top-full left-0 mt-2 w-80 bg-card text-card-foreground border border-border rounded-lg shadow-2xl z-50 overflow-hidden">
           {/* Spaces List */}
           <div className="p-2">
             {availableSpaces.map((space) => {
@@ -75,8 +76,8 @@ export function TenantSwitcher() {
                   className={cn(
                     "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-left",
                     isActive 
-                      ? "bg-primary-main/10 text-primary-main dark:text-white" 
-                      : "hover:bg-black/5 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300"
+                      ? "bg-primary-main/10 text-primary-main" 
+                      : "hover:bg-accent hover:text-accent-foreground text-foreground"
                   )}
                 >
                   {/* Space Avatar */}
@@ -84,7 +85,7 @@ export function TenantSwitcher() {
                     "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold",
                     isActive 
                       ? "bg-gradient-to-tr from-primary-main to-primary-dark text-white"
-                      : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white"
+                      : "bg-muted text-foreground"
                   )}>
                     {space.name[0]}
                   </div>
@@ -97,7 +98,7 @@ export function TenantSwitcher() {
                   </div>
                   
                   {/* Role Badge */}
-                  <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded-full border border-black/5 dark:border-white/5 uppercase">
+                  <span className="text-[10px] font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-full border border-border uppercase">
                     {role}
                   </span>
                 </button>
@@ -106,12 +107,12 @@ export function TenantSwitcher() {
           </div>
 
           {/* Divider */}
-          <div className="border-t border-gray-200 dark:border-gray-700/50" />
+          <div className="border-t border-border" />
 
           {/* Create Workspace */}
           <div className="p-2">
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors text-left">
-              <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-white">
+            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent text-muted-foreground hover:text-accent-foreground transition-colors text-left">
+              <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
                 <Plus className="w-4 h-4" />
               </div>
               <span className="text-sm font-medium">Create workspace</span>
