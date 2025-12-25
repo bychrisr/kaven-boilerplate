@@ -131,7 +131,9 @@ pnpm test:coverage
 - React 18
 - TypeScript 5.3
 - Tailwind CSS
-- (TODO: shadcn/ui, TanStack Query, Zustand)
+- shadcn/ui (Components)
+- TanStack Query (Data Fetching)
+- Zustand (State Management)
 
 ### DevOps
 
@@ -175,9 +177,9 @@ kaven-boilerplate/
 - [x] Autenticação completa + 2FA
 - [x] User/Tenant Management
 - [x] Frontend básico
-- [ ] Payment System (Stripe + Pix)
-- [ ] Observability (Prometheus + Grafana)
-- [ ] Frontend completo (36 páginas)
+- [x] Payment System (Stripe + Pix) - Parcial (Backend routes exist)
+- [x] Observability (Prometheus + Grafana) - Parcial (Metrics middleware + endpoint)
+- [ ] Frontend completo (36 páginas) - Em progresso
 - [ ] Testes (unit + integration + E2E)
 - [ ] CI/CD pipeline
 - [ ] Módulos Post-MVP (CRM, Files, Chat, etc.)
@@ -193,11 +195,12 @@ MIT © 2025
 ## 🔗 Links Úteis
 
 - [Documentação Phase 0](Phase%200%20-%20FOUNDATION/)
+- [Plano de Implementação Futura](docs/FUTURE_IMPLEMENTATION_PLAN.md)
 - [Telemetria e Relatórios](.agent/reports/)
 - [Workflows](.agent/workflows/)
 
 ---
 
-**Status:** 🟡 MVP Parcial (30% completo)  
-**Versão:** 0.3.0  
-**Última atualização:** 2025-12-19
+**Status:** 🟡 MVP Parcial (60% completo)
+**Versão:** 0.4.0
+**Última atualização:** 2025-12-25

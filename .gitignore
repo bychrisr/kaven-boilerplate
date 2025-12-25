@@ -1,13 +1,20 @@
+# Dependencies
 node_modules/
 .pnpm-store/
+
+# Build Outputs
 dist/
 build/
 .next/
 .turbo/
 out/
+
+# Environment Variables
 .env
 .env.local
 .env*.local
+
+# IDE & System
 .vscode/
 .idea/
 *.swp
@@ -15,11 +22,17 @@ out/
 *~
 .DS_Store
 Thumbs.db
+
+# Logs & Coverage
 *.log
 coverage/
 .nyc_output/
+
+# Database
 prisma/*.db
 prisma/*.db-journal
+
+# Agent System
 .agent/telemetry/*.json
 .agent/telemetry/*.txt
 .agent/telemetry/*.log
@@ -27,5 +40,10 @@ prisma/*.db-journal
 .agent/telemetry/archive/*.json
 !.agent/telemetry/README.md
 !.agent/telemetry/.gitkeep
-.docker/data/
 .agent/reports/
+
+# Docker
+.docker/data/
+
+# Documentation (Internal)
+Phase 0 - FOUNDATION/
