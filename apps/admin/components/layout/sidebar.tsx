@@ -89,7 +89,26 @@ export function Sidebar() {
   const pathname = usePathname();
   const { isCollapsed, toggle } = useSidebar();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  // Load expanded sections from localStorage on mount
+  useEffect(() => {
+    const savedSections = localStorage.getItem('sidebar-expanded-sections');
+    if (savedSections) {
+      setExpandedSections(JSON.parse(savedSections));
+    } else {
+      // Por padrão, todas as seções expandidas
+      setExpandedSections(navSections.map(section => section.title));
+    }
+  }, []);
+
+  // Save expanded sections to localStorage
+  useEffect(() => {
+    if (expandedSections.length > 0) {
+      localStorage.setItem('sidebar-expanded-sections', JSON.stringify(expandedSections));
+    }
+  }, [expandedSections]);
 
   // Close mobile sidebar on path change
   useEffect(() => {
@@ -105,6 +124,16 @@ export function Sidebar() {
       prev.includes(name) ? prev.filter((item) => item !== name) : [...prev, name]
     );
   };
+
+  const toggleSection = (sectionTitle: string) => {
+    if (isCollapsed) return;
+    setExpandedSections((prev) =>
+      prev.includes(sectionTitle)
+        ? prev.filter((title) => title !== sectionTitle)
+        : [...prev, sectionTitle]
+    );
+  };
+
 
   const renderNavItem = (item: NavigationItem) => {
     const isActive =
@@ -225,7 +254,7 @@ export function Sidebar() {
              {isCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
         </button>
 
-        <div className="h-full flex flex-col overflow-y-auto overflow-x-hidden">
+        <div className="h-full flex flex-col overflow-y-auto overflow-x-hidden pr-2">
             {/* Logo */}
             <div className={cn("h-20 flex items-center px-6 min-h-[80px] shrink-0", isCollapsed ? "justify-center px-0" : "")}>
               <Logo size={isCollapsed ? "small" : "medium"} />
@@ -252,19 +281,39 @@ export function Sidebar() {
 
             {/* Navigation */}
             <nav className={cn("px-4 pb-4 flex-1", isCollapsed ? "space-y-4" : "space-y-6")}>
-              {navSections.map((section) => (
-                <div key={section.title}>
-                  {!isCollapsed && (
-                      <div className="px-3 mb-2 text-[11px] font-bold text-[#919EAB] uppercase tracking-wider transition-colors cursor-default">
-                        {section.title}
+              {navSections.map((section) => {
+                const isSectionExpanded = expandedSections.includes(section.title);
+                
+                return (
+                  <div key={section.title}>
+                    {!isCollapsed && (
+                      <button
+                        onClick={() => toggleSection(section.title)}
+                        className={cn(
+                          "w-full flex items-center justify-between px-3 mb-2",
+                          "text-[11px] font-bold text-[#919EAB] uppercase tracking-wider",
+                          "hover:text-white transition-colors cursor-pointer"
+                        )}
+                      >
+                        <span>{section.title}</span>
+                        <ChevronDown
+                          className={cn(
+                            "h-3 w-3 transition-transform",
+                            isSectionExpanded ? "rotate-0" : "-rotate-90"
+                          )}
+                        />
+                      </button>
+                    )}
+                    
+                    {/* Items da seção */}
+                    {isSectionExpanded && (
+                      <div className="space-y-1">
+                        {section.items.map((item) => renderNavItem(item))}
                       </div>
-                  )}
-                  {/* Visually hidden divider or similar could go here if needed for mini mode */}
-                  <div className="space-y-1">
-                    {section.items.map((item) => renderNavItem(item))}
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </nav>
         </div>
       </aside>

@@ -189,7 +189,7 @@
     @apply bg-background text-foreground;
   }
 
-  /* Custom Scrollbar */
+  /* Custom Scrollbar - Invisível por padrão, aparece no hover */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -198,10 +198,16 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(145, 158, 171, 0.24);
+    background: transparent;
     border-radius: 8px;
+    transition: background 0.2s ease;
   }
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(145, 158, 171, 0.48);
+
+  /* Scrollbar aparece no hover do container */
+  *:hover::-webkit-scrollbar-thumb {
+    background: rgba(145, 158, 171, 0.2);
+  }
+  *:hover::-webkit-scrollbar-thumb:hover {
+    background: rgba(145, 158, 171, 0.4);
   }
 }
