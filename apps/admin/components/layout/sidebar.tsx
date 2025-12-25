@@ -5,11 +5,11 @@ import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/logo';
 import { Scrollbar } from '@/components/scrollbar/scrollbar';
 import { cn } from '@/lib/utils';
-import { useAuthStore } from '@/stores/auth.store';
+
 import { useSpaces } from '@/hooks/use-spaces';
 import { SPACES } from '@/config/spaces';
 import {
-  Users,
+
   ChevronDown,
   ChevronRight,
   ChevronLeft,
@@ -36,7 +36,7 @@ interface NavigationItem {
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { user } = useAuthStore();
+
   const { currentSpace } = useSpaces();
   const { isCollapsed, toggle } = useSidebar();
   const { sidebarOpen: isMobileOpen, setSidebarOpen } = useUIStore();
@@ -228,24 +228,7 @@ export function Sidebar() {
           <Scrollbar>
             <div className="flex flex-col">
 
-            {/* User Card */}
-            <div className="px-5 mb-6 shrink-0">
-               <div className={cn(
-                   "flex items-center rounded-2xl bg-sidebar-accent/50 transition-colors cursor-pointer border border-transparent hover:border-r-border",
-                   isCollapsed ? "p-2 justify-center bg-transparent" : "p-3 gap-3"
-               )}>
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-dark overflow-hidden flex items-center justify-center text-primary-foreground shrink-0">
-                    {/* User Avatar Img or Icon */}
-                    <Users className="h-5 w-5" />
-                  </div>
-                  {!isCollapsed && (
-                      <div className="flex flex-col min-w-0">
-                         <span className="text-sm font-semibold text-foreground truncate">{user?.name || 'User'}</span>
-                         <span className="text-xs text-muted-foreground truncate">{user?.email || 'user@kaven.dev'}</span>
-                      </div>
-                  )}
-               </div>
-            </div>
+
 
             {/* Navigation */}
             <nav className={cn("px-4 pb-4 flex-1", isCollapsed ? "space-y-4" : "space-y-6")}>
