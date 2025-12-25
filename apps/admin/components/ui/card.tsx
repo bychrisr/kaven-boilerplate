@@ -18,7 +18,7 @@ function Card({ className, ...props }: React.ComponentProps<'div'>) {
         'shadow-[0_0_2px_0_rgba(145,158,171,0.2),0_12px_24px_-4px_rgba(145,158,171,0.12)]', // z12
         'gap-6 py-6', // spacing 24px
         // Base styles
-        'bg-white border border-gray-200 text-gray-900 flex flex-col',
+        'bg-card border border-border text-card-foreground flex flex-col',
         className
       )}
       {...props}
@@ -47,7 +47,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot="card-title"
       className={cn(
         // Minimals typography
-        'text-lg font-semibold leading-tight text-gray-900',
+        'text-lg font-semibold leading-tight text-card-foreground',
         className
       )}
       {...props}
@@ -60,8 +60,8 @@ function CardDescription({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="card-description"
       className={cn(
-        // Minimals grey.600
-        'text-sm text-[#637381]',
+        // Minimals grey.600 -> muted-foreground
+        'text-sm text-muted-foreground',
         className
       )}
       {...props}
