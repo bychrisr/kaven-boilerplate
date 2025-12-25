@@ -66,17 +66,31 @@ export function useUserStats() {
 }
 
 // Query: Listar usuários
-export function useUsers(params?: { page?: number; limit?: number; tenantId?: string }) {
+export function useUsers(params?: { 
+  page?: number; 
+  limit?: number; 
+  tenantId?: string;
+  search?: string;
+  status?: string;
+}) {
   const isInitialized = useAuthStore((state) => state.isInitialized);
   const page = params?.page ?? 1;
   const limit = params?.limit ?? 10;
   const tenantId = params?.tenantId;
+  const search = params?.search;
+  const status = params?.status;
 
   return useQuery<UsersResponse>({
-    queryKey: ['users', page, limit, tenantId],
+    queryKey: ['users', page, limit, tenantId, search, status],
     queryFn: async () => {
       const response = await api.get('/api/users', {
-        params: { page, limit, tenantId },
+        params: { 
+          page, 
+          limit, 
+          tenantId,
+          search: search || undefined,
+          status: status && status !== 'all' ? status : undefined,
+        },
       });
       return response.data;
     },
