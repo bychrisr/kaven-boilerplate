@@ -29,7 +29,6 @@ export function TenantSwitcher() {
   const role = user?.role || 'USER';
 
   return (
-  return (
     <div className="relative hidden md:block" ref={dropdownRef}>
       {/* Trigger Button */}
       <button
