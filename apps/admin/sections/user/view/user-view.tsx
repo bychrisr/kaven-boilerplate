@@ -129,6 +129,8 @@ export function UserView() {
         <Button 
           variant="contained"
           color="primary"
+          size="lg"
+          className="h-12 text-md font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all"
         >
           <Plus className="mr-2 h-4 w-4" />
           New User
