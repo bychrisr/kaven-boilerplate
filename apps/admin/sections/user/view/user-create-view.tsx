@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { useCreateUser } from '@/hooks/use-users';
-import { Upload, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/radix-select';
 import { Switch } from '@/components/ui/switch';
 import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AvatarUpload } from '@/components/avatar-upload';
 
 const userSchema = z.object({
   name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
@@ -24,7 +24,7 @@ const userSchema = z.object({
   role: z.enum(['USER', 'TENANT_ADMIN']),
   status: z.enum(['ACTIVE', 'PENDING']).default('ACTIVE'),
   emailVerified: z.boolean().default(false),
-  // Optional fields from reference
+  // Optional address fields for future invoices/billing
   country: z.string().optional(),
   state: z.string().optional(),
   city: z.string().optional(),
@@ -38,6 +38,7 @@ type UserFormData = z.infer<typeof userSchema>;
 export function UserCreateView() {
   const router = useRouter();
   const { mutate: createUser, isPending } = useCreateUser();
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string>('');
 
   const {
@@ -60,19 +61,14 @@ export function UserCreateView() {
 
   const emailVerified = watch('emailVerified');
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatarPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleAvatarChange = (file: File | null, preview: string) => {
+    setAvatarFile(file);
+    setAvatarPreview(preview);
   };
 
   const onSubmit = async (data: UserFormData) => {
     try {
+      // TODO: Upload avatar file to storage if avatarFile exists
       createUser(
         {
           name: data.name,
@@ -120,47 +116,16 @@ export function UserCreateView() {
 
       <Card className="!p-0 !gap-0 block overflow-hidden border-none shadow-md bg-card dark:bg-[#212B36]">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="p-6 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
-            {/* Left Column: Avatar Upload */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative">
-                <Avatar className="h-32 w-32">
-                  {avatarPreview ? (
-                    <AvatarImage src={avatarPreview} alt="Avatar preview" />
-                  ) : (
-                    <AvatarFallback className="bg-muted text-muted-foreground text-3xl">
-                      <Upload className="h-12 w-12" />
-                    </AvatarFallback>
-                  )}
-                </Avatar>
-              </div>
-
-              <div className="w-full">
-                <label
-                  htmlFor="avatar-upload"
-                  className="flex items-center justify-center gap-2 cursor-pointer rounded-lg border-2 border-dashed border-border/60 bg-muted/30 px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/50 hover:bg-muted/50"
-                >
-                  <Upload className="h-4 w-4" />
-                  Upload photo
-                </label>
-                <input
-                  id="avatar-upload"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleAvatarChange}
-                />
-                <p className="mt-2 text-xs text-center text-muted-foreground">
-                  Allowed *.jpeg, *.jpg, *.png, *.gif
-                  <br />
-                  max size of 3.1 MB
-                </p>
-              </div>
+          <div className="p-6 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
+            {/* Left Column: Avatar Upload + Email Verified Toggle */}
+            <div className="flex flex-col gap-4">
+              {/* Avatar Upload with Drag & Drop + Crop */}
+              <AvatarUpload value={avatarPreview} onChange={handleAvatarChange} />
 
               {/* Email Verified Toggle */}
-              <div className="w-full mt-4 p-4 rounded-lg bg-muted/30 border border-border/40">
-                <div className="flex items-center justify-between">
-                  <div>
+              <div className="w-full p-4 rounded-lg bg-muted/30 border border-border/40">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex-1">
                     <p className="text-sm font-semibold text-foreground">Email verified</p>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       Disabling this will automatically send the user a verification email
@@ -174,8 +139,8 @@ export function UserCreateView() {
               </div>
             </div>
 
-            {/* Right Column: Form Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Right Column: Form Fields (2-column responsive grid) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {/* Full name */}
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
@@ -316,8 +281,8 @@ export function UserCreateView() {
                 </Select>
               </div>
 
-              {/* Password */}
-              <div className="md:col-span-2">
+              {/* Password - Full width */}
+              <div className="sm:col-span-2">
                 <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
                   Password
                 </label>
