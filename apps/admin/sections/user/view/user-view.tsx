@@ -1,8 +1,7 @@
-
 'use client';
 
 import { useState } from 'react';
-import { MOCK_USERS } from '@/lib/mock';
+import { useUsers, useUserStats, useDeleteUser } from '@/hooks/use-users';
 
 import { UserTableRow } from '../user-table-row';
 import { Button } from '@/components/ui/button';
@@ -17,7 +16,7 @@ import {
   TableRow,
   TableCell
 } from '@/components/ui/table';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Loader2 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
 import Link from 'next/link';
@@ -45,11 +44,26 @@ export function UserView() {
   const [filterName, setFilterName] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   
-  // Pagination
+  // Pagination (0-indexed for UI, 1-indexed for API)
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [selected, setSelected] = useState<string[]>([]);
+
+  // API Hooks
+  const { data, isLoading, error } = useUsers({
+    page: page + 1, // API uses 1-indexed
+    limit: rowsPerPage,
+    search: filterName || undefined,
+    status: filterStatus !== 'all' ? filterStatus.toUpperCase() : undefined,
+  });
+
+  const { data: stats } = useUserStats();
+  const { mutate: deleteUser } = useDeleteUser();
+
+  // Extract data from API response
+  const users = data?.users ?? [];
+  const totalUsers = data?.pagination.total ?? 0;
 
   // Filter handlers
   const handleFilterName = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,30 +75,16 @@ export function UserView() {
     setFilterStatus(value);
     setPage(0);
   };
-
-  // Filter users
-  const filteredUsers = MOCK_USERS.filter((user) => {
-    const matchesName =
-      user.name.toLowerCase().includes(filterName.toLowerCase()) ||
-      user.email.toLowerCase().includes(filterName.toLowerCase());
-    const matchesStatus = filterStatus === 'all' || user.status === filterStatus;
-
-    return matchesName && matchesStatus;
-  });
-
-  const paginatedUsers = filteredUsers.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
   
   const getStatusCount = (status: string) => {
-    if (status === 'all') return MOCK_USERS.length;
-    return MOCK_USERS.filter((user) => user.status === status).length;
+    if (!stats) return 0;
+    if (status === 'all') return stats.total;
+    return stats[status as keyof typeof stats] ?? 0;
   };
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelected(filteredUsers.map((user) => user.id));
+      setSelected(users.map((user) => user.id));
     } else {
       setSelected([]);
     }
@@ -99,8 +99,13 @@ export function UserView() {
   };
 
   const handleDeleteSelected = () => {
-    // TODO: Implement delete logic
-    console.log('Deleting:', selected);
+    if (selected.length === 0) return;
+    
+    // Delete each selected user
+    selected.forEach((id) => {
+      deleteUser(id);
+    });
+    
     setSelected([]);
   };
 
@@ -246,7 +251,7 @@ export function UserView() {
                       <div className="flex items-center justify-between w-full">
                         <div className="flex items-center gap-4">
                           <Checkbox 
-                            checked={paginatedUsers.length > 0 && selected.length === paginatedUsers.length}
+                            checked={users.length > 0 && selected.length === users.length}
                             onCheckedChange={(checked: boolean | 'indeterminate') => handleSelectAll(checked === true)}
                           />
                           <span className="text-sm font-semibold text-foreground">
@@ -269,7 +274,7 @@ export function UserView() {
                   <TableRow className="border-b border-dashed border-border/50 hover:bg-transparent">
                     <TableHead className="w-[40px] pl-4 h-16 font-semibold bg-transparent first:rounded-tl-none text-foreground dark:text-white">
                       <Checkbox 
-                        checked={paginatedUsers.length > 0 && selected.length === paginatedUsers.length}
+                        checked={users.length > 0 && selected.length === users.length}
                         onCheckedChange={(checked: boolean | 'indeterminate') => handleSelectAll(checked === true)}
                       />
                     </TableHead>
@@ -283,8 +288,34 @@ export function UserView() {
                 )}
               </TableHeader>
             <TableBody>
-              {paginatedUsers.length > 0 ? (
-                paginatedUsers.map((user) => (
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="h-64 text-center">
+                    <div className="flex items-center justify-center">
+                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="h-64 text-center">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <p className="text-destructive font-medium">Erro ao carregar usuários</p>
+                      <p className="text-sm text-muted-foreground">Tente novamente mais tarde</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : users.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="h-64 text-center">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <p className="text-muted-foreground font-medium">Nenhum usuário encontrado</p>
+                      <p className="text-sm text-muted-foreground">Tente ajustar os filtros de busca</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                users.map((user) => (
                   <UserTableRow
                     key={user.id}
                     row={user}
@@ -292,12 +323,6 @@ export function UserView() {
                     onSelectRow={() => handleSelectRow(user.id)}
                   />
                 ))
-              ) : (
-                <TableRow>
-                   <TableCell colSpan={7} className="h-24 text-center">
-                    No results found.
-                  </TableCell>
-                </TableRow>
               )}
             </TableBody>
           </Table>
@@ -327,8 +352,8 @@ export function UserView() {
                 </Select>
               </div>
               <div className="flex w-[100px] items-center justify-center text-sm font-medium text-muted-foreground">
-                {filteredUsers.length > 0 ? (
-                  `${page * rowsPerPage + 1}-${Math.min((page + 1) * rowsPerPage, filteredUsers.length)} of ${filteredUsers.length}`
+                {totalUsers > 0 ? (
+                  `${page * rowsPerPage + 1}-${Math.min((page + 1) * rowsPerPage, totalUsers)} of ${totalUsers}`
                 ) : (
                   "0-0 of 0"
                 )}
@@ -349,7 +374,7 @@ export function UserView() {
                   size="icon"
                   className="h-8 w-8"
                   onClick={() => setPage((p) => p + 1)}
-                  disabled={(page + 1) * rowsPerPage >= filteredUsers.length}
+                  disabled={(page + 1) * rowsPerPage >= totalUsers}
                 >
                   <span className="sr-only">Go to next page</span>
                   {'>'}
