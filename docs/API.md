@@ -200,11 +200,29 @@ Lista usuários com paginação.
 
 **Query Params:**
 
-- `page` (default: 1)
-- `limit` (default: 10)
-- `tenantId` (opcional)
+- `page` (default: 1) - Número da página
+- `limit` (default: 10) - Itens por página
+- `tenantId` (opcional) - Filtrar por tenant específico
+- `search` (opcional) - Busca case-insensitive em **name** ou **email**
+- `status` (opcional) - Filtrar por status: `ACTIVE`, `PENDING`, `BANNED`, `REJECTED`
 
 **Auth:** TENANT_ADMIN ou SUPER_ADMIN
+
+**Exemplos:**
+
+```bash
+# Listar todos os usuários
+GET /api/users?page=1&limit=10
+
+# Buscar por nome ou email
+GET /api/users?search=joão
+
+# Filtrar por status
+GET /api/users?status=ACTIVE
+
+# Combinar filtros
+GET /api/users?search=silva&status=PENDING&page=1
+```
 
 **Response:**
 
