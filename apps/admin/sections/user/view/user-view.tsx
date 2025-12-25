@@ -17,13 +17,14 @@ import {
   TableRow,
   TableCell
 } from '@/components/ui/table';
-import { Plus } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import { Select, SelectOption } from '@/components/ui/select';
 
 const STATUS_OPTIONS = [
   { value: 'all', label: 'All' },
@@ -89,6 +90,12 @@ export function UserView() {
     } else {
       setSelected([...selected, id]);
     }
+  };
+
+  const handleDeleteSelected = () => {
+    // TODO: Implement delete logic
+    console.log('Deleting:', selected);
+    setSelected([]);
   };
 
   return (
@@ -224,20 +231,47 @@ export function UserView() {
         <div className="relative mx-0 rounded-none border-none text-card-foreground shadow-none bg-transparent overflow-x-auto">
             <Table>
               <TableHeader className="bg-muted/50">
-                <TableRow className="border-b border-dashed border-border/50 hover:bg-transparent">
-                  <TableHead className="w-[40px] pl-4 h-16 font-semibold bg-transparent first:rounded-tl-none text-foreground dark:text-white">
-                    <Checkbox 
-                      checked={paginatedUsers.length > 0 && selected.length === paginatedUsers.length}
-                      onCheckedChange={(checked: boolean | 'indeterminate') => handleSelectAll(checked === true)}
-                    />
-                  </TableHead>
-                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Name</TableHead>
-                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Phone Number</TableHead>
-                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Tenant</TableHead>
-                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Role</TableHead>
-                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Status</TableHead>
-                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-right last:rounded-tr-none"></TableHead>
-                </TableRow>
+                {selected.length > 0 ? (
+                  <TableRow className="bg-primary/10 hover:bg-primary/10">
+                    <TableHead colSpan={7} className="h-16 px-4">
+                      <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center gap-4">
+                          <Checkbox 
+                            checked={paginatedUsers.length > 0 && selected.length === paginatedUsers.length}
+                            onCheckedChange={(checked: boolean | 'indeterminate') => handleSelectAll(checked === true)}
+                          />
+                          <span className="text-sm font-semibold text-foreground">
+                            {selected.length} selected
+                          </span>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleDeleteSelected}
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </Button>
+                      </div>
+                    </TableHead>
+                  </TableRow>
+                ) : (
+                  <TableRow className="border-b border-dashed border-border/50 hover:bg-transparent">
+                    <TableHead className="w-[40px] pl-4 h-16 font-semibold bg-transparent first:rounded-tl-none text-foreground dark:text-white">
+                      <Checkbox 
+                        checked={paginatedUsers.length > 0 && selected.length === paginatedUsers.length}
+                        onCheckedChange={(checked: boolean | 'indeterminate') => handleSelectAll(checked === true)}
+                      />
+                    </TableHead>
+                    <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Name</TableHead>
+                    <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Phone Number</TableHead>
+                    <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Tenant</TableHead>
+                    <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Role</TableHead>
+                    <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Status</TableHead>
+                    <TableHead className="px-4 h-16 font-semibold bg-transparent text-right last:rounded-tr-none"></TableHead>
+                  </TableRow>
+                )}
               </TableHeader>
             <TableBody>
               {paginatedUsers.length > 0 ? (
@@ -265,19 +299,20 @@ export function UserView() {
             <div className="flex items-center gap-6 lg:gap-8">
               <div className="flex items-center space-x-2">
                 <p className="text-sm font-medium text-muted-foreground">Rows per page</p>
-                <select 
-                  className="h-8 w-[70px] rounded-md border border-input bg-transparent px-2 py-1 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                <Select
                   value={rowsPerPage}
-                  onChange={(e) => {
-                    setRowsPerPage(Number(e.target.value));
+                  onChange={(value) => {
+                    setRowsPerPage(value);
                     setPage(0);
                   }}
+                  size="sm"
+                  className="w-[70px]"
                 >
-                  <option value={5}>5</option>
-                  <option value={10}>10</option>
-                  <option value={20}>20</option>
-                  <option value={50}>50</option>
-                </select>
+                  <SelectOption value={5}>5</SelectOption>
+                  <SelectOption value={10}>10</SelectOption>
+                  <SelectOption value={20}>20</SelectOption>
+                  <SelectOption value={50}>50</SelectOption>
+                </Select>
               </div>
               <div className="flex w-[100px] items-center justify-center text-sm font-medium text-muted-foreground">
                 {filteredUsers.length > 0 ? (
