@@ -33,17 +33,17 @@ export default function ForgotPasswordPage() {
 
   if (success) {
     return (
-     <div className="bg-[#212B36] rounded-2xl p-8 shadow-2xl border border-gray-700/50 text-center max-w-md w-full mx-auto">
-        <div className="mx-auto w-20 h-20 bg-[#161C24] rounded-full flex items-center justify-center mb-6">
-           <svg className="w-10 h-10 text-primary-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+     <div className="bg-card rounded-2xl p-8 shadow-2xl border border-border text-center max-w-md w-full mx-auto">
+        <div className="mx-auto w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
+           <svg className="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
            </svg>
         </div>
 
-        <h3 className="text-2xl font-bold text-white mb-2">Request sent successfully!</h3>
-        <p className="text-gray-400 mb-8">
+        <h3 className="text-2xl font-bold text-card-foreground mb-2">Request sent successfully!</h3>
+        <p className="text-muted-foreground mb-8">
           We&apos;ve sent a confirmation email to <br /> 
-          <span className="text-white font-medium">{email}</span>
+          <span className="text-foreground font-medium">{email}</span>
           <br />
           Please check your email.
         </p>
@@ -56,16 +56,16 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="bg-[#212B36] rounded-2xl p-8 shadow-2xl border border-gray-700/50 max-w-md w-full mx-auto">
+    <div className="bg-card rounded-2xl p-8 shadow-2xl border border-border max-w-md w-full mx-auto">
       <div className="text-center mb-8">
-        <div className="mx-auto w-20 h-20 bg-[#161C24] rounded-full flex items-center justify-center mb-6">
-            <svg className="w-10 h-10 text-primary-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="mx-auto w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
+            <svg className="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
         </div>
 
-        <h3 className="text-2xl font-bold text-white mb-2">Forgot your password?</h3>
-        <p className="text-gray-400">
+        <h3 className="text-2xl font-bold text-card-foreground mb-2">Forgot your password?</h3>
+        <p className="text-muted-foreground">
           Please enter the email address associated with your account and we&apos;ll email you a link to reset your password.
         </p>
       </div>
@@ -80,8 +80,7 @@ export default function ForgotPasswordPage() {
           onChange={(e) => setEmail(e.target.value)}
           required
           fullWidth
-          className="bg-[#161C24] border-gray-700 text-white placeholder-gray-500 focus:border-primary-main focus:ring-primary-main/20"
-          labelClassName="text-gray-400"
+          labelClassName="text-muted-foreground"
         />
 
         <Button
@@ -91,12 +90,12 @@ export default function ForgotPasswordPage() {
           loading={loading}
           fullWidth
           size="lg"
-          className="h-12 text-md font-bold shadow-lg shadow-primary-main/25 hover:shadow-primary-main/40 transition-all"
+          className="h-12 text-md font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all"
         >
           Send Request
         </Button>
 
-        <Button variant="text" className="w-full text-gray-400 hover:text-white" asChild>
+        <Button variant="text" className="w-full text-muted-foreground hover:text-foreground" asChild>
           <Link href="/login" className="flex items-center justify-center gap-2">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
