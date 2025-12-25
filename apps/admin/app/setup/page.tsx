@@ -41,6 +41,7 @@ export default function SetupPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   
   const [config, setConfig] = useState<SetupConfig>({
     companyName: '',
