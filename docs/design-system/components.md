@@ -576,6 +576,17 @@ import { UserMenu } from '@/components/layout/user-menu';
 </div>;
 ```
 
+### Sidebar (Navegação)
+
+Componente principal de navegação lateral.
+
+**Ajustes Recentes (Dez 2025):**
+
+- **User Card Removido:** O card de perfil foi removido para evitar redundância com o Header.
+- **Scrollbar Invisível:** Usa `SimpleBar` para um scroll fluido e estético.
+- **Menu Admin Consolidado:** Agrega todos os módulos do sistema para Super Admins.
+- **Colapso Inteligente:** Seções podem ser expandidas/colapsadas com persistência.
+
 ---
 
 **Anterior:** [Arquitetura](./architecture.md) | **Próximo:** [Design Tokens](./TOKENS.md)

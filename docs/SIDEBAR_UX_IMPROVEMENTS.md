@@ -57,6 +57,19 @@ Implementadas melhorias significativas de UX no sidebar do painel administrativo
 ✅ Scroll funcional abaixo da logo  
 ✅ UX profissional e polida
 
+### 4. Admin Menu Consolidation & Cleanup
+
+- **Consolidado:** Menu Admin agora inclui navegação completa de Finance, Support, Marketing e DevOps.
+- **Organizado:** Itens agrupados por ordem de importância e sem duplicatas (ex: Analytics centralizado).
+- **Redundância Removida:** Remoção do card de usuário do sidebar (já presente no header).
+- **Fix:** Compatibilidade retroativa para IDs de Space (ARCHITECT -> ADMIN).
+
+## 📦 Commits Recentes
+
+- `feat(admin): ` Consolidate all space menus into Admin sidebar
+- `refactor(admin): ` Optimize sidebar structure & Remove redundancy
+- `fix(admin): ` Resolve legacy ARCHITECT space ID mismatch
+
 ---
 
 **Data:** 2025-12-25  
