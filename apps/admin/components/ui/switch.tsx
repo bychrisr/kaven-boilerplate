@@ -106,16 +106,15 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
           className={cn(
             'relative rounded-full transition-colors',
             sizeClasses[size].track,
-            'bg-gray-300 peer-checked:' + colorClasses[color],
-            'peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2',
-            `peer-focus-visible:ring-${color}-main/30`
+            'bg-gray-600 peer-checked:bg-primary-main',
+            'peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-primary-main/30'
           )}
         >
           <div
             className={cn(
               'absolute top-0.5 left-0.5 bg-white rounded-full transition-transform',
               sizeClasses[size].thumb,
-              `peer-checked:${sizeClasses[size].translate}`
+              checked && sizeClasses[size].translate
             )}
           />
         </div>
