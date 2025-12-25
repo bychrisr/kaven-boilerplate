@@ -15,6 +15,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Tooltip } from '@/components/ui/tooltip';
 
 type UserTableRowProps = {
   row: MockUser;
@@ -68,9 +69,11 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
 
       <TableCell align="right" className="py-4 px-4 pr-4">
         <div className="flex items-center justify-end gap-1">
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
-              <Pencil className="h-4 w-4" />
-            </Button>
+            <Tooltip title="Quick edit">
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                <Pencil className="h-4 w-4" />
+              </Button>
+            </Tooltip>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
