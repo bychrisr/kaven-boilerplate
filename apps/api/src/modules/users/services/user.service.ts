@@ -23,12 +23,37 @@ export class UserService {
   }
 
   /**
-   * GET /api/users - Listar usuários (com paginação)
+   * GET /api/users - Listar usuários (com paginação e filtros)
    */
-  async listUsers(tenantId?: string, page: number = 1, limit: number = 10) {
+  async listUsers(
+    tenantId?: string, 
+    page: number = 1, 
+    limit: number = 10,
+    search?: string,
+    status?: string
+  ) {
     const skip = (page - 1) * limit;
     
-    const where = tenantId ? { tenantId, deletedAt: null } : { deletedAt: null };
+    // Build where clause with filters
+    const where: any = { deletedAt: null };
+    
+    // Tenant filter
+    if (tenantId) {
+      where.tenantId = tenantId;
+    }
+    
+    // Status filter
+    if (status) {
+      where.status = status;
+    }
+    
+    // Search filter (name OR email)
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+      ];
+    }
     
     const [users, total] = await Promise.all([
       prisma.user.findMany({

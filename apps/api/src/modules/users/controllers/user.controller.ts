@@ -15,11 +15,13 @@ export class UserController {
 
   async list(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { page = '1', limit = '10', tenantId } = request.query as any;
+      const { page = '1', limit = '10', tenantId, search, status } = request.query as any;
       const result = await userService.listUsers(
         tenantId,
         Number.parseInt(page),
-        Number.parseInt(limit)
+        Number.parseInt(limit),
+        search,
+        status
       );
       reply.send(result);
     } catch (error: any) {
