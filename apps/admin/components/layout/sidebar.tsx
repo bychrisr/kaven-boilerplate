@@ -44,7 +44,7 @@ const navSections: NavigationSection[] = [
   {
     title: 'Overview',
     items: [
-      { name: 'App', href: '/dashboard', icon: Home },
+      { name: 'Dashboard', href: '/dashboard', icon: Home },
       { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
     ],
   },
@@ -121,8 +121,8 @@ export function Sidebar() {
             className={cn(
               'w-full flex items-center justify-between px-3 py-2.5 text-[0.875rem] font-medium rounded-lg transition-colors min-h-[44px]',
               isActive || (isExpanded && !isCollapsed)
-                ? 'text-primary-main bg-[rgba(0,167,111,0.08)]'
-                : 'text-[#919EAB] hover:bg-[rgba(145,158,171,0.08)] hover:text-white',
+                ? 'text-primary-main bg-primary-main/10'
+                : 'text-muted-foreground hover:bg-muted/10 hover:text-foreground',
               isCollapsed && 'justify-center px-2'
             )}
           >
@@ -149,8 +149,8 @@ export function Sidebar() {
                     className={cn(
                         'flex items-center gap-2 py-2 text-[0.875rem] rounded-lg transition-colors relative min-h-[36px]',
                         isChildActive
-                        ? 'text-white font-semibold'
-                        : 'text-[#919EAB] hover:text-white'
+                        ? 'text-foreground font-semibold'
+                        : 'text-muted-foreground hover:text-foreground'
                     )}
                     >
                     <div className="w-[24px] flex justify-center flex-shrink-0">
@@ -177,8 +177,8 @@ export function Sidebar() {
         className={cn(
           'flex items-center gap-4 px-3 py-2.5 text-[0.875rem] font-medium rounded-lg transition-colors min-h-[44px]',
            isActive
-            ? 'text-primary-main bg-[rgba(0,167,111,0.08)]'
-            : 'text-[#919EAB] hover:bg-[rgba(145,158,171,0.08)] hover:text-white',
+            ? 'text-primary-main bg-primary-main/10'
+            : 'text-muted-foreground hover:bg-muted/10 hover:text-foreground',
            isCollapsed && 'justify-center px-2 gap-0'
         )}
       >
@@ -212,15 +212,15 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed top-0 left-0 z-50 h-screen bg-[#1C252E] border-r border-[rgba(145,158,171,0.12)] transition-all duration-300',
-          isCollapsed ? 'w-[88px]' : 'w-[280px]', // Minimal UI usually uses 88px for mini
+          'fixed top-0 left-0 z-[200] h-screen bg-sidebar border-r border-border transition-all duration-300',
+          isCollapsed ? 'w-[88px]' : 'w-[280px]',
           isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
       >
         {/* Toggle Button - Outside scroll container */}
         <button
             onClick={toggle}
-            className="hidden lg:flex absolute top-8 -right-3 w-6 h-6 bg-[#1C252E] border border-[rgba(145,158,171,0.24)] border-dashed rounded-full items-center justify-center text-[#919EAB] hover:text-white z-[100] cursor-pointer shadow-md transition-transform hover:scale-110"
+            className="hidden lg:flex absolute top-8 -right-3 w-6 h-6 bg-sidebar border border-border rounded-full items-center justify-center text-muted-foreground hover:text-foreground z-[201] cursor-pointer shadow-md transition-transform hover:scale-110"
         >
              {isCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
         </button>
@@ -243,15 +243,15 @@ export function Sidebar() {
                   </div>
                   {!isCollapsed && (
                       <div className="flex flex-col min-w-0">
-                         <span className="text-sm font-semibold text-white truncate">Admin User</span>
-                         <span className="text-xs text-[#919EAB] truncate">admin@kaven.dev</span>
+                         <span className="text-sm font-semibold text-foreground truncate">Admin User</span>
+                         <span className="text-xs text-muted-foreground truncate">admin@kaven.dev</span>
                       </div>
                   )}
                </div>
             </div>
 
             {/* Navigation */}
-            <nav className="px-4 pb-4 space-y-6 flex-1">
+            <nav className={cn("px-4 pb-4 flex-1", isCollapsed ? "space-y-4" : "space-y-6")}>
               {navSections.map((section) => (
                 <div key={section.title}>
                   {!isCollapsed && (
@@ -259,6 +259,7 @@ export function Sidebar() {
                         {section.title}
                       </div>
                   )}
+                  {/* Visually hidden divider or similar could go here if needed for mini mode */}
                   <div className="space-y-1">
                     {section.items.map((item) => renderNavItem(item))}
                   </div>
