@@ -3,11 +3,13 @@
 import { Search, Bell, Settings, Menu, ChevronDown, Command } from 'lucide-react';
 import { useUIStore } from '@/stores/ui.store';
 import { useSettings } from '@/stores/settings.store';
+import { useAuthStore } from '@/stores/auth.store';
 import { cn } from '@/lib/utils';
 
 export function Header() {
   const { toggleSidebar } = useUIStore();
   const { theme } = useSettings();
+  const { user } = useAuthStore();
 
   return (
     <header 
@@ -29,8 +31,8 @@ export function Header() {
                 K
             </div>
             <div className="flex flex-col">
-                <span className="text-sm font-semibold leading-tight">Team 1</span>
-                <span className="text-[10px] text-gray-400 font-medium">Free</span>
+                <span className="text-sm font-semibold leading-tight">{user?.tenantId || 'Kaven'}</span>
+                <span className="text-[10px] text-gray-400 font-medium">Admin</span>
             </div>
             <ChevronDown className="w-4 h-4 text-gray-400 ml-1" />
         </div>
