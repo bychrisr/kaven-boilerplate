@@ -24,7 +24,6 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
-import { Select, SelectOption } from '@/components/ui/select';
 
 const STATUS_OPTIONS = [
   { value: 'all', label: 'All' },
@@ -299,20 +298,19 @@ export function UserView() {
             <div className="flex items-center gap-6 lg:gap-8">
               <div className="flex items-center space-x-2">
                 <p className="text-sm font-medium text-muted-foreground">Rows per page</p>
-                <Select
+                <select
                   value={rowsPerPage}
-                  onChange={(value) => {
-                    setRowsPerPage(value);
+                  onChange={(e) => {
+                    setRowsPerPage(Number(e.target.value));
                     setPage(0);
                   }}
-                  size="sm"
-                  className="w-[70px]"
+                  className="h-8 w-[70px] rounded-md border border-border bg-background text-foreground px-2 py-1 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
                 >
-                  <SelectOption value={5}>5</SelectOption>
-                  <SelectOption value={10}>10</SelectOption>
-                  <SelectOption value={20}>20</SelectOption>
-                  <SelectOption value={50}>50</SelectOption>
-                </Select>
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                </select>
               </div>
               <div className="flex w-[100px] items-center justify-center text-sm font-medium text-muted-foreground">
                 {filteredUsers.length > 0 ? (
