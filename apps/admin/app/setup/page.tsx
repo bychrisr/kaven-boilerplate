@@ -140,13 +140,14 @@ export default function SetupPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#161C24] via-[#1C252E] to-[#212B36] flex items-center justify-center p-4">
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/50 to-background flex items-center justify-center p-4">
       <div className="w-full max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">
           <Logo size="large" className="mb-6 mx-auto" />
-          <h1 className="text-3xl font-bold text-white mb-2">Kaven Boilerplate</h1>
-          <p className="text-gray-400">Configure seu SaaS em minutos</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Kaven Boilerplate</h1>
+          <p className="text-muted-foreground">Configure seu SaaS em minutos</p>
         </div>
 
         {/* Stepper */}
@@ -155,13 +156,13 @@ export default function SetupPage() {
         </div>
 
         {/* Content Card */}
-        <div className="bg-[#212B36] rounded-2xl p-8 shadow-2xl border border-gray-700/50">
+        <div className="bg-card rounded-2xl p-8 shadow-2xl border border-border">
           {/* Step 1: Branding */}
           {currentStep === 0 && (
             <div>
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white mb-2">Configurações Básicas</h2>
-                <p className="text-gray-400 text-sm">Defina as informações principais do seu projeto</p>
+                <h2 className="text-2xl font-bold text-card-foreground mb-2">Configurações Básicas</h2>
+                <p className="text-muted-foreground text-sm">Defina as informações principais do seu projeto</p>
               </div>
               <div className="space-y-5">
                 <TextField
@@ -172,8 +173,6 @@ export default function SetupPage() {
                   onChange={(e) => updateConfig('companyName', e.target.value)}
                   required
                   fullWidth
-                  className="bg-[#161C24] border-gray-700 text-white placeholder-gray-500 focus:border-primary-main focus:ring-primary-main/20"
-                  labelClassName="text-gray-400"
                 />
 
                 <TextField
@@ -185,8 +184,6 @@ export default function SetupPage() {
                   onChange={(e) => updateConfig('adminEmail', e.target.value)}
                   required
                   fullWidth
-                  className="bg-[#161C24] border-gray-700 text-white placeholder-gray-500 focus:border-primary-main focus:ring-primary-main/20"
-                  labelClassName="text-gray-400"
                 />
 
                 <TextField
@@ -198,13 +195,11 @@ export default function SetupPage() {
                   onChange={(e) => updateConfig('adminPassword', e.target.value)}
                   required
                   fullWidth
-                  className="bg-[#161C24] border-gray-700 text-white placeholder-gray-500 focus:border-primary-main focus:ring-primary-main/20"
-                  labelClassName="text-gray-400"
                   endAdornment={
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="text-gray-500 hover:text-gray-300 transition-colors"
+                      className="text-muted-foreground hover:text-foreground transition-colors"
                     >
                       {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
@@ -215,7 +210,7 @@ export default function SetupPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-gray-400 text-sm font-medium mb-1.5 block">Idioma Padrão</Label>
+                    <Label className="text-muted-foreground text-sm font-medium mb-1.5 block">Idioma Padrão</Label>
                     <Select value={config.language} onChange={(v: 'pt-BR' | 'en-US') => updateConfig('language', v)} fullWidth>
                       <SelectOption value="pt-BR">🇧🇷 Português (Brasil)</SelectOption>
                       <SelectOption value="en-US">🇺🇸 English (US)</SelectOption>
@@ -223,7 +218,7 @@ export default function SetupPage() {
                   </div>
 
                   <div>
-                    <Label className="text-gray-400 text-sm font-medium mb-1.5 block">Moeda Padrão</Label>
+                    <Label className="text-muted-foreground text-sm font-medium mb-1.5 block">Moeda Padrão</Label>
                     <Select value={config.currency} onChange={(v: 'BRL' | 'USD') => updateConfig('currency', v)} fullWidth>
                       <SelectOption value="BRL">R$ Real (BRL)</SelectOption>
                       <SelectOption value="USD">$ Dollar (USD)</SelectOption>
@@ -232,32 +227,32 @@ export default function SetupPage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="primaryColor" className="text-gray-400 text-sm font-medium mb-1.5 block">Cor Primária</Label>
+                  <Label htmlFor="primaryColor" className="text-muted-foreground text-sm font-medium mb-1.5 block">Cor Primária</Label>
                   <div className="flex gap-2">
                     <Input
                       id="primaryColor"
                       type="color"
                       value={config.primaryColor}
                       onChange={(e) => updateConfig('primaryColor', e.target.value)}
-                      className="w-20 h-[42px] bg-[#161C24] border-gray-700"
+                      className="w-20 h-[42px] bg-background border-input"
                     />
                     <Input
                       value={config.primaryColor}
                       onChange={(e) => updateConfig('primaryColor', e.target.value)}
                       placeholder="#6366f1"
-                      className="flex-1 bg-[#161C24] border-gray-700 text-white placeholder-gray-500 focus:border-primary-main focus:ring-primary-main/20"
+                      className="flex-1 bg-background border-input focus:border-primary focus:ring-primary/20"
                     />
                   </div>
                 </div>
               </div>
               <div className="flex justify-between mt-8">
-                <Button variant="outlined" disabled className="border-gray-700 text-gray-500">Voltar</Button>
+                <Button variant="outlined" disabled className="border-border text-muted-foreground">Voltar</Button>
                 <Button 
                   onClick={handleNext}
                   disabled={!config.companyName || !config.adminEmail || !config.adminPassword}
                   variant="contained"
                   color="primary"
-                  className="shadow-lg shadow-primary-main/25 hover:shadow-primary-main/40"
+                  className="shadow-lg shadow-primary/25 hover:shadow-primary/40"
                 >
                   Próximo
                 </Button>
@@ -269,8 +264,8 @@ export default function SetupPage() {
           {currentStep === 1 && (
             <div>
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white mb-2">Escolha a Arquitetura</h2>
-                <p className="text-gray-400 text-sm">Defina como seu sistema irá operar</p>
+                <h2 className="text-2xl font-bold text-card-foreground mb-2">Escolha a Arquitetura</h2>
+                <p className="text-muted-foreground text-sm">Defina como seu sistema irá operar</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <ArchitectureCard
@@ -280,7 +275,7 @@ export default function SetupPage() {
                   selected={config.mode === 'SINGLE_TENANT'}
                   onClick={() => updateConfig('mode', 'SINGLE_TENANT')}
                 >
-                  <ul className="text-sm text-gray-400 space-y-1">
+                  <ul className="text-sm text-muted-foreground space-y-1">
                     <li>✓ Ideal para ferramentas internas</li>
                     <li>✓ Mais simples de gerenciar</li>
                     <li>✓ Sem isolamento de dados</li>
@@ -294,7 +289,7 @@ export default function SetupPage() {
                   selected={config.mode === 'MULTI_TENANT'}
                   onClick={() => updateConfig('mode', 'MULTI_TENANT')}
                 >
-                  <ul className="text-sm text-gray-400 space-y-1">
+                  <ul className="text-sm text-muted-foreground space-y-1">
                     <li>✓ Ideal para SaaS</li>
                     <li>✓ Isolamento por tenant</li>
                     <li>✓ Subdomínios automáticos</li>
@@ -302,12 +297,12 @@ export default function SetupPage() {
                 </ArchitectureCard>
               </div>
               <div className="flex justify-between mt-8">
-                <Button variant="outlined" onClick={handleBack} className="border-gray-700 text-gray-400">Voltar</Button>
+                <Button variant="outlined" onClick={handleBack} className="border-border text-muted-foreground hover:text-foreground">Voltar</Button>
                 <Button 
                   onClick={handleNext}
                   variant="contained"
                   color="primary"
-                  className="shadow-lg shadow-primary-main/25 hover:shadow-primary-main/40"
+                  className="shadow-lg shadow-primary/25 hover:shadow-primary/40"
                 >
                   Próximo
                 </Button>
@@ -319,8 +314,8 @@ export default function SetupPage() {
           {currentStep === 2 && (
             <div>
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white mb-2">Configure seu Time</h2>
-                <p className="text-gray-400 text-sm">Escolha quais personas criar no Admin Tenant</p>
+                <h2 className="text-2xl font-bold text-card-foreground mb-2">Configure seu Time</h2>
+                <p className="text-muted-foreground text-sm">Escolha quais personas criar no Admin Tenant</p>
               </div>
               <div className="space-y-3">
                 <RoleToggle
@@ -365,12 +360,12 @@ export default function SetupPage() {
                 />
               </div>
               <div className="flex justify-between mt-8">
-                <Button variant="outlined" onClick={handleBack} className="border-gray-700 text-gray-400">Voltar</Button>
+                <Button variant="outlined" onClick={handleBack} className="border-border text-muted-foreground hover:text-foreground">Voltar</Button>
                 <Button 
                   onClick={handleNext}
                   variant="contained"
                   color="primary"
-                  className="shadow-lg shadow-primary-main/25 hover:shadow-primary-main/40"
+                  className="shadow-lg shadow-primary/25 hover:shadow-primary/40"
                 >
                   Próximo
                 </Button>
@@ -382,40 +377,40 @@ export default function SetupPage() {
           {currentStep === 3 && (
             <div>
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white mb-2">Pronto para Instalar</h2>
-                <p className="text-gray-400 text-sm">Revise suas configurações</p>
+                <h2 className="text-2xl font-bold text-card-foreground mb-2">Pronto para Instalar</h2>
+                <p className="text-muted-foreground text-sm">Revise suas configurações</p>
               </div>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Projeto:</span>
-                  <span className="font-medium text-white">{config.companyName}</span>
+                  <span className="text-muted-foreground">Projeto:</span>
+                  <span className="font-medium text-foreground">{config.companyName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Email Admin:</span>
-                  <span className="font-medium text-white">{config.adminEmail}</span>
+                  <span className="text-muted-foreground">Email Admin:</span>
+                  <span className="font-medium text-foreground">{config.adminEmail}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Modo:</span>
-                  <span className="font-medium text-white">{config.mode === 'MULTI_TENANT' ? 'Multi-Tenant' : 'Single-Tenant'}</span>
+                  <span className="text-muted-foreground">Modo:</span>
+                  <span className="font-medium text-foreground">{config.mode === 'MULTI_TENANT' ? 'Multi-Tenant' : 'Single-Tenant'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Usuários:</span>
-                  <span className="font-medium text-white">{getUserCount()} personas</span>
+                  <span className="text-muted-foreground">Usuários:</span>
+                  <span className="font-medium text-foreground">{getUserCount()} personas</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Idioma:</span>
-                  <span className="font-medium text-white">{config.language === 'pt-BR' ? 'Português' : 'English'}</span>
+                  <span className="text-muted-foreground">Idioma:</span>
+                  <span className="font-medium text-foreground">{config.language === 'pt-BR' ? 'Português' : 'English'}</span>
                 </div>
               </div>
               <div className="flex justify-between mt-8">
-                <Button variant="outlined" onClick={handleBack} className="border-gray-700 text-gray-400">Voltar</Button>
+                <Button variant="outlined" onClick={handleBack} className="border-border text-muted-foreground hover:text-foreground">Voltar</Button>
                 <Button 
                   onClick={handleInstall} 
                   disabled={isLoading}
                   variant="contained"
                   color="primary"
                   loading={isLoading}
-                  className="min-w-[200px] shadow-lg shadow-primary-main/25 hover:shadow-primary-main/40"
+                  className="min-w-[200px] shadow-lg shadow-primary/25 hover:shadow-primary/40"
                 >
                   {isLoading ? 'Instalando...' : 'Instalar Kaven Boilerplate'}
                 </Button>

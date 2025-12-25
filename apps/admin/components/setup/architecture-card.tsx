@@ -26,9 +26,9 @@ export function ArchitectureCard({
     <div
       className={cn(
         'cursor-pointer transition-all rounded-lg border-2 p-6',
-        'bg-[#161C24] border-gray-700 hover:border-gray-600',
+        'bg-card border-border hover:border-input',
         'hover:shadow-lg',
-        selected && 'border-primary-main ring-2 ring-primary-main/20 bg-[#1a2332]'
+        selected && 'border-primary ring-2 ring-primary/20 bg-accent/10'
       )}
       onClick={onClick}
     >
@@ -36,14 +36,14 @@ export function ArchitectureCard({
         <div
           className={cn(
             'flex items-center justify-center w-12 h-12 rounded-lg transition-colors',
-            selected ? 'bg-primary-main text-white' : 'bg-gray-800 text-gray-400'
+            selected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
           )}
         >
           {icon}
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-white">{title}</h3>
-          <p className="text-sm text-gray-400">{description}</p>
+          <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+          <p className="text-sm text-muted-foreground">{description}</p>
         </div>
       </div>
       

@@ -31,8 +31,8 @@ export function RoleToggle({
     <div
       className={cn(
         'flex items-center justify-between p-4 rounded-lg border-2 transition-colors',
-        'bg-[#161C24] border-gray-700',
-        checked && !disabled && 'bg-[#1a2332] border-primary-main/40',
+        'bg-card border-border',
+        checked && !disabled && 'bg-accent/10 border-primary/40',
         disabled && 'opacity-60 cursor-not-allowed'
       )}
     >
@@ -41,7 +41,7 @@ export function RoleToggle({
         <div
           className={cn(
             'flex items-center justify-center w-10 h-10 rounded-lg transition-colors',
-            checked && !disabled ? 'bg-primary-main text-white' : 'bg-gray-800 text-gray-400'
+            checked && !disabled ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
           )}
         >
           {icon}
@@ -53,19 +53,19 @@ export function RoleToggle({
             <Label
               htmlFor={`role-${title}`}
               className={cn(
-                'text-sm font-medium cursor-pointer text-white',
+                'text-sm font-medium cursor-pointer text-foreground',
                 disabled && 'cursor-not-allowed'
               )}
             >
               {title}
             </Label>
             {badge && (
-              <Badge variant="secondary" className="text-xs bg-gray-700 text-gray-300">
+              <Badge variant="secondary" className="text-xs bg-muted text-muted-foreground">
                 {badge}
               </Badge>
             )}
           </div>
-          <p className="text-sm text-gray-400 mt-0.5">
+          <p className="text-sm text-muted-foreground mt-0.5">
             {description}
           </p>
         </div>
