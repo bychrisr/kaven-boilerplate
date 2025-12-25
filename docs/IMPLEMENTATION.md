@@ -165,7 +165,18 @@ export class AuthController {
 
 ## 🎨 Frontend
 
-### Páginas Implementadas (2)
+### Páginas Implementadas (3)
+
+#### `/setup` - Setup Wizard
+
+- Assistente de configuração inicial em 4 etapas
+- Step 1: Branding & Global Settings (nome, email, senha, idioma, moeda, cor)
+- Step 2: Architecture Selection (Single vs Multi-tenant)
+- Step 3: Administrative Team (seleção de personas)
+- Step 4: Finalization (resumo e instalação)
+- Validação visual de senha em tempo real
+- Design dark glassmorphism consistente
+- Documentação completa em [SETUP_WIZARD.md](SETUP_WIZARD.md)
 
 #### `/login` - Página de Login
 
