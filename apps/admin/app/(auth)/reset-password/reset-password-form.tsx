@@ -33,11 +33,11 @@ export default function ResetPasswordForm() {
 
   const passwordStrength = getPasswordStrength(formData.password);
   const strengthColors = [
-    'bg-gray-300',
-    'bg-error-main',
-    'bg-warning-main',
-    'bg-success-light',
-    'bg-success-main',
+    'bg-muted',
+    'bg-destructive',
+    'bg-yellow-500',
+    'bg-green-400',
+    'bg-green-600',
   ];
   const strengthLabels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
 
@@ -81,15 +81,15 @@ export default function ResetPasswordForm() {
   };
 
   return (
-    <div className="bg-[#212B36] rounded-2xl p-8 shadow-2xl border border-gray-700/50 max-w-md w-full mx-auto">
+    <div className="bg-card rounded-2xl p-8 shadow-2xl border border-border max-w-md w-full mx-auto">
       <div className="text-center mb-8">
-        <div className="mx-auto w-20 h-20 bg-[#161C24] rounded-full flex items-center justify-center mb-6">
-            <svg className="w-10 h-10 text-primary-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="mx-auto w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
+            <svg className="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
         </div>
-        <h3 className="text-2xl font-bold text-white mb-2">Reset your password</h3>
-        <p className="text-gray-400">Enter your new password below</p>
+        <h3 className="text-2xl font-bold text-card-foreground mb-2">Reset your password</h3>
+        <p className="text-muted-foreground">Enter your new password below</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -103,13 +103,11 @@ export default function ResetPasswordForm() {
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             required
             fullWidth
-            className="bg-[#161C24] border-gray-700 text-white placeholder-gray-500 focus:border-primary-main focus:ring-primary-main/20"
-            labelClassName="text-gray-400"
             endAdornment={
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="text-gray-500 hover:text-gray-300 transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
@@ -122,12 +120,12 @@ export default function ResetPasswordForm() {
                   <div
                     key={level}
                     className={`h-1 flex-1 rounded ${
-                      level <= passwordStrength ? strengthColors[passwordStrength] : 'bg-[#161C24]'
+                      level <= passwordStrength ? strengthColors[passwordStrength] : 'bg-muted'
                     }`}
                   />
                 ))}
               </div>
-              <p className="text-xs text-right text-gray-500">
+              <p className="text-xs text-right text-muted-foreground">
                 {strengthLabels[passwordStrength]}
               </p>
             </div>
@@ -144,8 +142,6 @@ export default function ResetPasswordForm() {
             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
             required
             fullWidth
-            className="bg-[#161C24] border-gray-700 text-white placeholder-gray-500 focus:border-primary-main focus:ring-primary-main/20"
-            labelClassName="text-gray-400"
             error={!!(formData.confirmPassword && formData.password !== formData.confirmPassword)}
             errorMessage={
               formData.confirmPassword && formData.password !== formData.confirmPassword
@@ -156,7 +152,7 @@ export default function ResetPasswordForm() {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="text-gray-500 hover:text-gray-300 transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
@@ -172,12 +168,12 @@ export default function ResetPasswordForm() {
           disabled={formData.password !== formData.confirmPassword}
           fullWidth
           size="lg"
-          className="h-12 text-md font-bold shadow-lg shadow-primary-main/25 hover:shadow-primary-main/40 transition-all"
+          className="h-12 text-md font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all"
         >
           Reset Password
         </Button>
 
-        <Button variant="text" className="w-full text-gray-400 hover:text-white mt-4" asChild>
+        <Button variant="text" className="w-full text-muted-foreground hover:text-foreground mt-4" asChild>
           <Link href="/login" className="flex items-center justify-center gap-2">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
