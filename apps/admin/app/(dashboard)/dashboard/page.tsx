@@ -104,7 +104,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Metrics Cards Grid */}
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {/* Users Card */}
         {showCard('users') && (
             <div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
@@ -215,7 +215,7 @@ export default function DashboardPage() {
 
       {/* Charts Row - Only show for Architect/Admin or specific spaces if mapped */}
       {showCard('activity') && (
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Donut Chart */}
             <div className="rounded-2xl bg-card p-6 shadow-xl border border-border/50 lg:col-span-1">
                 <div className="mb-6">
