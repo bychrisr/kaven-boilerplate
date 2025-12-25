@@ -127,7 +127,8 @@ export function UserView() {
           </div>
         </div>
         <Button 
-          className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md font-bold"
+          variant="contained"
+          color="primary"
         >
           <Plus className="mr-2 h-4 w-4" />
           New User
