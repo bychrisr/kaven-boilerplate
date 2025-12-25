@@ -6,21 +6,16 @@ import { Logo } from '@/components/logo';
 import { Scrollbar } from '@/components/scrollbar/scrollbar';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
+import { useSpaces } from '@/hooks/use-spaces';
+import { SPACES } from '@/config/spaces';
 import {
-  Home,
   Users,
-  Building2,
-  ShoppingCart,
-  FileText,
-  BarChart3,
-  Settings,
   ChevronDown,
-  Activity,
-  LucideIcon,
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
+  LucideIcon
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSidebar } from '@/hooks/use-sidebar';
 
 interface NavigationChild {
@@ -33,7 +28,6 @@ interface NavigationItem {
   name: string;
   href: string;
   icon: LucideIcon;
-  role?: string;
   children?: NavigationChild[];
 }
 
@@ -42,69 +36,47 @@ interface NavigationSection {
   items: NavigationItem[];
 }
 
-const navSections: NavigationSection[] = [
-  {
-    title: 'Overview',
-    items: [
-      { name: 'Dashboard', href: '/dashboard', icon: Home },
-      { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
-    ],
-  },
-  {
-    title: 'Management',
-    items: [
-      {
-        name: 'User',
-        href: '/users',
-        icon: Users,
-        children: [
-          { name: 'List', href: '/users' },
-          { name: 'Create', href: '/users/create' },
-          { name: 'Cards', href: '/users/cards' },
-        ],
-      },
-      { name: 'Tenant', href: '/tenants', icon: Building2, role: 'SUPER_ADMIN' },
-      { name: 'Order', href: '/orders', icon: ShoppingCart },
-      { name: 'Invoice', href: '/invoices', icon: FileText },
-    ],
-  },
-  {
-    title: 'Misc',
-    items: [
-      {
-        name: 'Monitoring',
-        href: '#',
-        icon: Activity,
-        children: [
-          { name: 'Grafana', href: 'http://localhost:3001', external: true },
-          { name: 'Prometheus', href: 'http://localhost:9090', external: true },
-          { name: 'System Health', href: '/dashboard/observability' },
-          { name: 'Audit Logs', href: '/dashboard/observability?tab=audit' },
-        ],
-      },
-      { name: 'Settings', href: '/settings', icon: Settings },
-    ],
-  },
-];
-
 export function Sidebar() {
   const pathname = usePathname();
   const { user } = useAuthStore();
+  const { currentSpace } = useSpaces();
   const { isCollapsed, toggle } = useSidebar();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  // Derive navigation sections based on current space
+  const navSections = useMemo(() => {
+    const spaceId = currentSpace?.id || 'ARCHITECT';
+    const config = SPACES[spaceId];
+    
+    if (!config) return [];
+
+    return config.navSections.map(section => ({
+      title: section.title,
+      items: section.items.map(item => ({
+        name: item.label,
+        href: item.href,
+        icon: item.icon,
+        children: item.children?.map(child => ({
+          name: child.label,
+          href: child.href,
+          external: child.external
+        }))
+      }))
+    }));
+  }, [currentSpace]);
 
   // Load expanded sections from localStorage on mount
   useEffect(() => {
     const savedSections = localStorage.getItem('sidebar-expanded-sections');
     if (savedSections) {
       setExpandedSections(JSON.parse(savedSections));
-    } else {
-      // Por padrão, todas as seções expandidas
+    } else if (navSections.length > 0) {
+      // By default, expand all sections
       setExpandedSections(navSections.map(section => section.title));
     }
-  }, []);
+  }, [navSections]);
 
   // Save expanded sections to localStorage
   useEffect(() => {
