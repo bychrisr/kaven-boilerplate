@@ -16,6 +16,7 @@ import { Switch } from '@/components/ui/switch';
 import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
 import { AvatarUpload } from '@/components/avatar-upload';
 import { AddressAutocomplete } from '@/components/address-autocomplete';
+import { PhoneInput } from '@/components/phone-input';
 
 const userSchema = z.object({
   name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
@@ -211,12 +212,12 @@ export function UserCreateView() {
                   <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
                     Phone number
                   </label>
-                  <Input
-                    {...register('phone')}
-                    id="phone"
-                    type="tel"
-                    placeholder="+1 (555) 000-0000"
+                  <PhoneInput
+                    value={watch('phone') || ''}
+                    onChange={(value) => setValue('phone', value)}
+                    placeholder="Enter phone number"
                     className="bg-transparent"
+                    id="phone"
                   />
                 </div>
 
