@@ -12,10 +12,14 @@ export const setupConfigSchema = z.object({
     .email('Email inválido'),
   
   adminPassword: z.string()
-    .min(8, 'Senha deve ter no mínimo 8 caracteres')
-    .regex(/[A-Z]/, 'Senha deve conter pelo menos uma letra maiúscula')
-    .regex(/[a-z]/, 'Senha deve conter pelo menos uma letra minúscula')
-    .regex(/[0-9]/, 'Senha deve conter pelo menos um número'),
+    .min(8, 'Senha deve ter no mínimo 8 caracteres'),
+  
+  language: z.enum(['pt-BR', 'en-US']),
+  
+  currency: z.enum(['BRL', 'USD']),
+  
+  primaryColor: z.string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, 'Cor primária deve ser um hex válido'),
   
   modules: z.object({
     createFinance: z.boolean(),
