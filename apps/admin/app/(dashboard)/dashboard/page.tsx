@@ -107,16 +107,16 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {/* Users Card */}
         {showCard('users') && (
-            <div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
-                <div className="flex items-center gap-4 mb-4">
-                     <div className="p-3 bg-primary/10 rounded-full">
-                        <Users className="h-6 w-6 text-primary" />
+            <div className="relative overflow-hidden rounded-2xl bg-card p-4 md:p-6 shadow-xl border border-border/50">
+                <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+                     <div className="p-2 md:p-3 bg-primary/10 rounded-full">
+                        <Users className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                      </div>
-                     <span className="text-sm font-bold text-foreground uppercase tracking-wider">Total Active Users</span>
+                     <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">Total Active Users</span>
                 </div>
                 <div className="flex items-end justify-between">
                     <div>
-                         <h3 className="text-3xl font-bold text-foreground mb-2">{metrics.totalUsers.toLocaleString()}</h3>
+                         <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">{metrics.totalUsers.toLocaleString()}</h3>
                          <div className="flex items-center gap-2 text-sm">
                             <span className="flex items-center text-green-500 font-semibold bg-green-500/10 px-1.5 py-0.5 rounded">
                                 <ArrowUp className="h-3 w-3 mr-1" />
@@ -138,16 +138,16 @@ export default function DashboardPage() {
 
         {/* Revenue Card */}
         {showCard('revenue') && (
-             <div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
-                <div className="flex items-center gap-4 mb-4">
-                     <div className="p-3 bg-blue-500/10 rounded-full">
-                        <DollarSign className="h-6 w-6 text-blue-500" />
+             <div className="relative overflow-hidden rounded-2xl bg-card p-4 md:p-6 shadow-xl border border-border/50">
+                <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+                     <div className="p-2 md:p-3 bg-blue-500/10 rounded-full">
+                        <DollarSign className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
                      </div>
-                     <span className="text-sm font-bold text-foreground uppercase tracking-wider">Total Revenue</span>
+                     <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">Total Revenue</span>
                 </div>
                  <div className="flex items-end justify-between">
                     <div>
-                         <h3 className="text-3xl font-bold text-foreground mb-2">{metrics.revenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</h3>
+                         <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">{metrics.revenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</h3>
                          <div className="flex items-center gap-2 text-sm">
                             <span className="flex items-center text-green-500 font-semibold bg-green-500/10 px-1.5 py-0.5 rounded">
                                  <ArrowUp className="h-3 w-3 mr-1" />
@@ -169,16 +169,16 @@ export default function DashboardPage() {
 
         {/* Invoices/Downloads Card */}
         {showCard('invoices') && (
-             <div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
-                <div className="flex items-center gap-4 mb-4">
-                     <div className="p-3 bg-yellow-500/10 rounded-full">
-                        <FileText className="h-6 w-6 text-yellow-500" />
+             <div className="relative overflow-hidden rounded-2xl bg-card p-4 md:p-6 shadow-xl border border-border/50">
+                <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+                     <div className="p-2 md:p-3 bg-yellow-500/10 rounded-full">
+                        <FileText className="h-5 w-5 md:h-6 md:w-6 text-yellow-500" />
                      </div>
-                     <span className="text-sm font-bold text-foreground uppercase tracking-wider">Total Invoices</span>
+                     <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">Total Invoices</span>
                 </div>
                  <div className="flex items-end justify-between">
                     <div>
-                         <h3 className="text-3xl font-bold text-foreground mb-2">{metrics.invoices}</h3>
+                         <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">{metrics.invoices}</h3>
                          <div className="flex items-center gap-2 text-sm">
                             <span className="flex items-center text-destructive font-semibold bg-destructive/10 px-1.5 py-0.5 rounded">
                                  <ArrowDown className="h-3 w-3 mr-1" />
