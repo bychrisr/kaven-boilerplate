@@ -20,11 +20,6 @@ export interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
    */
   size?: 'sm' | 'md' | 'lg';
   /**
-   * Color
-   * @default 'primary'
-   */
-  color?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info';
-  /**
    * Label
    */
   label?: string;
@@ -53,15 +48,6 @@ const sizeClasses = {
   },
 };
 
-const colorClasses = {
-  primary: 'bg-primary-main',
-  secondary: 'bg-secondary-main',
-  success: 'bg-success-main',
-  warning: 'bg-warning-main',
-  error: 'bg-error-main',
-  info: 'bg-info-main',
-};
-
 export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
   (
     {
@@ -70,7 +56,6 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
       defaultChecked,
       onChange,
       size = 'md',
-      color = 'primary',
       label,
       labelPlacement = 'end',
       disabled,
