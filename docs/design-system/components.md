@@ -620,6 +620,84 @@ Para garantir legibilidade máxima e hierarquia visual, seguimos um padrão estr
 </TableHeader>
 ```
 
+### Selection Toolbar (Barra de Seleção)
+
+Quando itens são selecionados em uma tabela, o header é substituído por uma barra de ação:
+
+```tsx
+{selected.length > 0 ? (
+  <TableRow className="bg-primary/10 hover:bg-primary/10">
+    <TableHead colSpan={7} className="h-16 px-4">
+      <div className="flex items-center justify-between w-full">
+        <div className="flex items-center gap-4">
+          <Checkbox checked={allSelected} onCheckedChange={handleSelectAll} />
+          <span className="text-sm font-semibold text-foreground">
+            {selected.length} selected
+          </span>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleDelete}
+          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+        >
+          <Trash2 className="h-4 w-4 mr-2" />
+          Delete
+        </Button>
+      </div>
+    </TableHead>
+  </TableRow>
+) : (
+  // Normal header
+)}
+```
+
+---
+
+## 🔽 Select (Radix UI)
+
+### Componente Robusto
+
+Usamos `@radix-ui/react-select` para um Select profissional com Portal (evita overflow):
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/radix-select';
+
+<Select value={value} onValueChange={setValue}>
+  <SelectTrigger className="h-8 w-[70px]">
+    <SelectValue />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="5">5</SelectItem>
+    <SelectItem value="10">10</SelectItem>
+    <SelectItem value="20">20</SelectItem>
+  </SelectContent>
+</Select>;
+```
+
+### Características
+
+- ✅ **Portal**: Dropdown renderiza fora do container (sem overflow)
+- ✅ **Tokens Semânticos**: `bg-popover`, `text-popover-foreground`
+- ✅ **Animações**: Fade, zoom, slide suaves
+- ✅ **Acessibilidade**: Completa (keyboard, ARIA)
+- ✅ **Check Indicator**: Feedback visual do item selecionado
+
+### Quando Usar
+
+- Paginação (rows per page)
+- Filtros de dados
+- Configurações de visualização
+- Qualquer seleção única em lista
+
+**Evite** select nativo (`<select>`) - use sempre o componente Radix para consistência.
+
 ---
 
 ## 🏷️ Badges e Status
