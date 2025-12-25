@@ -59,7 +59,6 @@ export function AuthGuard({ children, allowedRoles }: Readonly<AuthGuardProps>) 
   useEffect(() => {
     // Se ainda não inicializou e não forçou, aguardar
     if (!isInitialized && !forceInitialized) {
-      console.log('⏳ AUTH GUARD - Not initialized, waiting...');
       return;
     }
 
@@ -67,38 +66,37 @@ export function AuthGuard({ children, allowedRoles }: Readonly<AuthGuardProps>) 
     if (!isAuthenticated) {
       console.log('❌ AUTH GUARD - Not authenticated, redirecting to login');
       const returnUrl = encodeURIComponent(pathname);
-      router.push(`/login?returnUrl=${returnUrl}`);
+      router.replace(`/login?returnUrl=${returnUrl}`); // Replace evita voltar para página protegida
       return;
     }
 
     // Verificar roles se especificado (RBAC)
     if (allowedRoles && user && !allowedRoles.includes(user.role)) {
       console.log('❌ AUTH GUARD - Insufficient permissions, redirecting to unauthorized');
-      router.push('/unauthorized');
+      router.replace('/unauthorized');
       return;
     }
 
     console.log('✅ AUTH GUARD - User authenticated and authorized');
   }, [isInitialized, forceInitialized, isAuthenticated, user, router, pathname, allowedRoles]);
 
-  // ✅ AXISOR STYLE: Mostrar loading enquanto não inicializado ou carregando
-  if ((!isInitialized && !forceInitialized) || isLoading) {
+  // ✅ AXISOR STYLE: Loader bloqueante
+  // Enquanto estiver checando token (loading) ou ainda não inicializou
+  if (!isInitialized || isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
+      <div className="flex h-screen items-center justify-center bg-background">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary-main mx-auto mb-4" />
-          <p className="text-sm text-gray-600">
-            {!isInitialized && !forceInitialized ? 'Verificando autenticação...' : 'Carregando...'}
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-sm text-muted-foreground">
+            Verificando credenciais...
           </p>
         </div>
       </div>
     );
   }
 
-  // Não renderizar se não autenticado
-  if (!isAuthenticated) {
-    return null;
-  }
+  // Se passou pelo loading e não está autenticado, retorna null (o useEffect vai redirecionar)
+  if (!isAuthenticated) return null;
 
   return <>{children}</>;
 }
