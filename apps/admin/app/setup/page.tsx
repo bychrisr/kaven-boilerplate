@@ -6,7 +6,6 @@ import { Building2, Users, Crown, DollarSign, Headphones, TrendingUp, Server } f
 import { Logo } from '@/components/logo';
 import { TextField } from '@/components/ui/text-field';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectOption } from '@/components/ui/select';
@@ -297,12 +296,12 @@ export default function SetupPage() {
 
           {/* Step 3: Time */}
           {currentStep === 2 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Configure seu Time</CardTitle>
-                <CardDescription>Escolha quais personas criar no Admin Tenant</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
+            <div>
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-white mb-2">Configure seu Time</h2>
+                <p className="text-gray-400 text-sm">Escolha quais personas criar no Admin Tenant</p>
+              </div>
+              <div className="space-y-3">
                 <RoleToggle
                   icon={<Crown className="w-5 h-5" />}
                   title="Super Admin (The Architect)"
@@ -343,56 +342,64 @@ export default function SetupPage() {
                   checked={config.modules.createDevOps}
                   onCheckedChange={(v) => updateModule('createDevOps', v)}
                 />
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="outline" onClick={handleBack}>Voltar</Button>
-                <Button onClick={handleNext}>Próximo</Button>
-              </CardFooter>
-            </Card>
+              </div>
+              <div className="flex justify-between mt-8">
+                <Button variant="outlined" onClick={handleBack} className="border-gray-700 text-gray-400">Voltar</Button>
+                <Button 
+                  onClick={handleNext}
+                  variant="contained"
+                  color="primary"
+                  className="shadow-lg shadow-primary-main/25 hover:shadow-primary-main/40"
+                >
+                  Próximo
+                </Button>
+              </div>
+            </div>
           )}
 
           {/* Step 4: Finalização */}
           {currentStep === 3 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Pronto para Instalar</CardTitle>
-                <CardDescription>Revise suas configurações</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Projeto:</span>
-                    <span className="font-medium">{config.companyName}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Email Admin:</span>
-                    <span className="font-medium">{config.adminEmail}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Modo:</span>
-                    <span className="font-medium">{config.mode === 'MULTI_TENANT' ? 'Multi-Tenant' : 'Single-Tenant'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Usuários:</span>
-                    <span className="font-medium">{getUserCount()} personas</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Idioma:</span>
-                    <span className="font-medium">{config.language === 'pt-BR' ? 'Português' : 'English'}</span>
-                  </div>
+            <div>
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-white mb-2">Pronto para Instalar</h2>
+                <p className="text-gray-400 text-sm">Revise suas configurações</p>
+              </div>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Projeto:</span>
+                  <span className="font-medium text-white">{config.companyName}</span>
                 </div>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="outline" onClick={handleBack}>Voltar</Button>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Email Admin:</span>
+                  <span className="font-medium text-white">{config.adminEmail}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Modo:</span>
+                  <span className="font-medium text-white">{config.mode === 'MULTI_TENANT' ? 'Multi-Tenant' : 'Single-Tenant'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Usuários:</span>
+                  <span className="font-medium text-white">{getUserCount()} personas</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Idioma:</span>
+                  <span className="font-medium text-white">{config.language === 'pt-BR' ? 'Português' : 'English'}</span>
+                </div>
+              </div>
+              <div className="flex justify-between mt-8">
+                <Button variant="outlined" onClick={handleBack} className="border-gray-700 text-gray-400">Voltar</Button>
                 <Button 
                   onClick={handleInstall} 
                   disabled={isLoading}
-                  className="min-w-[200px]"
+                  variant="contained"
+                  color="primary"
+                  loading={isLoading}
+                  className="min-w-[200px] shadow-lg shadow-primary-main/25 hover:shadow-primary-main/40"
                 >
                   {isLoading ? 'Instalando...' : 'Instalar Kaven Boilerplate'}
                 </Button>
-              </CardFooter>
-            </Card>
+              </div>
+            </div>
           )}
         </div>
       </div>
