@@ -121,6 +121,12 @@ model User {
   lastLoginUserAgent String?
   sessionExpiresAt   DateTime?
   
+  /// Metadata JSON para permissões granulares e preferências do usuário
+  /// Estrutura: { internalRole?: string, permissions?: string[], preferences?: object }
+  /// Usado para sub-roles do Admin Tenant (ARCHITECT, FINANCE, SUPPORT, MARKETING, DEVOPS)
+  /// Exemplo: { "internalRole": "FINANCE", "permissions": ["view:invoices", "manage:refunds"] }
+  metadata           Json?
+  
   // Relations
   tenant        Tenant?        @relation(fields: [tenantId], references: [id])
   refreshTokens RefreshToken[]
