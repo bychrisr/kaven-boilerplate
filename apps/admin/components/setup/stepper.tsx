@@ -32,9 +32,9 @@ export function Stepper({ steps, currentStep }: StepperProps) {
                 <div
                   className={cn(
                     'flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all',
-                    isCompleted && 'bg-primary-main border-primary-main text-white',
-                    isCurrent && 'border-primary-main text-primary-main bg-primary-main/10',
-                    isUpcoming && 'border-gray-600 text-gray-500'
+                    isCompleted && 'bg-primary border-primary text-primary-foreground',
+                    isCurrent && 'border-primary text-primary bg-primary/10',
+                    isUpcoming && 'border-muted text-muted-foreground'
                   )}
                 >
                   {isCompleted ? (
@@ -49,14 +49,14 @@ export function Stepper({ steps, currentStep }: StepperProps) {
                   <p
                     className={cn(
                       'text-sm font-medium',
-                      (isCompleted || isCurrent) && 'text-white',
-                      isUpcoming && 'text-gray-500'
+                      (isCompleted || isCurrent) && 'text-foreground',
+                      isUpcoming && 'text-muted-foreground'
                     )}
                   >
                     {step.title}
                   </p>
                   {step.description && (
-                    <p className="text-xs text-gray-500 mt-0.5">
+                    <p className="text-xs text-muted-foreground mt-0.5">
                       {step.description}
                     </p>
                   )}
@@ -68,7 +68,7 @@ export function Stepper({ steps, currentStep }: StepperProps) {
                 <div
                   className={cn(
                     'h-0.5 flex-1 mx-4 transition-all',
-                    isCompleted ? 'bg-primary-main' : 'bg-gray-700'
+                    isCompleted ? 'bg-primary' : 'bg-border'
                   )}
                 />
               )}
