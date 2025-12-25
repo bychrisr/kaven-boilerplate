@@ -43,7 +43,6 @@ export default function VerifyEmailContent() {
   }, [token, router]);
 
   return (
-  return (
     <div className="bg-card rounded-2xl p-8 shadow-2xl border border-border max-w-md w-full mx-auto text-center">
       
       {status === 'verifying' && (
