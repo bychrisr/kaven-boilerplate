@@ -50,8 +50,6 @@ export function UserView() {
 
   const [selected, setSelected] = useState<string[]>([]);
 
-  console.log('🚀 [UserView] Component rendered with filters:', { filterName, filterStatus });
-
   // API Hooks
   const { data, isLoading, error } = useUsers({
     page: page + 1, // API uses 1-indexed
@@ -69,13 +67,11 @@ export function UserView() {
 
   // Filter handlers
   const handleFilterName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('📝 [handleFilterName] Called with:', e.target.value);
     setFilterName(e.target.value);
     setPage(0);
   };
 
   const handleFilterStatus = (value: string) => {
-    console.log('🏷️ [handleFilterStatus] Called with:', value);
     setFilterStatus(value);
     setPage(0);
   };
