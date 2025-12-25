@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { ChevronDown, Plus } from 'lucide-react';
 import { useTenant } from '@/hooks/use-tenant';
 import { useSpaces } from '@/hooks/use-spaces';
+import { useAuthStore } from '@/stores/auth.store';
 import { cn } from '@/lib/utils';
 
 export function TenantSwitcher() {
   const { tenant } = useTenant();
+  const { user } = useAuthStore();
   const { currentSpace, availableSpaces, setCurrentSpace } = useSpaces();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -23,7 +25,7 @@ export function TenantSwitcher() {
     );
   }
 
-
+  const role = user?.role || 'USER';
 
   return (
     <div className="relative hidden md:block">
@@ -42,8 +44,8 @@ export function TenantSwitcher() {
           <span className="text-sm font-semibold leading-tight">
             {currentSpace.name}
           </span>
-          <span className="text-[10px] text-gray-400 font-medium">
-            {tenant.plan}
+          <span className="text-[10px] text-gray-400 font-medium uppercase">
+            {role}
           </span>
         </div>
         
@@ -101,9 +103,9 @@ export function TenantSwitcher() {
                       </div>
                     </div>
                     
-                    {/* Tenant Badge (was Plan) */}
+                    {/* Role Badge (was Tenant Name) */}
                     <span className="text-[10px] font-bold text-gray-400 bg-white/5 px-2 py-0.5 rounded-full border border-white/5 uppercase">
-                      {tenant.name}
+                      {role}
                     </span>
                   </button>
                 );
