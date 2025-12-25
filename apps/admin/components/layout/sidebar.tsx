@@ -15,13 +15,11 @@ import {
   ChevronDown,
   Activity,
   LucideIcon,
+  ChevronRight,
+  ChevronLeft
 } from 'lucide-react';
-import { useState } from 'react';
-
-interface SidebarProps {
-  open: boolean;
-  onClose: () => void;
-}
+import { useState, useEffect } from 'react';
+import { useSidebar } from '@/hooks/use-sidebar';
 
 interface NavigationChild {
   name: string;
@@ -37,54 +35,176 @@ interface NavigationItem {
   children?: NavigationChild[];
 }
 
-const navigation: NavigationItem[] = [
-  { name: 'Dashboard', href: '/dashboard', icon: Home },
+interface NavigationSection {
+  title: string;
+  items: NavigationItem[];
+}
+
+const navSections: NavigationSection[] = [
   {
-    name: 'Users',
-    href: '/users', // Added base href for parent
-    icon: Users,
-    children: [
-      { name: 'List', href: '/users' },
-      { name: 'Create', href: '/users/create' },
-      { name: 'Cards', href: '/users/cards' },
+    title: 'Overview',
+    items: [
+      { name: 'App', href: '/dashboard', icon: Home },
+      { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
     ],
   },
-  { name: 'Tenants', href: '/tenants', icon: Building2, role: 'SUPER_ADMIN' },
-  { name: 'Orders', href: '/orders', icon: ShoppingCart },
-  { name: 'Invoices', href: '/invoices', icon: FileText },
-  { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
   {
-    name: 'Monitoring',
-    href: '#', // Placeholder
-    icon: Activity,
-    children: [
-      { name: 'Grafana', href: 'http://localhost:3001', external: true },
-      { name: 'Prometheus', href: 'http://localhost:9090', external: true },
-      { name: 'System Health', href: '/dashboard/observability' },
-      { name: 'Audit Logs', href: '/dashboard/observability?tab=audit' },
+    title: 'Management',
+    items: [
+      {
+        name: 'User',
+        href: '/users',
+        icon: Users,
+        children: [
+          { name: 'List', href: '/users' },
+          { name: 'Create', href: '/users/create' },
+          { name: 'Cards', href: '/users/cards' },
+        ],
+      },
+      { name: 'Tenant', href: '/tenants', icon: Building2, role: 'SUPER_ADMIN' },
+      { name: 'Order', href: '/orders', icon: ShoppingCart },
+      { name: 'Invoice', href: '/invoices', icon: FileText },
     ],
   },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  {
+    title: 'Misc',
+    items: [
+      {
+        name: 'Monitoring',
+        href: '#',
+        icon: Activity,
+        children: [
+          { name: 'Grafana', href: 'http://localhost:3001', external: true },
+          { name: 'Prometheus', href: 'http://localhost:9090', external: true },
+          { name: 'System Health', href: '/dashboard/observability' },
+          { name: 'Audit Logs', href: '/dashboard/observability?tab=audit' },
+        ],
+      },
+      { name: 'Settings', href: '/settings', icon: Settings },
+    ],
+  },
 ];
 
-export function Sidebar({ open, onClose }: Readonly<SidebarProps>) {
+export function Sidebar() {
   const pathname = usePathname();
+  const { isCollapsed, toggle } = useSidebar();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  // Close mobile sidebar on path change
+  useEffect(() => {
+    if (isMobileOpen) {
+      setIsMobileOpen(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   const toggleExpand = (name: string) => {
+    if (isCollapsed) return;
     setExpandedItems((prev) =>
       prev.includes(name) ? prev.filter((item) => item !== name) : [...prev, name]
     );
   };
 
+  const renderNavItem = (item: NavigationItem) => {
+    const isActive =
+      pathname === item.href || item.children?.some((child) => pathname === child.href);
+    const isExpanded = expandedItems.includes(item.name);
+    const Icon = item.icon;
+
+    if (item.children) {
+      return (
+        <div key={item.name}>
+          <button
+            onClick={() => toggleExpand(item.name)}
+            data-tooltip={isCollapsed ? item.name : undefined}
+            className={cn(
+              'w-full flex items-center justify-between px-3 py-2.5 text-[0.875rem] font-medium rounded-lg transition-colors min-h-[44px]',
+              isActive || (isExpanded && !isCollapsed)
+                ? 'text-primary-main bg-[rgba(0,167,111,0.08)]'
+                : 'text-[#919EAB] hover:bg-[rgba(145,158,171,0.08)] hover:text-white',
+              isCollapsed && 'justify-center px-2'
+            )}
+          >
+            <div className={cn("flex items-center gap-4", isCollapsed ? "gap-0" : "")}>
+              <Icon className="h-6 w-6 flex-shrink-0" />
+              {!isCollapsed && <span>{item.name}</span>}
+            </div>
+            {!isCollapsed && (
+              <ChevronDown
+                className={cn('h-4 w-4 transition-transform flex-shrink-0', isExpanded && 'rotate-180')}
+              />
+            )}
+          </button>
+          {isExpanded && !isCollapsed && (
+            <div className="mt-1 space-y-1">
+              {item.children.map((child) => {
+                const isChildActive = pathname === child.href;
+                return (
+                    <Link
+                    key={child.href}
+                    href={child.href}
+                    target={child.external ? '_blank' : undefined}
+                    rel={child.external ? 'noopener noreferrer' : undefined}
+                    className={cn(
+                        'flex items-center gap-2 py-2 text-[0.875rem] rounded-lg transition-colors relative min-h-[36px]',
+                        isChildActive
+                        ? 'text-white font-semibold'
+                        : 'text-[#919EAB] hover:text-white'
+                    )}
+                    >
+                    <div className="w-[24px] flex justify-center flex-shrink-0">
+                       <span className={cn(
+                           "flex-shrink-0 rounded-full transition-all bg-current",
+                           isChildActive ? "w-2 h-2 scale-100 bg-primary-main" : "w-1 h-1 bg-[#919EAB] group-hover:bg-white"
+                       )} />
+                    </div>
+                    <span>{child.name}</span>
+                    </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <Link
+        key={item.name}
+        href={item.href}
+        data-tooltip={isCollapsed ? item.name : undefined}
+        className={cn(
+          'flex items-center gap-4 px-3 py-2.5 text-[0.875rem] font-medium rounded-lg transition-colors min-h-[44px]',
+           isActive
+            ? 'text-primary-main bg-[rgba(0,167,111,0.08)]'
+            : 'text-[#919EAB] hover:bg-[rgba(145,158,171,0.08)] hover:text-white',
+           isCollapsed && 'justify-center px-2 gap-0'
+        )}
+      >
+        <Icon className="h-6 w-6 flex-shrink-0" />
+        {!isCollapsed && <span>{item.name}</span>}
+      </Link>
+    );
+  };
+
   return (
     <>
+      {/* Mobile Toggle Button (Visible only on small screens) */}
+      <button
+          type="button"
+          onClick={() => setIsMobileOpen(true)}
+          className="lg:hidden fixed bottom-4 right-4 z-50 p-3 bg-primary-main text-white rounded-full shadow-lg"
+      >
+          <ChevronRight className="h-6 w-6" />
+      </button>
+
       {/* Mobile Overlay */}
-      {open && (
+      {isMobileOpen && (
         <button
           type="button"
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden w-full h-full cursor-default focus:outline-none"
-          onClick={onClose}
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden w-full h-full cursor-default focus:outline-none backdrop-blur-sm"
+          onClick={() => setIsMobileOpen(false)}
           aria-label="Close sidebar"
         />
       )}
@@ -92,80 +212,60 @@ export function Sidebar({ open, onClose }: Readonly<SidebarProps>) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed top-0 left-0 z-50 h-screen w-64 bg-white border-r border-gray-200 transition-transform duration-300',
-          open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+          'fixed top-0 left-0 z-50 h-screen bg-[#1C252E] border-r border-[rgba(145,158,171,0.12)] transition-all duration-300',
+          isCollapsed ? 'w-[88px]' : 'w-[280px]', // Minimal UI usually uses 88px for mini
+          isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
       >
-        {/* Logo */}
-        <div className="h-16 flex items-center px-6 border-b border-gray-200">
-          <Logo size="medium" />
-        </div>
+        {/* Toggle Button - Outside scroll container */}
+        <button
+            onClick={toggle}
+            className="hidden lg:flex absolute top-8 -right-3 w-6 h-6 bg-[#1C252E] border border-[rgba(145,158,171,0.24)] border-dashed rounded-full items-center justify-center text-[#919EAB] hover:text-white z-[100] cursor-pointer shadow-md transition-transform hover:scale-110"
+        >
+             {isCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
+        </button>
 
-        {/* Navigation */}
-        <nav className="p-4 space-y-1">
-          {navigation.map((item) => {
-            const isActive =
-              pathname === item.href || item.children?.some((child) => pathname === child.href);
-            const isExpanded = expandedItems.includes(item.name);
-            const Icon = item.icon;
+        <div className="h-full flex flex-col overflow-y-auto overflow-x-hidden">
+            {/* Logo */}
+            <div className={cn("h-20 flex items-center px-6 min-h-[80px] shrink-0", isCollapsed ? "justify-center px-0" : "")}>
+              <Logo size={isCollapsed ? "small" : "medium"} />
+            </div>
 
-            if (item.children) {
-              return (
-                <div key={item.name}>
-                  <button
-                    onClick={() => toggleExpand(item.name)}
-                    className={cn(
-                      'w-full flex items-center justify-between px-4 py-2 text-sm font-medium rounded-lg transition-colors',
-                      isActive ? 'bg-primary-main text-white' : 'text-gray-700 hover:bg-gray-100'
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <Icon className="h-5 w-5" />
-                      <span>{item.name}</span>
-                    </div>
-                    <ChevronDown
-                      className={cn('h-4 w-4 transition-transform', isExpanded && 'rotate-180')}
-                    />
-                  </button>
-                  {isExpanded && (
-                    <div className="ml-8 mt-1 space-y-1">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          target={child.external ? '_blank' : undefined}
-                          rel={child.external ? 'noopener noreferrer' : undefined}
-                          className={cn(
-                            'block px-4 py-2 text-sm rounded-lg transition-colors',
-                            pathname === child.href
-                              ? 'bg-primary-light text-primary-dark'
-                              : 'text-gray-600 hover:bg-gray-100'
-                          )}
-                        >
-                          {child.name}
-                        </Link>
-                      ))}
-                    </div>
+            {/* User Card */}
+            <div className="px-5 mb-6 shrink-0">
+               <div className={cn(
+                   "flex items-center rounded-2xl bg-[rgba(145,158,171,0.12)] transition-colors cursor-pointer border border-transparent hover:border-r-[rgba(145,158,171,0.24)]",
+                   isCollapsed ? "p-2 justify-center bg-transparent" : "p-3 gap-3"
+               )}>
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-main to-primary-dark overflow-hidden flex items-center justify-center text-white shrink-0">
+                    {/* User Avatar Img or Icon */}
+                    <Users className="h-5 w-5" />
+                  </div>
+                  {!isCollapsed && (
+                      <div className="flex flex-col min-w-0">
+                         <span className="text-sm font-semibold text-white truncate">Admin User</span>
+                         <span className="text-xs text-[#919EAB] truncate">admin@kaven.dev</span>
+                      </div>
                   )}
-                </div>
-              );
-            }
+               </div>
+            </div>
 
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  'flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg transition-colors',
-                  isActive ? 'bg-primary-main text-white' : 'text-gray-700 hover:bg-gray-100'
-                )}
-              >
-                <Icon className="h-5 w-5" />
-                <span>{item.name}</span>
-              </Link>
-            );
-          })}
-        </nav>
+            {/* Navigation */}
+            <nav className="px-4 pb-4 space-y-6 flex-1">
+              {navSections.map((section) => (
+                <div key={section.title}>
+                  {!isCollapsed && (
+                      <div className="px-3 mb-2 text-[11px] font-bold text-[#919EAB] uppercase tracking-wider transition-colors cursor-default">
+                        {section.title}
+                      </div>
+                  )}
+                  <div className="space-y-1">
+                    {section.items.map((item) => renderNavItem(item))}
+                  </div>
+                </div>
+              ))}
+            </nav>
+        </div>
       </aside>
     </>
   );

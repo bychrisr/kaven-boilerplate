@@ -1,26 +1,33 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { Sidebar } from '@/components/sidebar';
+import { Sidebar } from '@/components/layout/sidebar';
 import { Header } from '@/components/header';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { QueryProvider } from '@/providers/query-provider';
 import { ToastProvider } from '@/providers/toast-provider';
 import { AuthGuard } from '@/components/auth/auth-guard';
 import { useSidebar } from '@/hooks/use-sidebar';
+import { useSettings } from '@/stores/settings.store';
 import { cn } from '@/lib/utils';
 
 function DashboardLayoutInner({ children }: { children: ReactNode }) {
+  const { theme } = useSettings();
   const { isCollapsed } = useSidebar();
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#F9FAFB]">
+    <div 
+      className={cn(
+        "flex h-screen overflow-hidden transition-colors duration-300",
+        theme === 'dark' ? "bg-[#1C252E] text-white" : "bg-[#F9FAFB] text-gray-900"
+      )}
+    >
       <Sidebar />
 
       <div
         className={cn(
           'flex flex-1 flex-col overflow-hidden transition-all duration-300',
-          isCollapsed ? 'ml-[72px]' : 'ml-[280px]'
+          isCollapsed ? 'ml-[88px]' : 'ml-[280px]'
         )}
       >
         <Header />
