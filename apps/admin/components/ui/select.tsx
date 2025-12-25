@@ -138,7 +138,7 @@ export function Select<T = string>({
         }}
         className={cn(
           'flex items-center justify-between w-full border-2 rounded-md transition-all cursor-pointer',
-          'bg-[#161C24] text-white',
+          'bg-background-paper text-text-primary',
           'focus:outline-none focus:ring-2 focus:ring-primary-main/20',
           sizeClasses[size],
           error ? 'border-error-main' : 'border-gray-700 hover:border-gray-600',
@@ -146,14 +146,14 @@ export function Select<T = string>({
           isOpen && 'border-primary-main'
         )}
       >
-        <span className={cn(!selectedOption && 'text-gray-500')}>
+        <span className={cn(!selectedOption && 'text-text-disabled')}>
           {selectedOption?.props.children || placeholder}
         </span>
-        <ChevronDown className={cn('size-4 transition-transform text-gray-400', isOpen && 'rotate-180')} />
+        <ChevronDown className={cn('size-4 transition-transform text-text-secondary', isOpen && 'rotate-180')} />
       </div>
 
       {isOpen && (
-        <div className="absolute z-dropdown w-full mt-1 bg-[#161C24] border border-gray-700 rounded-md shadow-lg max-h-60 overflow-auto">
+        <div className="absolute z-dropdown w-full mt-1 bg-background-paper border border-divider rounded-md shadow-lg max-h-60 overflow-auto">
           {options.map((option, index) => (
             <div
               key={index}
@@ -161,9 +161,9 @@ export function Select<T = string>({
               aria-selected={option.props.value === currentValue}
               onClick={() => handleSelect(option.props.value)}
               className={cn(
-                'flex items-center justify-between px-4 py-2 cursor-pointer transition-colors text-white',
-                'hover:bg-gray-700',
-                option.props.value === currentValue && 'bg-gray-800'
+                'flex items-center justify-between px-4 py-2 cursor-pointer transition-colors text-text-primary',
+                'hover:bg-action-hover',
+                option.props.value === currentValue && 'bg-action-selected'
               )}
             >
               <span>{option.props.children}</span>
