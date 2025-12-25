@@ -182,14 +182,14 @@
   --chart-4: #00b8d9;
   --chart-5: #8e33ff;
 
-  /* Sidebar Specifics to match Card */
-  --sidebar: #212b36;
+  /* Sidebar Specifics - Match Background depth for "floating cards" effect */
+  --sidebar: #161c24;
   --sidebar-foreground: #ffffff;
   --sidebar-primary: #00a76f;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: rgba(145, 158, 171, 0.12);
+  --sidebar-accent: rgba(145, 158, 171, 0.08);
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(145, 158, 171, 0.24);
+  --sidebar-border: rgba(145, 158, 171, 0.12); /* Subtle border */
   --sidebar-ring: rgba(0, 167, 111, 0.3);
 }
 
