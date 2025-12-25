@@ -1,23 +1,27 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { useSettings } from '@/stores/settings.store';
 
-interface SidebarState {
-  isCollapsed: boolean;
-  toggle: () => void;
-  collapse: () => void;
-  expand: () => void;
-}
+// Facade hook to sync Sidebar state with Settings Store (Single Source of Truth)
+export const useSidebar = () => {
+  const { themeLayout, setThemeLayout } = useSettings();
 
-export const useSidebar = create<SidebarState>()(
-  persist(
-    (set) => ({
-      isCollapsed: false,
-      toggle: () => set((state) => ({ isCollapsed: !state.isCollapsed })),
-      collapse: () => set({ isCollapsed: true }),
-      expand: () => set({ isCollapsed: false }),
-    }),
-    {
-      name: 'sidebar-storage',
-    }
-  )
-);
+  const isCollapsed = themeLayout === 'mini';
+
+  const toggle = () => {
+    setThemeLayout(isCollapsed ? 'vertical' : 'mini');
+  };
+
+  const collapse = () => {
+    setThemeLayout('mini');
+  };
+
+  const expand = () => {
+    setThemeLayout('vertical');
+  };
+
+  return {
+    isCollapsed,
+    toggle,
+    collapse,
+    expand,
+  };
+};

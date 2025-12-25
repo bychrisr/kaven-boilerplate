@@ -43,11 +43,11 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         : value;
 
     return (
-      <div className="bg-[#161C24] border border-gray-700 p-3 rounded-lg shadow-xl">
-        {label && <p className="text-gray-400 text-xs mb-1">{label}</p>}
+      <div className="bg-popover border border-border p-3 rounded-lg shadow-xl">
+        {label && <p className="text-muted-foreground text-xs mb-1">{label}</p>}
         <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: payload[0].fill }}></span>
-            <p className="text-white font-bold text-sm">
+            <p className="text-popover-foreground font-bold text-sm">
             {name}: {formattedValue}
             </p>
         </div>
@@ -97,26 +97,21 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-         <div>
-            <h1 className="text-2xl font-bold text-white">Hi, Welcome back 👋</h1>
-            <p className="mt-1 text-sm text-gray-400">Here&apos;s what&apos;s happening with your store today.</p>
-         </div>
-      </div>
+      {/* Header removed per user request */}
 
       {/* Metrics Cards */}
       <div className="grid gap-6 md:grid-cols-3">
         {/* Total Active Users */}
-        <div className="relative overflow-hidden rounded-2xl bg-[#212B36] p-6 shadow-2xl border border-gray-700/50">
+        <div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
             <div className="flex items-center gap-4 mb-4">
                  <div className="p-3 bg-primary-main/10 rounded-full">
                     <Users className="h-6 w-6 text-primary-main" />
                  </div>
-                 <span className="text-sm font-medium text-gray-400 uppercase tracking-wider">Total Active Users</span>
+                 <span className="text-sm font-bold text-foreground uppercase tracking-wider">Total Active Users</span>
             </div>
             <div className="flex items-end justify-between">
                 <div>
-                     <h3 className="text-3xl font-bold text-white mb-2">{metrics.totalUsers.toLocaleString()}</h3>
+                     <h3 className="text-3xl font-bold text-foreground mb-2">{metrics.totalUsers.toLocaleString()}</h3>
                      <div className="flex items-center gap-2 text-sm">
                         <span className="flex items-center text-success-main font-semibold bg-success-main/10 px-1.5 py-0.5 rounded">
                             <ArrowUp className="h-3 w-3 mr-1" />
@@ -137,16 +132,16 @@ export default function DashboardPage() {
         </div>
 
         {/* Total Installed (Revenue) */}
-         <div className="relative overflow-hidden rounded-2xl bg-[#212B36] p-6 shadow-2xl border border-gray-700/50">
+         <div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
             <div className="flex items-center gap-4 mb-4">
                  <div className="p-3 bg-info-main/10 rounded-full">
                     <DollarSign className="h-6 w-6 text-info-main" />
                  </div>
-                 <span className="text-sm font-medium text-gray-400 uppercase tracking-wider">Total Installed</span>
+                 <span className="text-sm font-bold text-foreground uppercase tracking-wider">Total Installed</span>
             </div>
              <div className="flex items-end justify-between">
                 <div>
-                     <h3 className="text-3xl font-bold text-white mb-2">{metrics.revenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</h3>
+                     <h3 className="text-3xl font-bold text-foreground mb-2">{metrics.revenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</h3>
                      <div className="flex items-center gap-2 text-sm">
                         <span className="flex items-center text-success-main font-semibold bg-success-main/10 px-1.5 py-0.5 rounded">
                              <ArrowUp className="h-3 w-3 mr-1" />
@@ -166,16 +161,16 @@ export default function DashboardPage() {
         </div>
 
         {/* Total Downloads (Invoices) */}
-         <div className="relative overflow-hidden rounded-2xl bg-[#212B36] p-6 shadow-2xl border border-gray-700/50">
+         <div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
             <div className="flex items-center gap-4 mb-4">
                  <div className="p-3 bg-warning-main/10 rounded-full">
                     <FileText className="h-6 w-6 text-warning-main" />
                  </div>
-                 <span className="text-sm font-medium text-gray-400 uppercase tracking-wider">Total Downloads</span>
+                 <span className="text-sm font-bold text-foreground uppercase tracking-wider">Total Downloads</span>
             </div>
              <div className="flex items-end justify-between">
                 <div>
-                     <h3 className="text-3xl font-bold text-white mb-2">{metrics.invoices}</h3>
+                     <h3 className="text-3xl font-bold text-foreground mb-2">{metrics.invoices}</h3>
                      <div className="flex items-center gap-2 text-sm">
                         <span className="flex items-center text-error-main font-semibold bg-error-main/10 px-1.5 py-0.5 rounded">
                              <ArrowDown className="h-3 w-3 mr-1" />
@@ -198,10 +193,10 @@ export default function DashboardPage() {
       {/* Charts Row */}
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Current Download (Donut Chart) */}
-        <div className="rounded-2xl bg-[#212B36] p-6 shadow-xl border border-gray-700/50 lg:col-span-1">
+        <div className="rounded-2xl bg-card p-6 shadow-xl border border-border/50 lg:col-span-1">
           <div className="mb-6">
-              <h3 className="text-lg font-bold text-white">Current Download</h3>
-              <p className="text-sm text-gray-500">Downloaded by operating system</p>
+              <h3 className="text-lg font-bold text-foreground">Current Download</h3>
+              <p className="text-sm text-muted-foreground">Downloaded by operating system</p>
           </div>
 
           <div className="h-80 w-full flex items-center justify-center relative">
@@ -227,8 +222,8 @@ export default function DashboardPage() {
                     />
                     {/* Centered Label */}
                     <text x="50%" y="45%" textAnchor="middle" dominantBaseline="middle">
-                        <tspan x="50%" dy="0" className="fill-white text-3xl font-bold">{metrics.invoices.toLocaleString()}</tspan>
-                        <tspan x="50%" dy="25" className="fill-gray-500 text-sm">Total</tspan>
+                        <tspan x="50%" dy="0" className="fill-foreground text-3xl font-bold">{metrics.invoices.toLocaleString()}</tspan>
+                        <tspan x="50%" dy="25" className="fill-muted-foreground text-sm">Total</tspan>
                     </text>
                  </PieChart>
                </ResponsiveContainer>
@@ -236,11 +231,11 @@ export default function DashboardPage() {
         </div>
 
         {/* Area Installed (Stacked Bar Chart) */}
-        <div className="rounded-2xl bg-[#212B36] p-6 shadow-xl border border-gray-700/50 lg:col-span-2">
+        <div className="rounded-2xl bg-card p-6 shadow-xl border border-border/50 lg:col-span-2">
           <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-lg font-bold text-white">Area Installed</h3>
-                <p className="text-sm text-gray-500">(+43%) than last year</p>
+                <h3 className="text-lg font-bold text-foreground">Area Installed</h3>
+                <p className="text-sm text-muted-foreground">(+43%) than last year</p>
               </div>
               <div className="flex items-center gap-2">
                   <span className="flex items-center gap-1 text-xs text-gray-400">
@@ -273,15 +268,15 @@ export default function DashboardPage() {
       </div>
 
       {/* User Table */}
-      <div className="rounded-2xl bg-[#212B36] shadow-xl border border-gray-700/50 overflow-hidden">
-        <div className="p-6 border-b border-gray-700/50">
-             <h3 className="text-lg font-bold text-white">New Users</h3>
+      <div className="rounded-2xl bg-card shadow-xl border border-border/50 overflow-hidden">
+        <div className="p-6 border-b border-border/50">
+             <h3 className="text-lg font-bold text-foreground">New Users</h3>
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-700/50">
-            <thead className="bg-[#1C252E]">
+          <table className="min-w-full divide-y divide-border/50">
+            <thead className="bg-muted/50">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">
+                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   User
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">
@@ -295,17 +290,17 @@ export default function DashboardPage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-700/50 bg-[#212B36]">
+            <tbody className="divide-y divide-border/50 bg-card">
               {usersData?.users.map((user: User) => (
-                <tr key={user.id} className="hover:bg-[#2A3441] transition-colors">
+                <tr key={user.id} className="hover:bg-muted/50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-main to-primary-dark flex items-center justify-center text-white font-bold text-sm">
                            {user.name.charAt(0)}
                        </div>
                        <div>
-                          <div className="font-medium text-white">{user.name}</div>
-                          <div className="text-sm text-gray-500">{user.email}</div>
+                          <div className="font-medium text-foreground">{user.name}</div>
+                          <div className="text-sm text-muted-foreground">{user.email}</div>
                        </div>
                     </div>
                   </td>
@@ -318,11 +313,11 @@ export default function DashboardPage() {
                       {user.role}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-400">
+                  <td className="px-6 py-4 text-sm text-muted-foreground">
                     {new Date(user.createdAt).toLocaleDateString('pt-BR')}
                   </td>
                    <td className="px-6 py-4 text-right">
-                       <button className="text-gray-400 hover:text-white transition-colors">
+                       <button className="text-muted-foreground hover:text-foreground transition-colors">
                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
                        </button>
                   </td>

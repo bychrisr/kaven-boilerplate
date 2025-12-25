@@ -9,6 +9,8 @@ import { ToastProvider } from '@/providers/toast-provider';
 import { AuthGuard } from '@/components/auth/auth-guard';
 import { useSidebar } from '@/hooks/use-sidebar';
 import { useSettings } from '@/stores/settings.store';
+import { ThemeConfigurator } from '@/components/settings/theme-configurator';
+import { SettingsDrawer } from '@/components/settings/settings-drawer';
 import { cn } from '@/lib/utils';
 
 function DashboardLayoutInner({ children }: { children: ReactNode }) {
@@ -34,9 +36,7 @@ function DashboardLayoutInner({ children }: { children: ReactNode }) {
 
         <main className="flex-1 overflow-y-auto">
           <div className="p-6">
-            <Breadcrumbs>
-              <span>Dashboard</span>
-            </Breadcrumbs>
+            {/* Breadcrumbs removed per user request */}
             <div className="mt-6">{children}</div>
           </div>
         </main>
@@ -51,6 +51,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <AuthGuard>
         <DashboardLayoutInner>{children}</DashboardLayoutInner>
         <ToastProvider />
+        {/* Advanced Customization Engine */}
+        <ThemeConfigurator />
+        <SettingsDrawer />
       </AuthGuard>
     </QueryProvider>
   );
