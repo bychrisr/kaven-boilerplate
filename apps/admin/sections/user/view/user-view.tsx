@@ -24,6 +24,13 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/radix-select';
 
 const STATUS_OPTIONS = [
   { value: 'all', label: 'All' },
@@ -298,19 +305,23 @@ export function UserView() {
             <div className="flex items-center gap-6 lg:gap-8">
               <div className="flex items-center space-x-2">
                 <p className="text-sm font-medium text-muted-foreground">Rows per page</p>
-                <select
-                  value={rowsPerPage}
-                  onChange={(e) => {
-                    setRowsPerPage(Number(e.target.value));
+                <Select
+                  value={String(rowsPerPage)}
+                  onValueChange={(value) => {
+                    setRowsPerPage(Number(value));
                     setPage(0);
                   }}
-                  className="h-8 w-[70px] rounded-md border border-input bg-card text-foreground px-2.5 py-1.5 text-sm shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer"
                 >
-                  <option value={5}>5</option>
-                  <option value={10}>10</option>
-                  <option value={20}>20</option>
-                  <option value={50}>50</option>
-                </select>
+                  <SelectTrigger className="h-8 w-[70px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex w-[100px] items-center justify-center text-sm font-medium text-muted-foreground">
                 {filteredUsers.length > 0 ? (
