@@ -9,7 +9,7 @@ function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
       data-slot="input"
       className={cn(
         // Base styles - seguindo padrão da página de login
-        'h-10 w-full min-w-0 rounded-md px-4 text-base md:text-sm',
+        'w-full min-w-0 rounded-md px-4 py-2.5 text-base md:text-sm',
         'bg-[#161C24] border-2 border-gray-700 text-white',
         'placeholder:text-gray-500',
         'transition-all outline-none',

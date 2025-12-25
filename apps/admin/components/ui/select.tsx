@@ -108,9 +108,9 @@ export function Select<T = string>({
   }, [isOpen]);
 
   const sizeClasses = {
-    sm: 'h-8 text-sm px-3',
-    md: 'h-10 text-base px-4',
-    lg: 'h-12 text-lg px-5',
+    sm: 'px-3 py-2 text-sm',
+    md: 'px-4 py-2.5 text-base',
+    lg: 'px-5 py-3 text-lg',
   };
 
   return (
