@@ -65,7 +65,16 @@ export const SPACES: Record<string, SpaceConfig> = {
       {
         title: 'MANAGEMENT',
         items: [
-          { icon: Users, label: 'User', href: '/users' },
+          { 
+            icon: Users, 
+            label: 'User', 
+            href: '/users',
+            children: [
+              { label: 'List', href: '/users' },
+              { label: 'Create', href: '/users/create' },
+              { label: 'Cards', href: '/users/cards' }
+            ]
+          },
           { icon: Building2, label: 'Tenant', href: '/tenants' },
           { icon: ShoppingCart, label: 'Order', href: '/orders' },
           { icon: FileText, label: 'Invoice', href: '/invoices' }
@@ -74,7 +83,17 @@ export const SPACES: Record<string, SpaceConfig> = {
       {
         title: 'MISC',
         items: [
-          { icon: Activity, label: 'Monitoring', href: '/monitoring' }
+          { 
+            icon: Activity, 
+            label: 'Monitoring', 
+            href: '#',
+            children: [
+              { label: 'Grafana', href: 'http://localhost:3001', external: true },
+              { label: 'Prometheus', href: 'http://localhost:9090', external: true },
+              { label: 'System Health', href: '/dashboard/observability' },
+              { label: 'Audit Logs', href: '/dashboard/observability?tab=audit' }
+            ]
+          }
         ]
       }
     ],

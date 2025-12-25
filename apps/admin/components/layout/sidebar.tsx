@@ -64,13 +64,9 @@ export function Sidebar() {
     }));
   }, [currentSpace]);
 
-  // Load expanded sections from localStorage on mount
+  // Expand all sections when navSections changes (e.g. switching spaces)
   useEffect(() => {
-    const savedSections = localStorage.getItem('sidebar-expanded-sections');
-    if (savedSections) {
-      setExpandedSections(JSON.parse(savedSections));
-    } else if (navSections.length > 0) {
-      // By default, expand all sections
+    if (navSections.length > 0) {
       setExpandedSections(navSections.map(section => section.title));
     }
   }, [navSections]);
