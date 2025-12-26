@@ -53,46 +53,48 @@ export function AddressAutocomplete({
         
         /* Custom styling for dropdown */
         .pac-container {
-          background-color: hsl(var(--popover));
-          border: 1px solid hsl(var(--border));
-          border-radius: 8px;
-          box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-          margin-top: 4px;
-          font-family: inherit;
+          background-color: hsl(var(--popover)) !important;
+          border: 1px solid hsl(var(--border)) !important;
+          border-radius: 8px !important;
+          box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+          margin-top: 4px !important;
+          font-family: inherit !important;
+          z-index: 9999 !important;
         }
         
         .pac-item {
-          padding: 8px 12px;
-          border-top: 1px solid hsl(var(--border));
-          color: hsl(var(--foreground));
-          cursor: pointer;
-          font-size: 14px;
+          padding: 8px 12px !important;
+          border-top: 1px solid hsl(var(--border)) !important;
+          color: hsl(var(--foreground)) !important;
+          cursor: pointer !important;
+          font-size: 14px !important;
+          background-color: hsl(var(--popover)) !important;
         }
         
         .pac-item:first-child {
-          border-top: none;
+          border-top: none !important;
         }
         
         .pac-item:hover {
-          background-color: hsl(var(--accent));
+          background-color: hsl(var(--accent)) !important;
         }
         
         .pac-item-selected {
-          background-color: hsl(var(--accent));
+          background-color: hsl(var(--accent)) !important;
         }
         
         .pac-item-query {
-          color: hsl(var(--foreground));
-          font-weight: 500;
+          color: hsl(var(--foreground)) !important;
+          font-weight: 500 !important;
         }
         
         .pac-matched {
-          font-weight: 600;
-          color: hsl(var(--primary));
+          font-weight: 600 !important;
+          color: hsl(var(--primary)) !important;
         }
         
         .pac-icon {
-          display: none;
+          display: none !important;
         }
       `;
       document.head.appendChild(style);
