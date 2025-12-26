@@ -77,16 +77,17 @@ export function UserView() {
   };
   
   const getStatusCount = (status: string) => {
-    // When viewing 'all', show total from current filtered results
-    if (status === 'all') return totalUsers;
+    if (!stats) return 0;
     
-    // When a specific status is selected, show its filtered total
-    if (status.toUpperCase() === filterStatus.toUpperCase()) {
+    // Tab 'all' always shows global total
+    if (status === 'all') return stats.total;
+    
+    // Selected status tab shows filtered total
+    if (filterStatus !== 'all' && status.toUpperCase() === filterStatus.toUpperCase()) {
       return totalUsers;
     }
     
-    // For other statuses, use global stats as fallback
-    if (!stats) return 0;
+    // All other tabs show global stats (fixed values)
     return stats[status as keyof typeof stats] ?? 0;
   };
 
