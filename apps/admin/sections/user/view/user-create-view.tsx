@@ -42,6 +42,7 @@ export function UserCreateView() {
   const { mutate: createUser, isPending } = useCreateUser();
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string>('');
+  const [isAddressAutoFilled, setIsAddressAutoFilled] = useState(false);
 
   const {
     register,
@@ -69,34 +70,13 @@ export function UserCreateView() {
     setAvatarPreview(preview);
   };
 
-  const handlePlaceSelected = (place: google.maps.places.PlaceResult) => {
+  const handlePlaceSelected = (data: { address: string; city: string; state: string; country: string; zipcode: string }) => {
     // Auto-fill address fields from Google Places
-    const addressComponents = place.address_components || [];
-    
-    let city = '';
-    let state = '';
-    let country = '';
-    let zipcode = '';
-
-    addressComponents.forEach((component) => {
-      const types = component.types;
-      
-      if (types.includes('locality')) {
-        city = component.long_name;
-      } else if (types.includes('administrative_area_level_1')) {
-        state = component.long_name;
-      } else if (types.includes('country')) {
-        country = component.long_name;
-      } else if (types.includes('postal_code')) {
-        zipcode = component.long_name;
-      }
-    });
-
-    // Update form fields
-    if (city) setValue('city', city);
-    if (state) setValue('state', state);
-    if (country) setValue('country', country);
-    if (zipcode) setValue('zipcode', zipcode);
+    setValue('city', data.city);
+    setValue('state', data.state);
+    setValue('country', data.country);
+    setValue('zipcode', data.zipcode);
+    setIsAddressAutoFilled(true);
   };
 
   const onSubmit = async (data: UserFormData) => {
@@ -216,52 +196,12 @@ export function UserCreateView() {
                     value={watch('phone') || ''}
                     onChange={(value) => setValue('phone', value)}
                     placeholder="Enter phone number"
-                    className="bg-transparent"
                     id="phone"
                   />
                 </div>
 
-                {/* Country */}
-                <div>
-                  <label htmlFor="country" className="block text-sm font-medium text-foreground mb-2">
-                    Country
-                  </label>
-                  <Input
-                    {...register('country')}
-                    id="country"
-                    placeholder="United States"
-                    className="bg-transparent"
-                  />
-                </div>
-
-                {/* State/Region */}
-                <div>
-                  <label htmlFor="state" className="block text-sm font-medium text-foreground mb-2">
-                    State/Region
-                  </label>
-                  <Input
-                    {...register('state')}
-                    id="state"
-                    placeholder="California"
-                    className="bg-transparent"
-                  />
-                </div>
-
-                {/* City */}
-                <div>
-                  <label htmlFor="city" className="block text-sm font-medium text-foreground mb-2">
-                    City
-                  </label>
-                  <Input
-                    {...register('city')}
-                    id="city"
-                    placeholder="San Francisco"
-                    className="bg-transparent"
-                  />
-                </div>
-
-                {/* Address with Autocomplete */}
-                <div>
+                {/* Address with Autocomplete - FIRST */}
+                <div className="sm:col-span-2">
                   <label htmlFor="address" className="block text-sm font-medium text-foreground mb-2">
                     Address
                   </label>
@@ -275,7 +215,49 @@ export function UserCreateView() {
                   />
                 </div>
 
-                {/* Zip/code */}
+                {/* City - Auto-filled, disabled when autocomplete used */}
+                <div>
+                  <label htmlFor="city" className="block text-sm font-medium text-foreground mb-2">
+                    City
+                  </label>
+                  <Input
+                    {...register('city')}
+                    id="city"
+                    placeholder="San Francisco"
+                    className="bg-transparent"
+                    disabled={isAddressAutoFilled}
+                  />
+                </div>
+
+                {/* State/Region - Auto-filled, disabled when autocomplete used */}
+                <div>
+                  <label htmlFor="state" className="block text-sm font-medium text-foreground mb-2">
+                    State/Region
+                  </label>
+                  <Input
+                    {...register('state')}
+                    id="state"
+                    placeholder="California"
+                    className="bg-transparent"
+                    disabled={isAddressAutoFilled}
+                  />
+                </div>
+
+                {/* Country - Auto-filled, disabled when autocomplete used */}
+                <div>
+                  <label htmlFor="country" className="block text-sm font-medium text-foreground mb-2">
+                    Country
+                  </label>
+                  <Input
+                    {...register('country')}
+                    id="country"
+                    placeholder="United States"
+                    className="bg-transparent"
+                    disabled={isAddressAutoFilled}
+                  />
+                </div>
+
+                {/* Zip/code - Auto-filled, disabled when autocomplete used */}
                 <div>
                   <label htmlFor="zipcode" className="block text-sm font-medium text-foreground mb-2">
                     Zip/code
@@ -285,6 +267,7 @@ export function UserCreateView() {
                     id="zipcode"
                     placeholder="94102"
                     className="bg-transparent"
+                    disabled={isAddressAutoFilled}
                   />
                 </div>
 

@@ -8,13 +8,16 @@ O Kaven usa um **único arquivo `.env`** na raiz do projeto para todas as variá
 
 ```
 kaven-boilerplate/
-├── .env                    # ✅ Variáveis reais (NÃO commitado)
+├── .env                    # ✅ Backend variables (API)
 ├── .env.example            # ✅ Template (commitado)
 └── apps/
-    ├── admin/              # Frontend (Next.js) - usa NEXT_PUBLIC_*
-    └── api/                # Backend (Express) - usa dotenv.config()
+    ├── admin/              # Frontend (Next.js)
+    │   └── .env.local      # ✅ Frontend variables (NEXT_PUBLIC_*)
+    └── api/                # Backend (Express)
         └── src/config/env.ts  # Validação com Zod
 ```
+
+**Importante:** Em monorepo, variáveis `NEXT_PUBLIC_*` devem estar em `apps/admin/.env.local`.
 
 ## Setup Inicial
 
@@ -163,7 +166,15 @@ Next.js carrega automaticamente `.env` da raiz e expõe `NEXT_PUBLIC_*` para o c
    - "Create Credentials" → "API Key"
    - Copie a chave
 
-### 2. Adicionar no `.env`
+### 2. Adicionar no `.env.local`
+
+**Em monorepo, adicione em `apps/admin/.env.local`:**
+
+```bash
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIzaSyBOOLr3BeqTjbVf773DlIPlr0r9j9c885Y
+```
+
+**Também adicione no `.env` da raiz** (para referência e outros apps):
 
 ```bash
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIzaSyBOOLr3BeqTjbVf773DlIPlr0r9j9c885Y
