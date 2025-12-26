@@ -61,8 +61,8 @@ export function UserCreateView() {
     formState: { errors, isSubmitting, touchedFields },
   } = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
-    mode: 'onBlur', // Valida quando campo perde foco
-    reValidateMode: 'onChange', // Re-valida em tempo real após primeira validação
+    mode: 'onChange', // Valida em tempo real enquanto digita
+    reValidateMode: 'onChange', // Re-valida em tempo real
     defaultValues: {
       name: '',
       email: '',
