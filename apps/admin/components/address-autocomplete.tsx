@@ -25,8 +25,19 @@ export function AddressAutocomplete({
 }: AddressAutocompleteProps) {
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
+  
+  // Debug: verificar se API Key está carregada
+  useEffect(() => {
+    if (!apiKey) {
+      console.error('❌ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY não encontrada no .env');
+    } else {
+      console.log('✅ Google Maps API Key carregada:', apiKey.substring(0, 10) + '...');
+    }
+  }, [apiKey]);
+
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+    googleMapsApiKey: apiKey,
     libraries,
   });
 
