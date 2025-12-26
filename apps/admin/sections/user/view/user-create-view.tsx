@@ -204,7 +204,6 @@ export function UserCreateView() {
                   <Input
                     {...register('email')}
                     id="email"
-                    name="user_email_new"
                     type="email"
                     placeholder="john@example.com"
                     autoComplete="new-password"
@@ -288,7 +287,6 @@ export function UserCreateView() {
                     <Input
                       {...register('password')}
                       id="password"
-                      name="user_password_new"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="••••••••"
                       autoComplete="new-password"
