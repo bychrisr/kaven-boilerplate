@@ -46,8 +46,11 @@ cd apps/admin && pnpm dev
 
 - ✅ **Login funcional** com integração API
 - ✅ **Dashboard Analytics** (Real Data) com Gráficos Recharts
+- ✅ **User Creation** com validação avançada de senha (5 requisitos)
+- ✅ **Tenant Management** obrigatório (create own tenant ou selecionar existente)
 - ✅ **UI Minimalista** (Dark/Light Mode) com Persistência
 - ✅ **Design System** refinado (Header Glassmorphism, Collapsible Sidebar)
+- ✅ **Form Validation** em tempo real com feedback visual (bordas verde/vermelha)
 - ✅ **UI responsiva** com Tailwind CSS
 
 ### Database
@@ -74,17 +77,29 @@ Turborepo Monorepo
 
 ## 📚 Documentação
 
+### Guias Gerais
+
 - [**Guia de Implementação**](docs/IMPLEMENTATION.md) - Arquitetura e detalhes técnicos
-- [**Plano de Implementação**](https://github.com/.../implementation_plan.md) - Roadmap completo
 - [**API Specification**](Phase%200%20-%20FOUNDATION/7.%20API%20SPECIFICATION.md) - Todos os endpoints
 - [**Database Specification**](Phase%200%20-%20FOUNDATION/9.%20DATABASE%20SPECIFICATION.md) - Schema completo
+
+### Features Específicas
+
+- [**Password Validation**](docs/PASSWORD_VALIDATION.md) - Sistema de validação de senha
+- [**Tenant Management**](docs/TENANT_MANAGEMENT.md) - Gestão de tenants em criação de usuário
+- [**Backend Config Fixes**](docs/BACKEND_CONFIG_FIXES.md) - Correções de configuração
+- [**Form Validation Bugs**](docs/FORM_VALIDATION_BUGS.md) - Bugs corrigidos e lições aprendidas
 
 ---
 
 ## 🔐 Segurança
 
 - **JWT** com access tokens (15min) + refresh tokens (7 dias) (Standard `sub` claim)
-- **Password Hardening** com validação de força e hash seguro
+- **Password Validation** production-ready com 5 requisitos de segurança:
+  - Mínimo 8 caracteres
+  - Letra minúscula + maiúscula
+  - Número + caractere especial
+  - Indicador visual de força em tempo real
 - **2FA TOTP** com QR codes + backup codes
 - **Zod** para validação de inputs e Environment Variables
 - **Security Middlewares:** Rate Limiting (Redis), CSRF Protection, IDOR Prevention
@@ -201,6 +216,6 @@ MIT © 2025
 
 ---
 
-**Status:** 🟡 MVP Parcial (60% completo)
-**Versão:** 0.4.0
-**Última atualização:** 2025-12-25
+**Status:** 🟢 MVP Funcional (70% completo)
+**Versão:** 0.5.0
+**Última atualização:** 2025-12-26
