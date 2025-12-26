@@ -32,8 +32,8 @@ const userSchema = z.object({
     .regex(PASSWORD_REGEX, PASSWORD_ERROR_MESSAGE),
   phone: z.string().optional(),
   role: z.enum(['USER', 'TENANT_ADMIN']),
-  status: z.enum(['ACTIVE', 'PENDING']).default('ACTIVE'),
-  emailVerified: z.boolean().default(false),
+  status: z.enum(['ACTIVE', 'PENDING']),
+  emailVerified: z.boolean(),
   // Optional address fields for future invoices/billing
   country: z.string().optional(),
   state: z.string().optional(),
@@ -98,7 +98,6 @@ export function UserCreateView() {
           name: data.name,
           email: data.email,
           password: data.password,
-          phone: data.phone,
           role: data.role,
           status: data.status,
           tenantId: 'create-own', // Creates own tenant
@@ -280,7 +279,8 @@ export function UserCreateView() {
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
-                  <PasswordStrengthIndicator password={watch('password') || ''} className="mt-2" />
+                  {/* Password Validator - Only shows when password has value */}
+                  <PasswordValidator password={watch('password') || ''} className="mt-2" />
                   {errors.password && (
                     <p className="mt-1 text-sm text-destructive" role="alert">{errors.password.message}</p>
                   )}
