@@ -17,7 +17,7 @@ import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
 import { AvatarUpload } from '@/components/avatar-upload';
 import { AddressAutocomplete } from '@/components/address-autocomplete';
 import { PhoneInput } from '@/components/phone-input';
-import { PasswordStrengthIndicator } from '@/components/password-strength-indicator';
+import { PasswordValidator, PASSWORD_REGEX, PASSWORD_ERROR_MESSAGE } from '@/components/password-validator';
 import { cn } from '@/lib/utils';
 
 const userSchema = z.object({
@@ -27,7 +27,9 @@ const userSchema = z.object({
       message: 'Please enter your full name (first and last name)',
     }),
   email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  password: z.string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(PASSWORD_REGEX, PASSWORD_ERROR_MESSAGE),
   phone: z.string().optional(),
   role: z.enum(['USER', 'TENANT_ADMIN']),
   status: z.enum(['ACTIVE', 'PENDING']).default('ACTIVE'),
