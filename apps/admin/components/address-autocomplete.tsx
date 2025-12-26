@@ -44,17 +44,18 @@ export function AddressAutocomplete({
   useEffect(() => {
     if (isLoaded) {
       const style = document.createElement('style');
+      style.id = 'google-places-custom-styles';
       style.textContent = `
         /* Hide "Powered by Google" logo */
         .pac-container:after {
           background-image: none !important;
-          height: 0px;
+          height: 0px !important;
         }
         
-        /* Custom styling for dropdown */
+        /* Custom styling for dropdown - Dark theme hardcoded */
         .pac-container {
-          background-color: hsl(var(--popover)) !important;
-          border: 1px solid hsl(var(--border)) !important;
+          background-color: #212B36 !important;
+          border: 1px solid rgba(145, 158, 171, 0.2) !important;
           border-radius: 8px !important;
           box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
           margin-top: 4px !important;
@@ -64,11 +65,11 @@ export function AddressAutocomplete({
         
         .pac-item {
           padding: 8px 12px !important;
-          border-top: 1px solid hsl(var(--border)) !important;
-          color: hsl(var(--foreground)) !important;
+          border-top: 1px solid rgba(145, 158, 171, 0.2) !important;
+          color: #FFFFFF !important;
           cursor: pointer !important;
           font-size: 14px !important;
-          background-color: hsl(var(--popover)) !important;
+          background-color: #212B36 !important;
         }
         
         .pac-item:first-child {
@@ -76,21 +77,21 @@ export function AddressAutocomplete({
         }
         
         .pac-item:hover {
-          background-color: hsl(var(--accent)) !important;
+          background-color: rgba(145, 158, 171, 0.08) !important;
         }
         
         .pac-item-selected {
-          background-color: hsl(var(--accent)) !important;
+          background-color: rgba(145, 158, 171, 0.08) !important;
         }
         
         .pac-item-query {
-          color: hsl(var(--foreground)) !important;
+          color: #FFFFFF !important;
           font-weight: 500 !important;
         }
         
         .pac-matched {
           font-weight: 600 !important;
-          color: hsl(var(--primary)) !important;
+          color: #00AB55 !important;
         }
         
         .pac-icon {
@@ -100,7 +101,10 @@ export function AddressAutocomplete({
       document.head.appendChild(style);
       
       return () => {
-        document.head.removeChild(style);
+        const existingStyle = document.getElementById('google-places-custom-styles');
+        if (existingStyle) {
+          document.head.removeChild(existingStyle);
+        }
       };
     }
   }, [isLoaded]);
