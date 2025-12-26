@@ -1,40 +1,6 @@
-/* Phone Input Styles - react-international-phone customization */
+/* Phone Input Styles - Minimal customization needed */
 
-/* Customize to match design system */
-.react-international-phone-input-container {
-  @apply h-11 rounded-md border border-input bg-transparent;
-  @apply ring-offset-background transition-colors;
-}
-
-.react-international-phone-input-container:focus-within {
-  @apply ring-2 ring-ring ring-offset-2;
-}
-
-.react-international-phone-input {
-  @apply h-full px-3 py-2 text-sm bg-transparent;
-  @apply placeholder:text-muted-foreground;
-  @apply focus:outline-none;
-}
-
-.react-international-phone-country-selector-button {
-  @apply h-full px-3 border-r border-input bg-transparent;
-  @apply hover:bg-muted/30 transition-colors;
-}
-
-.react-international-phone-country-selector-dropdown {
-  @apply bg-popover text-popover-foreground border border-border rounded-md shadow-md;
-  @apply max-h-[300px] overflow-auto;
-}
-
-.react-international-phone-country-selector-dropdown__list-item {
-  @apply px-3 py-2 hover:bg-muted cursor-pointer;
-  @apply transition-colors;
-}
-
-.react-international-phone-country-selector-dropdown__list-item--selected {
-  @apply bg-primary/10 text-primary;
-}
-
-.react-international-phone-country-selector-dropdown__list-item--focused {
-  @apply bg-muted;
+/* Flag images */
+.react-international-phone-flag-emoji {
+  @apply inline-block;
 }
