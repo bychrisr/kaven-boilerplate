@@ -54,10 +54,14 @@ export class UserController {
 
   async create(request: FastifyRequest, reply: FastifyReply) {
     try {
+      console.log('🔍 [USER CONTROLLER] Create User - Raw body:', JSON.stringify(request.body, null, 2));
       const data = createUserSchema.parse(request.body);
+      console.log('✅ [USER CONTROLLER] Create User - Validated data:', JSON.stringify(data, null, 2));
       const user = await userService.createUser(data);
+      console.log('✅ [USER CONTROLLER] Create User - Created user:', JSON.stringify(user, null, 2));
       reply.status(201).send(user);
     } catch (error: any) {
+      console.error('❌ [USER CONTROLLER] Create User - Error:', error);
       reply.status(400).send({  error: error.message });
     }
   }

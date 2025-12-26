@@ -105,7 +105,9 @@ export class UserService {
         id: true,
         email: true,
         name: true,
+        phone: true, 
         role: true,
+        status: true,
         emailVerified: true,
         twoFactorEnabled: true,
         tenantId: true,
@@ -113,6 +115,7 @@ export class UserService {
         updatedAt: true,
         lastLoginAt: true,
         deletedAt: true,
+        metadata: true,
       },
     });
 
@@ -120,7 +123,13 @@ export class UserService {
       throw new Error('Usuário não encontrado');
     }
 
-    return user;
+    // Flatten metadata for frontend consumption
+    const metadata = (user.metadata as any) || {};
+    return {
+      ...user,
+      ...metadata,
+      metadata: undefined, // Hide raw metadata if desired, or keep it
+    };
   }
 
   /**
@@ -174,6 +183,24 @@ export class UserService {
       tenantId = tenant.id;
     }
 
+    console.log('🔍 [USER SERVICE] Creating user with data:', {
+      email: data.email,
+      name: data.name,
+      phone: data.phone,
+      role: data.role,
+      status: data.status,
+      tenantId,
+      metadata: {
+        country: (data as any).country,
+        state: (data as any).state,
+        city: (data as any).city,
+        address: (data as any).address,
+        zipcode: (data as any).zipcode,
+        company: (data as any).company,
+        avatarUrl: (data as any).avatarUrl,
+      }
+    });
+
     const user = await prisma.user.create({
       data: {
         email: data.email,
@@ -182,7 +209,17 @@ export class UserService {
         phone: data.phone,
         role: data.role || 'USER',
         status: data.status || 'ACTIVE',
+        emailVerified: (data as any).emailVerified || false,
         tenantId: tenantId || null,
+        metadata: {
+           country: (data as any).country,
+           state: (data as any).state,
+           city: (data as any).city,
+           address: (data as any).address,
+           zipcode: (data as any).zipcode,
+           company: (data as any).company,
+           avatarUrl: (data as any).avatarUrl,
+        }
       },
       select: {
         id: true,
@@ -236,10 +273,37 @@ export class UserService {
       }
     }
 
+    // Extract metadata fields
+    const { 
+      country, 
+      state, 
+      city, 
+      address, 
+      zipcode, 
+      company, 
+      avatarUrl, 
+      emailVerified,
+      ...coreData 
+    } = data as any;
+
+    const currentMetadata = (existingUser.metadata as any) || {};
+    const newMetadata = {
+      ...currentMetadata,
+      ...(country !== undefined && { country }),
+      ...(state !== undefined && { state }),
+      ...(city !== undefined && { city }),
+      ...(address !== undefined && { address }),
+      ...(zipcode !== undefined && { zipcode }),
+      ...(company !== undefined && { company }),
+      ...(avatarUrl !== undefined && { avatarUrl }),
+    };
+
     const user = await prisma.user.update({
       where: { id },
       data: {
-        ...data,
+        ...coreData,
+        ...(emailVerified !== undefined && { emailVerified }),
+        metadata: newMetadata,
         updatedAt: new Date(),
       },
       select: {
@@ -248,6 +312,7 @@ export class UserService {
         name: true,
         role: true,
         tenantId: true,
+        metadata: true, // Select metadata to verify
         tenant: {
           select: {
             name: true,

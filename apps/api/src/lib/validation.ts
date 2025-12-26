@@ -55,7 +55,16 @@ export const createUserSchema = z.object({
   phone: z.string().optional(),
   role: z.enum(['SUPER_ADMIN', 'TENANT_ADMIN', 'USER']).default('USER'),
   status: z.enum(['ACTIVE', 'PENDING', 'BANNED', 'REJECTED']).default('ACTIVE'),
+  emailVerified: z.boolean().optional(),
   tenantId: z.union([z.string().uuid(), z.literal('create-own')]).optional(),
+  // Metadata fields
+  country: z.string().optional(),
+  state: z.string().optional(),
+  city: z.string().optional(),
+  address: z.string().optional(),
+  zipcode: z.string().optional(),
+  company: z.string().optional(),
+  avatarUrl: z.string().optional(),
 });
 
 export const updateUserSchema = z.object({
@@ -64,7 +73,16 @@ export const updateUserSchema = z.object({
   phone: z.string().nullable().optional(),
   role: z.enum(['SUPER_ADMIN', 'TENANT_ADMIN', 'USER']).optional(),
   status: z.enum(['ACTIVE', 'PENDING', 'BANNED', 'REJECTED']).optional(),
+  emailVerified: z.boolean().optional(),
   tenantId: z.string().uuid().nullable().optional(),
+  // Metadata fields
+  country: z.string().optional(),
+  state: z.string().optional(),
+  city: z.string().optional(),
+  address: z.string().optional(),
+  zipcode: z.string().optional(),
+  company: z.string().optional(),
+  avatarUrl: z.string().optional(),
 });
 
 // ===========================

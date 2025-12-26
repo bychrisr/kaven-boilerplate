@@ -38,6 +38,7 @@ describe('UserService', () => {
         password: 'password123',
         name: 'New User',
         role: 'USER' as const,
+        status: 'ACTIVE' as const,
       };
 
       prismaMock.user.findUnique.mockResolvedValue(null);
@@ -66,6 +67,7 @@ describe('UserService', () => {
         name: 'Existing User',
         password: 'password123',
         role: 'USER' as const,
+        status: 'ACTIVE' as const,
       };
 
       prismaMock.user.findUnique.mockResolvedValue({ id: 'existing-id' });
@@ -114,7 +116,11 @@ describe('UserService', () => {
       // Assert
       expect(prismaMock.user.update).toHaveBeenCalledWith({
         where: { id: userId },
-        data: { deletedAt: expect.any(Date) },
+        data: expect.objectContaining({
+          deletedAt: expect.any(Date),
+          status: 'BANNED', // or whatever status logic uses
+          email: expect.stringContaining('deleted_'),
+        }),
       });
     });
 
