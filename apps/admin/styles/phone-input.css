@@ -1,83 +1,85 @@
-/* Phone Input Styles - Customized to match reference design */
+/* Phone Input Styles - Fixed for proper rendering */
 
-/* Container */
-.phone-input-container {
-  @apply relative flex items-stretch w-full;
+/* Reset default styles from react-phone-number-input */
+.PhoneInput {
+  @apply flex items-stretch w-full h-11 rounded-md border border-input bg-transparent;
+  @apply ring-offset-background transition-colors;
 }
 
-/* Country selector button */
-.phone-input-container .PhoneInputCountry {
+.PhoneInput:focus-within {
+  @apply ring-2 ring-ring ring-offset-2;
+}
+
+/* Country selector container */
+.PhoneInputCountry {
   @apply flex items-center gap-2 px-3 border-r border-input bg-transparent;
-  @apply transition-colors hover:bg-muted/50;
+  @apply transition-colors hover:bg-muted/30 cursor-pointer;
   min-width: 80px;
 }
 
-/* Country flag */
-.phone-input-container .PhoneInputCountryIcon {
-  @apply w-6 h-4 rounded-sm overflow-hidden shadow-sm;
+/* Country flag icon */
+.PhoneInputCountryIcon {
+  @apply w-6 h-4 rounded-sm overflow-hidden;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
 }
 
-/* Country select dropdown */
-.phone-input-container .PhoneInputCountrySelect {
+.PhoneInputCountryIcon--border {
+  @apply border-0;
+  box-shadow: none;
+}
+
+/* Hide the default select element */
+.PhoneInputCountrySelect {
   @apply absolute opacity-0 cursor-pointer;
   width: 100%;
   height: 100%;
   top: 0;
   left: 0;
+  z-index: 1;
 }
 
 /* Dropdown arrow */
-.phone-input-container .PhoneInputCountrySelectArrow {
+.PhoneInputCountrySelectArrow {
   @apply text-muted-foreground opacity-50 transition-opacity;
-  @apply group-hover:opacity-100;
+  width: 0.3em;
+  height: 0.3em;
+  margin-left: 0.35em;
 }
 
-/* Phone number input */
-.phone-input-container input[type='tel'] {
-  @apply flex-1 h-11 px-3 py-2 text-sm bg-transparent;
-  @apply border-0 outline-none ring-0;
+.PhoneInputCountry:hover .PhoneInputCountrySelectArrow {
+  @apply opacity-100;
+}
+
+/* Phone number input field */
+.PhoneInputInput {
+  @apply flex-1 h-full px-3 py-2 text-sm bg-transparent border-0;
   @apply placeholder:text-muted-foreground;
-  @apply transition-colors;
+  @apply focus:outline-none focus:ring-0;
 }
 
-.phone-input-container input[type='tel']:focus {
-  @apply outline-none ring-0;
-}
-
-/* Wrapper for the entire component */
-.phone-input-wrapper {
-  @apply flex h-11 w-full rounded-md border border-input bg-transparent;
-  @apply ring-offset-background transition-colors;
-  @apply focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2;
-}
-
-/* Country list dropdown (when opened) */
-.PhoneInputCountrySelect option {
-  @apply bg-popover text-popover-foreground;
-  @apply py-2 px-3;
-}
-
-/* Hover state for country selector */
-.phone-input-container .PhoneInputCountry:hover {
-  @apply bg-muted/30;
-}
-
-/* Selected country highlight */
-.phone-input-container .PhoneInputCountryIcon--border {
-  @apply border border-border/20;
-}
-
-/* International icon (if shown) */
-.phone-input-container .PhoneInputInternationalIconPhone {
+/* International icon (when no country selected) */
+.PhoneInputInternationalIconPhone {
   @apply text-muted-foreground;
 }
 
 /* Disabled state */
-.phone-input-container:has(input:disabled) {
+.PhoneInput--disabled {
   @apply opacity-50 cursor-not-allowed;
 }
 
-.phone-input-container input:disabled {
+.PhoneInput--disabled .PhoneInputInput {
   @apply cursor-not-allowed;
+}
+
+/* Remove any conflicting wrapper styles */
+.phone-input-wrapper {
+  @apply w-full;
+}
+
+.phone-input-wrapper .PhoneInput {
+  @apply border-0;
+}
+
+.phone-input-container {
+  @apply w-full;
 }

@@ -2,7 +2,6 @@
 
 import PhoneInputWithCountry from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { cn } from '@/lib/utils';
 
 interface PhoneInputProps {
   value: string;
@@ -20,22 +19,14 @@ export function PhoneInput({
   id,
 }: PhoneInputProps) {
   return (
-    <div className={cn('phone-input-wrapper', className)}>
-      <PhoneInputWithCountry
-        international
-        defaultCountry="BR"
-        value={value}
-        onChange={(value) => onChange(value || '')}
-        placeholder={placeholder}
-        id={id}
-        className="phone-input-container"
-        numberInputProps={{
-          className: 'phone-number-input',
-        }}
-        countrySelectProps={{
-          className: 'phone-country-select',
-        }}
-      />
-    </div>
+    <PhoneInputWithCountry
+      international
+      defaultCountry="BR"
+      value={value}
+      onChange={(value) => onChange(value || '')}
+      placeholder={placeholder}
+      id={id}
+      className={className}
+    />
   );
 }
