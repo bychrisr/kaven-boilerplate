@@ -241,7 +241,7 @@ export function UserCreateView() {
                     placeholder="Enter phone number"
                     id="phone"
                     className={cn(
-                      watch('phone') && watch('phone')?.length >= 10 && "border-green-500"
+                      (watch('phone') ?? '').length >= 10 && "border-green-500"
                     )}
                   />
                 </div>
