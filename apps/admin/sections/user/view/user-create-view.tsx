@@ -192,12 +192,24 @@ export function UserCreateView() {
                   <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
                     Email address <span className="text-destructive">*</span>
                   </label>
+                  {/* Honeypot field to trick browser autocomplete */}
+                  <input
+                    type="email"
+                    name="email_fake"
+                    autoComplete="email"
+                    tabIndex={-1}
+                    style={{ position: 'absolute', opacity: 0, height: 0, width: 0, pointerEvents: 'none' }}
+                    aria-hidden="true"
+                  />
                   <Input
                     {...register('email')}
                     id="email"
+                    name="user_email_new"
                     type="email"
                     placeholder="john@example.com"
-                    autoComplete="off"
+                    autoComplete="new-password"
+                    data-form-type="other"
+                    data-lpignore="true"
                     className={cn(
                       "bg-transparent transition-colors",
                       errors.email && touchedFields.email && "border-red-500 focus:border-red-500",
@@ -258,12 +270,25 @@ export function UserCreateView() {
                   <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
                     Password <span className="text-destructive">*</span>
                   </label>
+                  {/* Honeypot field to trick browser autocomplete */}
+                  <input
+                    type="password"
+                    name="password_fake"
+                    autoComplete="current-password"
+                    tabIndex={-1}
+                    style={{ position: 'absolute', opacity: 0, height: 0, width: 0, pointerEvents: 'none' }}
+                    aria-hidden="true"
+                  />
                   <div className="relative">
                     <Input
                       {...register('password')}
                       id="password"
+                      name="user_password_new"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="••••••••"
+                      autoComplete="new-password"
+                      data-form-type="other"
+                      data-lpignore="true"
                       className={cn(
                         "bg-transparent pr-10 transition-colors",
                         errors.password && touchedFields.password && "border-red-500 focus:border-red-500",
