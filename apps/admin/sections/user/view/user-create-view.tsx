@@ -17,6 +17,7 @@ import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
 import { AvatarUpload } from '@/components/avatar-upload';
 import { AddressAutocomplete } from '@/components/address-autocomplete';
 import { PhoneInput } from '@/components/phone-input';
+import { cn } from '@/lib/utils';
 
 const userSchema = z.object({
   name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
@@ -50,9 +51,11 @@ export function UserCreateView() {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, touchedFields },
   } = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
+    mode: 'onBlur', // Valida quando campo perde foco
+    reValidateMode: 'onChange', // Re-valida em tempo real após primeira validação
     defaultValues: {
       name: '',
       email: '',
@@ -168,9 +171,14 @@ export function UserCreateView() {
                     {...register('name')}
                     id="name"
                     placeholder="John Doe"
-                    className="bg-transparent"
+                    className={cn(
+                      "bg-transparent transition-colors",
+                      errors.name && touchedFields.name && "border-red-500 focus:border-red-500",
+                      !errors.name && touchedFields.name && watch('name') && "border-green-500 focus:border-green-500"
+                    )}
+                    aria-invalid={errors.name ? "true" : "false"}
                   />
-                  {errors.name && <p className="mt-1 text-sm text-destructive">{errors.name.message}</p>}
+                  {errors.name && <p className="mt-1 text-sm text-destructive" role="alert">{errors.name.message}</p>}
                 </div>
 
                 {/* Email address */}
@@ -183,9 +191,14 @@ export function UserCreateView() {
                     id="email"
                     type="email"
                     placeholder="john@example.com"
-                    className="bg-transparent"
+                    className={cn(
+                      "bg-transparent transition-colors",
+                      errors.email && touchedFields.email && "border-red-500 focus:border-red-500",
+                      !errors.email && touchedFields.email && watch('email') && "border-green-500 focus:border-green-500"
+                    )}
+                    aria-invalid={errors.email ? "true" : "false"}
                   />
-                  {errors.email && <p className="mt-1 text-sm text-destructive">{errors.email.message}</p>}
+                  {errors.email && <p className="mt-1 text-sm text-destructive" role="alert">{errors.email.message}</p>}
                 </div>
 
                 {/* Phone number */}
@@ -244,7 +257,12 @@ export function UserCreateView() {
                       id="password"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="••••••••"
-                      className="bg-transparent pr-10"
+                      className={cn(
+                        "bg-transparent pr-10 transition-colors",
+                        errors.password && touchedFields.password && "border-red-500 focus:border-red-500",
+                        !errors.password && touchedFields.password && watch('password') && "border-green-500 focus:border-green-500"
+                      )}
+                      aria-invalid={errors.password ? "true" : "false"}
                     />
                     <button
                       type="button"
@@ -255,7 +273,7 @@ export function UserCreateView() {
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="mt-1 text-sm text-destructive">{errors.password.message}</p>
+                    <p className="mt-1 text-sm text-destructive" role="alert">{errors.password.message}</p>
                   )}
                 </div>
 
