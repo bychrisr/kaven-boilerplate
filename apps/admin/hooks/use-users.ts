@@ -34,6 +34,7 @@ interface CreateUserData {
   password: string;
   name: string;
   role?: 'USER' | 'TENANT_ADMIN';
+  status?: 'ACTIVE' | 'PENDING';
   tenantId?: string;
 }
 
