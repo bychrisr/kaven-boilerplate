@@ -1,8 +1,10 @@
 import { z } from 'zod';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 if (process.env['NODE_ENV'] !== 'production') {
-  dotenv.config();
+  // Load .env from monorepo root (../../.env from apps/api/src/config/)
+  dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
 }
 
 export const envSchema = z.object({
