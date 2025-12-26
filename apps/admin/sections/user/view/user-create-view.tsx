@@ -52,6 +52,7 @@ export function UserCreateView() {
   const [avatarPreview, setAvatarPreview] = useState<string>('');
   const [isAddressAutoFilled, setIsAddressAutoFilled] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const {
     register,
@@ -292,6 +293,8 @@ export function UserCreateView() {
                       autoComplete="new-password"
                       data-form-type="other"
                       data-lpignore="true"
+                      onFocus={() => setIsPasswordFocused(true)}
+                      onBlur={() => setIsPasswordFocused(false)}
                       className={cn(
                         "bg-transparent pr-10 transition-colors",
                         errors.password && touchedFields.password && "border-red-500 focus:border-red-500",
@@ -307,10 +310,9 @@ export function UserCreateView() {
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
-                  {/* Password Validator - Only shows when password has value */}
-                  <PasswordValidator password={watch('password') || ''} className="mt-2" />
-                  {errors.password && (
-                    <p className="mt-1 text-sm text-destructive" role="alert">{errors.password.message}</p>
+                  {/* Password Validator - Shows when focused or has errors */}
+                  {(isPasswordFocused || errors.password) && (
+                    <PasswordValidator password={watch('password') || ''} className="mt-2" />
                   )}
                 </div>
 
@@ -324,7 +326,10 @@ export function UserCreateView() {
                     onChange={(value) => setValue('address', value)}
                     onPlaceSelected={handlePlaceSelected}
                     placeholder="123 Main St"
-                    className="bg-transparent"
+                    className={cn(
+                      "bg-transparent transition-colors",
+                      addressValue && "border-green-500"
+                    )}
                     id="address"
                   />
                 </div>
