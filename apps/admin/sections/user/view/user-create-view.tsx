@@ -201,6 +201,19 @@ export function UserCreateView() {
                   />
                 </div>
 
+                {/* Company */}
+                <div>
+                  <label htmlFor="company" className="block text-sm font-medium text-foreground mb-2">
+                    Company
+                  </label>
+                  <Input
+                    {...register('company')}
+                    id="company"
+                    placeholder="Acme Inc."
+                    className="bg-transparent"
+                  />
+                </div>
+
                 {/* Role */}
                 <div>
                   <label htmlFor="role" className="block text-sm font-medium text-foreground mb-2">
@@ -210,7 +223,7 @@ export function UserCreateView() {
                     value={watch('role')}
                     onValueChange={(value) => setValue('role', value as 'USER' | 'TENANT_ADMIN')}
                   >
-                    <SelectTrigger className="bg-transparent">
+                    <SelectTrigger className="bg-transparent h-11">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -220,7 +233,7 @@ export function UserCreateView() {
                   </Select>
                 </div>
 
-                {/* Password */}
+                {/* Password - Full width with eye toggle */}
                 <div className="sm:col-span-2">
                   <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
                     Password
@@ -236,7 +249,7 @@ export function UserCreateView() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground"
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground transition-colors"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -246,9 +259,7 @@ export function UserCreateView() {
                   )}
                 </div>
 
-
-
-                {/* Address with Autocomplete - FIRST */}
+                {/* Address with Autocomplete - Full width */}
                 <div className="sm:col-span-2">
                   <label htmlFor="address" className="block text-sm font-medium text-foreground mb-2">
                     Address
@@ -317,55 +328,6 @@ export function UserCreateView() {
                     className="bg-transparent"
                     disabled={isAddressAutoFilled}
                   />
-                </div>
-
-                {/* Company */}
-                <div>
-                  <label htmlFor="company" className="block text-sm font-medium text-foreground mb-2">
-                    Company
-                  </label>
-                  <Input
-                    {...register('company')}
-                    id="company"
-                    placeholder="Acme Inc."
-                    className="bg-transparent"
-                  />
-                </div>
-
-                {/* Role */}
-                <div>
-                  <label htmlFor="role" className="block text-sm font-medium text-foreground mb-2">
-                    Role
-                  </label>
-                  <Select
-                    value={watch('role')}
-                    onValueChange={(value) => setValue('role', value as 'USER' | 'TENANT_ADMIN')}
-                  >
-                    <SelectTrigger className="bg-transparent h-11">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="USER">User</SelectItem>
-                      <SelectItem value="TENANT_ADMIN">Tenant Admin</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Password - Full width */}
-                <div className="sm:col-span-2">
-                  <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
-                    Password
-                  </label>
-                  <Input
-                    {...register('password')}
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    className="bg-transparent"
-                  />
-                  {errors.password && (
-                    <p className="mt-1 text-sm text-destructive">{errors.password.message}</p>
-                  )}
                 </div>
               </div>
             </div>
