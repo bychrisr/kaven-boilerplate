@@ -99,7 +99,6 @@ export function UserCreateView() {
           email: data.email,
           password: data.password,
           role: data.role,
-          status: data.status,
           tenantId: 'create-own', // Creates own tenant
         },
         {
