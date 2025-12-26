@@ -168,7 +168,7 @@ export function UserCreateView() {
                     </div>
                     <Switch
                       checked={emailVerified}
-                      onCheckedChange={(checked) => setValue('emailVerified', checked)}
+                      onChange={(e) => setValue('emailVerified', e.target.checked)}
                     />
                   </div>
                 </div>
