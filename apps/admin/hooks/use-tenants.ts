@@ -36,16 +36,29 @@ interface TenantsResponse {
   };
 }
 
-export function useTenants(page: number = 1, limit: number = 100) {
+export function useTenants(params?: { 
+  page?: number; 
+  limit?: number;
+  search?: string;
+  status?: string;
+}) {
   const isInitialized = useAuthStore((state) => state.isInitialized);
   const queryClient = useQueryClient();
+  const page = params?.page ?? 1;
+  const limit = params?.limit ?? 10;
+  const search = params?.search;
+  const status = params?.status;
 
   const { data, isLoading, error } = useQuery<TenantsResponse>({
-    queryKey: ['tenants', page, limit],
+    queryKey: ['tenants', page, limit, search, status],
     queryFn: async () => {
-      const response = await api.get('/api/tenants', {
-        params: { page, limit },
-      });
+      const queryParams = { 
+        page, 
+        limit,
+        search,
+        status,
+      };
+      const response = await api.get('/api/tenants', { params: queryParams });
       return response.data;
     },
     enabled: isInitialized,
