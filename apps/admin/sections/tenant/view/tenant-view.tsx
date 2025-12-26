@@ -125,10 +125,18 @@ export function TenantView() {
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">All Tenants</h1>
-          <div>
+          <div className="mt-2">
             <Breadcrumbs>
-              <BreadcrumbItem href="/">Home</BreadcrumbItem>
-              <BreadcrumbItem>Tenants</BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link href="/dashboard" className="transition-colors hover:text-foreground">
+                  Dashboard
+                </Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link href="#" className="transition-colors hover:text-foreground">
+                  Tenants
+                </Link>
+              </BreadcrumbItem>
             </Breadcrumbs>
           </div>
         </div>
