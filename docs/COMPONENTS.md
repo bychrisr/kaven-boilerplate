@@ -100,6 +100,93 @@ import { TextField } from '@/components/ui/text-field';
 />
 ```
 
+### Advanced Form Components
+
+#### AvatarUpload
+
+**Features**:
+
+- Drag & drop support
+- Click to upload
+- Image cropping with zoom
+- Preview in real-time
+- Format validation (jpg, jpeg, png, gif)
+- Size validation (max 5MB)
+- Remove button
+
+```tsx
+import { AvatarUpload } from '@/components/avatar-upload';
+
+<AvatarUpload
+  value={avatarPreview}
+  onChange={(file, preview) => {
+    setAvatarFile(file);
+    setAvatarPreview(preview);
+  }}
+/>;
+```
+
+#### AddressAutocomplete
+
+**Features**:
+
+- Google Places API integration
+- Global autocomplete (any country)
+- Auto-fill city, state, country, zipcode
+- Fallback to normal Input if API key missing
+- Loading state
+
+```tsx
+import { AddressAutocomplete } from '@/components/address-autocomplete';
+
+<AddressAutocomplete
+  value={watch('address') || ''}
+  onChange={(value) => setValue('address', value)}
+  onPlaceSelected={(place) => {
+    setValue('city', place.city);
+    setValue('state', place.state);
+    setValue('country', place.country);
+    setValue('zipcode', place.zipcode);
+  }}
+  placeholder="Enter address"
+/>;
+```
+
+**Configuration**: Requires `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` in `.env.local`
+
+#### PhoneInput
+
+**Features**:
+
+- Country selector with flags
+- Automatic DDI based on country
+- Default: Brazil (+55)
+- Country search in dropdown
+- International validation (google-libphonenumber)
+- Error message only after interaction
+- Design system compliant
+
+```tsx
+import { PhoneInput } from '@/components/phone-input';
+
+<PhoneInput
+  value={watch('phone') || ''}
+  onChange={(value) => setValue('phone', value)}
+  placeholder="Enter phone number"
+  error={errors.phone?.message}
+  onValidationChange={(isValid) => {
+    // Optional validation callback
+  }}
+/>;
+```
+
+**Dropdown Features**:
+
+- Search by country name, ISO code, or DDI
+- 2-line layout: Country name + ISO + DDI
+- Large flags (36px height)
+- Scrollable with max-height 300px
+
 ### Feedback Components
 
 #### Alert
