@@ -40,9 +40,19 @@ export function AddressAutocomplete({
     libraries,
   });
 
-  // Inject custom CSS to hide "Powered by Google" footer
+  // Inject custom CSS using actual theme colors
   useEffect(() => {
     if (isLoaded) {
+      // Get computed CSS variables from :root
+      const rootStyles = getComputedStyle(document.documentElement);
+      
+      // Read theme colors
+      const backgroundColor = rootStyles.getPropertyValue('--background-paper').trim() || '#212B36';
+      const textColor = rootStyles.getPropertyValue('--text-primary').trim() || '#FFFFFF';
+      const borderColor = rootStyles.getPropertyValue('--divider').trim() || 'rgba(145, 158, 171, 0.2)';
+      const hoverColor = rootStyles.getPropertyValue('--action-hover').trim() || 'rgba(145, 158, 171, 0.08)';
+      const primaryColor = rootStyles.getPropertyValue('--primary-main').trim() || '#00AB55';
+      
       const style = document.createElement('style');
       style.id = 'google-places-custom-styles';
       style.textContent = `
@@ -52,10 +62,10 @@ export function AddressAutocomplete({
           height: 0px !important;
         }
         
-        /* Custom styling for dropdown - Dark theme hardcoded */
+        /* Custom styling for dropdown using theme colors */
         .pac-container {
-          background-color: #212B36 !important;
-          border: 1px solid rgba(145, 158, 171, 0.2) !important;
+          background-color: ${backgroundColor} !important;
+          border: 1px solid ${borderColor} !important;
           border-radius: 8px !important;
           box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
           margin-top: 4px !important;
@@ -65,11 +75,11 @@ export function AddressAutocomplete({
         
         .pac-item {
           padding: 8px 12px !important;
-          border-top: 1px solid rgba(145, 158, 171, 0.2) !important;
-          color: #FFFFFF !important;
+          border-top: 1px solid ${borderColor} !important;
+          color: ${textColor} !important;
           cursor: pointer !important;
           font-size: 14px !important;
-          background-color: #212B36 !important;
+          background-color: ${backgroundColor} !important;
         }
         
         .pac-item:first-child {
@@ -77,21 +87,21 @@ export function AddressAutocomplete({
         }
         
         .pac-item:hover {
-          background-color: rgba(145, 158, 171, 0.08) !important;
+          background-color: ${hoverColor} !important;
         }
         
         .pac-item-selected {
-          background-color: rgba(145, 158, 171, 0.08) !important;
+          background-color: ${hoverColor} !important;
         }
         
         .pac-item-query {
-          color: #FFFFFF !important;
+          color: ${textColor} !important;
           font-weight: 500 !important;
         }
         
         .pac-matched {
           font-weight: 600 !important;
-          color: #00AB55 !important;
+          color: ${primaryColor} !important;
         }
         
         .pac-icon {

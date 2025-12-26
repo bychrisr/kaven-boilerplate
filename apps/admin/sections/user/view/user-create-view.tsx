@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { useCreateUser } from '@/hooks/use-users';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -43,6 +43,7 @@ export function UserCreateView() {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string>('');
   const [isAddressAutoFilled, setIsAddressAutoFilled] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -158,8 +159,8 @@ export function UserCreateView() {
             {/* Right Column: Form Fields */}
             <div className="p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* Full name */}
-                <div>
+                {/* Full name - Full width */}
+                <div className="sm:col-span-2">
                   <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
                     Full name
                   </label>
@@ -199,6 +200,53 @@ export function UserCreateView() {
                     id="phone"
                   />
                 </div>
+
+                {/* Role */}
+                <div>
+                  <label htmlFor="role" className="block text-sm font-medium text-foreground mb-2">
+                    Role
+                  </label>
+                  <Select
+                    value={watch('role')}
+                    onValueChange={(value) => setValue('role', value as 'USER' | 'TENANT_ADMIN')}
+                  >
+                    <SelectTrigger className="bg-transparent">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="USER">User</SelectItem>
+                      <SelectItem value="TENANT_ADMIN">Tenant Admin</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Password */}
+                <div className="sm:col-span-2">
+                  <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Input
+                      {...register('password')}
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="••••••••"
+                      className="bg-transparent pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <p className="mt-1 text-sm text-destructive">{errors.password.message}</p>
+                  )}
+                </div>
+
+
 
                 {/* Address with Autocomplete - FIRST */}
                 <div className="sm:col-span-2">
@@ -293,7 +341,7 @@ export function UserCreateView() {
                     value={watch('role')}
                     onValueChange={(value) => setValue('role', value as 'USER' | 'TENANT_ADMIN')}
                   >
-                    <SelectTrigger className="bg-transparent">
+                    <SelectTrigger className="bg-transparent h-11">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -328,8 +376,10 @@ export function UserCreateView() {
             <Button
               type="button"
               variant="outline"
+              size="lg"
               onClick={() => router.push('/users')}
               disabled={isSubmitting || isPending}
+              className="h-12"
             >
               Cancel
             </Button>
@@ -337,8 +387,9 @@ export function UserCreateView() {
               type="submit"
               variant="contained"
               color="primary"
+              size="lg"
               disabled={isSubmitting || isPending}
-              className="min-w-[140px]"
+              className="min-w-[140px] h-12"
             >
               {isSubmitting || isPending ? (
                 <>
