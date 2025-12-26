@@ -17,12 +17,17 @@ import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
 import { AvatarUpload } from '@/components/avatar-upload';
 import { AddressAutocomplete } from '@/components/address-autocomplete';
 import { PhoneInput } from '@/components/phone-input';
+import { PasswordStrengthIndicator } from '@/components/password-strength-indicator';
 import { cn } from '@/lib/utils';
 
 const userSchema = z.object({
-  name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
-  email: z.string().email('Email inválido'),
-  password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
+  name: z.string()
+    .min(3, 'Name must be at least 3 characters')
+    .refine((val) => val.trim().split(/\s+/).length >= 2, {
+      message: 'Please enter your full name (first and last name)',
+    }),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
   phone: z.string().optional(),
   role: z.enum(['USER', 'TENANT_ADMIN']),
   status: z.enum(['ACTIVE', 'PENDING']).default('ACTIVE'),
@@ -76,10 +81,10 @@ export function UserCreateView() {
 
   const handlePlaceSelected = (data: { address: string; city: string; state: string; country: string; zipcode: string }) => {
     // Auto-fill address fields from Google Places
-    setValue('city', data.city);
-    setValue('state', data.state);
-    setValue('country', data.country);
-    setValue('zipcode', data.zipcode);
+    setValue('city', data.city, { shouldValidate: true, shouldTouch: true });
+    setValue('state', data.state, { shouldValidate: true, shouldTouch: true });
+    setValue('country', data.country, { shouldValidate: true, shouldTouch: true });
+    setValue('zipcode', data.zipcode, { shouldValidate: true, shouldTouch: true });
     setIsAddressAutoFilled(true);
   };
 
@@ -165,7 +170,7 @@ export function UserCreateView() {
                 {/* Full name - Full width */}
                 <div className="sm:col-span-2">
                   <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
-                    Full name
+                    Full name <span className="text-destructive">*</span>
                   </label>
                   <Input
                     {...register('name')}
@@ -184,13 +189,14 @@ export function UserCreateView() {
                 {/* Email address */}
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
-                    Email address
+                    Email address <span className="text-destructive">*</span>
                   </label>
                   <Input
                     {...register('email')}
                     id="email"
                     type="email"
                     placeholder="john@example.com"
+                    autoComplete="off"
                     className={cn(
                       "bg-transparent transition-colors",
                       errors.email && touchedFields.email && "border-red-500 focus:border-red-500",
@@ -249,7 +255,7 @@ export function UserCreateView() {
                 {/* Password - Full width with eye toggle */}
                 <div className="sm:col-span-2">
                   <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
-                    Password
+                    Password <span className="text-destructive">*</span>
                   </label>
                   <div className="relative">
                     <Input
@@ -272,6 +278,7 @@ export function UserCreateView() {
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
+                  <PasswordStrengthIndicator password={watch('password') || ''} className="mt-2" />
                   {errors.password && (
                     <p className="mt-1 text-sm text-destructive" role="alert">{errors.password.message}</p>
                   )}
