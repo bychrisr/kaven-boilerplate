@@ -161,6 +161,26 @@ export class StripeService {
   }
 
   /**
+   * Criar sessão do portal do cliente
+   */
+  async createPortalSession(subscriptionId: string, returnUrl: string) {
+    const subscription = await prisma.subscription.findUnique({
+      where: { id: subscriptionId },
+    });
+
+    if (!subscription || !subscription.stripeCustomerId) {
+      throw new Error('Subscription não encontrada');
+    }
+
+    const session = await stripe.billingPortal.sessions.create({
+      customer: subscription.stripeCustomerId,
+      return_url: returnUrl,
+    });
+
+    return { url: session.url };
+  }
+
+  /**
    * Processar webhook do Stripe
    */
   async handleWebhook(body: string | Buffer, signature: string) {

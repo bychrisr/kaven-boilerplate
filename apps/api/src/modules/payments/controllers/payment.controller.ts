@@ -25,6 +25,11 @@ const createPixPaymentSchema = z.object({
   description: z.string(),
 });
 
+const createPortalSessionSchema = z.object({
+  subscriptionId: z.string().uuid(),
+  returnUrl: z.string().url(),
+});
+
 export class PaymentController {
   /**
    * POST /api/payments/subscription
@@ -76,6 +81,22 @@ export class PaymentController {
       const { subscriptionId } = request.params as { subscriptionId: string };
       const methods = await stripeService.listPaymentMethods(subscriptionId);
       reply.send({ paymentMethods: methods });
+    } catch (error: any) {
+      reply.status(400).send({ error: error.message });
+    }
+  }
+
+  /**
+   * POST /api/payments/portal-session
+   */
+  async createPortalSession(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const data = createPortalSessionSchema.parse(request.body);
+      const result = await stripeService.createPortalSession(
+        data.subscriptionId,
+        data.returnUrl
+      );
+      reply.send(result);
     } catch (error: any) {
       reply.status(400).send({ error: error.message });
     }

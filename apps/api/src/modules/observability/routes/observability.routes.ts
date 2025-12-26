@@ -19,4 +19,9 @@ export async function observabilityRoutes(fastify: FastifyInstance) {
     },
     observabilityController.getAdvancedMetrics
   );
+
+  fastify.get(
+    '/metrics',
+    observabilityController.getMetrics
+  );
 }

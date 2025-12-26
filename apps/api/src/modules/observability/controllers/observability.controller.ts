@@ -62,6 +62,16 @@ export class ObservabilityController {
   async getAdvancedMetrics(request: FastifyRequest, reply: FastifyReply) {
     return await advancedMetricsService.getAdvancedMetrics();
   }
+
+  /**
+   * GET /metrics
+   * Endpoint para scraping do Prometheus
+   */
+  async getMetrics(request: FastifyRequest, reply: FastifyReply) {
+    const metrics = await register.metrics();
+    reply.header('Content-Type', register.contentType);
+    return metrics;
+  }
 }
 
 export const observabilityController = new ObservabilityController();

@@ -8,6 +8,19 @@ export async function paymentRoutes(fastify: FastifyInstance) {
   
   // Payment Methods
   fastify.put('/payment-method', paymentController.updatePaymentMethod.bind(paymentController));
+  fastify.post('/portal-session', {
+    schema: {
+      body: {
+        type: 'object',
+        properties: {
+          subscriptionId: { type: 'string' },
+          returnUrl: { type: 'string' },
+        },
+        required: ['subscriptionId', 'returnUrl'],
+      },
+    },
+    handler: paymentController.createPortalSession.bind(paymentController),
+  });
   fastify.get(
     '/payment-methods/:subscriptionId',
     paymentController.listPaymentMethods.bind(paymentController)
