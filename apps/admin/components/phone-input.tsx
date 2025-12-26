@@ -81,11 +81,14 @@ export function PhoneInput({
       <div
         className={cn(
           'flex items-stretch h-11 rounded-md border bg-transparent transition-colors',
-          // Border color based on error state
-          showError || error ? 'border-destructive' : 'border-input',
-          // Focus ring
-          isFocused && 'ring-2 ring-offset-2',
-          isFocused && (showError || error ? 'ring-destructive' : 'ring-ring'),
+          // Border color based on state
+          showError || error 
+            ? 'border-destructive' 
+            : isFocused 
+              ? 'border-primary' 
+              : 'border-input',
+          // Focus ring (same as Input component)
+          isFocused && 'ring-2 ring-ring/20',
           className
         )}
       >
