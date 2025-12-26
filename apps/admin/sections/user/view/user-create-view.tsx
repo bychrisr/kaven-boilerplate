@@ -210,14 +210,6 @@ export function UserCreateView() {
                     autoComplete="new-password"
                     data-form-type="other"
                     data-lpignore="true"
-                    readOnly
-                    onFocus={(e) => {
-                      e.target.removeAttribute('readonly');
-                    }}
-                    onClick={(e) => e.currentTarget.removeAttribute('readonly')}
-                    onBlur={(e) => {
-                      register('email').onBlur(e);
-                    }}
                     className={cn(
                       "bg-transparent transition-colors",
                       errors.email && touchedFields.email && "border-red-500 focus:border-red-500",
@@ -302,9 +294,6 @@ export function UserCreateView() {
                       autoComplete="new-password"
                       data-form-type="other"
                       data-lpignore="true"
-                      readOnly
-                      onFocus={(e) => e.target.removeAttribute('readonly')}
-                      onClick={(e) => e.currentTarget.removeAttribute('readonly')}
                       className={cn(
                         "bg-transparent pr-10 transition-colors",
                         errors.password && touchedFields.password && "border-red-500 focus:border-red-500",
