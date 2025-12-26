@@ -6,12 +6,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { useCreateUser } from '@/hooks/use-users';
-import { Loader2, Eye, EyeOff } from 'lucide-react';
+import { useTenants } from '@/hooks/use-tenants';
+import { Loader2, Eye, EyeOff, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/radix-select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectSeparator } from '@/components/ui/radix-select';
 import { Switch } from '@/components/ui/switch';
 import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
 import { AvatarUpload } from '@/components/avatar-upload';
@@ -34,13 +35,13 @@ const userSchema = z.object({
   role: z.enum(['USER', 'TENANT_ADMIN']),
   status: z.enum(['ACTIVE', 'PENDING']),
   emailVerified: z.boolean(),
+  tenantId: z.string().min(1, 'Tenant is required'),
   // Optional address fields for future invoices/billing
   country: z.string().optional(),
   state: z.string().optional(),
   city: z.string().optional(),
   address: z.string().optional(),
   zipcode: z.string().optional(),
-  company: z.string().optional(),
 });
 
 type UserFormData = z.infer<typeof userSchema>;
@@ -48,6 +49,7 @@ type UserFormData = z.infer<typeof userSchema>;
 export function UserCreateView() {
   const router = useRouter();
   const { mutate: createUser, isPending } = useCreateUser();
+  const { tenants, isLoading: isLoadingTenants } = useTenants();
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string>('');
   const [isAddressAutoFilled, setIsAddressAutoFilled] = useState(false);
@@ -238,17 +240,54 @@ export function UserCreateView() {
                   />
                 </div>
 
-                {/* Company */}
+                {/* Tenant - Required */}
                 <div>
-                  <label htmlFor="company" className="block text-sm font-medium text-foreground mb-2">
-                    Company
+                  <label htmlFor="tenantId" className="block text-sm font-medium text-foreground mb-2">
+                    Tenant <span className="text-destructive">*</span>
                   </label>
-                  <Input
-                    {...register('company')}
-                    id="company"
-                    placeholder="Acme Inc."
-                    className="bg-transparent"
-                  />
+                  <Select
+                    value={watch('tenantId')}
+                    onValueChange={(value) => setValue('tenantId', value, { shouldValidate: true, shouldTouch: true })}
+                  >
+                    <SelectTrigger 
+                      id="tenantId"
+                      className={cn(
+                        "bg-transparent h-11 transition-colors",
+                        errors.tenantId && "border-red-500"
+                      )}
+                    >
+                      <SelectValue placeholder="Select tenant" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {/* Primeira opção: Create own tenant */}
+                      <SelectItem value="create-own">
+                        <div className="flex items-center gap-2">
+                          <Plus className="h-4 w-4" />
+                          <span>Create own tenant</span>
+                        </div>
+                      </SelectItem>
+                      
+                      <SelectSeparator />
+                      
+                      {/* Lista de tenants existentes */}
+                      {isLoadingTenants ? (
+                        <SelectItem value="loading" disabled>Loading tenants...</SelectItem>
+                      ) : tenants?.length === 0 ? (
+                        <SelectItem value="empty" disabled>No tenants available</SelectItem>
+                      ) : (
+                        tenants?.map((tenant) => (
+                          <SelectItem key={tenant.id} value={tenant.id}>
+                            {tenant.name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  {errors.tenantId && (
+                    <p className="mt-1 text-sm text-destructive" role="alert">
+                      {errors.tenantId.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Role */}
