@@ -1,0 +1,93 @@
+# User Edit Page - Tenant Select Fix
+
+## Problema
+
+O campo Tenant Select na página de edição de usuários (`/users/[userId]`) não exibia o tenant selecionado do usuário, mesmo com o valor sendo salvo corretamente no backend.
+
+## Causa Raiz
+
+**Problema de timing entre carregamento assíncrono de dados:**
+
+1. Componente renderiza → `user` ainda está `undefined`
+2. `useForm` inicializa com `defaultValues: { tenantId: '' }`
+3. Usuário é carregado → `reset()` popula `tenantId: "2ccbd9fd..."`
+4. Componente re-renderiza
+5. **Tenants ainda não foram carregados** → `tenantId` é resetado para `''`
+6. Tenants finalmente carregam → mas `tenantId` já está vazio!
+
+## Solução Implementada
+
+### 1. useEffect de Proteção
+
+Adicionado `useEffect` que roda em **todo render** (sem dependências) para restaurar automaticamente o `tenantId`:
+
+```tsx
+// Proteger tenantId: restaurar se foi limpo mas user.tenantId existe
+useEffect(() => {
+  const currentTenantId = watch('tenantId');
+  if (user?.tenantId && !currentTenantId) {
+    setValue('tenantId', user.tenantId, {
+      shouldValidate: false,
+      shouldDirty: false,
+    });
+  }
+}); // SEM DEPENDÊNCIAS - roda em todo render
+```
+
+**Por que sem dependências?**
+
+- Com dependências `[user?.tenantId]`, o effect só roda quando `user.tenantId` muda
+- Mas o `tenantId` pode ser limpo **depois** do effect rodar
+- Sem dependências, o effect roda em **todo render** e detecta quando o valor é limpo
+
+### 2. Select sem Conversões Desnecessárias
+
+```tsx
+<Select
+  value={watch('tenantId') ?? undefined} // Apenas converte null → undefined
+  onValueChange={(value) => setValue('tenantId', value)} // Sem conversões
+>
+  <SelectTrigger className="bg-transparent h-11">
+    <SelectValue /> {/* SEM placeholder que sobrescreve o valor */}
+  </SelectTrigger>
+  <SelectContent>
+    {tenants.map((tenant) => (
+      <SelectItem key={tenant.id} value={tenant.id}>
+        {tenant.name}
+      </SelectItem>
+    ))}
+  </SelectContent>
+</Select>
+```
+
+**Mudanças importantes:**
+
+- ✅ Removido `placeholder="Select tenant"` do `SelectValue`
+- ✅ Removido `|| undefined` e `|| ''` que causavam loops
+- ✅ Apenas `?? undefined` para converter `null` → `undefined` (TypeScript)
+
+## Arquivos Modificados
+
+- `apps/admin/sections/user/view/user-edit-view.tsx`
+  - Linhas 127-133: useEffect de proteção
+  - Linhas 335-360: Tenant Select component
+
+## Testes
+
+✅ Tenant Select exibe corretamente o tenant do usuário  
+✅ Valor permanece estável em re-renders  
+✅ Tenant correto aparece selecionado visualmente  
+✅ Formulário pode ser salvo com sucesso
+
+## Lições Aprendidas
+
+1. **Problemas de timing** são comuns com múltiplas fontes assíncronas
+2. **useEffect sem dependências** pode ser útil para "proteção" contínua
+3. **Debugging sistemático** com logs é essencial
+4. **Comparar com código que funciona** acelera a resolução
+5. **Simplicidade** é melhor - menos conversões = menos bugs
+
+## Referências
+
+- Issue relacionada no Radix UI: https://github.com/radix-ui/primitives/issues/1808
+- React Hook Form docs: https://react-hook-form.com/api/useform/watch
