@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useUsers, useUserStats, useDeleteUser } from '@/hooks/use-users';
 
 import { UserTableRow } from '../user-table-row';
@@ -77,23 +77,41 @@ export function UserView() {
   };
   
   
-  const getStatusCount = (status: string) => {
-    if (!stats) return 0;
+  // SOLUÇÃO DEFINITIVA: Cachear contadores baseado APENAS em stats globais
+  // Isso garante que os números nunca mudem durante re-renders
+  const statusCounts = useMemo(() => {
+    if (!stats) {
+      return {
+        all: 0,
+        active: 0,
+        pending: 0,
+        banned: 0,
+        rejected: 0,
+      };
+    }
     
-    // ONLY the currently selected tab shows dynamic totalUsers
-    // All other tabs show fixed global stats
+    return {
+      all: stats.total,
+      active: stats.active,
+      pending: stats.pending,
+      banned: stats.banned,
+      rejected: stats.rejected,
+    };
+  }, [stats]); // Só recalcula quando stats mudar
+  
+  const getStatusCount = (status: string) => {
+    // Para a tab selecionada, mostra o total atual (pode ser filtrado)
     const isCurrentlySelected = (
       (status === 'all' && filterStatus === 'all') ||
       (status !== 'all' && status.toUpperCase() === filterStatus.toUpperCase())
     );
     
     if (isCurrentlySelected) {
-      return totalUsers; // Dynamic: updates when data changes
+      return totalUsers; // Dinâmico: total da query atual
     }
     
-    // All non-selected tabs: fixed global stats (never change)
-    if (status === 'all') return stats.total;
-    return stats[status as keyof typeof stats] ?? 0;
+    // Para tabs não selecionadas: usa contadores cacheados (fixos)
+    return statusCounts[status as keyof typeof statusCounts] ?? 0;
   };
 
   const handleSelectAll = (checked: boolean) => {
