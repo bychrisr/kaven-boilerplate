@@ -211,8 +211,13 @@ export function UserCreateView() {
                     data-form-type="other"
                     data-lpignore="true"
                     readOnly
-                    onFocus={(e) => e.target.removeAttribute('readonly')}
+                    onFocus={(e) => {
+                      e.target.removeAttribute('readonly');
+                    }}
                     onClick={(e) => e.currentTarget.removeAttribute('readonly')}
+                    onBlur={(e) => {
+                      register('email').onBlur(e);
+                    }}
                     className={cn(
                       "bg-transparent transition-colors",
                       errors.email && touchedFields.email && "border-red-500 focus:border-red-500",
@@ -230,9 +235,14 @@ export function UserCreateView() {
                   </label>
                   <PhoneInput
                     value={watch('phone') || ''}
-                    onChange={(value) => setValue('phone', value)}
+                    onChange={(value) => {
+                      setValue('phone', value, { shouldValidate: true, shouldTouch: true });
+                    }}
                     placeholder="Enter phone number"
                     id="phone"
+                    className={cn(
+                      watch('phone') && watch('phone')?.length >= 10 && "border-green-500"
+                    )}
                   />
                 </div>
 
