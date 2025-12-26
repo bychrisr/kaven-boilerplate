@@ -1,6 +1,7 @@
 'use client';
 
 import 'react-international-phone/style.css';
+import { useState } from 'react';
 import {
   defaultCountries,
   FlagImage,
@@ -41,6 +42,8 @@ export function PhoneInput({
   error,
   onValidationChange,
 }: PhoneInputProps) {
+  const [touched, setTouched] = useState(false);
+
   const { inputValue, handlePhoneValueChange, inputRef, country, setCountry } = usePhoneInput({
     defaultCountry: 'br',
     value,
@@ -56,7 +59,7 @@ export function PhoneInput({
   });
 
   const isValid = value ? isPhoneValid(value) : true;
-  const showError = value && !isValid;
+  const showError = touched && value && !isValid;
 
   return (
     <div className="w-full">
@@ -97,6 +100,8 @@ export function PhoneInput({
           ref={inputRef}
           value={inputValue}
           onChange={handlePhoneValueChange}
+          onBlur={() => setTouched(true)}
+          onFocus={() => setTouched(true)}
           type="tel"
           placeholder={placeholder}
           id={id}
@@ -107,7 +112,7 @@ export function PhoneInput({
         />
       </div>
 
-      {/* Error Message */}
+      {/* Error Message - Only show after touched */}
       {(showError || error) && (
         <p className="mt-1 text-sm text-destructive">
           {error || 'Invalid phone number'}
