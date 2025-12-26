@@ -77,8 +77,16 @@ export function UserView() {
   };
   
   const getStatusCount = (status: string) => {
+    // When viewing 'all', show total from current filtered results
+    if (status === 'all') return totalUsers;
+    
+    // When a specific status is selected, show its filtered total
+    if (status.toUpperCase() === filterStatus.toUpperCase()) {
+      return totalUsers;
+    }
+    
+    // For other statuses, use global stats as fallback
     if (!stats) return 0;
-    if (status === 'all') return stats.total;
     return stats[status as keyof typeof stats] ?? 0;
   };
 
