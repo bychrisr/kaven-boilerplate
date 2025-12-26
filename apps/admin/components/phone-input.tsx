@@ -1,7 +1,7 @@
 'use client';
 
-import PhoneInputWithCountry from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
+import { PhoneInput as ReactInternationalPhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
 
 interface PhoneInputProps {
   value: string;
@@ -15,18 +15,17 @@ export function PhoneInput({
   value,
   onChange,
   placeholder = 'Enter phone number',
-  className,
   id,
 }: PhoneInputProps) {
   return (
-    <PhoneInputWithCountry
-      international
-      defaultCountry="BR"
+    <ReactInternationalPhoneInput
+      defaultCountry="br"
       value={value}
-      onChange={(value) => onChange(value || '')}
+      onChange={(phone) => onChange(phone)}
       placeholder={placeholder}
-      id={id}
-      className={className}
+      inputProps={{
+        id,
+      }}
     />
   );
 }
