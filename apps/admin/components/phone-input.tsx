@@ -45,6 +45,7 @@ export function PhoneInput({
 }: PhoneInputProps) {
   const [touched, setTouched] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
 
   const { inputValue, handlePhoneValueChange, inputRef, country, setCountry } = usePhoneInput({
     defaultCountry: 'br',
@@ -76,8 +77,19 @@ export function PhoneInput({
 
   return (
     <div className="w-full">
-      <div className={cn('flex items-stretch', className)}>
-        {/* Country Selector */}
+      {/* Wrapper with unified border and focus ring */}
+      <div
+        className={cn(
+          'flex items-stretch h-11 rounded-md border bg-transparent transition-colors',
+          // Border color based on error state
+          showError || error ? 'border-destructive' : 'border-input',
+          // Focus ring
+          isFocused && 'ring-2 ring-offset-2',
+          isFocused && (showError || error ? 'ring-destructive' : 'ring-ring'),
+          className
+        )}
+      >
+        {/* Country Selector - No border, transparent background */}
         <Select 
           value={country.iso2} 
           onValueChange={(value) => {
@@ -86,10 +98,7 @@ export function PhoneInput({
           }}
         >
           <SelectTrigger 
-            className={cn(
-              'w-[70px] h-11 rounded-r-none border-r-0 bg-transparent px-2',
-              showError || error ? 'border-destructive' : 'border-input'
-            )}
+            className="w-[70px] h-full border-0 border-r border-input rounded-none rounded-l-md bg-transparent px-2 focus:ring-0 focus:ring-offset-0"
           >
             <SelectValue>
               <FlagImage iso2={country.iso2} style={{ display: 'flex', width: '24px', height: '16px' }} />
@@ -153,19 +162,21 @@ export function PhoneInput({
           </SelectContent>
         </Select>
 
-        {/* Phone Number Input */}
+        {/* Phone Number Input - No border, transparent background */}
         <Input
           ref={inputRef}
           value={inputValue}
           onChange={handlePhoneValueChange}
-          onBlur={() => setTouched(true)}
-          onFocus={() => setTouched(true)}
+          onBlur={() => {
+            setTouched(true);
+            setIsFocused(false);
+          }}
+          onFocus={() => setIsFocused(true)}
           type="tel"
           placeholder={placeholder}
           id={id}
           className={cn(
-            'flex-1 h-11 rounded-l-none',
-            showError || error ? 'border-destructive' : '',
+            'flex-1 h-full border-0 rounded-none rounded-r-md bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0',
             (showError || error) && 'text-destructive placeholder:text-destructive/50'
           )}
         />
