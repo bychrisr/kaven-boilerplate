@@ -294,7 +294,10 @@ export function UserCreateView() {
                       data-form-type="other"
                       data-lpignore="true"
                       onFocus={() => setIsPasswordFocused(true)}
-                      onBlur={() => setIsPasswordFocused(false)}
+                      onBlur={(e) => {
+                        setIsPasswordFocused(false);
+                        register('password').onBlur(e);
+                      }}
                       className={cn(
                         "bg-transparent pr-10 transition-colors",
                         errors.password && touchedFields.password && "border-red-500 focus:border-red-500",
@@ -343,7 +346,10 @@ export function UserCreateView() {
                     {...register('city')}
                     id="city"
                     placeholder="San Francisco"
-                    className="bg-transparent"
+                    className={cn(
+                      "bg-transparent transition-colors",
+                      watch('city') && "border-green-500"
+                    )}
                     disabled={isAddressAutoFilled}
                   />
                 </div>
@@ -357,7 +363,10 @@ export function UserCreateView() {
                     {...register('state')}
                     id="state"
                     placeholder="California"
-                    className="bg-transparent"
+                    className={cn(
+                      "bg-transparent transition-colors",
+                      watch('state') && "border-green-500"
+                    )}
                     disabled={isAddressAutoFilled}
                   />
                 </div>
@@ -371,7 +380,10 @@ export function UserCreateView() {
                     {...register('country')}
                     id="country"
                     placeholder="United States"
-                    className="bg-transparent"
+                    className={cn(
+                      "bg-transparent transition-colors",
+                      watch('country') && "border-green-500"
+                    )}
                     disabled={isAddressAutoFilled}
                   />
                 </div>
@@ -385,7 +397,10 @@ export function UserCreateView() {
                     {...register('zipcode')}
                     id="zipcode"
                     placeholder="94102"
-                    className="bg-transparent"
+                    className={cn(
+                      "bg-transparent transition-colors",
+                      watch('zipcode') && "border-green-500"
+                    )}
                     disabled={isAddressAutoFilled}
                   />
                 </div>
