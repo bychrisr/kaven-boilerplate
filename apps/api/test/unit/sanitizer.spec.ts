@@ -1,18 +1,17 @@
-import { test, describe, it } from 'node:test';
-import assert from 'node:assert';
+import { describe, it, expect } from 'vitest';
 import { sanitizer } from '../../src/utils/sanitizer';
 
 describe('Sanitizer Utility', () => {
   it('should clean malicious HTML tags', () => {
     const input = '<script>alert(1)</script>';
     const output = sanitizer.clean(input);
-    assert.strictEqual(output, '');
+    expect(output).toBe('');
   });
 
   it('should allow safe HTML tags if configured (default strips script)', () => {
     const input = '<b>Bold</b>';
     const output = sanitizer.clean(input);
-    assert.strictEqual(output, '<b>Bold</b>');
+    expect(output).toBe('<b>Bold</b>');
   });
 
   it('should sanitize nested objects', () => {
@@ -23,30 +22,30 @@ describe('Sanitizer Utility', () => {
       }
     };
     const output = sanitizer.sanitizeObject(input);
-    assert.strictEqual(output.unsafe.nested, '<img src="x">');
+    expect(output.unsafe.nested).toBe('<img src="x">');
   });
 
   it('should sanitize arrays', () => {
     const input = ['safe', '<script>alert(1)</script>'];
     const output = sanitizer.sanitizeObject(input);
-    assert.strictEqual(output[1], '');
+    expect(output[1]).toBe('');
   });
 
   it('should handle non-string values gracefully', () => {
     const input = { val: 123, bool: true, nullVal: null };
     const output = sanitizer.sanitizeObject(input);
-    assert.deepStrictEqual(output, input);
+    expect(output).toEqual(input);
   });
 
   it('should escape HTML characters', () => {
     const input = '<script>';
     const output = sanitizer.escape(input);
-    assert.strictEqual(output, '&lt;script&gt;');
+    expect(output).toBe('&lt;script&gt;');
   });
 
   it('should normalize emails', () => {
     const input = 'TEST@Example.com';
     const output = sanitizer.normalizeEmail(input);
-    assert.strictEqual(output, 'test@example.com');
+    expect(output).toBe('test@example.com');
   });
 });

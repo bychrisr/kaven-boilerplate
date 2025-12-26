@@ -1,5 +1,4 @@
-import { describe, it } from 'node:test';
-import assert from 'node:assert';
+import { describe, it, expect } from 'vitest';
 import { envSchema } from '../../src/config/env.schema';
 
 describe('Environment Configuration (Zod)', () => {
@@ -11,7 +10,7 @@ describe('Environment Configuration (Zod)', () => {
       REFRESH_TOKEN_SECRET: '12345678901234567890123456789012', // 32 chars
     };
     const result = envSchema.safeParse(validEnv);
-    assert.ok(result.success, 'Valid config should pass');
+    expect(result.success).toBe(true);
   });
 
   it('should fail if DATABASE_URL is missing', () => {
@@ -20,9 +19,9 @@ describe('Environment Configuration (Zod)', () => {
       JWT_SECRET: '32chars_minimun_length_string_here_!',
     };
     const result = envSchema.safeParse(invalidEnv);
-    assert.strictEqual(result.success, false);
+    expect(result.success).toBe(false);
     if (!result.success) {
-      assert.ok(result.error.issues.some(i => i.path.includes('DATABASE_URL')));
+      expect(result.error.issues.some(i => i.path.includes('DATABASE_URL'))).toBe(true);
     }
   });
 
@@ -34,9 +33,9 @@ describe('Environment Configuration (Zod)', () => {
       REFRESH_TOKEN_SECRET: '32chars_minimun_length_string_here_!',
     };
     const result = envSchema.safeParse(invalidEnv);
-    assert.strictEqual(result.success, false);
+    expect(result.success).toBe(false);
     if (!result.success) {
-      assert.ok(result.error.issues.some(i => i.path.includes('JWT_SECRET')));
+      expect(result.error.issues.some(i => i.path.includes('JWT_SECRET'))).toBe(true);
     }
   });
 
@@ -49,10 +48,10 @@ describe('Environment Configuration (Zod)', () => {
       // PORT missing, should default
     };
     const result = envSchema.safeParse(minimalEnv);
-    assert.ok(result.success);
+    expect(result.success).toBe(true);
     if (result.success) {
-      assert.strictEqual(result.data.PORT, 8000);
-      assert.strictEqual(result.data.LOG_LEVEL, 'info');
+      expect(result.data.PORT).toBe(8000);
+      expect(result.data.LOG_LEVEL).toBe('info');
     }
   });
 });

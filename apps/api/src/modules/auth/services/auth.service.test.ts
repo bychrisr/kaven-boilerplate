@@ -10,11 +10,15 @@ const prismaMock = vi.hoisted(() => ({
   },
   tenant: {
     findUnique: vi.fn(),
+    create: vi.fn(),
   },
   refreshToken: {
     create: vi.fn(),
     findUnique: vi.fn(),
     update: vi.fn(),
+  },
+  securityAuditLog: {
+    create: vi.fn(),
   },
 }));
 
@@ -70,6 +74,7 @@ describe('AuthService', () => {
         role: 'USER',
         tenantId: null,
       });
+      prismaMock.tenant.create.mockResolvedValue({ id: 'tenant-123' });
 
       // Act
       const result = await authService.register(input);
@@ -128,7 +133,7 @@ describe('AuthService', () => {
       expect(comparePassword).toHaveBeenCalledWith(input.password, user.password);
       expect(prismaMock.refreshToken.create).toHaveBeenCalled();
       expect(result.accessToken).toBe('access_token');
-      expect(result.user.email).toBe(input.email);
+      expect(result.user?.email).toBe(input.email);
     });
 
     it('should throw error with invalid password', async () => {

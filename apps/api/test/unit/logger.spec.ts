@@ -1,5 +1,4 @@
-import { describe, it, beforeEach, afterEach } from 'node:test';
-import assert from 'node:assert';
+import { describe, it, beforeEach, afterEach, expect, vi } from 'vitest';
 import { secureLog } from '../../src/utils/secure-logger';
 
 describe('Secure Logger Utility', () => {
@@ -15,27 +14,28 @@ describe('Secure Logger Utility', () => {
     logOutput = [];
 
     // Mock console methods
-    console.log = (...args) => logOutput.push(args.map(a => String(a)).join(' '));
-    console.warn = (...args) => logOutput.push(args.map(a => String(a)).join(' '));
-    console.error = (...args) => logOutput.push(args.map(a => String(a)).join(' '));
+    console.log = vi.fn((...args) => logOutput.push(args.map(a => String(a)).join(' ')));
+    console.warn = vi.fn((...args) => logOutput.push(args.map(a => String(a)).join(' ')));
+    console.error = vi.fn((...args) => logOutput.push(args.map(a => String(a)).join(' ')));
   });
 
   afterEach(() => {
     console.log = originalLog;
     console.warn = originalWarn;
     console.error = originalError;
+    vi.restoreAllMocks();
   });
 
   it('should redact sensitive password field', () => {
     secureLog.info('Test login', { password: 'secret123', email: 'valid@email.com' });
     
     // Check if output contains log
-    assert.strictEqual(logOutput.length, 1);
+    expect(logOutput.length).toBe(1);
     const log = logOutput[0];
     
-    assert.ok(log.includes('[REDACTED]'), 'Should contain [REDACTED]');
-    assert.ok(!log.includes('secret123'), 'Should NOT contain secret123');
-    assert.ok(log.includes('valid@email.com'), 'Should contain email');
+    expect(log).toContain('[REDACTED]');
+    expect(log).not.toContain('secret123');
+    expect(log).toContain('valid@email.com');
   });
 
   it('should redact sensitive keys recursively', () => {
@@ -50,12 +50,12 @@ describe('Secure Logger Utility', () => {
     };
     
     secureLog.info('Recursion test', data);
-    const log = logOutput[0];
+    const log = logOutput[0] || '';
     
-    assert.ok(log.includes('[REDACTED]'), 'Should contain redacted fields');
-    assert.ok(!log.includes('abcdef123456'), 'Should verify apiKey is redacted');
-    assert.ok(!log.includes('jwt-token-here'), 'Should verify token is redacted');
-    assert.ok(log.includes('John'), 'Should keep name');
+    expect(log).toContain('[REDACTED]');
+    expect(log).not.toContain('abcdef123456');
+    expect(log).not.toContain('jwt-token-here');
+    expect(log).toContain('John');
   });
 
   it('should handle arrays', () => {
@@ -64,13 +64,13 @@ describe('Secure Logger Utility', () => {
           { email: 'a@b.com' }
       ];
       secureLog.info('Array test', data);
-      const log = logOutput[0];
-      assert.ok(log.includes('[REDACTED]'));
-      assert.ok(log.includes('a@b.com'));
+      const log = logOutput[0] || '';
+      expect(log).toContain('[REDACTED]');
+      expect(log).toContain('a@b.com');
   });
   
   it('should handle null/undefined', () => {
       secureLog.info('Null test', null);
-      assert.ok(logOutput[0].includes('[INFO] Null test'));
+      expect(logOutput[0]).toContain('[INFO] Null test');
   });
 });
