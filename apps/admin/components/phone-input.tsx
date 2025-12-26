@@ -117,11 +117,29 @@ export function PhoneInput({
                 filteredCountries.map((c) => {
                   const countryData = parseCountry(c);
                   return (
-                    <SelectItem key={countryData.iso2} value={countryData.iso2}>
-                      <div className="flex items-center gap-2">
-                        <FlagImage iso2={countryData.iso2} style={{ width: '24px', height: '16px' }} />
-                        <span className="flex-1">{countryData.name}</span>
-                        <span className="text-muted-foreground text-sm">+{countryData.dialCode}</span>
+                    <SelectItem 
+                      key={countryData.iso2} 
+                      value={countryData.iso2}
+                      className="py-3"
+                    >
+                      <div className="flex items-start gap-3">
+                        {/* Flag */}
+                        <FlagImage 
+                          iso2={countryData.iso2} 
+                          style={{ width: '24px', height: '16px', marginTop: '2px' }} 
+                        />
+                        
+                        {/* Country Info - 2 lines */}
+                        <div className="flex-1 min-w-0">
+                          {/* Line 1: Country Name */}
+                          <div className="text-sm font-medium text-foreground truncate">
+                            {countryData.name}
+                          </div>
+                          {/* Line 2: ISO + Dial Code */}
+                          <div className="text-xs text-muted-foreground">
+                            {countryData.iso2.toUpperCase()} (+{countryData.dialCode})
+                          </div>
+                        </div>
                       </div>
                     </SelectItem>
                   );
@@ -146,7 +164,7 @@ export function PhoneInput({
           placeholder={placeholder}
           id={id}
           className={cn(
-            'flex-1 rounded-l-none',
+            'flex-1 h-11 rounded-l-none',
             showError || error ? 'border-destructive' : '',
             (showError || error) && 'text-destructive placeholder:text-destructive/50'
           )}
