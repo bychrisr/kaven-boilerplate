@@ -101,7 +101,7 @@ export function PhoneInput({
           }}
         >
           <SelectTrigger 
-            className="w-[70px] h-full border-0 border-r border-input rounded-none rounded-l-md bg-transparent px-2 focus:ring-0 focus:ring-offset-0"
+            className="w-[60px] h-full border-0 border-r border-input rounded-none rounded-l-md bg-transparent px-2 focus:ring-0 focus:ring-offset-0"
           >
             <SelectValue>
               <FlagImage iso2={country.iso2} style={{ display: 'flex', width: '24px', height: '16px' }} />
@@ -134,11 +134,11 @@ export function PhoneInput({
                       value={countryData.iso2}
                       className="py-3"
                     >
-                      <div className="flex items-start gap-3">
-                        {/* Flag */}
+                      <div className="flex items-center gap-3">
+                        {/* Flag - Full height of 2 lines */}
                         <FlagImage 
                           iso2={countryData.iso2} 
-                          style={{ width: '24px', height: '16px', marginTop: '2px' }} 
+                          style={{ height: '36px', width: 'auto' }} 
                         />
                         
                         {/* Country Info - 2 lines */}
