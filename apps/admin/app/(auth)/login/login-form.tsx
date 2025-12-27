@@ -2,30 +2,48 @@
 
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Logo } from '@/components/logo';
 import { TextField } from '@/components/ui/text-field';
 import { Button } from '@/components/ui/button';
-import { Eye, EyeOff } from 'lucide-react';
+import { Alert } from '@/components/ui/alert';
+import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/auth.store';
+
+const loginSchema = z.object({
+  email: z.string().min(1, 'Email is required').email('Invalid email address'),
+  password: z.string().min(1, 'Password is required'),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnUrl = searchParams.get('returnUrl');
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    remember: false,
-  });
+  const [generalError, setGeneralError] = useState<string | null>(null);
+  
   const { login, clearError } = useAuthStore();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const onSubmit = async (data: LoginFormData) => {
+    setGeneralError(null);
     clearError();
 
     console.log('🔄 LOGIN FORM - Starting login...');
@@ -36,18 +54,18 @@ export default function LoginForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
+          email: data.email,
+          password: data.password,
         }),
       });
 
       if (response.ok) {
-        const data = await response.json();
+        const responseData = await response.json();
         
         console.log('✅ LOGIN FORM - Login successful, calling store.login()');
         
         // ✅ AXISOR STYLE: Login armazena no localStorage
-        login(data.user, data.accessToken, data.refreshToken);
+        login(responseData.user, responseData.accessToken, responseData.refreshToken);
         
         toast.success('Login realizado com sucesso!');
         
@@ -60,13 +78,15 @@ export default function LoginForm() {
         console.log('✅ LOGIN FORM - Navigation triggered to:', targetUrl);
       } else {
         const errorData = await response.json().catch(() => ({}));
-        toast.error(errorData.message || 'Credenciais inválidas');
+        const message = errorData.message || 'Invalid credentials';
+        setGeneralError(message);
+        toast.error(message);
       }
     } catch (error) {
       console.error('❌ LOGIN FORM - Error:', error);
-      toast.error('Erro ao fazer login. Tente novamente.');
-    } finally {
-      setLoading(false);
+      const message = 'Erro ao fazer login. Tente novamente.';
+      setGeneralError(message);
+      toast.error(message);
     }
   };
 
@@ -83,16 +103,27 @@ export default function LoginForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        {generalError && (
+          <Alert 
+            severity="error" 
+            variant="filled" 
+            className="mb-4"
+            icon={<AlertCircle className="h-5 w-5" />}
+          >
+            {generalError}
+          </Alert>
+        )}
+
         <div className="space-y-5">
             <TextField
               id="email"
               type="email"
               label="Email address"
               placeholder="demo@minimals.cc"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required
+              error={!!errors.email}
+              errorMessage={errors.email?.message}
+              {...register('email')}
               fullWidth
             />
 
@@ -107,9 +138,9 @@ export default function LoginForm() {
                   type={showPassword ? 'text' : 'password'}
                   label="Password"
                   placeholder="6+ characters"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  required
+                  error={!!errors.password}
+                  errorMessage={errors.password?.message}
+                  {...register('password')}
                   fullWidth
                   endAdornment={
                     <button
@@ -128,7 +159,7 @@ export default function LoginForm() {
             type="submit" 
             variant="contained" 
             color="primary" 
-            loading={loading} 
+            loading={isSubmitting} 
             fullWidth 
             size="lg"
             className="h-12 text-md font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all"
