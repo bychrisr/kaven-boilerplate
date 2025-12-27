@@ -99,18 +99,10 @@ export function UserView() {
     };
   }, [stats]); // Só recalcula quando stats mudar
   
+  
+  // SOLUÇÃO ROBUSTA: Usar APENAS stats globais para TODOS os contadores
+  // Isso elimina race condition entre mudança de filtro e chegada de dados
   const getStatusCount = (status: string) => {
-    // Para a tab selecionada, mostra o total atual (pode ser filtrado)
-    const isCurrentlySelected = (
-      (status === 'all' && filterStatus === 'all') ||
-      (status !== 'all' && status.toUpperCase() === filterStatus.toUpperCase())
-    );
-    
-    if (isCurrentlySelected) {
-      return totalUsers; // Dinâmico: total da query atual
-    }
-    
-    // Para tabs não selecionadas: usa contadores cacheados (fixos)
     return statusCounts[status as keyof typeof statusCounts] ?? 0;
   };
 
@@ -163,15 +155,17 @@ export function UserView() {
             </Breadcrumbs>
           </div>
         </div>
-        <Button 
-          variant="contained"
-          color="primary"
-          size="lg"
-          className="h-12 text-md font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          New User
-        </Button>
+        <Link href="/users/new">
+          <Button 
+            variant="contained"
+            color="primary"
+            size="lg"
+            className="h-12 text-md font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            New User
+          </Button>
+        </Link>
       </div>
 
       <Card className="!p-0 !gap-0 block overflow-hidden border-none shadow-md bg-card dark:bg-[#212B36]">

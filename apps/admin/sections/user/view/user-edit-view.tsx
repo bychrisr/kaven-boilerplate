@@ -113,11 +113,19 @@ export function UserEditView({ userId }: UserEditViewProps) {
         company: user.company || '',
       });
       
-
+      console.log('👤 [USER EDIT] User loaded:', { 
+        userId: user.id, 
+        hasAvatar: !!user.avatar, 
+        avatarUrl: user.avatar 
+      });
       
-      if (user.avatarUrl) {
-        setAvatarPreview(user.avatarUrl);
-
+      if (user.avatar) {
+        // Adiciona URL base do backend se não estiver presente
+        const avatarUrl = user.avatar.startsWith('http') 
+          ? user.avatar 
+          : `http://localhost:8000${user.avatar}`;
+        console.log('🖼️ [USER EDIT] Setting avatar preview:', avatarUrl);
+        setAvatarPreview(avatarUrl);
       }
     } else {
 
@@ -242,18 +250,21 @@ export function UserEditView({ userId }: UserEditViewProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1 space-y-6">
             <Card className="p-6 bg-card border-none shadow-sm dark:bg-[#212B36]">
-              <div className="relative mb-8 flex justify-center">
-                 <div className="absolute right-0 top-0">
-                    <span className={cn(
-                        "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset",
-                        user.status === 'ACTIVE' ? "bg-green-50 text-green-700 ring-green-600/20" : 
-                        user.status === 'BANNED' ? "bg-red-50 text-red-700 ring-red-600/20" : 
-                        "bg-yellow-50 text-yellow-700 ring-yellow-600/20"
-                    )}>
-                        {user.status}
-                    </span>
-                 </div>
+              {/* Avatar centralizado */}
+              <div className="relative mb-4 flex justify-center">
                  <AvatarUpload value={avatarPreview} onChange={handleAvatarChange} />
+              </div>
+
+              {/* Status badge centralizado abaixo do avatar */}
+              <div className="flex justify-center mb-6">
+                <span className={cn(
+                    "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset",
+                    user.status === 'ACTIVE' ? "bg-green-50 text-green-700 ring-green-600/20" : 
+                    user.status === 'BANNED' ? "bg-red-50 text-red-700 ring-red-600/20" : 
+                    "bg-yellow-50 text-yellow-700 ring-yellow-600/20"
+                )}>
+                    {user.status}
+                </span>
               </div>
 
               <div className="space-y-4 pt-4 border-t border-border/40">

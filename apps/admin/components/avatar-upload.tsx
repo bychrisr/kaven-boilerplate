@@ -100,36 +100,42 @@ export function AvatarUpload({ value, onChange }: AvatarUploadProps) {
         >
           <input {...getInputProps()} />
           
-          {/* Círculo principal com borda tracejada */}
-          <div className={cn(
-            "relative w-36 h-36 rounded-full flex items-center justify-center transition-all duration-200",
-            "border-2 border-dashed",
-            isDragActive 
-              ? "border-primary bg-primary/10" 
-              : "border-border/40 hover:border-primary/50 hover:bg-muted/50"
-          )}>
-            {value ? (
-              <>
-                {/* Avatar com imagem */}
-                <Avatar className="w-full h-full">
-                  <AvatarImage src={value} alt="Avatar preview" className="object-cover" />
-                </Avatar>
-                
-                {/* Overlay no hover quando tem imagem */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center rounded-full bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Upload className="h-8 w-8 text-white mb-1" />
-                  <span className="text-xs text-white font-medium">Update photo</span>
-                </div>
-              </>
-            ) : (
-              <>
-                {/* Estado vazio - ícone de câmera */}
-                <div className="flex flex-col items-center justify-center text-muted-foreground group-hover:text-foreground transition-colors">
-                  <Upload className="h-8 w-8 mb-2" />
-                  <span className="text-sm font-medium">Upload photo</span>
-                </div>
-              </>
-            )}
+          {/* Container com fundo escuro e padding para criar o gap */}
+          <div className="relative w-40 h-40 rounded-full bg-muted/20 p-2 flex items-center justify-center">
+            
+            {/* Borda tracejada com gap */}
+            <div className={cn(
+              "absolute inset-2 rounded-full border-2 border-dashed transition-colors",
+              isDragActive 
+                ? "border-primary" 
+                : "border-border/30 group-hover:border-primary/50"
+            )} />
+            
+            {/* Círculo interno com conteúdo */}
+            <div className="relative w-full h-full rounded-full bg-muted/40 flex items-center justify-center overflow-hidden">
+              {value ? (
+                <>
+                  {/* Avatar com imagem */}
+                  <Avatar className="w-full h-full">
+                    <AvatarImage src={value} alt="Avatar preview" className="object-cover" />
+                  </Avatar>
+                  
+                  {/* Overlay no hover quando tem imagem */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center rounded-full bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Upload className="h-7 w-7 text-white/90 mb-1.5" />
+                    <span className="text-xs text-white/90 font-medium">Update photo</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Estado vazio - ícone de câmera */}
+                  <div className="flex flex-col items-center justify-center text-muted-foreground/60 group-hover:text-muted-foreground transition-colors">
+                    <Upload className="h-7 w-7 mb-2" />
+                    <span className="text-sm font-medium">Upload photo</span>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
           
           {/* Botão de remover quando tem imagem */}
@@ -140,7 +146,7 @@ export function AvatarUpload({ value, onChange }: AvatarUploadProps) {
                 e.stopPropagation();
                 handleRemove();
               }}
-              className="absolute -top-1 -right-1 h-7 w-7 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center hover:bg-destructive/90 transition-colors shadow-md z-10"
+              className="absolute top-0 right-0 h-7 w-7 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center hover:bg-destructive/90 transition-colors shadow-lg z-10"
             >
               <X className="h-4 w-4" />
             </button>
@@ -148,7 +154,7 @@ export function AvatarUpload({ value, onChange }: AvatarUploadProps) {
         </div>
 
         {/* Texto de ajuda */}
-        <p className="text-xs text-center text-muted-foreground">
+        <p className="text-xs text-center text-muted-foreground/70">
           Allowed *.jpeg, *.jpg, *.png, *.gif
           <br />
           max size of 3 MB

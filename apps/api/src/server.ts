@@ -107,6 +107,11 @@ fastify.register(fastifyStatic, {
   root: path.join(process.cwd(), 'uploads'),
   prefix: '/uploads/',
   decorateReply: false, // Não decorar reply para evitar conflitos
+  setHeaders: (res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  },
 });
 
 // Rate Limiting (global) - SOLUÇÃO ROBUSTA COM REDIS

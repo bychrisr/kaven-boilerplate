@@ -68,6 +68,7 @@ export class UserService {
           emailVerified: true,
           twoFactorEnabled: true,
           phone: true,
+          avatar: true,
           status: true,
           tenantId: true,
           tenant: {
@@ -106,6 +107,7 @@ export class UserService {
         email: true,
         name: true,
         phone: true, 
+        avatar: true,
         role: true,
         status: true,
         emailVerified: true,

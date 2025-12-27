@@ -18,7 +18,7 @@ interface User {
   createdAt: string;
   updatedAt: string;
   emailVerified?: boolean;
-  avatarUrl?: string;
+  avatar?: string;
   country?: string;
   state?: string;
   city?: string;

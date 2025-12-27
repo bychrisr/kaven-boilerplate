@@ -21,6 +21,19 @@ export function UserMenu() {
     router.push('/login');
   };
 
+  // Gerar iniciais do nome
+  const initials = user?.name
+    ?.split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2) || 'U';
+
+  // URL do avatar com fallback
+  const avatarUrl = user?.avatar 
+    ? (user.avatar.startsWith('http') ? user.avatar : `http://localhost:8000${user.avatar}`)
+    : undefined;
+
   const menuItems = [
     { label: 'Home', icon: Home, href: '/' },
     { label: 'Profile', icon: User, href: '/profile' },
@@ -40,11 +53,13 @@ export function UserMenu() {
         >
             <div className="w-full h-full rounded-full bg-background flex items-center justify-center overflow-hidden border-2 border-background">
                 <Avatar className="w-full h-full">
-                    <AvatarImage 
-                        src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" 
-                        alt={user?.name || 'User'} 
-                    />
-                    <AvatarFallback className="bg-primary/10 text-primary">{user?.name?.charAt(0) || 'U'}</AvatarFallback>
+                    {avatarUrl ? (
+                      <AvatarImage 
+                          src={avatarUrl} 
+                          alt={user?.name || 'User'} 
+                      />
+                    ) : null}
+                    <AvatarFallback className="bg-primary/10 text-primary">{initials}</AvatarFallback>
                 </Avatar>
             </div>
         </div>
@@ -61,11 +76,13 @@ export function UserMenu() {
                 <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-primary to-primary-dark">
                     <div className="w-full h-full rounded-full bg-[#212B36] p-1">
                         <Avatar className="w-full h-full">
-                            <AvatarImage 
-                                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" 
-                                alt={user?.name || 'User'}
-                            />
-                            <AvatarFallback className="bg-primary/10 text-primary text-2xl">{user?.name?.charAt(0) || 'U'}</AvatarFallback>
+                            {avatarUrl ? (
+                              <AvatarImage 
+                                  src={avatarUrl} 
+                                  alt={user?.name || 'User'}
+                              />
+                            ) : null}
+                            <AvatarFallback className="bg-primary/10 text-primary text-2xl">{initials}</AvatarFallback>
                         </Avatar>
                     </div>
                 </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import {
@@ -8,13 +9,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Tooltip } from '@/components/ui/tooltip';
+import { useDeleteUser } from '@/hooks/use-users';
+import { toast } from 'sonner';
 
 // User type from API
 interface User {
@@ -22,6 +33,7 @@ interface User {
   name: string;
   email: string;
   phone?: string | null;
+  avatar?: string | null;
   role: string;
   status?: string;
   tenant?: {
@@ -37,6 +49,8 @@ type UserTableRowProps = {
 
 export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
   const { name, email, role, status, phone, tenant } = row;
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const { mutate: deleteUser, isPending } = useDeleteUser();
   
   // Generate initials for avatar
   const initials = name
@@ -46,8 +60,22 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
     .toUpperCase()
     .slice(0, 2);
 
+  const handleDelete = () => {
+    deleteUser(row.id, {
+      onSuccess: () => {
+        toast.success('Usuário excluído com sucesso');
+        setShowDeleteDialog(false);
+      },
+      onError: (error: unknown) => {
+        const message = error instanceof Error ? error.message : 'Erro ao excluir usuário';
+        toast.error(message);
+      },
+    });
+  };
+
   return (
-    <TableRow data-state={selected ? 'selected' : undefined} aria-checked={selected} className="hover:bg-transparent">
+    <>
+      <TableRow data-state={selected ? 'selected' : undefined} aria-checked={selected} className="hover:bg-transparent">
       <TableCell className="w-[40px] pl-4 py-4">
         <Checkbox checked={selected} onCheckedChange={onSelectRow} />
       </TableCell>
@@ -55,6 +83,12 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
       <TableCell className="flex items-center gap-3 py-4 px-4">
         <Link href={`/users/${row.id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <Avatar>
+            {row.avatar ? (
+              <AvatarImage 
+                src={row.avatar.startsWith('http') ? row.avatar : `http://localhost:8000${row.avatar}`} 
+                alt={name} 
+              />
+            ) : null}
             <AvatarFallback className="bg-primary/10 text-primary font-semibold">
               {initials}
             </AvatarFallback>
@@ -112,7 +146,13 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem className="text-destructive">
+                <DropdownMenuItem 
+                  className="text-destructive"
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    setShowDeleteDialog(true);
+                  }}
+                >
                   <Trash2 className="mr-2 h-4 w-4" />
                   Delete
                 </DropdownMenuItem>
@@ -120,6 +160,34 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
             </DropdownMenu>
         </div>
       </TableCell>
-    </TableRow>
+      </TableRow>
+
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmar exclusão?</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja excluir o usuário <strong>{name}</strong>? Esta ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={isPending}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={isPending}
+            >
+              {isPending ? 'Excluindo...' : 'Excluir'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

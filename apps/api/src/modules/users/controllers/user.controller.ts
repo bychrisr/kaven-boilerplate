@@ -5,7 +5,10 @@ import { createUserSchema, updateUserSchema } from '../../../lib/validation';
 export class UserController {
   async getStats(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const tenantId = request.headers['x-tenant-id'] as string | undefined;
+      // NÃO usar x-tenant-id automaticamente
+      // SUPER_ADMIN deve ver stats globais (sem filtro de tenant)
+      // Se precisar filtrar por tenant, passar como query parameter
+      const { tenantId } = request.query as any;
       const stats = await userService.getStats(tenantId);
       reply.send(stats);
     } catch (error: any) {

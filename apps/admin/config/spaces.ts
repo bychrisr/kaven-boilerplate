@@ -65,16 +65,7 @@ export const SPACES: Record<string, SpaceConfig> = {
       {
         title: 'MANAGEMENT',
         items: [
-          { 
-            icon: Users, 
-            label: 'User', 
-            href: '/users',
-            children: [
-              { label: 'List', href: '/users' },
-              { label: 'Create', href: '/users/create' },
-              { label: 'Cards', href: '/users/cards' }
-            ]
-          },
+          { icon: Users, label: 'Users', href: '/users' },
           { icon: Building2, label: 'Tenant', href: '/tenants' }
         ]
       },
