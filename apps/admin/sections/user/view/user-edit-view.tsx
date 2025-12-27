@@ -57,6 +57,7 @@ export function UserEditView({ userId }: UserEditViewProps) {
   const { tenants, isLoading: isLoadingTenants } = useTenants({ limit: 100 });
 
   const [avatarPreview, setAvatarPreview] = useState<string>('');
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   
 
   
@@ -137,8 +138,9 @@ export function UserEditView({ userId }: UserEditViewProps) {
   const addressValue = watch('address') || '';
 
   const handleAvatarChange = (file: File | null, preview: string) => {
-    // setAvatarFile(file); // Unused
+    setAvatarFile(file);
     setAvatarPreview(preview);
+    console.log('📸 Avatar changed:', { hasFile: !!file, preview: preview.substring(0, 50) });
   };
 
   const handlePlaceSelected = (data: { address: string; city: string; state: string; country: string; zipcode: string }) => {
@@ -150,6 +152,19 @@ export function UserEditView({ userId }: UserEditViewProps) {
 
   const onSubmit = async (data: UserFormData) => {
     try {
+      console.log('💾 Submitting user update...', { hasAvatar: !!avatarFile });
+      
+      // Se tem avatar, fazer upload primeiro
+      if (avatarFile) {
+        const formData = new FormData();
+        formData.append('avatar', avatarFile);
+        
+        console.log('📤 Uploading avatar...');
+        // TODO: Implementar endpoint de upload de avatar
+        // const avatarUrl = await uploadAvatar(userId, formData);
+        // data.avatar = avatarUrl;
+      }
+      
       await updateUser({
         ...data,
         tenantId: data.tenantId === '' ? null : data.tenantId,
