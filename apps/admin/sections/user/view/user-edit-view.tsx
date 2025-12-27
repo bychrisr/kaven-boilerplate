@@ -230,11 +230,6 @@ export function UserEditView({ userId }: UserEditViewProps) {
                  </div>
                  <AvatarUpload value={avatarPreview} onChange={handleAvatarChange} />
               </div>
-              
-              <p className="text-center text-xs text-muted-foreground mb-8">
-                Allowed *.jpeg, *.jpg, *.png, *.gif
-                <br /> max size of 3 Mb
-              </p>
 
               <div className="space-y-4 pt-4 border-t border-border/40">
                  <div className="flex items-center justify-between">
