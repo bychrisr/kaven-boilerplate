@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -52,15 +53,17 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
       </TableCell>
 
       <TableCell className="flex items-center gap-3 py-4 px-4">
-        <Avatar>
-          <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-            {initials}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex flex-col">
-          <span className="text-sm font-semibold text-foreground">{name}</span>
-          <span className="text-xs text-muted-foreground">{email}</span>
-        </div>
+        <Link href={`/users/${row.id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <Avatar>
+            <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold text-foreground">{name}</span>
+            <span className="text-xs text-muted-foreground">{email}</span>
+          </div>
+        </Link>
       </TableCell>
 
       <TableCell className="whitespace-nowrap py-4 px-4 text-sm font-medium">
@@ -95,10 +98,12 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
 
       <TableCell align="right" className="py-4 px-4 pr-4">
         <div className="flex items-center justify-end gap-1">
-            <Tooltip title="Quick edit">
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
-                <Pencil className="h-4 w-4" />
-              </Button>
+            <Tooltip title="Edit">
+              <Link href={`/users/${row.id}`}>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </Link>
             </Tooltip>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

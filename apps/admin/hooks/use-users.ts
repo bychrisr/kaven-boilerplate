@@ -17,6 +17,14 @@ interface User {
   };
   createdAt: string;
   updatedAt: string;
+  emailVerified?: boolean;
+  avatarUrl?: string;
+  country?: string;
+  state?: string;
+  city?: string;
+  address?: string;
+  zipcode?: string;
+  company?: string;
 }
 
 interface UsersResponse {
@@ -36,13 +44,30 @@ interface CreateUserData {
   role?: 'USER' | 'TENANT_ADMIN';
   status?: 'ACTIVE' | 'PENDING';
   tenantId?: string;
+  emailVerified?: boolean;
+  phone?: string;
+  country?: string;
+  state?: string;
+  city?: string;
+  address?: string;
+  zipcode?: string;
+  company?: string;
 }
 
 interface UpdateUserData {
   name?: string;
   email?: string;
   role?: 'USER' | 'TENANT_ADMIN' | 'SUPER_ADMIN';
-  tenantId?: string;
+  tenantId?: string | null;
+  status?: 'ACTIVE' | 'PENDING' | 'BANNED' | 'REJECTED';
+  emailVerified?: boolean;
+  phone?: string | null;
+  country?: string;
+  state?: string;
+  city?: string;
+  address?: string;
+  zipcode?: string;
+  company?: string;
 }
 
 interface UserStats {
@@ -113,10 +138,15 @@ export function useUsers(params?: {
 export function useUser(id: string) {
   const isInitialized = useAuthStore((state) => state.isInitialized);
   
+  console.log('🔍 [useUser] Hook called with ID:', id);
+  console.log('🔍 [useUser] isInitialized:', isInitialized);
+  
   return useQuery<User>({
     queryKey: ['user', id],
     queryFn: async () => {
+      console.log('🌐 [useUser] Fetching user from API:', `/api/users/${id}`);
       const response = await api.get(`/api/users/${id}`);
+      console.log('✅ [useUser] API Response:', response.data);
       return response.data;
     },
     enabled: isInitialized && !!id,

@@ -42,6 +42,7 @@ const userSchema = z.object({
   city: z.string().optional(),
   address: z.string().optional(),
   zipcode: z.string().optional(),
+  company: z.string().optional(),
 });
 
 type UserFormData = z.infer<typeof userSchema>;
@@ -73,6 +74,13 @@ export function UserCreateView() {
       role: 'USER',
       status: 'ACTIVE',
       emailVerified: false,
+      phone: '',
+      country: '',
+      state: '',
+      city: '',
+      address: '',
+      zipcode: '',
+      company: '',
     },
   });
 
@@ -102,8 +110,17 @@ export function UserCreateView() {
           email: data.email,
           password: data.password,
           role: data.role,
+          phone: data.phone,
           status: data.emailVerified ? 'ACTIVE' : 'PENDING',
-          tenantId: 'create-own', // Creates own tenant
+          emailVerified: data.emailVerified,
+          tenantId: 'create-own',
+          // Metadata fields
+          country: data.country,
+          state: data.state,
+          city: data.city,
+          address: data.address,
+          zipcode: data.zipcode,
+          company: data.company,
         },
         {
           onSuccess: () => {
@@ -441,6 +458,22 @@ export function UserCreateView() {
                       watch('zipcode') && "border-green-500"
                     )}
                     disabled={isAddressAutoFilled}
+                  />
+                </div>
+
+                {/* Company - Optional */}
+                <div className="sm:col-span-2">
+                  <label htmlFor="company" className="block text-sm font-medium text-foreground mb-2">
+                    Company
+                  </label>
+                  <Input
+                    {...register('company')}
+                    id="company"
+                    placeholder="Acme Inc."
+                    className={cn(
+                      "bg-transparent transition-colors",
+                      watch('company') && "border-green-500"
+                    )}
                   />
                 </div>
               </div>
