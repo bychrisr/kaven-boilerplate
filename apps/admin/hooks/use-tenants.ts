@@ -128,3 +128,16 @@ export function useTenant(id: string) {
     enabled: isInitialized && !!id,
   });
 }
+
+export function useTenantStats() {
+  const isInitialized = useAuthStore((state) => state.isInitialized);
+  
+  return useQuery({
+    queryKey: ['tenant-stats'],
+    queryFn: async () => {
+      const response = await api.get('/api/tenants/stats');
+      return response.data;
+    },
+    enabled: isInitialized,
+  });
+}

@@ -3,14 +3,48 @@ import type { CreateTenantInput, UpdateTenantInput } from '../../../lib/validati
 
 export class TenantService {
   /**
+   * GET /api/tenants/stats - Obter estatísticas globais de tenants
+   */
+  async getStats() {
+    const [total, active, suspended] = await Promise.all([
+      prisma.tenant.count({ where: { deletedAt: null } }),
+      prisma.tenant.count({ where: { status: 'ACTIVE', deletedAt: null } }),
+      prisma.tenant.count({ where: { status: 'SUSPENDED', deletedAt: null } }),
+    ]);
+
+    return {
+      total,
+      active,
+      suspended,
+      deleted: 0,
+    };
+  }
+
+  /**
    * GET /api/tenants - Listar tenants (Super Admin only)
    */
-  async listTenants(page: number = 1, limit: number = 10) {
+  async listTenants(page: number = 1, limit: number = 10, search?: string, status?: string) {
     const skip = (page - 1) * limit;
+
+    const where: any = {
+      deletedAt: null,
+    };
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { slug: { contains: search, mode: 'insensitive' } },
+        { domain: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    if (status && status !== 'ALL') {
+      where.status = status;
+    }
     
     const [tenants, total] = await Promise.all([
       prisma.tenant.findMany({
-        where: { deletedAt: null },
+        where,
         skip,
         take: limit,
         select: {
@@ -20,17 +54,24 @@ export class TenantService {
           domain: true,
           status: true,
           createdAt: true,
+          updatedAt: true,
+          // logo: true, // Campo talvez não exista ainda, removendo para fixar build
           _count: {
             select: { users: true },
           },
         },
         orderBy: { createdAt: 'desc' },
       }),
-      prisma.tenant.count({ where: { deletedAt: null } }),
+      prisma.tenant.count({ where }),
     ]);
 
+    const formattedTenants = tenants.map(t => ({
+      ...t,
+      // Opcional: Flatten user count if needed for UI consistency
+    }));
+
     return {
-      tenants,
+      tenants: formattedTenants,
       pagination: {
         page,
         limit,

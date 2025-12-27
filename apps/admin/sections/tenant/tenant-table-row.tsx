@@ -14,6 +14,9 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Tooltip } from '@/components/ui/tooltip';
 import { format } from 'date-fns';
+import Link from 'next/link';
+import { useTenants } from '@/hooks/use-tenants';
+import { toast } from 'sonner';
 
 // Tenant type from API
 interface Tenant {
@@ -35,9 +38,18 @@ type TenantTableRowProps = {
 };
 
 export function TenantTableRow({ row, selected, onSelectRow }: TenantTableRowProps) {
-  const { name, slug, domain, status, createdAt, _count } = row;
+  const { id, name, slug, domain, status, createdAt, _count } = row;
+  const { deleteTenant } = useTenants();
   
   const usersCount = _count?.users ?? 0;
+
+  const handleDelete = () => {
+    deleteTenant.mutate(id, {
+        onSuccess: () => {
+            // Toast is handled by the hook usually, but we can add extra if needed
+        }
+    });
+  };
 
   return (
     <TableRow data-state={selected ? 'selected' : undefined} aria-checked={selected} className="hover:bg-transparent">
@@ -47,7 +59,9 @@ export function TenantTableRow({ row, selected, onSelectRow }: TenantTableRowPro
 
       <TableCell className="py-4 px-4">
         <div className="flex flex-col">
-          <span className="text-sm font-semibold text-foreground">{name}</span>
+          <Link href={`/tenants/${id}`} className="hover:underline cursor-pointer">
+            <span className="text-sm font-semibold text-foreground">{name}</span>
+          </Link>
           <span className="text-xs text-muted-foreground">{slug}</span>
         </div>
       </TableCell>
@@ -88,12 +102,14 @@ export function TenantTableRow({ row, selected, onSelectRow }: TenantTableRowPro
 
       <TableCell align="right" className="py-4 px-4 pr-4">
         <div className="flex items-center justify-end gap-1">
-            <Tooltip title="Quick edit">
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
-                <Pencil className="h-4 w-4" />
-              </Button>
-            </Tooltip>
-
+            <Link href={`/tenants/${id}`}>
+              <Tooltip title="Quick edit">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </Tooltip>
+            </Link>
+ 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
@@ -101,11 +117,17 @@ export function TenantTableRow({ row, selected, onSelectRow }: TenantTableRowPro
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <Pencil className="mr-2 h-4 w-4" />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive">
+              <Link href={`/tenants/${id}`}>
+                <DropdownMenuItem>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Edit
+                </DropdownMenuItem>
+              </Link>
+              <DropdownMenuItem 
+                className="text-destructive focus:text-destructive cursor-pointer"
+                onClick={handleDelete}
+                disabled={deleteTenant.isPending}
+              >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>

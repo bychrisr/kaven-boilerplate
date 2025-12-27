@@ -10,6 +10,11 @@ export async function tenantRoutes(fastify: FastifyInstance) {
     handler: tenantController.list.bind(tenantController),
   });
 
+  fastify.get('/stats', {
+    preHandler: [authMiddleware, requireTenantAdmin],
+    handler: tenantController.getStats.bind(tenantController),
+  });
+
   // GET /api/tenants/:id - Buscar tenant (requer TENANT_ADMIN)
   fastify.get('/:id', {
     preHandler: [authMiddleware, requireTenantAdmin],

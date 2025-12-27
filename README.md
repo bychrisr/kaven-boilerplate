@@ -38,7 +38,8 @@ cd apps/admin && pnpm dev
 ### Backend (21 endpoints REST)
 
 - ✅ **Autenticação completa:** Register, Login, 2FA TOTP, Password Reset
-- ✅ **User Management:** CRUD com paginação
+- ✅ **User Management:** CRUD com paginação e filtros
+- ✅ **Avatar System:** Upload, redimensionamento e conversão automática para WebP
 - ✅ **Tenant Management:** CRUD multi-tenant
 - ✅ **Segurança:** JWT + Refresh Tokens, bcrypt, Zod validation
 
@@ -47,6 +48,8 @@ cd apps/admin && pnpm dev
 - ✅ **Login funcional** com integração API
 - ✅ **Dashboard Analytics** (Real Data) com Gráficos Recharts
 - ✅ **User Creation** com validação avançada de senha (5 requisitos)
+- ✅ **Avatar Management** com preview em tempo real e fallback para iniciais
+- ✅ **User List** com filtros estáveis e contadores em tempo real
 - ✅ **Tenant Management** obrigatório (create own tenant ou selecionar existente)
 - ✅ **UI Minimalista** (Dark/Light Mode) com Persistência
 - ✅ **Design System** refinado (Header Glassmorphism, Collapsible Sidebar)
@@ -89,6 +92,8 @@ Turborepo Monorepo
 - [**Tenant Management**](docs/TENANT_MANAGEMENT.md) - Gestão de tenants em criação de usuário
 - [**Backend Config Fixes**](docs/BACKEND_CONFIG_FIXES.md) - Correções de configuração
 - [**Form Validation Bugs**](docs/FORM_VALIDATION_BUGS.md) - Bugs corrigidos e lições aprendidas
+- [**Avatar Upload Feature**](docs/AVATAR_UPLOAD_FEATURE.md) - Sistema completo de upload de avatares
+- [**User List Filters**](docs/USER_LIST_FILTERS_FIX.md) - Solução de estabilidade para contadores e filtros
 
 ---
 

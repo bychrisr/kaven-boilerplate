@@ -5,9 +5,23 @@ import { createTenantSchema, updateTenantSchema } from '../../../lib/validation'
 export class TenantController {
   async list(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { page = '1', limit = '10' } = request.query as any;
-      const result = await tenantService.listTenants(parseInt(page), parseInt(limit));
+      const { page = '1', limit = '10', search, status } = request.query as any;
+      const result = await tenantService.listTenants(
+        parseInt(page), 
+        parseInt(limit),
+        search,
+        status
+      );
       reply.send(result);
+    } catch (error: any) {
+      reply.status(400).send({ error: error.message });
+    }
+  }
+
+  async getStats(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const stats = await tenantService.getStats();
+      reply.send(stats);
     } catch (error: any) {
       reply.status(400).send({ error: error.message });
     }

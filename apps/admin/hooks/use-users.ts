@@ -187,11 +187,36 @@ export function useCreateUser() {
   });
 }
 
-// Mutation: Atualizar usuário
+// Mutation: Atualizar usuário (Genérico)
+export function useUpdateUserMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: UpdateUserData }) => {
+      const response = await api.put(`/api/users/${id}`, data);
+      return response.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['user', variables.id] });
+      // Invalidate tenant stats as user count might change
+      queryClient.invalidateQueries({ queryKey: ['tenant-stats'] }); 
+      queryClient.invalidateQueries({ queryKey: ['tenants'] });
+      toast.success('Usuário atualizado com sucesso!');
+    },
+    onError: (error: unknown) => {
+      const message = getErrorMessage(error);
+      toast.error(message || 'Erro ao atualizar usuário');
+    },
+  });
+}
+
+// Mutation: Atualizar usuário (Legado/Fixo - wrapper do genérico se quisesse, mas mantendo compatibilidade)
 export function useUpdateUser(id: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
+// ... (mantendo o existente)
     mutationFn: async (data: UpdateUserData) => {
       const response = await api.put(`/api/users/${id}`, data);
       return response.data;
