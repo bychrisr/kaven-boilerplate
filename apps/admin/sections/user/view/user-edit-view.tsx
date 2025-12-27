@@ -277,8 +277,8 @@ export function UserEditView({ userId }: UserEditViewProps) {
           <div className="lg:col-span-2">
             <Card className="p-6 bg-card border-none shadow-sm dark:bg-[#212B36]">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* Full name */}
-                <div>
+                {/* Full name - 100% */}
+                <div className="sm:col-span-2">
                   <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
                     Full name <span className="text-destructive">*</span>
                   </label>
@@ -293,7 +293,7 @@ export function UserEditView({ userId }: UserEditViewProps) {
                    {errors.name && <p className="mt-1 text-sm text-destructive">{errors.name.message}</p>}
                 </div>
 
-                {/* Email address */}
+                {/* Email address - 50% */}
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
                     Email address <span className="text-destructive">*</span>
@@ -310,7 +310,7 @@ export function UserEditView({ userId }: UserEditViewProps) {
                   {errors.email && <p className="mt-1 text-sm text-destructive">{errors.email.message}</p>}
                 </div>
 
-                {/* Phone number */}
+                {/* Phone number - 50% */}
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
                     Phone number
@@ -328,7 +328,7 @@ export function UserEditView({ userId }: UserEditViewProps) {
                   />
                 </div>
 
-                {/* Tenant */}
+                {/* Tenant - 50% */}
                 <div>
                   <label htmlFor="tenantId" className="block text-sm font-medium text-foreground mb-2">
                     Tenant
@@ -356,7 +356,7 @@ export function UserEditView({ userId }: UserEditViewProps) {
                   </Select>
                 </div>
 
-                {/* Role */}
+                {/* Role - 50% */}
                 <div>
                   <label htmlFor="role" className="block text-sm font-medium text-foreground mb-2">
                     Role
@@ -376,49 +376,7 @@ export function UserEditView({ userId }: UserEditViewProps) {
                   </Select>
                 </div>
 
-                {/* Country */}
-                <div>
-                  <label htmlFor="country" className="block text-sm font-medium text-foreground mb-2">
-                    Country
-                  </label>
-                  <Input
-                    {...register('country')}
-                    id="country"
-                    placeholder="United States"
-                    className="bg-transparent"
-                    disabled
-                  />
-                </div>
-
-                {/* State/Region */}
-                <div>
-                  <label htmlFor="state" className="block text-sm font-medium text-foreground mb-2">
-                    State/Region
-                  </label>
-                  <Input
-                    {...register('state')}
-                    id="state"
-                    placeholder="Virginia"
-                    className="bg-transparent"
-                    disabled
-                  />
-                </div>
-
-                {/* City */}
-                <div>
-                  <label htmlFor="city" className="block text-sm font-medium text-foreground mb-2">
-                    City
-                  </label>
-                  <Input
-                    {...register('city')}
-                    id="city"
-                    placeholder="Rancho Cordova"
-                    className="bg-transparent"
-                    disabled
-                  />
-                </div>
-
-                {/* Address - Full width */}
+                {/* Address - 100% */}
                 <div className="sm:col-span-2">
                   <label htmlFor="address" className="block text-sm font-medium text-foreground mb-2">
                     Address
@@ -433,7 +391,49 @@ export function UserEditView({ userId }: UserEditViewProps) {
                   />
                 </div>
 
-                {/* Zip/code */}
+                {/* City - 50% */}
+                <div>
+                  <label htmlFor="city" className="block text-sm font-medium text-foreground mb-2">
+                    City
+                  </label>
+                  <Input
+                    {...register('city')}
+                    id="city"
+                    placeholder="Rancho Cordova"
+                    className="bg-transparent"
+                    disabled
+                  />
+                </div>
+
+                {/* State/Region - 50% */}
+                <div>
+                  <label htmlFor="state" className="block text-sm font-medium text-foreground mb-2">
+                    State/Region
+                  </label>
+                  <Input
+                    {...register('state')}
+                    id="state"
+                    placeholder="Virginia"
+                    className="bg-transparent"
+                    disabled
+                  />
+                </div>
+
+                {/* Country - 50% */}
+                <div>
+                  <label htmlFor="country" className="block text-sm font-medium text-foreground mb-2">
+                    Country
+                  </label>
+                  <Input
+                    {...register('country')}
+                    id="country"
+                    placeholder="United States"
+                    className="bg-transparent"
+                    disabled
+                  />
+                </div>
+
+                {/* Zip/code - 50% */}
                 <div>
                   <label htmlFor="zipcode" className="block text-sm font-medium text-foreground mb-2">
                     Zip/code
@@ -447,8 +447,8 @@ export function UserEditView({ userId }: UserEditViewProps) {
                   />
                 </div>
 
-                {/* Company */}
-                <div>
+                {/* Company - 100% */}
+                <div className="sm:col-span-2">
                   <label htmlFor="company" className="block text-sm font-medium text-foreground mb-2">
                     Company
                   </label>
