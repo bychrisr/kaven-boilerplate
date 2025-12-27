@@ -368,6 +368,71 @@ export class UserService {
 
     return { message: 'Usuário deletado com sucesso' };
   }
+
+  /**
+   * POST /api/users/:id/avatar - Upload de avatar
+   */
+  async uploadAvatar(userId: string, buffer: Buffer, filename: string): Promise<string> {
+    const fs = await import('node:fs/promises');
+    const path = await import('node:path');
+    const crypto = await import('node:crypto');
+    const sharp = (await import('sharp')).default;
+
+    // Verificar se usuário existe
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new Error('Usuário não encontrado');
+    }
+
+    // Criar diretório de uploads se não existir
+    const uploadsDir = path.join(process.cwd(), 'uploads', 'avatars');
+    await fs.mkdir(uploadsDir, { recursive: true });
+
+    // Gerar nome único para o arquivo (sempre .webp)
+    const uniqueName = `${userId}_${crypto.randomBytes(8).toString('hex')}.webp`;
+    const filePath = path.join(uploadsDir, uniqueName);
+
+    console.log('🖼️ [USER SERVICE] Converting image to WebP...');
+
+    // Processar imagem: redimensionar e converter para WebP
+    await sharp(buffer)
+      .resize(400, 400, {
+        fit: 'cover',
+        position: 'center',
+      })
+      .webp({
+        quality: 85, // Boa qualidade com compressão
+        effort: 6,   // Esforço de compressão (0-6, maior = melhor compressão)
+      })
+      .toFile(filePath);
+
+    console.log('✅ [USER SERVICE] Image converted to WebP');
+
+    // URL pública do avatar
+    const avatarUrl = `/uploads/avatars/${uniqueName}`;
+
+    // Atualizar usuário com URL do avatar
+    await prisma.user.update({
+      where: { id: userId },
+      data: { avatar: avatarUrl },
+    });
+
+    // Log Audit
+    await auditService.log({
+      action: 'user.avatar_updated',
+      entity: 'User',
+      entityId: userId,
+      actorId: undefined, // TODO: passar actorId
+      metadata: { avatarUrl }
+    });
+
+    console.log('✅ [USER SERVICE] Avatar uploaded:', { userId, avatarUrl });
+
+    return avatarUrl;
+  }
 }
 
 export const userService = new UserService();

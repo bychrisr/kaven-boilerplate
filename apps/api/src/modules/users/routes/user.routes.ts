@@ -40,6 +40,12 @@ export async function userRoutes(fastify: FastifyInstance) {
     handler: userController.update.bind(userController),
   });
 
+  // POST /api/users/:id/avatar - Upload de avatar (requer ownership ou TENANT_ADMIN)
+  fastify.post('/:id/avatar', {
+    preHandler: [authMiddleware, requireResourceOwnership('id')],
+    handler: userController.uploadAvatar.bind(userController),
+  });
+
   // DELETE /api/users/:id - Deletar usuário (requer TENANT_ADMIN)
   fastify.delete('/:id', {
     preHandler: [authMiddleware, requireTenantAdmin],

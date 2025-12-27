@@ -78,6 +78,56 @@ export class UserController {
     }
   }
 
+  async uploadAvatar(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const { id } = request.params as { id: string };
+      
+      // Processar multipart/form-data
+      const data = await request.file();
+      
+      if (!data) {
+        return reply.status(400).send({ error: 'No file uploaded' });
+      }
+
+      console.log('📤 [USER CONTROLLER] Upload Avatar - File:', {
+        filename: data.filename,
+        mimetype: data.mimetype,
+        encoding: data.encoding,
+      });
+
+      // Validar tipo de arquivo
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(data.mimetype)) {
+        return reply.status(400).send({ 
+          error: 'Invalid file type. Allowed: jpeg, jpg, png, gif, webp' 
+        });
+      }
+
+      // Converter stream para buffer
+      const buffer = await data.toBuffer();
+
+      // Validar tamanho (3MB)
+      const maxSize = 3 * 1024 * 1024; // 3MB
+      if (buffer.length > maxSize) {
+        return reply.status(400).send({ 
+          error: 'File too large. Maximum size: 3MB' 
+        });
+      }
+
+      console.log('✅ [USER CONTROLLER] Upload Avatar - File validated, size:', buffer.length);
+
+      // Salvar avatar
+      const avatarUrl = await userService.uploadAvatar(id, buffer, data.filename);
+      
+      console.log('✅ [USER CONTROLLER] Upload Avatar - Saved:', avatarUrl);
+
+      reply.send({ avatarUrl });
+    } catch (error: any) {
+      console.error('❌ [USER CONTROLLER] Upload Avatar - Error:', error);
+      reply.status(400).send({ error: error.message });
+    }
+  }
+
   async delete(request: FastifyRequest, reply: FastifyReply) {
     try {
       const { id } = request.params as { id: string };

@@ -80,8 +80,8 @@ model Tenant {
   status    TenantStatus @default(ACTIVE)
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
-  deletedAt DateTime?    // Soft delete
-  
+  deletedAt DateTime? // Soft delete
+
   // Relations
   users         User[]
   subscriptions Subscription[]
@@ -89,57 +89,58 @@ model Tenant {
   orders        Order[]
   auditLogs     AuditLog[]
   files         File[]
-  
+
   @@index([slug])
   @@index([domain])
   @@index([status])
 }
 
 model User {
-  id                String     @id @default(uuid())
-  email             String     @unique
-  password          String
-  name              String
-  phone             String?
-  emailVerified     Boolean    @default(false)
-  emailVerifiedAt   DateTime?
-  twoFactorEnabled  Boolean    @default(false)
-  twoFactorSecret   String?    // TOTP secret
-  backupCodes       String?    // JSON array of backup codes
-  role              Role       @default(USER)
-  status            UserStatus @default(ACTIVE)
-  tenantId          String?
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
-  deletedAt         DateTime?  // Soft delete
-  lastLoginAt       DateTime?
-  
+  id               String     @id @default(uuid())
+  email            String     @unique
+  password         String
+  name             String
+  phone            String?
+  avatar           String? // URL do avatar do usuário
+  emailVerified    Boolean    @default(false)
+  emailVerifiedAt  DateTime?
+  twoFactorEnabled Boolean    @default(false)
+  twoFactorSecret  String? // TOTP secret
+  backupCodes      String? // JSON array of backup codes
+  role             Role       @default(USER)
+  status           UserStatus @default(ACTIVE)
+  tenantId         String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  deletedAt        DateTime? // Soft delete
+  lastLoginAt      DateTime?
+
   // Security fields (Axisor Port)
   loginAttempts      Int       @default(0)
   lockedUntil        DateTime?
   lastLoginIp        String?
   lastLoginUserAgent String?
   sessionExpiresAt   DateTime?
-  
+
   /// Metadata JSON para permissões granulares e preferências do usuário
   /// Estrutura: { internalRole?: string, permissions?: string[], preferences?: object }
   /// Usado para sub-roles do Admin Tenant (ARCHITECT, FINANCE, SUPPORT, MARKETING, DEVOPS)
   /// Exemplo: { "internalRole": "FINANCE", "permissions": ["view:invoices", "manage:refunds"] }
-  metadata           Json?
-  
+  metadata Json?
+
   // Relations
-  tenant        Tenant?        @relation(fields: [tenantId], references: [id])
-  refreshTokens RefreshToken[]
-  auditLogs     AuditLog[]
-  files         File[]
-  verificationTokens VerificationToken[]
-  passwordResetTokens PasswordResetToken[]
+  tenant                    Tenant?                    @relation(fields: [tenantId], references: [id])
+  refreshTokens             RefreshToken[]
+  auditLogs                 AuditLog[]
+  files                     File[]
+  verificationTokens        VerificationToken[]
+  passwordResetTokens       PasswordResetToken[]
   designSystemCustomization DesignSystemCustomization?
-  
+
   // Security Relations
-  securityAuditLogs SecurityAuditLog[]
+  securityAuditLogs      SecurityAuditLog[]
   securityConfigsUpdated SecurityConfig[]
-  
+
   @@index([email])
   @@index([tenantId])
   @@index([role])
@@ -147,37 +148,37 @@ model User {
 }
 
 model RefreshToken {
-  id        String   @id @default(uuid())
-  token     String   @unique
+  id        String    @id @default(uuid())
+  token     String    @unique
   userId    String
   expiresAt DateTime
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
   revokedAt DateTime?
-  
+
   // Relations
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@index([userId])
   @@index([token])
   @@index([expiresAt])
 }
 
 model AuditLog {
-  id          String   @id @default(uuid())
-  action      String   // Ex: "user.created", "tenant.updated"
-  entity      String   // Ex: "User", "Tenant"
-  entityId    String
-  userId      String?
-  tenantId    String?
-  metadata    Json?    // Dados adicionais
-  ipAddress   String?
-  userAgent   String?
-  createdAt   DateTime @default(now())
-  
+  id        String   @id @default(uuid())
+  action    String // Ex: "user.created", "tenant.updated"
+  entity    String // Ex: "User", "Tenant"
+  entityId  String
+  userId    String?
+  tenantId  String?
+  metadata  Json? // Dados adicionais
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
   // Relations
   user   User?   @relation(fields: [userId], references: [id])
   tenant Tenant? @relation(fields: [tenantId], references: [id])
-  
+
   @@index([userId])
   @@index([tenantId])
   @@index([action])
@@ -189,24 +190,24 @@ model AuditLog {
 // ===========================
 
 model Subscription {
-  id                 String             @id @default(uuid())
-  tenantId           String
-  stripeCustomerId   String?            @unique
-  stripeSubscriptionId String?          @unique
-  status             SubscriptionStatus @default(TRIALING)
-  planName           String             // Ex: "FREE", "STARTER", "PRO"
-  priceMonthly       Decimal            @db.Decimal(10, 2)
-  currentPeriodStart DateTime
-  currentPeriodEnd   DateTime
-  cancelAtPeriodEnd  Boolean            @default(false)
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
-  deletedAt          DateTime?
-  
+  id                   String             @id @default(uuid())
+  tenantId             String
+  stripeCustomerId     String?            @unique
+  stripeSubscriptionId String?            @unique
+  status               SubscriptionStatus @default(TRIALING)
+  planName             String // Ex: "FREE", "STARTER", "PRO"
+  priceMonthly         Decimal            @db.Decimal(10, 2)
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  cancelAtPeriodEnd    Boolean            @default(false)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  deletedAt            DateTime?
+
   // Relations
   tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   invoices Invoice[]
-  
+
   @@index([tenantId])
   @@index([status])
   @@index([stripeSubscriptionId])
@@ -227,12 +228,12 @@ model Invoice {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   deletedAt      DateTime?
-  
+
   // Relations
   tenant       Tenant        @relation(fields: [tenantId], references: [id])
   subscription Subscription? @relation(fields: [subscriptionId], references: [id])
   payments     Payment[]
-  
+
   @@index([tenantId])
   @@index([status])
   @@index([invoiceNumber])
@@ -246,40 +247,40 @@ model Order {
   status      OrderStatus @default(PENDING)
   totalAmount Decimal     @db.Decimal(10, 2)
   currency    String      @default("BRL")
-  metadata    Json?       // Items, customer info, etc.
+  metadata    Json? // Items, customer info, etc.
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   deletedAt   DateTime?
-  
+
   // Relations
   tenant   Tenant    @relation(fields: [tenantId], references: [id])
   payments Payment[]
-  
+
   @@index([tenantId])
   @@index([status])
   @@index([orderNumber])
 }
 
 model Payment {
-  id                String        @id @default(uuid())
-  invoiceId         String?
-  orderId           String?
-  amount            Decimal       @db.Decimal(10, 2)
-  currency          String        @default("BRL")
-  method            PaymentMethod
-  status            PaymentStatus @default(PENDING)
-  transactionId     String?       @unique // Stripe/Pix transaction ID
-  pixQrCode         String?       // For Pix payments
-  pixQrCodeUrl      String?
-  metadata          Json?
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
-  confirmedAt       DateTime?
-  
+  id            String        @id @default(uuid())
+  invoiceId     String?
+  orderId       String?
+  amount        Decimal       @db.Decimal(10, 2)
+  currency      String        @default("BRL")
+  method        PaymentMethod
+  status        PaymentStatus @default(PENDING)
+  transactionId String?       @unique // Stripe/Pix transaction ID
+  pixQrCode     String? // For Pix payments
+  pixQrCodeUrl  String?
+  metadata      Json?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  confirmedAt   DateTime?
+
   // Relations
   invoice Invoice? @relation(fields: [invoiceId], references: [id])
   order   Order?   @relation(fields: [orderId], references: [id])
-  
+
   @@index([invoiceId])
   @@index([orderId])
   @@index([status])
@@ -291,22 +292,22 @@ model Payment {
 // ===========================
 
 model File {
-  id           String   @id @default(uuid())
-  filename     String   // Nome gerado (único)
-  originalName String   // Nome original do arquivo
-  mimeType     String   // ex: image/jpeg, application/pdf
-  size         Int      // Tamanho em bytes
-  path         String   // Caminho no filesystem ou S3
-  url          String?  // URL pública (se aplicável)
+  id           String    @id @default(uuid())
+  filename     String // Nome gerado (único)
+  originalName String // Nome original do arquivo
+  mimeType     String // ex: image/jpeg, application/pdf
+  size         Int // Tamanho em bytes
+  path         String // Caminho no filesystem ou S3
+  url          String? // URL pública (se aplicável)
   userId       String
   tenantId     String?
-  createdAt    DateTime @default(now())
+  createdAt    DateTime  @default(now())
   deletedAt    DateTime? // Soft delete
-  
+
   // Relations
   user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  
+
   @@index([userId])
   @@index([tenantId])
   @@index([createdAt])
@@ -318,9 +319,9 @@ model VerificationToken {
   userId    String
   expiresAt DateTime
   createdAt DateTime @default(now())
-  
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([token])
   @@index([userId])
 }
@@ -331,9 +332,9 @@ model PasswordResetToken {
   userId    String
   expiresAt DateTime
   createdAt DateTime @default(now())
-  
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([token])
   @@index([userId])
 }
@@ -350,11 +351,11 @@ enum DesignSystemType {
 }
 
 model DesignSystemCustomization {
-  id             String           @id @default(uuid())
-  userId         String           @unique
-  designSystem   DesignSystemType @default(MUI)
-  mode           String           @default("light") // "light" or "dark"
-  
+  id           String           @id @default(uuid())
+  userId       String           @unique
+  designSystem DesignSystemType @default(MUI)
+  mode         String           @default("light") // "light" or "dark"
+
   // Color customizations (JSON)
   colorPrimary   String?
   colorSecondary String?
@@ -362,23 +363,23 @@ model DesignSystemCustomization {
   colorWarning   String?
   colorError     String?
   colorInfo      String?
-  
+
   // Typography customizations
-  fontFamily     String?
-  fontSizeScale  Float?           @default(1.0)
-  
+  fontFamily    String?
+  fontSizeScale Float?  @default(1.0)
+
   // Spacing customizations
-  spacingScale   Float?           @default(1.0)
-  
+  spacingScale Float? @default(1.0)
+
   // Radius customizations
-  radiusScale    Float?           @default(1.0)
-  
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  
+  radiusScale Float? @default(1.0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Relations
-  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([designSystem])
 }
@@ -397,28 +398,28 @@ model SecurityConfig {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   updatedBy   String?
-  
+
   // Relations
-  updatedByUser User?    @relation(fields: [updatedBy], references: [id])
-  
+  updatedByUser User? @relation(fields: [updatedBy], references: [id])
+
   @@index([key])
   @@index([isActive])
 }
 
 model SecurityAuditLog {
-  id         String   @id @default(uuid())
-  userId     String?
-  action     String
-  resource   String?
-  ipAddress  String?
-  userAgent  String?
-  success    Boolean  @default(true)
-  details    Json?
-  createdAt  DateTime @default(now())
-  
+  id        String   @id @default(uuid())
+  userId    String?
+  action    String
+  resource  String?
+  ipAddress String?
+  userAgent String?
+  success   Boolean  @default(true)
+  details   Json?
+  createdAt DateTime @default(now())
+
   // Relations
-  user       User?    @relation(fields: [userId], references: [id])
-  
+  user User? @relation(fields: [userId], references: [id])
+
   @@index([userId])
   @@index([action])
   @@index([createdAt])

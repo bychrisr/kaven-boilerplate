@@ -19,6 +19,7 @@ import { AvatarUpload } from '@/components/avatar-upload';
 import { AddressAutocomplete } from '@/components/address-autocomplete';
 import { PhoneInput } from '@/components/phone-input';
 import { cn } from '@/lib/utils';
+import { api } from '@/lib/api';
 
 
 const userSchema = z.object({
@@ -160,9 +161,18 @@ export function UserEditView({ userId }: UserEditViewProps) {
         formData.append('avatar', avatarFile);
         
         console.log('📤 Uploading avatar...');
-        // TODO: Implementar endpoint de upload de avatar
-        // const avatarUrl = await uploadAvatar(userId, formData);
-        // data.avatar = avatarUrl;
+        try {
+          const response = await api.post(`/api/users/${userId}/avatar`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          console.log('✅ Avatar uploaded:', response.data);
+          // Avatar URL já foi atualizado no banco pelo backend
+        } catch (uploadError) {
+          console.error('❌ Avatar upload failed:', uploadError);
+          // Continuar com update mesmo se avatar falhar
+        }
       }
       
       await updateUser({

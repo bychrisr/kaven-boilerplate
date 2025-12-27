@@ -2,6 +2,7 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import multipart from '@fastify/multipart';
+import fastifyStatic from '@fastify/static';
 import fastifyHelmet from '@fastify/helmet';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
@@ -98,6 +99,14 @@ fastify.register(multipart, {
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB
   },
+});
+
+// Static files (uploads)
+import path from 'node:path';
+fastify.register(fastifyStatic, {
+  root: path.join(process.cwd(), 'uploads'),
+  prefix: '/uploads/',
+  decorateReply: false, // Não decorar reply para evitar conflitos
 });
 
 // Rate Limiting (global) - SOLUÇÃO ROBUSTA COM REDIS
