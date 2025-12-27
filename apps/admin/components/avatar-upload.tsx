@@ -93,46 +93,48 @@ export function AvatarUpload({ value, onChange }: AvatarUploadProps) {
   return (
     <>
       <div className="flex flex-col items-center gap-4">
-        <div className="relative">
-          <Avatar className="h-32 w-32">
+        <div 
+          {...getRootProps()}
+          className="relative cursor-pointer group"
+        >
+          <input {...getInputProps()} />
+          <Avatar className="h-32 w-32 ring-2 ring-offset-2 ring-border/20 group-hover:ring-primary/50 transition-all">
             {value ? (
               <AvatarImage src={value} alt="Avatar preview" />
             ) : (
-              <AvatarFallback className="bg-muted text-muted-foreground text-3xl">
+              <AvatarFallback className="bg-muted text-muted-foreground">
                 <Upload className="h-12 w-12" />
               </AvatarFallback>
             )}
           </Avatar>
+          
+          {/* Camera icon overlay */}
+          <div className={`absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity ${
+            isDragActive ? 'opacity-100' : ''
+          }`}>
+            <Upload className="h-8 w-8 text-white" />
+          </div>
+          
+          {/* Remove button */}
           {value && (
             <button
               type="button"
-              onClick={handleRemove}
-              className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center hover:bg-destructive/90 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRemove();
+              }}
+              className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center hover:bg-destructive/90 transition-colors z-10"
             >
               <X className="h-4 w-4" />
             </button>
           )}
         </div>
 
-        <div className="w-full">
-          <div
-            {...getRootProps()}
-            className={`flex items-center justify-center gap-2 cursor-pointer rounded-lg border-2 border-dashed px-4 py-3 text-sm font-medium transition-colors ${
-              isDragActive
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-border/60 bg-muted/30 text-muted-foreground hover:border-primary/50 hover:bg-muted/50'
-            }`}
-          >
-            <input {...getInputProps()} />
-            <Upload className="h-4 w-4" />
-            {isDragActive ? 'Drop here...' : 'Upload photo'}
-          </div>
-          <p className="mt-2 text-xs text-center text-muted-foreground">
-            Allowed *.jpeg, *.jpg, *.png, *.gif
-            <br />
-            max size of 3 MB
-          </p>
-        </div>
+        <p className="text-xs text-center text-muted-foreground">
+          Allowed *.jpeg, *.jpg, *.png, *.gif
+          <br />
+          max size of 3 MB
+        </p>
       </div>
 
       {/* Crop Dialog */}
