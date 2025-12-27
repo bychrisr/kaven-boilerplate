@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Home, User, Settings, LogOut, CreditCard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
-import { Avatar } from '@/components/ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,11 +39,13 @@ export function UserMenu() {
             )}
         >
             <div className="w-full h-full rounded-full bg-background flex items-center justify-center overflow-hidden border-2 border-background">
-                <Avatar 
-                    src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" 
-                    alt={user?.name || 'User'} 
-                    className="w-full h-full"
-                />
+                <Avatar className="w-full h-full">
+                    <AvatarImage 
+                        src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" 
+                        alt={user?.name || 'User'} 
+                    />
+                    <AvatarFallback className="bg-primary/10 text-primary">{user?.name?.charAt(0) || 'U'}</AvatarFallback>
+                </Avatar>
             </div>
         </div>
       </DropdownMenuTrigger>
@@ -58,11 +60,13 @@ export function UserMenu() {
              <div className="relative mb-4">
                 <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-primary to-primary-dark">
                     <div className="w-full h-full rounded-full bg-[#212B36] p-1">
-                        <Avatar 
-                            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" 
-                            size="2xl"
-                            className="w-full h-full"
-                        />
+                        <Avatar className="w-full h-full">
+                            <AvatarImage 
+                                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" 
+                                alt={user?.name || 'User'}
+                            />
+                            <AvatarFallback className="bg-primary/10 text-primary text-2xl">{user?.name?.charAt(0) || 'U'}</AvatarFallback>
+                        </Avatar>
                     </div>
                 </div>
              </div>

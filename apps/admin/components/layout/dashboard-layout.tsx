@@ -1,28 +1,39 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
 import { Sidebar } from './sidebar';
 import { Navbar } from './navbar';
+import { useSidebar } from '@/hooks/use-sidebar';
+import { useUIStore } from '@/stores/ui.store';
+import { cn } from '@/lib/utils';
 
 interface DashboardLayoutProps {
   children: ReactNode;
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { isCollapsed } = useSidebar();
+  const { toggleSidebar } = useUIStore();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Sidebar */}
-      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar />
 
       {/* Main Content */}
-      <div className={`transition-all duration-300 ${sidebarOpen ? 'lg:ml-64' : 'ml-0'}`}>
+      <div 
+        className={cn(
+            "transition-all duration-300 ease-in-out min-h-screen flex flex-col",
+            isCollapsed ? "lg:ml-[88px]" : "lg:ml-[280px]"
+        )}
+      >
         {/* Top Navbar */}
-        <Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
+        <Navbar onMenuClick={toggleSidebar} />
 
         {/* Page Content */}
-        <main className="p-6">{children}</main>
+        <main className="flex-1 p-4 md:p-6 overflow-hidden">
+            {children}
+        </main>
       </div>
     </div>
   );
