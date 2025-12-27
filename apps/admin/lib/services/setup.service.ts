@@ -1,4 +1,4 @@
-import { PrismaClient, Role, TenantStatus } from '@prisma/client';
+import { PrismaClient, Role, TenantStatus, Prisma } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { SeedConfig } from '../types/seed-config';
 import { UserMetadata, INTERNAL_ROLE_PERMISSIONS } from '../types/user-metadata';
@@ -118,7 +118,7 @@ export class SetupService {
       where: { email: config.adminEmail },
       update: {
         password: hashedPassword,
-        metadata: metadata as any
+        metadata: metadata as Prisma.InputJsonValue,
       },
       create: {
         email: config.adminEmail,
@@ -126,7 +126,7 @@ export class SetupService {
         password: hashedPassword,
         role: Role.SUPER_ADMIN,
         tenantId: tenantId,
-        metadata: metadata as any,
+        metadata: metadata as Prisma.InputJsonValue,
         emailVerified: true,
         emailVerifiedAt: new Date()
       }
@@ -151,7 +151,7 @@ export class SetupService {
     return await prisma.user.upsert({
       where: { email: 'finance@admin.com' },
       update: {
-        metadata: metadata as any
+        metadata: metadata as Prisma.InputJsonValue,
       },
       create: {
         email: 'finance@admin.com',
@@ -159,7 +159,7 @@ export class SetupService {
         password: hashedPassword,
         role: Role.TENANT_ADMIN,
         tenantId: tenantId,
-        metadata: metadata as any,
+        metadata: metadata as Prisma.InputJsonValue,
         emailVerified: true,
         emailVerifiedAt: new Date()
       }
@@ -184,7 +184,7 @@ export class SetupService {
     return await prisma.user.upsert({
       where: { email: 'support@admin.com' },
       update: {
-        metadata: metadata as any
+        metadata: metadata as Prisma.InputJsonValue,
       },
       create: {
         email: 'support@admin.com',
@@ -192,7 +192,7 @@ export class SetupService {
         password: hashedPassword,
         role: Role.TENANT_ADMIN,
         tenantId: tenantId,
-        metadata: metadata as any,
+        metadata: metadata as Prisma.InputJsonValue,
         emailVerified: true,
         emailVerifiedAt: new Date()
       }
@@ -217,7 +217,7 @@ export class SetupService {
     return await prisma.user.upsert({
       where: { email: 'marketing@admin.com' },
       update: {
-        metadata: metadata as any
+        metadata: metadata as Prisma.InputJsonValue,
       },
       create: {
         email: 'marketing@admin.com',
@@ -225,7 +225,7 @@ export class SetupService {
         password: hashedPassword,
         role: Role.TENANT_ADMIN,
         tenantId: tenantId,
-        metadata: metadata as any,
+        metadata: metadata as Prisma.InputJsonValue,
         emailVerified: true,
         emailVerifiedAt: new Date()
       }
@@ -250,7 +250,7 @@ export class SetupService {
     return await prisma.user.upsert({
       where: { email: 'devops@admin.com' },
       update: {
-        metadata: metadata as any
+        metadata: metadata as Prisma.InputJsonValue,
       },
       create: {
         email: 'devops@admin.com',
@@ -258,7 +258,7 @@ export class SetupService {
         password: hashedPassword,
         role: Role.TENANT_ADMIN,
         tenantId: tenantId,
-        metadata: metadata as any,
+        metadata: metadata as Prisma.InputJsonValue,
         emailVerified: true,
         emailVerifiedAt: new Date()
       }

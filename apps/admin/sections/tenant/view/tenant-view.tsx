@@ -42,6 +42,7 @@ export function TenantView() {
   // Filters
   const [filterName, setFilterName] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [filterPlan, setFilterPlan] = useState('all');
   
   // Pagination (0-indexed for UI, 1-indexed for API)
   const [page, setPage] = useState(0);
@@ -218,6 +219,18 @@ export function TenantView() {
                   className="pl-9 bg-transparent"
                 />
               </div>
+
+              <Select value={filterPlan} onValueChange={setFilterPlan}>
+                <SelectTrigger className="w-[140px] bg-transparent">
+                  <SelectValue placeholder="All Plans" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Plans</SelectItem>
+                  <SelectItem value="starter">Starter</SelectItem>
+                  <SelectItem value="pro">Pro</SelectItem>
+                  <SelectItem value="enterprise">Enterprise</SelectItem>
+                </SelectContent>
+              </Select>
 
               <Select value={String(rowsPerPage)} onValueChange={(value) => setRowsPerPage(Number(value))}>
                 <SelectTrigger className="w-[100px] bg-transparent">

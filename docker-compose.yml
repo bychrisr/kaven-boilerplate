@@ -67,6 +67,29 @@ services:
     depends_on:
       - prometheus
 
+  loki:
+    image: grafana/loki:latest
+    container_name: kaven-loki
+    ports:
+      - '3100:3100'
+    volumes:
+      - ./monitoring/loki/loki-config.yaml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - default
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: kaven-promtail
+    volumes:
+      - ./monitoring/promtail/promtail-config.yaml:/etc/promtail/config.yaml
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/config.yaml
+    depends_on:
+      - loki
+    networks:
+      - default
+
 volumes:
   postgres_data:
   prometheus_data:

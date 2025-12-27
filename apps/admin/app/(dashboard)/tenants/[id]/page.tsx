@@ -16,6 +16,7 @@ import {
   User as UserIcon,
   Shield,
   Loader2,
+  CreditCard,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -182,6 +183,49 @@ export default function TenantDetailsPage({ params }: { params: Promise<{ id: st
               <p className="text-sm text-gray-700">
                 {format(new Date(tenant.updatedAt), "d 'de' MMM, yyyy", { locale: ptBR })}
               </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Plan & Usage Card */}
+        <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="rounded-lg bg-emerald-50 p-2 text-emerald-600">
+              <CreditCard className="h-5 w-5" />
+            </div>
+            <h3 className="font-medium text-gray-900">Plano & Uso</h3>
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                 <p className="text-xs text-gray-500">Plano Atual</p>
+                 <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Trial</span>
+              </div>
+              <p className="text-sm font-medium text-gray-900">Plano Starter</p>
+              <p className="text-xs text-gray-500">Expira em 30 dias</p>
+            </div>
+            
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <p className="text-xs text-gray-500">Armazenamento</p>
+                <span className="text-xs text-gray-600">2%</span>
+              </div>
+              <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                <div className="bg-emerald-500 h-1.5 rounded-full" style={{ width: '2%' }}></div>
+              </div>
+              <p className="text-xs text-gray-400 mt-1">10MB de 500MB usados</p>
+            </div>
+
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <p className="text-xs text-gray-500">API Calls</p>
+                <span className="text-xs text-gray-600">15%</span>
+              </div>
+              <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                <div className="bg-blue-500 h-1.5 rounded-full" style={{ width: '15%' }}></div>
+              </div>
+              <p className="text-xs text-gray-400 mt-1">150 de 1.000 chamadas</p>
             </div>
           </div>
         </div>
