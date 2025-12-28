@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 import { Home, User, Settings, LogOut, CreditCard } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -44,25 +43,17 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div 
-            className={cn(
-            "w-10 h-10 rounded-full p-[2px] cursor-pointer transition-transform hover:scale-105",
-            "bg-gradient-to-tr from-yellow-400 to-orange-500", // Minimals gradient ring
-            "data-[state=open]:scale-105 data-[state=open]:ring-2 data-[state=open]:ring-primary/20"
-            )}
-        >
-            <div className="w-full h-full rounded-full bg-background flex items-center justify-center overflow-hidden border-2 border-background">
-                <Avatar className="w-full h-full">
-                    {avatarUrl ? (
-                      <AvatarImage 
-                          src={avatarUrl} 
-                          alt={user?.name || 'User'} 
-                      />
-                    ) : null}
-                    <AvatarFallback className="bg-primary/10 text-primary">{initials}</AvatarFallback>
-                </Avatar>
-            </div>
-        </div>
+        <button className="rounded-full outline-none transition-transform hover:scale-105 active:scale-95">
+            <Avatar className="w-10 h-10 ring-2 ring-primary ring-offset-2 ring-offset-background cursor-pointer">
+                {avatarUrl ? (
+                  <AvatarImage 
+                      src={avatarUrl} 
+                      alt={user?.name || 'User'} 
+                  />
+                ) : null}
+                <AvatarFallback className="bg-primary/10 text-primary font-medium">{initials}</AvatarFallback>
+            </Avatar>
+        </button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent 
@@ -73,7 +64,7 @@ export function UserMenu() {
           {/* Header */}
           <div className="flex flex-col items-center justify-center p-6 border-b border-dashed border-border relative">
              <div className="relative mb-4">
-                <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-primary to-primary-dark">
+                <div className="w-24 h-24 rounded-full p-1 bg-primary">
                     <div className="w-full h-full rounded-full bg-popover p-1">
                         <Avatar className="w-full h-full">
                             {avatarUrl ? (
