@@ -68,13 +68,13 @@ export function UserMenu() {
       <DropdownMenuContent 
         align="end" 
         sideOffset={8}
-        className="w-80 p-0 border-white/5 bg-[#212B36] text-white rounded-2xl backdrop-blur-xl shadow-2xl"
+        className="w-80 p-0 border-border bg-popover text-popover-foreground rounded-2xl backdrop-blur-xl shadow-2xl"
       >
           {/* Header */}
-          <div className="flex flex-col items-center justify-center p-6 border-b border-dashed border-white/10 relative">
+          <div className="flex flex-col items-center justify-center p-6 border-b border-dashed border-border relative">
              <div className="relative mb-4">
                 <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-primary to-primary-dark">
-                    <div className="w-full h-full rounded-full bg-[#212B36] p-1">
+                    <div className="w-full h-full rounded-full bg-popover p-1">
                         <Avatar className="w-full h-full">
                             {avatarUrl ? (
                               <AvatarImage 
@@ -88,8 +88,8 @@ export function UserMenu() {
                 </div>
              </div>
 
-             <h6 className="text-lg font-bold text-white mb-1">{user?.name || 'Jaydon Frankie'}</h6>
-             <p className="text-sm text-gray-400">{user?.email || 'demo@minimals.cc'}</p>
+             <h6 className="text-lg font-bold text-foreground mb-1">{user?.name || 'Jaydon Frankie'}</h6>
+             <p className="text-sm text-muted-foreground">{user?.email || 'demo@minimals.cc'}</p>
           </div>
 
           {/* Menu Items */}
@@ -98,9 +98,9 @@ export function UserMenu() {
                 <DropdownMenuItem
                     key={item.label}
                     onClick={() => router.push(item.href)}
-                    className="w-full flex items-center gap-4 px-4 py-3 rounded-lg text-sm text-gray-300 focus:text-white focus:bg-white/5 cursor-pointer group outline-none"
+                    className="w-full flex items-center gap-4 px-4 py-3 rounded-lg text-sm text-foreground/90 focus:text-accent-foreground focus:bg-accent cursor-pointer group outline-none"
                 >
-                    <item.icon className="w-5 h-5 text-gray-400 group-hover:text-primary transition-colors" />
+                    <item.icon className="w-5 h-5 text-foreground/70 group-hover:text-primary transition-colors" />
                     <span className="font-medium">{item.label}</span>
                     {item.label === 'Billing' && (
                         <span className="ml-auto bg-error-main/20 text-error-main text-xs font-bold px-1.5 py-0.5 rounded">
@@ -115,7 +115,7 @@ export function UserMenu() {
           <div className="p-4 pt-0">
              <button
                 onClick={handleLogout}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-red-500/10 to-red-500/20 text-red-500 font-bold hover:bg-red-500/20 transition-all flex items-center justify-center gap-2 border border-red-500/20 cursor-pointer"
+                className="w-full py-3 rounded-xl bg-red-500/10 text-red-500 font-bold hover:bg-red-500/20 transition-all flex items-center justify-center gap-2 border border-red-500/20 cursor-pointer"
              >
                 <LogOut className="w-4 h-4" />
                 Logout
