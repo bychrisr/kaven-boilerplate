@@ -24,15 +24,24 @@ function DashboardLayoutInner({ children }: { children: ReactNode }) {
   return (
     <div 
       className={cn(
-        "flex h-screen overflow-hidden transition-colors duration-300",
+        "flex h-screen overflow-hidden transition-colors duration-300 relative",
         "bg-background text-foreground"
       )}
     >
+      {/* Background Gradients/Blobs */}
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary/20 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-primary/20 blur-[120px] pointer-events-none" />
+      
+      {/* Noise Texture */}
+      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none mix-blend-overlay"
+           style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} 
+      />
+
       <Sidebar />
 
       <div
         className={cn(
-          'flex flex-1 flex-col overflow-hidden transition-all duration-300',
+          'flex flex-1 flex-col overflow-hidden transition-all duration-300 relative z-10',
           isCollapsed ? 'lg:ml-[88px]' : 'lg:ml-[280px]'
         )}
       >
