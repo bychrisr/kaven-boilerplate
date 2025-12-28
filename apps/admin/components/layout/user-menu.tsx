@@ -1,19 +1,23 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Home, User, Settings, LogOut, CreditCard } from 'lucide-react';
+import { Home, User, Settings, LogOut, CreditCard, Moon, Sun } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
+import { useSettings } from '@/stores/settings.store';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 
 export function UserMenu() {
   const router = useRouter();
   const { user, logout } = useAuthStore();
+  const { theme, toggleTheme } = useSettings();
 
   const handleLogout = async () => {
     await logout();
@@ -43,7 +47,7 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="rounded-full outline-none transition-transform hover:scale-105 active:scale-95">
+        <button className="rounded-full outline-none transition-transform hover:scale-105 active:scale-95 focus:ring-2 focus:ring-primary/20">
             <Avatar className="w-10 h-10 ring-2 ring-primary ring-offset-2 ring-offset-background cursor-pointer">
                 {avatarUrl ? (
                   <AvatarImage 
@@ -101,6 +105,39 @@ export function UserMenu() {
                 </DropdownMenuItem>
             ))}
           </div>
+
+          <DropdownMenuSeparator className="my-1 mx-4" />
+
+          {/* Theme Toggle */}
+          <div className="px-4 pb-2">
+            <button
+                onClick={toggleTheme}
+                className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm text-foreground/90 hover:bg-accent transition-colors cursor-pointer"
+            >
+                <div className="flex items-center gap-4">
+                    {theme === 'dark' ? (
+                        <Moon className="w-5 h-5 text-foreground/70" />
+                    ) : (
+                        <Sun className="w-5 h-5 text-foreground/70" />
+                    )}
+                    <span className="font-medium">
+                        {theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
+                    </span>
+                </div>
+                {/* Toggle visual indicator */}
+                <div className={cn(
+                    "w-9 h-5 rounded-full p-0.5 transition-colors duration-300 relative",
+                    theme === 'dark' ? "bg-primary" : "bg-muted-foreground/30"
+                )}>
+                    <div className={cn(
+                        "w-4 h-4 bg-white rounded-full transition-transform duration-300 shadow-sm",
+                        theme === 'dark' ? "translate-x-4" : "translate-x-0"
+                    )} />
+                </div>
+            </button>
+          </div>
+
+          <DropdownMenuSeparator className="my-1 mx-4" />
 
           {/* Logout Button */}
           <div className="p-4 pt-0">

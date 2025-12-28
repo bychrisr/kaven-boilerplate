@@ -1,15 +1,15 @@
 'use client';
 
-import { Search, Bell, Settings, Menu, Command } from 'lucide-react';
+import { Search, Bell, Command } from 'lucide-react';
 import { useUIStore } from '@/stores/ui.store';
-import { useSettings } from '@/stores/settings.store';
 import { TenantSwitcher } from '@/components/layout/tenant-switcher';
 import { UserMenu } from '@/components/layout/user-menu';
 import { cn } from '@/lib/utils';
 
+
 export function Header() {
   const { toggleSidebar } = useUIStore();
-  const { theme } = useSettings();
+
 
   return (
     <header 
@@ -59,16 +59,7 @@ export function Header() {
             <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-destructive rounded-full ring-2 ring-background" />
         </button>
 
-        {/* Settings (Drawer Trigger) */}
-        <button 
-            onClick={() => window.dispatchEvent(new Event('open-settings-drawer'))}
-            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-accent transition-colors animate-spin-slow group"
-        >
-            <Settings className={cn(
-                "w-5 h-5 text-muted-foreground transition-transform group-hover:rotate-90 group-hover:text-foreground",
-                theme === 'dark' ? "text-primary" : ""
-            )} />
-        </button>
+
 
         {/* User Profile */}
         <UserMenu />
