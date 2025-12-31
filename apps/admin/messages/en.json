@@ -1,0 +1,15 @@
+{
+  "Settings": {
+    "title": "Platform Settings",
+    "description": "General settings for your SaaS platform.",
+    "save": "Save Changes",
+    "saved": "Settings saved successfully",
+    "companyName": "Company Name",
+    "language": "Language",
+    "currency": "Currency"
+  },
+  "Common": {
+    "dashboard": "Dashboard",
+    "actions": "Actions"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "Settings": {
+    "title": "Configurações da Plataforma",
+    "description": "Configurações gerais da sua plataforma SaaS.",
+    "save": "Salvar Alterações",
+    "saved": "Configurações salvas com sucesso",
+    "companyName": "Nome da Empresa",
+    "language": "Idioma",
+    "currency": "Moeda"
+  },
+  "Common": {
+    "dashboard": "Dashboard",
+    "actions": "Ações"
+  }
+}
