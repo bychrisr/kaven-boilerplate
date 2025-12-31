@@ -69,6 +69,26 @@ enum PaymentStatus {
 }
 
 // ===========================
+// PLATFORM CONFIGURATION
+// ===========================
+
+model PlatformConfig {
+  id           String   @id @default(uuid())
+  companyName  String   @default("Kaven SaaS")
+  description  String?
+  primaryColor String   @default("#00A76F")
+  logoUrl      String?  // URL do logo principal
+  faviconUrl   String?  // URL do favicon
+  
+  // Configurações Regionais
+  language     String   @default("pt-BR")
+  currency     String   @default("BRL")
+  numberFormat String   @default("1.000,00") // 1.000,00 or 1,000.00
+  
+  updatedAt    DateTime @updatedAt
+}
+
+// ===========================
 // CORE MODELS
 // ===========================
 
