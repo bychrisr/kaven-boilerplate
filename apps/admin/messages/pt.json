@@ -10,6 +10,43 @@
   },
   "Common": {
     "dashboard": "Dashboard",
-    "actions": "Ações"
+    "actions": "Ações",
+    "users": "Usuários",
+    "business": "Negócios",
+    "comingSoon": "Em breve para {name}",
+    "menu": {
+      "profile": "Perfil",
+      "settings": "Configurações",
+      "logout": "Sair"
+    }
+  },
+  "Dashboard": {
+    "title": "Dashboard {name}",
+    "cards": {
+      "totalUsers": "Usuários Ativos",
+      "newSignups": "Novos Cadastros",
+      "activationRate": "Taxa de Ativação",
+      "totalRevenue": "Receita Total",
+      "totalInvoices": "Faturas Totais"
+    },
+    "metrics": {
+      "last7Days": "últimos 7 dias",
+      "vsPrevious7Days": "vs 7 dias anteriores"
+    },
+    "charts": {
+      "currentActivity": "Atividade Atual",
+      "activityByType": "Atividade por tipo",
+      "activityTrends": "Tendências de Atividade",
+      "trendComparison": "(+43%) que ano passado"
+    },
+    "table": {
+      "title": "Usuários Ativos",
+      "columns": {
+        "user": "Usuário",
+        "role": "Função",
+        "joined": "Entrou em",
+        "action": "Ação"
+      }
+    }
   }
 }

@@ -3,6 +3,7 @@
 
 import { useSpaces } from '@/hooks/use-spaces';
 import { SPACES } from '@/config/spaces';
+import { useTranslations } from 'next-intl';
 
 import { useUsers } from '@/hooks/use-users';
 import { useDashboardSummary, useDashboardCharts } from '@/hooks/use-dashboard';
@@ -71,6 +72,9 @@ const normalizeMetric = (metric: any) => {
 };
 
 export default function DashboardPage() {
+  const t = useTranslations('Dashboard');
+  const tCommon = useTranslations('Common');
+  
   const { data: usersData } = useUsers({ page: 1, limit: 5 });
   const { data: summary, isLoading: isLoadingSummary } = useDashboardSummary();
   const { data: charts, isLoading: isLoadingCharts } = useDashboardCharts();
@@ -114,7 +118,7 @@ export default function DashboardPage() {
     <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
-         <h1 className="text-2xl font-bold tracking-tight text-foreground">{spaceConfig.name} Dashboard</h1>
+         <h1 className="text-2xl font-bold tracking-tight text-foreground">{t('title', { name: spaceConfig.name })}</h1>
       </div>
 
       {/* Metrics Cards Grid */}
@@ -126,7 +130,7 @@ export default function DashboardPage() {
                      <div className="p-2 md:p-3 bg-primary/10 rounded-full">
                         <Users className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                      </div>
-                     <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">Total Active Users</span>
+                     <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">{t('cards.totalUsers')}</span>
                 </div>
                 <div className="flex items-end justify-between">
                     <div>
@@ -136,7 +140,7 @@ export default function DashboardPage() {
                                 {metrics.totalUsers.trend >= 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
                                 {metrics.totalUsers.trend > 0 ? '+' : ''}{metrics.totalUsers.trend}%
                             </span>
-                            <span className="text-muted-foreground">last 7 days</span>
+                            <span className="text-muted-foreground">{t('metrics.last7Days')}</span>
                          </div>
                     </div>
                      <div className="h-12 w-24" style={{ minWidth: '96px', minHeight: '48px' }}>
@@ -157,7 +161,7 @@ export default function DashboardPage() {
                      <div className="p-2 md:p-3 bg-blue-500/10 rounded-full">
                         <Users className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
                      </div>
-                     <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">New Signups</span>
+                     <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">{t('cards.newSignups')}</span>
                 </div>
                  <div className="flex items-end justify-between">
                     <div>
@@ -167,7 +171,7 @@ export default function DashboardPage() {
                                  {metrics.newSignups.trend >= 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
                                 {metrics.newSignups.trend > 0 ? '+' : ''}{metrics.newSignups.trend}%
                             </span>
-                            <span className="text-muted-foreground">vs previous 7 days</span>
+                            <span className="text-muted-foreground">{t('metrics.vsPrevious7Days')}</span>
                          </div>
                     </div>
                      <div className="h-12 w-24" style={{ minWidth: '96px', minHeight: '48px' }}>
@@ -188,7 +192,7 @@ export default function DashboardPage() {
                      <div className="p-2 md:p-3 bg-yellow-500/10 rounded-full">
                         <FileText className="h-5 w-5 md:h-6 md:w-6 text-yellow-500" />
                      </div>
-                     <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">Activation Rate</span>
+                     <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">{t('cards.activationRate')}</span>
                 </div>
                  <div className="flex items-end justify-between">
                     <div>
@@ -198,7 +202,7 @@ export default function DashboardPage() {
                                  {metrics.activationRate.trend >= 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
                                 {metrics.activationRate.trend > 0 ? '+' : ''}{metrics.activationRate.trend}%
                             </span>
-                            <span className="text-muted-foreground">vs previous 7 days</span>
+                            <span className="text-muted-foreground">{t('metrics.vsPrevious7Days')}</span>
                          </div>
                     </div>
                       <div className="h-12 w-24" style={{ minWidth: '96px', minHeight: '48px' }}>
@@ -224,7 +228,7 @@ export default function DashboardPage() {
                         <FileText className="h-6 w-6 text-muted-foreground" />
                     </div>
                     <h3 className="text-lg font-bold text-foreground capitalize">{card.replace('_', ' ')}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">Coming soon for {spaceConfig.name}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{tCommon('comingSoon', { name: spaceConfig.name })}</p>
                 </div>
             ))
         }
@@ -235,7 +239,7 @@ export default function DashboardPage() {
         <div className="space-y-4">
              <div className="flex items-center gap-2">
                 <DollarSign className="h-5 w-5 text-muted-foreground" />
-                <h3 className="text-lg font-bold text-foreground">Business</h3>
+                <h3 className="text-lg font-bold text-foreground">{tCommon('business')}</h3>
             </div>
             
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -246,7 +250,7 @@ export default function DashboardPage() {
                             <div className="p-2 md:p-3 bg-blue-500/10 rounded-full">
                                 <DollarSign className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
                             </div>
-                            <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">Total Revenue</span>
+                            <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">{t('cards.totalRevenue')}</span>
                         </div>
                         <div className="flex items-end justify-between">
                             <div>
@@ -256,7 +260,7 @@ export default function DashboardPage() {
                                         {metrics.revenue.trend >= 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
                                         {metrics.revenue.trend > 0 ? '+' : ''}{metrics.revenue.trend}%
                                     </span>
-                                    <span className="text-muted-foreground">last 7 days</span>
+                                    <span className="text-muted-foreground">{t('metrics.last7Days')}</span>
                                 </div>
                             </div>
                             <div className="h-12 w-24" style={{ minWidth: '96px', minHeight: '48px' }}>
@@ -277,7 +281,7 @@ export default function DashboardPage() {
                             <div className="p-2 md:p-3 bg-yellow-500/10 rounded-full">
                                 <FileText className="h-5 w-5 md:h-6 md:w-6 text-yellow-500" />
                             </div>
-                            <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">Total Invoices</span>
+                            <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">{t('cards.totalInvoices')}</span>
                         </div>
                         <div className="flex items-end justify-between">
                             <div>
@@ -287,7 +291,7 @@ export default function DashboardPage() {
                                         {metrics.invoices.trend >= 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
                                         {metrics.invoices.trend > 0 ? '+' : ''}{metrics.invoices.trend}%
                                     </span>
-                                    <span className="text-muted-foreground">last 7 days</span>
+                                    <span className="text-muted-foreground">{t('metrics.last7Days')}</span>
                                 </div>
                             </div>
                             <div className="h-12 w-24" style={{ minWidth: '96px', minHeight: '48px' }}>
@@ -310,7 +314,7 @@ export default function DashboardPage() {
                                 <FileText className="h-6 w-6 text-muted-foreground" />
                             </div>
                             <h3 className="text-lg font-bold text-foreground capitalize">{card.replace('_', ' ')}</h3>
-                            <p className="text-sm text-muted-foreground mt-1">Coming soon for {spaceConfig.name}</p>
+                            <p className="text-sm text-muted-foreground mt-1">{tCommon('comingSoon', { name: spaceConfig.name })}</p>
                         </div>
                     ))
                 }
@@ -324,8 +328,8 @@ export default function DashboardPage() {
             {/* Donut Chart */}
             <div className="rounded-2xl bg-card p-6 shadow-xl border border-border/50 lg:col-span-1">
                 <div className="mb-6">
-                    <h3 className="text-lg font-bold text-foreground">Current Activity</h3>
-                    <p className="text-sm text-muted-foreground">Activity by type</p>
+                    <h3 className="text-lg font-bold text-foreground">{t('charts.currentActivity')}</h3>
+                    <p className="text-sm text-muted-foreground">{t('charts.activityByType')}</p>
                 </div>
                 <div className="h-80 w-full flex items-center justify-center relative" style={{ minHeight: '320px' }}>
                     <ResponsiveContainer width="100%" height="100%">
@@ -352,8 +356,8 @@ export default function DashboardPage() {
             <div className="rounded-2xl bg-card p-6 shadow-xl border border-border/50 lg:col-span-2">
                 <div className="flex items-center justify-between mb-6">
                     <div>
-                        <h3 className="text-lg font-bold text-foreground">Activity Trends</h3>
-                        <p className="text-sm text-muted-foreground">(+43%) than last year</p>
+                        <h3 className="text-lg font-bold text-foreground">{t('charts.activityTrends')}</h3>
+                        <p className="text-sm text-muted-foreground">{t('charts.trendComparison')}</p>
                     </div>
                 </div>
                 <div className="h-80 w-full min-w-0" style={{ minHeight: '320px' }}>
@@ -376,16 +380,16 @@ export default function DashboardPage() {
       {showCard('users') && (
         <div className="rounded-2xl bg-card shadow-xl border border-border/50 overflow-hidden">
             <div className="p-6 border-b border-border/50">
-                <h3 className="text-lg font-bold text-foreground">Active Users</h3>
+                <h3 className="text-lg font-bold text-foreground">{t('table.title')}</h3>
             </div>
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-border/50">
                     <thead className="bg-muted/50">
                     <tr>
-                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">User</th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Role</th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Joined</th>
-                        <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">Action</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('table.columns.user')}</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('table.columns.role')}</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('table.columns.joined')}</th>
+                        <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('table.columns.action')}</th>
                     </tr>
                     </thead>
                     <tbody className="divide-y divide-border/50 bg-card">

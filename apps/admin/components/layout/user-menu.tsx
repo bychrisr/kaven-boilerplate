@@ -1,6 +1,7 @@
 'use client';
 
-import { useRouter } from '@/i18n/routing';
+import { useRouter, usePathname } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 import { Home, User, Settings, LogOut, CreditCard, Moon, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
@@ -18,6 +19,10 @@ import {
 
 export function UserMenu() {
   const router = useRouter();
+  const pathname = usePathname();
+  const t = useTranslations('Common.menu');
+  const tSettings = useTranslations('Settings');
+  
   const { user, logout } = useAuthStore();
   const { theme, toggleTheme } = useSettings();
 
@@ -26,7 +31,15 @@ export function UserMenu() {
     router.push('/login');
   };
 
-  // Gerar iniciais do nome
+  const handleLanguageChange = (locale: string) => {
+    // Manually constructing URL to force full reload/switch if needed, 
+    // or use router.replace(pathname, { locale })
+    // Using window.location for hard switch as requested by user context implies full correct translation
+    // But next-intl router is better.
+    router.replace(pathname, { locale });
+  };
+
+  // Generate initials
   const initials = user?.name
     ?.split(' ')
     .map(n => n[0])
@@ -34,15 +47,15 @@ export function UserMenu() {
     .toUpperCase()
     .slice(0, 2) || 'U';
 
-  // URL do avatar com fallback
+  // Avatar URL
   const avatarUrl = user?.avatar 
     ? (user.avatar.startsWith('http') ? user.avatar : `http://localhost:8000${user.avatar}`)
     : undefined;
 
   const menuItems = [
     { label: 'Home', icon: Home, href: '/' },
-    { label: 'Profile', icon: User, href: '/profile' },
-    { label: 'Settings', icon: Settings, href: '/settings' },
+    { label: t('profile'), icon: User, href: '/profile' },
+    { label: t('settings'), icon: Settings, href: '/settings' },
     { label: 'Billing', icon: CreditCard, href: '/billing' },
   ];
 
@@ -112,15 +125,15 @@ export function UserMenu() {
 
           {/* Language Selection */}
           <DropdownMenuGroup className="px-4 pb-2">
-            <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-4">Language</DropdownMenuLabel>
+            <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-4">{tSettings('language')}</DropdownMenuLabel>
             <DropdownMenuItem 
-                onClick={() => window.location.href = '/en/dashboard'}
+                onClick={() => handleLanguageChange('en')}
                 className="w-full flex items-center gap-4 px-4 py-3 rounded-lg text-sm text-foreground/90 focus:text-accent-foreground focus:bg-accent cursor-pointer group outline-none"
             >
                 🇺🇸 English (US)
             </DropdownMenuItem>
              <DropdownMenuItem 
-                onClick={() => window.location.href = '/pt/dashboard'}
+                onClick={() => handleLanguageChange('pt')}
                 className="w-full flex items-center gap-4 px-4 py-3 rounded-lg text-sm text-foreground/90 focus:text-accent-foreground focus:bg-accent cursor-pointer group outline-none"
             >
                 🇧🇷 Português (BR)
@@ -167,7 +180,7 @@ export function UserMenu() {
                 className="w-full py-3 rounded-xl bg-red-500/10 text-red-500 font-bold hover:bg-red-500/20 transition-all flex items-center justify-center gap-2 border border-red-500/20 cursor-pointer"
              >
                 <LogOut className="w-4 h-4" />
-                Logout
+                {t('logout')}
              </button>
           </div>
       </DropdownMenuContent>
