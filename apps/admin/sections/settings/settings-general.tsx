@@ -5,16 +5,20 @@
 
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 export function SettingsGeneral() {
+  const t = useTranslations('Settings');
+
   return (
     <div className="bg-white rounded-xl border shadow-sm p-6">
-      <h2 className="text-xl font-semibold mb-4">Configurações Gerais</h2>
+      <h2 className="text-xl font-semibold mb-4">{t('general.title')}</h2>
 
       <div className="space-y-6">
         {/* App Name */}
         <div>
           <label htmlFor="app-name" className="block text-sm font-medium text-gray-700 mb-2">
-            Nome da Aplicação
+            {t('general.appName')}
           </label>
           <input
             id="app-name"
@@ -27,7 +31,7 @@ export function SettingsGeneral() {
         {/* Language */}
         <div>
           <label htmlFor="language" className="block text-sm font-medium text-gray-700 mb-2">
-            Idioma
+            {t('general.language')}
           </label>
           <select
             id="language"
@@ -43,7 +47,7 @@ export function SettingsGeneral() {
         {/* Timezone */}
         <div>
           <label htmlFor="timezone" className="block text-sm font-medium text-gray-700 mb-2">
-            Fuso Horário
+            {t('general.timezone')}
           </label>
           <select
             id="timezone"
@@ -59,7 +63,7 @@ export function SettingsGeneral() {
         {/* Save Button */}
         <div className="flex justify-end pt-4">
           <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-            Salvar Alterações
+            {t('actions.save')}
           </button>
         </div>
       </div>

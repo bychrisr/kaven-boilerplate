@@ -1,12 +1,14 @@
+// 🎨 UI: Forgot Password Page (Dark Glassmorphism)
 'use client';
 
 import { useState } from 'react';
 import { TextField } from '@/components/ui/text-field';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 
-// 🎨 UI: Forgot Password Page (Dark Glassmorphism)
 export default function ForgotPasswordPage() {
+  const t = useTranslations('Auth.forgotPassword');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -40,16 +42,15 @@ export default function ForgotPasswordPage() {
            </svg>
         </div>
 
-        <h3 className="text-2xl font-bold text-card-foreground mb-2">Request sent successfully!</h3>
+        <h3 className="text-2xl font-bold text-card-foreground mb-2">{t('successTitle')}</h3>
         <p className="text-muted-foreground mb-8">
-          We&apos;ve sent a confirmation email to <br /> 
-          <span className="text-foreground font-medium">{email}</span>
-          <br />
-          Please check your email.
+          {t.rich('successDescription', {
+            email: () => <span className="text-foreground font-medium">{email}</span>
+          })}
         </p>
 
         <Button variant="contained" color="primary" fullWidth size="lg" asChild className="mb-4">
-            <Link href="/login">Back to Sign In</Link>
+            <Link href="/login">{t('backToLogin')}</Link>
         </Button>
       </div>
     );
@@ -64,9 +65,9 @@ export default function ForgotPasswordPage() {
             </svg>
         </div>
 
-        <h3 className="text-2xl font-bold text-card-foreground mb-2">Forgot your password?</h3>
+        <h3 className="text-2xl font-bold text-card-foreground mb-2">{t('title')}</h3>
         <p className="text-muted-foreground">
-          Please enter the email address associated with your account and we&apos;ll email you a link to reset your password.
+          {t('description')}
         </p>
       </div>
 
@@ -74,7 +75,7 @@ export default function ForgotPasswordPage() {
         <TextField
           id="email"
           type="email"
-          label="Email address"
+          label={t('emailLabel')}
           placeholder="example@gmail.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -92,7 +93,7 @@ export default function ForgotPasswordPage() {
           size="lg"
           className="h-12 text-md font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all"
         >
-          Send Request
+          {t('submit')}
         </Button>
 
         <Button variant="text" className="w-full text-muted-foreground hover:text-foreground" asChild>
@@ -100,7 +101,7 @@ export default function ForgotPasswordPage() {
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Return to sign in
+            {t('backToSignIn')}
           </Link>
         </Button>
       </form>

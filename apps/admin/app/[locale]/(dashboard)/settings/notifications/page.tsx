@@ -1,10 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { Loader2, Save, Bell, Mail } from 'lucide-react';
 
 export default function NotificationsSettingsPage() {
+  const t = useTranslations('Settings.notifications');
+  const tActions = useTranslations('Settings.actions');
   const [isSaving, setIsSaving] = useState(false);
   const [preferences, setPreferences] = useState({
     emailRegisters: true,
@@ -24,12 +27,12 @@ export default function NotificationsSettingsPage() {
     // Simulating API call since we don't have a specific endpoint yet
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setIsSaving(false);
-    toast.success('Preferências de notificação salvas!');
+    toast.success(tActions('save') || 'Preferences saved!');
   };
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Notificações</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">{t('title')}</h1>
 
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 max-w-2xl">
         <div className="space-y-8">
@@ -37,30 +40,30 @@ export default function NotificationsSettingsPage() {
           <div>
             <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
               <Mail className="h-5 w-5 text-gray-500" />
-              Notificações por Email
+              {t('email')}
             </h3>
             <div className="space-y-3">
               <ToggleOption
-                label="Novos registros de usuários"
-                description="Receba um email quando um novo usuário se cadastrar."
+                label={t('newUsers')}
+                description={t('newUsersDesc')}
                 checked={preferences.emailRegisters}
                 onChange={() => handleToggle('emailRegisters')}
               />
               <ToggleOption
-                label="Atualizações de pedidos"
-                description="Receba atualizações sobre mudanças de status em pedidos."
+                label={t('newOrders')}
+                description={t('newOrdersDesc')}
                 checked={preferences.emailOrders}
                 onChange={() => handleToggle('emailOrders')}
               />
               <ToggleOption
-                label="Pagamentos de faturas"
-                description="Seja notificado quando uma fatura for paga."
+                label="Invoice Payments" 
+                description="Get notified when an invoice is paid."
                 checked={preferences.emailInvoices}
                 onChange={() => handleToggle('emailInvoices')}
               />
               <ToggleOption
-                label="Alertas do sistema"
-                description="Notificações importantes sobre manutenção e segurança."
+                label={t('systemUpdates')}
+                description={t('systemUpdatesDesc')}
                 checked={preferences.emailSystem}
                 onChange={() => handleToggle('emailSystem')}
               />
@@ -73,18 +76,18 @@ export default function NotificationsSettingsPage() {
           <div>
             <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
               <Bell className="h-5 w-5 text-gray-500" />
-              Notificações Push
+              {t('push')}
             </h3>
             <div className="space-y-3">
               <ToggleOption
-                label="Notificações na área de trabalho"
-                description="Mostrar popups no navegador para eventos importantes."
+                label={t('realTime')}
+                description={t('realTimeDesc')}
                 checked={preferences.pushDesktop}
                 onChange={() => handleToggle('pushDesktop')}
               />
               <ToggleOption
-                label="Alertas sonoros"
-                description="Tocar um som quando chegar uma notificação crítica."
+                label="Sound Alerts"
+                description="Play a sound when a critical notification arrives."
                 checked={preferences.pushSound}
                 onChange={() => handleToggle('pushSound')}
               />
@@ -103,7 +106,7 @@ export default function NotificationsSettingsPage() {
               ) : (
                 <Save className="h-4 w-4" />
               )}
-              {isSaving ? 'Salvando...' : 'Salvar Preferências'}
+              {isSaving ? 'Saving...' : tActions('save')}
             </button>
           </div>
         </div>

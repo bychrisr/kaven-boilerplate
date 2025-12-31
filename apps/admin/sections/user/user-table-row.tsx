@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -48,6 +49,7 @@ type UserTableRowProps = {
 };
 
 export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
+  const t = useTranslations('User.table');
   const { name, email, role, status, phone, tenant } = row;
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { mutate: deleteUser, isPending } = useDeleteUser();
@@ -63,11 +65,11 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
   const handleDelete = () => {
     deleteUser(row.id, {
       onSuccess: () => {
-        toast.success('Usuário excluído com sucesso');
+        toast.success(t('deleteSuccess'));
         setShowDeleteDialog(false);
       },
       onError: (error: unknown) => {
-        const message = error instanceof Error ? error.message : 'Erro ao excluir usuário';
+        const message = error instanceof Error ? error.message : t('deleteError');
         toast.error(message);
       },
     });
@@ -154,7 +156,7 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
                   }}
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
+                  {t('delete')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -165,9 +167,12 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirmar exclusão?</DialogTitle>
+            <DialogTitle>{t('confirmDeleteTitle')}</DialogTitle>
             <DialogDescription>
-              Tem certeza que deseja excluir o usuário <strong>{name}</strong>? Esta ação não pode ser desfeita.
+              {t.rich('confirmDeleteDesc', {
+                name: name,
+                bold: (chunks) => <strong>{chunks}</strong>
+              })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -176,14 +181,14 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
               onClick={() => setShowDeleteDialog(false)}
               disabled={isPending}
             >
-              Cancelar
+              {t('cancel')}
             </Button>
             <Button
               variant="destructive"
               onClick={handleDelete}
               disabled={isPending}
             >
-              {isPending ? 'Excluindo...' : 'Excluir'}
+              {isPending ? t('deleting') : t('delete')}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,6 +1,7 @@
 'use client';
 
 import { Link, usePathname } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 import { Logo } from '@/components/logo';
 import { Scrollbar } from '@/components/scrollbar/scrollbar';
 import { cn } from '@/lib/utils';
@@ -35,12 +36,26 @@ interface NavigationItem {
 
 export function Sidebar() {
   const pathname = usePathname();
+  const t = useTranslations('Sidebar');
 
   const { currentSpace } = useSpaces();
   const { isCollapsed, toggle } = useSidebar();
   const { sidebarOpen: isMobileOpen, setSidebarOpen } = useUIStore();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
+
+  // Helpers for translation
+  const getSectionTitle = (title: string) => {
+    const key = title.toLowerCase();
+    // Default to key if translation exists, else fallback to title
+    // Note: In a real app we might want strict type safety or a fallback map
+    return t.has(`groups.${key}`) ? t(`groups.${key}`) : title;
+  };
+
+  const getItemLabel = (label: string) => {
+    const key = label.toLowerCase();
+    return t.has(`items.${key}`) ? t(`items.${key}`) : label;
+  };
 
   // Derive navigation sections based on current space
   const navSections = useMemo(() => {
@@ -54,11 +69,13 @@ export function Sidebar() {
     return config.navSections.map(section => ({
       title: section.title,
       items: section.items.map(item => ({
-        name: item.label,
+        name: item.label, // Keep original for key/logic if needed, but we render translation
+        label: item.label,
         href: item.href,
         icon: item.icon,
         children: item.children?.map(child => ({
           name: child.label,
+          label: child.label,
           href: child.href,
           external: child.external
         }))
@@ -105,9 +122,9 @@ export function Sidebar() {
   };
 
 
-  const renderNavItem = (item: NavigationItem) => {
+  const renderNavItem = (item: any) => { // Type loose here for the mapped struct
     const isActive =
-      pathname === item.href || item.children?.some((child) => pathname === child.href);
+      pathname === item.href || item.children?.some((child: any) => pathname === child.href);
     const isExpanded = expandedItems.includes(item.name);
     const Icon = item.icon;
 
@@ -116,7 +133,7 @@ export function Sidebar() {
         <div key={item.name}>
           <button
             onClick={() => toggleExpand(item.name)}
-            data-tooltip={isCollapsed ? item.name : undefined}
+            data-tooltip={isCollapsed ? getItemLabel(item.label) : undefined}
             className={cn(
               'w-full flex items-center justify-between px-3 py-2.5 text-sm rounded-lg transition-colors min-h-[44px]',
               // Typography & Colors match reference
@@ -128,7 +145,7 @@ export function Sidebar() {
           >
             <div className={cn("flex items-center gap-4 min-w-0", isCollapsed ? "gap-0" : "")}>
               <Icon className="h-6 w-6 flex-shrink-0" />
-              {!isCollapsed && <span className="truncate">{item.name}</span>}
+              {!isCollapsed && <span className="truncate">{getItemLabel(item.label)}</span>}
             </div>
             {!isCollapsed && (
               <ChevronDown
@@ -138,7 +155,7 @@ export function Sidebar() {
           </button>
           {isExpanded && !isCollapsed && (
             <div className="mt-1 space-y-1">
-              {item.children.map((child) => {
+              {item.children.map((child: any) => {
                 const isChildActive = pathname === child.href;
                 return (
                     <Link
@@ -159,7 +176,7 @@ export function Sidebar() {
                            isChildActive ? "w-2 h-2 scale-100 bg-primary" : "w-1 h-1 bg-sidebar-foreground/40 group-hover:bg-foreground"
                        )} />
                     </div>
-                    <span className="truncate">{child.name}</span>
+                    <span className="truncate">{getItemLabel(child.label)}</span>
                     </Link>
                 );
               })}
@@ -173,7 +190,7 @@ export function Sidebar() {
       <Link
         key={item.name}
         href={item.href}
-        data-tooltip={isCollapsed ? item.name : undefined}
+        data-tooltip={isCollapsed ? getItemLabel(item.label) : undefined}
         className={cn(
           'flex items-center gap-4 px-3 py-2.5 text-sm rounded-lg transition-colors min-h-[44px]',
            isActive
@@ -183,7 +200,7 @@ export function Sidebar() {
         )}
       >
         <Icon className="h-6 w-6 flex-shrink-0" />
-        {!isCollapsed && <span className="truncate">{item.name}</span>}
+        {!isCollapsed && <span className="truncate">{getItemLabel(item.label)}</span>}
       </Link>
     );
   };
@@ -251,7 +268,7 @@ export function Sidebar() {
                             isSectionExpanded ? "rotate-0" : "-rotate-90"
                           )}
                         />
-                        <span>{section.title}</span>
+                        <span>{getSectionTitle(section.title)}</span>
                       </button>
                     )}
                     

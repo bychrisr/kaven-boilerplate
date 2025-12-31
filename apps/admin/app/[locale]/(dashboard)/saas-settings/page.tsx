@@ -45,7 +45,8 @@ const PRESETS = [
 ];
 
 export default function PlatformSettingsPage() {
-  const t = useTranslations();
+  const t = useTranslations('PlatformSettings');
+  const tCommon = useTranslations('Common');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -147,7 +148,7 @@ export default function PlatformSettingsPage() {
       
       const updated = await res.json();
       reset(updated); // Update form with server response
-      toast.success(t('Settings.saved'));
+      toast.success(tCommon('actions.saved') || 'Settings saved successfully'); // Fallback or updated key check
       
       // Reload to apply branding changes immediately
       window.location.reload();
@@ -174,15 +175,15 @@ export default function PlatformSettingsPage() {
           {/* Page Header */}
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('Settings.title')}</h1>
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('title')}</h1>
               <div className="mt-2">
                 <Breadcrumbs>
                   <BreadcrumbItem>
                     <Link href="/dashboard" className="transition-colors hover:text-foreground">
-                      {t('Common.dashboard')}
+                      {tCommon('dashboard')}
                     </Link>
                   </BreadcrumbItem>
-                  <BreadcrumbItem current>{t('Settings.title')}</BreadcrumbItem>
+                  <BreadcrumbItem current>{t('title')}</BreadcrumbItem>
                 </Breadcrumbs>
               </div>
             </div>
@@ -197,7 +198,7 @@ export default function PlatformSettingsPage() {
                     onClick={() => window.location.reload()} // Simple reset
                     disabled={isSaving}
                 >
-                    Discard
+                    {t('actions.discard')}
                 </Button>
                 <Button 
                     type="submit"
@@ -212,7 +213,7 @@ export default function PlatformSettingsPage() {
                     ) : (
                         <Save className="mr-2 h-4 w-4" />
                     )}
-                    Save Changes
+                    {isSaving ? t('actions.saving') : t('actions.save')}
                 </Button>
             </div>
           </div>
@@ -223,10 +224,10 @@ export default function PlatformSettingsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Building2 className="h-5 w-5 text-primary" />
-                    General Settings
+                    {t('general.title')}
                 </CardTitle>
                 <CardDescription>
-                    Configure the general information for your platform.
+                    {t('general.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -237,7 +238,7 @@ export default function PlatformSettingsPage() {
                         render={({ field, fieldState }) => (
                             <TextField
                                 {...field}
-                                label="Company Name"
+                                label={t('general.companyName')}
                                 placeholder="Ex: Kaven SaaS"
                                 error={!!fieldState.error}
                                 helperText={fieldState.error?.message}
@@ -258,7 +259,7 @@ export default function PlatformSettingsPage() {
                                 <div className="relative">
                                     <TextField
                                         {...field}
-                                        label="Description (SEO)"
+                                        label={t('general.seoDescription')}
                                         placeholder="Platform description..."
                                         multiline
                                         rows={3}
@@ -281,7 +282,7 @@ export default function PlatformSettingsPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                      <div>
-                        <Label className="mb-2 block md:mb-1.5">Default Language</Label>
+                        <Label className="mb-2 block md:mb-1.5">{t('general.language')}</Label>
                         <Controller
                             name="language"
                             control={control}
@@ -298,7 +299,7 @@ export default function PlatformSettingsPage() {
                         />
                      </div>
                      <div>
-                        <Label className="mb-2 block md:mb-1.5">Default Currency</Label>
+                        <Label className="mb-2 block md:mb-1.5">{t('general.currency')}</Label>
                         <Controller
                             name="currency"
                             control={control}
@@ -319,7 +320,7 @@ export default function PlatformSettingsPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                      <div>
-                        <Label className="mb-2 block md:mb-1.5">Number Format</Label>
+                        <Label className="mb-2 block md:mb-1.5">{t('general.numberFormat')}</Label>
                         <Controller
                             name="numberFormat"
                             control={control}
@@ -343,16 +344,16 @@ export default function PlatformSettingsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Settings className="h-5 w-5 text-primary" />
-                    Branding
+                    {t('branding.title')}
                 </CardTitle>
                 <CardDescription>
-                    Customize the look and feel of your SaaS.
+                    {t('branding.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                  <div className="space-y-4">
                      <div>
-                       <Label className="text-foreground font-medium mb-3 block">Color Presets</Label>
+                       <Label className="text-foreground font-medium mb-3 block">{t('branding.presets')}</Label>
                        <div className="flex flex-wrap gap-3 mb-6">
                           {PRESETS.map((preset) => (
                               <button
@@ -369,7 +370,7 @@ export default function PlatformSettingsPage() {
                           ))}
                        </div>
 
-                       <Label htmlFor="primaryColor" className="text-foreground font-medium mb-2 block">Custom Color</Label>
+                       <Label htmlFor="primaryColor" className="text-foreground font-medium mb-2 block">{t('branding.customColor')}</Label>
                        <div className="flex gap-4 items-center">
                          <div className="relative">
                              <Input
@@ -398,7 +399,7 @@ export default function PlatformSettingsPage() {
                      </div>
 
                      <div className="pt-4 border-t border-border">
-                        <Label className="text-foreground font-medium mb-3 block">Favicon & Logo</Label>
+                        <Label className="text-foreground font-medium mb-3 block">{t('branding.faviconAndLogo')}</Label>
                         
                         <div className="grid grid-cols-1 gap-6">
                              <Controller
@@ -408,7 +409,7 @@ export default function PlatformSettingsPage() {
                                     <div className="space-y-4">
                                         <div className="flex items-start gap-6 border p-4 rounded-lg bg-card">
                                             <div className="space-y-1">
-                                                <Label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Active Favicon</Label>
+                                                <Label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">{t('branding.activeFavicon')}</Label>
                                                 <div className="mt-2 h-16 w-16 rounded-xl border border-dashed border-border flex items-center justify-center bg-background/50 overflow-hidden shadow-sm">
                                                     {field.value ? (
                                                         // eslint-disable-next-line @next/next/no-img-element
@@ -427,7 +428,7 @@ export default function PlatformSettingsPage() {
                                                  <div className="flex gap-2 w-full items-end">
                                                     <TextField
                                                         {...field}
-                                                        label="Favicon URL"
+                                                        label={t('branding.faviconUrl')}
                                                         placeholder="https://..."
                                                         fullWidth
                                                         className="flex-1"
@@ -446,11 +447,11 @@ export default function PlatformSettingsPage() {
                                                         onClick={() => fileInputRef.current?.click()}
                                                     >
                                                         <UploadCloud className="mr-2 h-4 w-4" />
-                                                        Upload
+                                                        {t('branding.upload')}
                                                     </Button>
                                                  </div>
                                                  <p className="text-xs text-muted-foreground">
-                                                    Recommended: 32x32px or 64x64px. Formats: .ico, .png, .svg. 
+                                                    {t('branding.recommended')}
                                                     <span className="opacity-70"> (Max 1MB for upload)</span>
                                                  </p>
                                             </div>
@@ -468,16 +469,16 @@ export default function PlatformSettingsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <UploadCloud className="h-5 w-5 text-primary" />
-                    Public SEO Configuration
+                    {t('seo.title')}
                 </CardTitle>
                 <CardDescription>
-                    Configure Global SEO settings for your public pages (OG Image, Twitter).
+                    {t('seo.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <Label className="mb-2 block md:mb-1.5">Twitter Handle</Label>
+                        <Label className="mb-2 block md:mb-1.5">{t('seo.twitterHandle')}</Label>
                         <Controller
                             name="twitterHandle"
                             control={control}
@@ -494,7 +495,7 @@ export default function PlatformSettingsPage() {
                  </div>
 
                  <div className="pt-4 border-t border-border">
-                    <Label className="text-foreground font-medium mb-3 block">OpenGraph Image (Social Share)</Label>
+                    <Label className="text-foreground font-medium mb-3 block">{t('seo.ogImage')}</Label>
                     <div className="grid grid-cols-1 gap-6">
                          <Controller
                             name="ogImageUrl"
@@ -503,7 +504,7 @@ export default function PlatformSettingsPage() {
                                 <div className="space-y-4">
                                     <div className="flex items-start gap-6 border p-4 rounded-lg bg-card">
                                         <div className="space-y-1">
-                                            <Label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Preview</Label>
+                                            <Label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">{t('seo.preview')}</Label>
                                             <div className="mt-2 h-24 w-40 rounded-xl border border-dashed border-border flex items-center justify-center bg-background/50 overflow-hidden shadow-sm relative group">
                                                 {field.value ? (
                                                     // eslint-disable-next-line @next/next/no-img-element
@@ -541,7 +542,7 @@ export default function PlatformSettingsPage() {
                                                     onClick={() => ogInputRef.current?.click()}
                                                 >
                                                     <UploadCloud className="mr-2 h-4 w-4" />
-                                                    Upload
+                                                    {t('branding.upload')}
                                                 </Button>
                                              </div>
                                              <p className="text-xs text-muted-foreground">

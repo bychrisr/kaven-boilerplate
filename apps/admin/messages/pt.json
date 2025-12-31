@@ -1,13 +1,5 @@
 {
-  "Settings": {
-    "title": "Configurações da Plataforma",
-    "description": "Configurações gerais da sua plataforma SaaS.",
-    "save": "Salvar Alterações",
-    "saved": "Configurações salvas com sucesso",
-    "companyName": "Nome da Empresa",
-    "language": "Idioma",
-    "currency": "Moeda"
-  },
+
   "Common": {
     "dashboard": "Dashboard",
     "actions": "Ações",
@@ -18,6 +10,14 @@
       "profile": "Perfil",
       "settings": "Configurações",
       "logout": "Sair"
+    },
+    "errors": {
+      "notFoundTitle": "Página não encontrada (404)",
+      "notFoundDescription": "Ops! A página que você está procurando não existe ou foi movida. Verifique a URL ou volte para o início.",
+      "notFoundBack": "Voltar ao Dashboard",
+      "errorTitle": "Algo deu errado! (500)",
+      "errorDescription": "Encontramos um erro inesperado ao processar sua solicitação. Nossos engenheiros já foram notificados.",
+      "errorRetry": "Tentar novamente"
     }
   },
   "Dashboard": {
@@ -47,6 +47,182 @@
         "joined": "Entrou em",
         "action": "Ação"
       }
+    }
+  },
+  "Sidebar": {
+    "groups": {
+      "overview": "Visão Geral",
+      "management": "Gerenciamento",
+      "finance": "Finanças",
+      "support": "Suporte",
+      "marketing": "Marketing",
+      "devops": "DevOps",
+      "configuration": "Configuração"
+    },
+    "items": {
+      "home": "Início",
+      "dashboard": "Dashboard",
+      "analytics": "Análise",
+      "platform settings": "Config. da Plataforma",
+      "users": "Usuários",
+      "tenant": "Inquilinos",
+      "revenue": "Receita",
+      "orders": "Pedidos",
+      "invoices": "Faturas",
+      "payments": "Pagamentos",
+      "billing": "Cobrança",
+      "tickets": "Chamados",
+      "impersonation": "Impersonificação",
+      "2fa reset": "Resetar 2FA",
+      "crm": "CRM",
+      "campaigns": "Campanhas",
+      "goals": "Metas",
+      "monitoring": "Monitoramento",
+      "servers": "Servidores",
+      "databases": "Banco de Dados",
+      "logs": "Logs",
+      "system health": "Saúde do Sistema",
+      "audit logs": "Logs de Auditoria"
+    }
+  },
+  "Auth": {
+    "login": {
+      "title": "Entre na sua conta",
+      "subtitle": "Não tem uma conta?",
+      "getStarted": "Comece agora",
+      "emailLabel": "Endereço de email",
+      "passwordLabel": "Senha",
+      "forgotPassword": "Esqueceu a senha?",
+      "submit": "Entrar",
+      "or": "OU",
+      "success": "Login realizado com sucesso!"
+    },
+    "register": {
+      "title": "Comece agora, é grátis",
+      "subtitle": "Já tem uma conta?",
+      "signIn": "Entrar",
+      "firstName": "Nome",
+      "lastName": "Sobrenome",
+      "emailLabel": "Endereço de email",
+      "passwordLabel": "Senha",
+      "terms": "Concordo com os Termos de Serviço e Política de Privacidade",
+      "submit": "Criar conta",
+      "or": "OU",
+      "success": "Conta criada! Verifique seu email.",
+      "passwordStrength": ["Fraca", "Razoável", "Boa", "Forte"]
+    },
+    "forgotPassword": {
+      "title": "Esqueceu sua senha?",
+      "description": "Digite o email associado à sua conta e enviaremos um link para redefinir sua senha.",
+      "emailLabel": "Endereço de email",
+      "submit": "Enviar Solicitação",
+      "backToSignIn": "Voltar para o login",
+      "successTitle": "Solicitação enviada!",
+      "successDescription": "Enviamos um email de confirmação para {email}. Por favor, verifique seu email.",
+      "returnToLogin": "Voltar para o login",
+      "resetPassword": {
+        "title": "Redefinir sua senha",
+        "subtitle": "Digite sua nova senha abaixo",
+        "newPassword": "Nova Senha",
+        "confirmPassword": "Confirmar Senha",
+        "passwordPlaceholder": "6+ caracteres",
+        "submit": "Redefinir Senha",
+        "matchError": "As senhas não coincidem",
+        "tokenError": "Token de redefinição inválido",
+        "success": "Senha redefinida com sucesso!",
+        "failed": "Falha ao redefinir a senha"
+      }
+    }
+  },
+  "User": {
+    "table": {
+      "deleteSuccess": "Usuário excluído com sucesso",
+      "deleteError": "Erro ao excluir usuário",
+      "confirmDeleteTitle": "Confirmar exclusão?",
+      "confirmDeleteDesc": "Tem certeza que deseja excluir o usuário <bold>{name}</bold>? Esta ação não pode ser desfeita.",
+      "cancel": "Cancelar",
+      "delete": "Excluir",
+      "deleting": "Excluindo..."
+    }
+  },
+  "PlatformSettings": {
+    "title": "Configurações da Plataforma",
+    "general": {
+      "title": "Configurações Gerais",
+      "description": "Configure as informações gerais da sua plataforma.",
+      "companyName": "Nome da Empresa",
+      "seoDescription": "Descrição (SEO)",
+      "language": "Idioma Padrão",
+      "currency": "Moeda Padrão",
+      "numberFormat": "Formato de Números"
+    },
+    "branding": {
+      "title": "Branding",
+      "description": "Personalize a aparência do seu SaaS.",
+      "presets": "Predefinições de Cor",
+      "customColor": "Cor Personalizada",
+      "faviconAndLogo": "Favicon e Logo",
+      "activeFavicon": "Favicon Ativo",
+      "faviconUrl": "URL do Favicon",
+      "upload": "Enviar",
+      "recommended": "Recomendado: 32x32px ou 64x64px. Formatos: .ico, .png, .svg."
+    },
+    "seo": {
+      "title": "Configuração Pública de SEO",
+      "description": "Configure as definições globais de SEO para páginas públicas (OG Image, Twitter).",
+      "twitterHandle": "Twitter Handle",
+      "ogImage": "Imagem OpenGraph (Compartilhamento Social)",
+      "preview": "Prévia"
+    },
+    "actions": {
+      "discard": "Descartar",
+      "save": "Salvar Alterações",
+      "saving": "Salvando..."
+    }
+  },
+  "Settings": {
+    "title": "Configurações",
+    "subtitle": "Gerencie as configurações do sistema e personalize sua experiência",
+    "tabs": {
+      "general": "Geral",
+      "theme": "Tema",
+      "security": "Segurança",
+      "notifications": "Notificações"
+    },
+    "general": {
+      "title": "Configurações Gerais",
+      "appName": "Nome da Aplicação",
+      "language": "Idioma",
+      "timezone": "Fuso Horário"
+    },
+    "security": {
+      "title": "Segurança",
+      "changePassword": "Alterar Senha",
+      "currentPassword": "Senha Atual",
+      "newPassword": "Nova Senha",
+      "confirmPassword": "Confirmar Nova Senha",
+      "2fa": "Autenticação de Dois Fatores",
+      "2faDescription": "Adicione uma camada extra de segurança à sua conta",
+      "enable2fa": "Ativar 2FA"
+    },
+    "notifications": {
+      "title": "Notificações",
+      "description": "Gerencie como e quando você recebe notificações",
+      "email": "Notificações por Email",
+      "newUsers": "Novos usuários",
+      "newUsersDesc": "Receba um email quando um novo usuário se cadastrar",
+      "newOrders": "Novos pedidos",
+      "newOrdersDesc": "Receba um email quando um novo pedido for criado",
+      "systemUpdates": "Atualizações do sistema",
+      "systemUpdatesDesc": "Receba emails sobre atualizações e manutenções",
+      "push": "Notificações Push",
+      "realTime": "Atividade em tempo real",
+      "realTimeDesc": "Receba notificações sobre atividades importantes",
+      "reminders": "Lembretes",
+      "remindersDesc": "Receba lembretes sobre tarefas pendentes"
+    },
+    "actions": {
+      "save": "Salvar Alterações"
     }
   }
 }

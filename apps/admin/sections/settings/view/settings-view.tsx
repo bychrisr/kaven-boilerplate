@@ -6,6 +6,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Settings as SettingsIcon, Palette, Bell, User, Shield } from 'lucide-react';
 import { SettingsGeneral } from '../settings-general';
@@ -14,6 +15,7 @@ import { SettingsNotifications } from '../settings-notifications';
 import { SettingsSecurity } from '../settings-security';
 
 export function SettingsView() {
+  const t = useTranslations('Settings');
   const [activeTab, setActiveTab] = useState('general');
 
   return (
@@ -22,10 +24,10 @@ export function SettingsView() {
       <div>
         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
           <SettingsIcon className="h-8 w-8" />
-          Configurações
+          {t('title')}
         </h1>
         <p className="mt-2 text-sm text-gray-600">
-          Gerencie as configurações do sistema e personalize sua experiência
+          {t('subtitle')}
         </p>
       </div>
 
@@ -34,19 +36,19 @@ export function SettingsView() {
         <TabsList className="mb-6">
           <TabsTrigger value="general">
             <User className="h-4 w-4 mr-2" />
-            Geral
+            {t('tabs.general')}
           </TabsTrigger>
           <TabsTrigger value="theme">
             <Palette className="h-4 w-4 mr-2" />
-            Tema
+            {t('tabs.theme')}
           </TabsTrigger>
           <TabsTrigger value="security">
             <Shield className="h-4 w-4 mr-2" />
-            Segurança
+            {t('tabs.security')}
           </TabsTrigger>
           <TabsTrigger value="notifications">
             <Bell className="h-4 w-4 mr-2" />
-            Notificações
+            {t('tabs.notifications')}
           </TabsTrigger>
         </TabsList>
 

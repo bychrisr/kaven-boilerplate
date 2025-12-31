@@ -1,7 +1,8 @@
+// 🎨 UI: Login Form (Dark Glassmorphism)
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from '@/i18n/routing';
+import { useRouter, Link } from '@/i18n/routing';
 import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,18 +12,12 @@ import { TextField } from '@/components/ui/text-field';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
 import { Eye, EyeOff, AlertCircle } from 'lucide-react';
-import { Link } from '@/i18n/routing';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/auth.store';
-
-const loginSchema = z.object({
-  email: z.string().min(1, 'Email is required').email('Invalid email address'),
-  password: z.string().min(1, 'Password is required'),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
+import { useTranslations } from 'next-intl';
 
 export default function LoginForm() {
+  const t = useTranslations('Auth.login');
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnUrl = searchParams.get('returnUrl');
@@ -30,6 +25,13 @@ export default function LoginForm() {
   const [generalError, setGeneralError] = useState<string | null>(null);
   
   const { login, clearError } = useAuthStore();
+
+  const loginSchema = z.object({
+    email: z.string().min(1, t('emailLabel') + ' is required').email('Invalid email address'),
+    password: z.string().min(1, t('passwordLabel') + ' is required'),
+  });
+  
+  type LoginFormData = z.infer<typeof loginSchema>;
 
   const {
     register,
@@ -68,7 +70,7 @@ export default function LoginForm() {
         // ✅ AXISOR STYLE: Login armazena no localStorage
         login(responseData.user, responseData.accessToken, responseData.refreshToken);
         
-        toast.success('Login realizado com sucesso!');
+        toast.success(t('success'));
         
         console.log('✅ LOGIN FORM - Store updated, navigating...');
         
@@ -95,11 +97,11 @@ export default function LoginForm() {
     <div className="bg-card rounded-2xl p-8 shadow-2xl border border-border">
       <div className="mb-8">
         <Logo size="large" className="mb-6" />
-        <h4 className="text-2xl font-bold text-card-foreground mb-2">Sign in to your account</h4>
+        <h4 className="text-2xl font-bold text-card-foreground mb-2">{t('title')}</h4>
         <p className="text-muted-foreground text-sm">
-          Don&apos;t have an account?{' '}
+          {t('subtitle')}{' '}
           <Link href="/register" className="text-primary hover:text-primary/80 font-semibold transition-colors">
-            Get started
+            {t('getStarted')}
           </Link>
         </p>
       </div>
@@ -120,7 +122,7 @@ export default function LoginForm() {
             <TextField
               id="email"
               type="email"
-              label="Email address"
+              label={t('emailLabel')}
               placeholder="demo@minimals.cc"
               error={!!errors.email}
               errorMessage={errors.email?.message}
@@ -131,13 +133,13 @@ export default function LoginForm() {
             <div className="space-y-1">
                 <div className="flex items-center justify-between mb-1">
                     <Link href="/forgot-password" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-                        Forgot password?
+                        {t('forgotPassword')}
                     </Link>
                 </div>
                 <TextField
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  label="Password"
+                  label={t('passwordLabel')}
                   placeholder="6+ characters"
                   error={!!errors.password}
                   errorMessage={errors.password?.message}
@@ -165,7 +167,7 @@ export default function LoginForm() {
             size="lg"
             className="h-12 text-md font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all"
         >
-          Sign In
+          {t('submit')}
         </Button>
 
         <div className="relative my-6">
@@ -173,7 +175,7 @@ export default function LoginForm() {
             <div className="w-full border-t border-border" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="px-3 bg-card text-muted-foreground font-bold">OR</span>
+            <span className="px-3 bg-card text-muted-foreground font-bold">{t('or')}</span>
           </div>
         </div>
 

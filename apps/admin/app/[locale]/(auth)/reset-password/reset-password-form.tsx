@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { TextField } from '@/components/ui/text-field';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -12,6 +13,8 @@ export default function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams?.get('token');
+  const t = useTranslations('Auth.resetPassword');
+  const tReg = useTranslations('Auth.register');
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -39,18 +42,18 @@ export default function ResetPasswordForm() {
     'bg-green-400',
     'bg-green-600',
   ];
-  const strengthLabels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+  const strengthLabels = ['', tReg('passwordStrength.0'), tReg('passwordStrength.1'), tReg('passwordStrength.2'), tReg('passwordStrength.3')];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
+      toast.error(t('matchError'));
       return;
     }
 
     if (!token) {
-      toast.error('Invalid reset token');
+      toast.error(t('tokenError'));
       return;
     }
 
@@ -67,14 +70,14 @@ export default function ResetPasswordForm() {
       });
 
       if (response.ok) {
-        toast.success('Password reset successfully!');
+        toast.success(t('success'));
         router.push('/login');
       } else {
-        toast.error('Password reset failed');
+        toast.error(t('failed'));
       }
     } catch (error) {
       console.error('Reset password error:', error);
-      toast.error('Password reset failed');
+      toast.error(t('failed'));
     } finally {
       setLoading(false);
     }
@@ -88,8 +91,8 @@ export default function ResetPasswordForm() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
         </div>
-        <h3 className="text-2xl font-bold text-card-foreground mb-2">Reset your password</h3>
-        <p className="text-muted-foreground">Enter your new password below</p>
+        <h3 className="text-2xl font-bold text-card-foreground mb-2">{t('title')}</h3>
+        <p className="text-muted-foreground">{t('subtitle')}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -97,8 +100,8 @@ export default function ResetPasswordForm() {
           <TextField
             id="password"
             type={showPassword ? 'text' : 'password'}
-            label="New Password"
-            placeholder="6+ characters"
+            label={t('newPassword')}
+            placeholder={t('passwordPlaceholder')}
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             required
@@ -136,8 +139,8 @@ export default function ResetPasswordForm() {
           <TextField
             id="confirmPassword"
             type={showConfirmPassword ? 'text' : 'password'}
-            label="Confirm Password"
-            placeholder="6+ characters"
+            label={t('confirmPassword')}
+            placeholder={t('passwordPlaceholder')}
             value={formData.confirmPassword}
             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
             required
@@ -145,7 +148,7 @@ export default function ResetPasswordForm() {
             error={!!(formData.confirmPassword && formData.password !== formData.confirmPassword)}
             errorMessage={
               formData.confirmPassword && formData.password !== formData.confirmPassword
-                ? 'Passwords do not match'
+                ? t('matchError')
                 : undefined
             }
             endAdornment={
@@ -170,7 +173,7 @@ export default function ResetPasswordForm() {
           size="lg"
           className="h-12 text-md font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all"
         >
-          Reset Password
+          {t('submit')}
         </Button>
 
         <Button variant="text" className="w-full text-muted-foreground hover:text-foreground mt-4" asChild>
@@ -178,7 +181,7 @@ export default function ResetPasswordForm() {
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Return to sign in
+            {useTranslations('Auth.forgotPassword')('returnToLogin')}
           </Link>
         </Button>
       </form>

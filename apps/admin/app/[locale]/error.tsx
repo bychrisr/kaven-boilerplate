@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
@@ -11,6 +12,8 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useTranslations('Common.errors');
+
   useEffect(() => {
     // Log the error to an error reporting service
     console.error(error);
@@ -22,15 +25,15 @@ export default function Error({
         <AlertTriangle className="h-12 w-12 text-red-600" />
       </div>
       <h1 className="mb-2 text-3xl font-bold tracking-tight text-gray-900">
-        Algo deu errado! (500)
+        {t('errorTitle')}
       </h1>
       <p className="mb-8 max-w-md text-gray-500">
-        Encontramos um erro inesperado ao processar sua solicitação. Nossos engenheiros já foram notificados.
+        {t('errorDescription')}
       </p>
       <div className="flex gap-4">
         <Button onClick={reset} className="gap-2">
           <RefreshCw className="h-4 w-4" />
-          Tentar novamente
+          {t('errorRetry')}
         </Button>
       </div>
       
