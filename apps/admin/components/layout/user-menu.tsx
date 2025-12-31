@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import { Home, User, Settings, LogOut, CreditCard, Moon, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
@@ -12,6 +12,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
 
 export function UserMenu() {
@@ -105,6 +107,25 @@ export function UserMenu() {
                 </DropdownMenuItem>
             ))}
           </div>
+
+          <DropdownMenuSeparator className="my-1 mx-4" />
+
+          {/* Language Selection */}
+          <DropdownMenuGroup className="px-4 pb-2">
+            <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-4">Language</DropdownMenuLabel>
+            <DropdownMenuItem 
+                onClick={() => window.location.href = '/en/dashboard'}
+                className="w-full flex items-center gap-4 px-4 py-3 rounded-lg text-sm text-foreground/90 focus:text-accent-foreground focus:bg-accent cursor-pointer group outline-none"
+            >
+                🇺🇸 English (US)
+            </DropdownMenuItem>
+             <DropdownMenuItem 
+                onClick={() => window.location.href = '/pt/dashboard'}
+                className="w-full flex items-center gap-4 px-4 py-3 rounded-lg text-sm text-foreground/90 focus:text-accent-foreground focus:bg-accent cursor-pointer group outline-none"
+            >
+                🇧🇷 Português (BR)
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
 
           <DropdownMenuSeparator className="my-1 mx-4" />
 

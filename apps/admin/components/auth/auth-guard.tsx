@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+// import { useRouter, usePathname } from 'next/navigation'; // <-- REMOVED
+import { useRouter, usePathname } from '@/i18n/routing'; // <-- ADDED
 import { useAuthStore } from '@/stores/auth.store';
 import { Loader2 } from 'lucide-react';
 
@@ -60,6 +61,14 @@ export function AuthGuard({ children, allowedRoles }: Readonly<AuthGuardProps>) 
     // Se ainda não inicializou e não forçou, aguardar
     if (!isInitialized && !forceInitialized) {
       return;
+    }
+
+    // Ignore public paths to prevent loops
+    const PUBLIC_PATHS = ['/login', '/register', '/forgot-password', '/reset-password', '/verify'];
+    const isPublicPath = PUBLIC_PATHS.some(path => pathname.includes(path));
+
+    if (isPublicPath) {
+        return;
     }
 
     // Verificar autenticação

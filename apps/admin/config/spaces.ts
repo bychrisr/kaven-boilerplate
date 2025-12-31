@@ -17,6 +17,7 @@ import {
   Server,
   Activity,
   Database,
+  Settings,
   LucideIcon
 } from 'lucide-react';
 
@@ -59,7 +60,8 @@ export const SPACES: Record<string, SpaceConfig> = {
         title: 'OVERVIEW',
         items: [
           { icon: Home, label: 'Dashboard', href: '/dashboard' },
-          { icon: BarChart3, label: 'Analytics', href: '/analytics' }
+          { icon: BarChart3, label: 'Analytics', href: '/analytics' },
+          { icon: Settings, label: 'Platform Settings', href: '/saas-settings' }
         ]
       },
       {
@@ -208,7 +210,8 @@ export const SPACES: Record<string, SpaceConfig> = {
       {
         title: 'OVERVIEW',
         items: [
-          { icon: Home, label: 'Dashboard', href: '/dashboard' }
+          { icon: Home, label: 'Dashboard', href: '/dashboard' },
+          { icon: Settings, label: 'Platform Settings', href: '/saas-settings' }
         ]
       },
       {

@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { X, RefreshCw } from 'lucide-react';
-import { useSettings, ThemeColorPresets, ThemeLayout, ThemeMode, ThemeContrast } from '@/stores/settings.store';
+import { useSettings, ThemeLayout, ThemeMode, ThemeContrast } from '@/stores/settings.store';
 import { cn } from '@/lib/utils';
-import { presets } from './theme-configurator';
+
 
 export function SettingsDrawer() {
   const [open, setOpen] = useState(false);
@@ -14,8 +14,7 @@ export function SettingsDrawer() {
     setTheme,
     themeLayout,
     setThemeLayout,
-    themeColorPresets,
-    setThemeColorPresets,
+
     themeStretch,
     setThemeStretch,
     themeContrast,
@@ -139,29 +138,7 @@ export function SettingsDrawer() {
              </div>
           </div>
 
-           {/* Presets */}
-           <div className="space-y-3">
-             <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Color Presets</div>
-             <div className="grid grid-cols-3 gap-3">
-                {presets.map((preset) => (
-                    <button
-                        key={preset.name}
-                        onClick={() => setThemeColorPresets(preset.name)}
-                        className={cn(
-                            "relative flex items-center justify-center w-full h-12 rounded-xl transition-all border-2",
-                            themeColorPresets === preset.name
-                                ? "border-primary-main bg-white/5" 
-                                : "border-transparent bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
-                        )}
-                    >
-                        <div 
-                            className="w-4 h-4 rounded-full shadow-sm"
-                            style={{ backgroundColor: preset.main }}
-                        />
-                    </button>
-                ))}
-             </div>
-          </div>
+
 
            {/* Stretch */}
            <div className="space-y-3">

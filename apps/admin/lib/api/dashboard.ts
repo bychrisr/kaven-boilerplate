@@ -14,11 +14,11 @@ export interface ChartData {
 }
 
 export const getDashboardSummary = async (): Promise<DashboardSummary> => {
-  const { data } = await api.get<DashboardSummary>('/dashboard/summary');
+  const { data } = await api.get<DashboardSummary>('/api/dashboard/summary');
   return data;
 };
 
 export const getDashboardCharts = async (): Promise<ChartData[]> => {
-  const { data } = await api.get<ChartData[]>('/dashboard/charts');
+  const { data } = await api.get<ChartData[]>('/api/dashboard/charts');
   return data;
 };

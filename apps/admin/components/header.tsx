@@ -42,16 +42,7 @@ export function Header() {
             </span>
         </button>
 
-        {/* Language (Mock - UK Flag) */}
-        <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-accent transition-colors">
-            <img 
-                src="https://flagcdn.com/w40/gb.png" 
-                alt="English" 
-                width={20} 
-                height={15} 
-                className="rounded-sm object-cover"
-            />
-        </button>
+
 
         {/* Notifications */}
         <button className="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-accent transition-colors group">
