@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { Link, useRouter } from '@/i18n/routing';
 import { Logo } from '@/components/logo';
 import { TextField } from '@/components/ui/text-field';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
-import Link from 'next/link';
 import { toast } from 'sonner';
 
 export default function RegisterPage() {

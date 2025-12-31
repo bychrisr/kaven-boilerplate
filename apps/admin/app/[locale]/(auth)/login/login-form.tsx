@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
+import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,7 +11,7 @@ import { TextField } from '@/components/ui/text-field';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
 import { Eye, EyeOff, AlertCircle } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/auth.store';
 
@@ -72,7 +73,7 @@ export default function LoginForm() {
         console.log('✅ LOGIN FORM - Store updated, navigating...');
         
         // Navegar para destino
-        const targetUrl = returnUrl ? decodeURIComponent(returnUrl) : '/';
+        const targetUrl = returnUrl ? decodeURIComponent(returnUrl) : '/dashboard';
         router.push(targetUrl);
         
         console.log('✅ LOGIN FORM - Navigation triggered to:', targetUrl);

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { TextField } from '@/components/ui/text-field';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 
 // 🎨 UI: Forgot Password Page (Dark Glassmorphism)
 export default function ForgotPasswordPage() {
