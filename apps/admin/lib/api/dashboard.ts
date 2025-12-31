@@ -1,10 +1,17 @@
 import { api } from '../api';
 
+export interface MetricWithTrend {
+  value: number;
+  trend: number;
+}
+
 export interface DashboardSummary {
-  totalUsers: number;
-  revenue: number;
-  invoices: number;
-  orders: number;
+  totalUsers: MetricWithTrend;
+  newSignups: MetricWithTrend;
+  activationRate: MetricWithTrend;
+  revenue: MetricWithTrend;
+  invoices: MetricWithTrend;
+  orders: MetricWithTrend;
 }
 
 export interface ChartData {

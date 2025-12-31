@@ -75,18 +75,20 @@ export default function DashboardPage() {
   }
 
   const metrics = summary || {
-    totalUsers: 0,
-    revenue: 0,
-    invoices: 0,
-    orders: 0
+    totalUsers: { value: 0, trend: 0 },
+    revenue: { value: 0, trend: 0 },
+    invoices: { value: 0, trend: 0 },
+    orders: { value: 0, trend: 0 },
+    newSignups: { value: 0, trend: 0 },
+    activationRate: { value: 0, trend: 0 }
   };
 
   const chartData = charts || [];
   const donutData = [
-    { name: 'Mac', value: metrics.invoices * 0.4 },
-    { name: 'Window', value: metrics.invoices * 0.3 },
-    { name: 'iOS', value: metrics.invoices * 0.2 },
-    { name: 'Android', value: metrics.invoices * 0.1 },
+    { name: 'Mac', value: metrics.invoices.value * 0.4 },
+    { name: 'Window', value: metrics.invoices.value * 0.3 },
+    { name: 'iOS', value: metrics.invoices.value * 0.2 },
+    { name: 'Android', value: metrics.invoices.value * 0.1 },
   ];
 
   let spaceId = currentSpace?.id || 'ADMIN';
@@ -118,11 +120,11 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex items-end justify-between">
                     <div>
-                         <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">{metrics.totalUsers.toLocaleString()}</h3>
+                         <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">{metrics.totalUsers.value.toLocaleString()}</h3>
                          <div className="flex items-center gap-2 text-sm">
-                            <span className="flex items-center text-green-500 font-semibold bg-green-500/10 px-1.5 py-0.5 rounded">
-                                <ArrowUp className="h-3 w-3 mr-1" />
-                                +2.6%
+                            <span className={`flex items-center font-semibold px-1.5 py-0.5 rounded ${metrics.totalUsers.trend >= 0 ? 'text-green-500 bg-green-500/10' : 'text-destructive bg-destructive/10'}`}>
+                                {metrics.totalUsers.trend >= 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
+                                {metrics.totalUsers.trend > 0 ? '+' : ''}{metrics.totalUsers.trend}%
                             </span>
                             <span className="text-muted-foreground">last 7 days</span>
                          </div>
@@ -138,29 +140,29 @@ export default function DashboardPage() {
             </div>
         )}
 
-        {/* Revenue Card */}
-        {showCard('revenue') && (
+        {/* New Signups Card */}
+        {showCard('users') && (
              <div className="relative overflow-hidden rounded-2xl bg-card p-4 md:p-6 shadow-xl border border-border/50">
                 <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
                      <div className="p-2 md:p-3 bg-blue-500/10 rounded-full">
-                        <DollarSign className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
+                        <Users className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
                      </div>
-                     <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">Total Revenue</span>
+                     <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">New Signups</span>
                 </div>
                  <div className="flex items-end justify-between">
                     <div>
-                         <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">{metrics.revenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</h3>
+                         <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">{metrics.newSignups.value}</h3>
                          <div className="flex items-center gap-2 text-sm">
-                            <span className="flex items-center text-green-500 font-semibold bg-green-500/10 px-1.5 py-0.5 rounded">
-                                 <ArrowUp className="h-3 w-3 mr-1" />
-                                +0.2%
+                            <span className={`flex items-center font-semibold px-1.5 py-0.5 rounded ${metrics.newSignups.trend >= 0 ? 'text-green-500 bg-green-500/10' : 'text-destructive bg-destructive/10'}`}>
+                                 {metrics.newSignups.trend >= 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
+                                {metrics.newSignups.trend > 0 ? '+' : ''}{metrics.newSignups.trend}%
                             </span>
-                            <span className="text-muted-foreground">last 7 days</span>
+                            <span className="text-muted-foreground">vs previous 7 days</span>
                          </div>
                     </div>
                      <div className="h-12 w-24" style={{ minWidth: '96px', minHeight: '48px' }}>
                          <ResponsiveContainer width="100%" height="100%">
-                             <BarChart data={[{v:40},{v:20},{v:60},{v:40},{v:80}]}>
+                             <BarChart data={[{v:10},{v:25},{v:15},{v:30},{v:metrics.newSignups.value}]}>
                                  <Bar dataKey="v" fill="#00B8D9" radius={[2,2,0,0]} />
                              </BarChart>
                          </ResponsiveContainer>
@@ -169,29 +171,29 @@ export default function DashboardPage() {
             </div>
         )}
 
-        {/* Invoices/Downloads Card */}
-        {showCard('invoices') && (
+        {/* Activation Rate Card */}
+        {showCard('users') && (
              <div className="relative overflow-hidden rounded-2xl bg-card p-4 md:p-6 shadow-xl border border-border/50">
                 <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
                      <div className="p-2 md:p-3 bg-yellow-500/10 rounded-full">
                         <FileText className="h-5 w-5 md:h-6 md:w-6 text-yellow-500" />
                      </div>
-                     <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">Total Invoices</span>
+                     <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">Activation Rate</span>
                 </div>
                  <div className="flex items-end justify-between">
                     <div>
-                         <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">{metrics.invoices}</h3>
+                         <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">{metrics.activationRate.value}%</h3>
                          <div className="flex items-center gap-2 text-sm">
-                            <span className="flex items-center text-destructive font-semibold bg-destructive/10 px-1.5 py-0.5 rounded">
-                                 <ArrowDown className="h-3 w-3 mr-1" />
-                                -0.1%
+                            <span className={`flex items-center font-semibold px-1.5 py-0.5 rounded ${metrics.activationRate.trend >= 0 ? 'text-green-500 bg-green-500/10' : 'text-destructive bg-destructive/10'}`}>
+                                 {metrics.activationRate.trend >= 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
+                                {metrics.activationRate.trend > 0 ? '+' : ''}{metrics.activationRate.trend}%
                             </span>
-                            <span className="text-muted-foreground">last 7 days</span>
+                            <span className="text-muted-foreground">vs previous 7 days</span>
                          </div>
                     </div>
                       <div className="h-12 w-24" style={{ minWidth: '96px', minHeight: '48px' }}>
                          <ResponsiveContainer width="100%" height="100%">
-                             <BarChart data={[{v:30},{v:50},{v:40},{v:30},{v:70}]}>
+                             <BarChart data={[{v:30},{v:28},{v:25},{v:24},{v:metrics.activationRate.value}]}>
                                  <Bar dataKey="v" fill="#FFAB00" radius={[2,2,0,0]} />
                              </BarChart>
                          </ResponsiveContainer>
@@ -202,7 +204,10 @@ export default function DashboardPage() {
         
         {/* Placeholder for other cards defined in space but not yet implemented */}
         {spaceConfig.dashboardCards
-            .filter(card => !['users', 'revenue', 'invoices'].includes(card))
+            .filter(card => !['users'].includes(card))
+             // Note: Excluding Revenue/Invoices from this row as they are now in Business Section
+             // But for now keeping logic flexible or hiding them if handled below
+            .filter(card => !['revenue', 'invoices'].includes(card)) // Removing them from here
             .map(card => (
                 <div key={card} className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-dashed border-border flex flex-col items-center justify-center text-center">
                     <div className="p-3 bg-muted rounded-full mb-3">
@@ -214,6 +219,94 @@ export default function DashboardPage() {
             ))
         }
       </div>
+
+      {/* NEW: Business Section (Revenue, Invoices, Etc) */}
+      {(showCard('revenue') || showCard('invoices')) && (
+        <div className="space-y-4">
+             <div className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5 text-muted-foreground" />
+                <h3 className="text-lg font-bold text-foreground">Business</h3>
+            </div>
+            
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                {/* Revenue Card */}
+                {showCard('revenue') && (
+                    <div className="relative overflow-hidden rounded-2xl bg-card p-4 md:p-6 shadow-xl border border-border/50">
+                        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+                            <div className="p-2 md:p-3 bg-blue-500/10 rounded-full">
+                                <DollarSign className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
+                            </div>
+                            <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">Total Revenue</span>
+                        </div>
+                        <div className="flex items-end justify-between">
+                            <div>
+                                <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">{metrics.revenue.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</h3>
+                                <div className="flex items-center gap-2 text-sm">
+                                    <span className={`flex items-center font-semibold px-1.5 py-0.5 rounded ${metrics.revenue.trend >= 0 ? 'text-green-500 bg-green-500/10' : 'text-destructive bg-destructive/10'}`}>
+                                        {metrics.revenue.trend >= 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
+                                        {metrics.revenue.trend > 0 ? '+' : ''}{metrics.revenue.trend}%
+                                    </span>
+                                    <span className="text-muted-foreground">last 7 days</span>
+                                </div>
+                            </div>
+                            <div className="h-12 w-24" style={{ minWidth: '96px', minHeight: '48px' }}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={[{v:40},{v:20},{v:60},{v:40},{v:80}]}>
+                                        <Bar dataKey="v" fill="#00B8D9" radius={[2,2,0,0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Invoices/Downloads Card */}
+                {showCard('invoices') && (
+                    <div className="relative overflow-hidden rounded-2xl bg-card p-4 md:p-6 shadow-xl border border-border/50">
+                        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+                            <div className="p-2 md:p-3 bg-yellow-500/10 rounded-full">
+                                <FileText className="h-5 w-5 md:h-6 md:w-6 text-yellow-500" />
+                            </div>
+                            <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">Total Invoices</span>
+                        </div>
+                        <div className="flex items-end justify-between">
+                            <div>
+                                <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">{metrics.invoices.value}</h3>
+                                <div className="flex items-center gap-2 text-sm">
+                                    <span className={`flex items-center font-semibold px-1.5 py-0.5 rounded ${metrics.invoices.trend >= 0 ? 'text-green-500 bg-green-500/10' : 'text-destructive bg-destructive/10'}`}>
+                                        {metrics.invoices.trend >= 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
+                                        {metrics.invoices.trend > 0 ? '+' : ''}{metrics.invoices.trend}%
+                                    </span>
+                                    <span className="text-muted-foreground">last 7 days</span>
+                                </div>
+                            </div>
+                            <div className="h-12 w-24" style={{ minWidth: '96px', minHeight: '48px' }}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={[{v:30},{v:50},{v:40},{v:30},{v:70}]}>
+                                        <Bar dataKey="v" fill="#FFAB00" radius={[2,2,0,0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                
+                {/* Placeholders for other cards */}
+                {spaceConfig.dashboardCards
+                    .filter(card => !['users', 'revenue', 'invoices', 'activity'].includes(card))
+                    .map(card => (
+                        <div key={card} className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-dashed border-border flex flex-col items-center justify-center text-center">
+                            <div className="p-3 bg-muted rounded-full mb-3">
+                                <FileText className="h-6 w-6 text-muted-foreground" />
+                            </div>
+                            <h3 className="text-lg font-bold text-foreground capitalize">{card.replace('_', ' ')}</h3>
+                            <p className="text-sm text-muted-foreground mt-1">Coming soon for {spaceConfig.name}</p>
+                        </div>
+                    ))
+                }
+            </div>
+        </div>
+      )}
 
       {/* Charts Row - Only show for Architect/Admin or specific spaces if mapped */}
       {showCard('activity') && (
