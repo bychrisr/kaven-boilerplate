@@ -161,6 +161,7 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
             aria-describedby={displayHelperText ? `${inputId}-helper` : undefined}
             {...(props as React.InputHTMLAttributes<HTMLInputElement> &
               React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
+
           />
 
           {endAdornment && (

@@ -524,7 +524,8 @@ spec:
 ### Frontend
 
 - **Framework:** Next.js 14 (App Router)
-- **UI:** Tailwind CSS + shadcn/ui
+- **Internationalization**: [i18n Implementation](architecture/INTERNATIONALIZATION.md) using `next-intl`.
+- **Styling**: TailwindCSS with CSS Variables for dynamic theming./ui
 - **State:** Zustand (planned)
 - **API Client:** TanStack Query (planned)
 - **Forms:** React Hook Form + Zod (planned)
