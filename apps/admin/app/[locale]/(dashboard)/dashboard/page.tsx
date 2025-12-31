@@ -63,6 +63,13 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 const CHART_COLORS = ['hsl(var(--primary))', '#FFAB00', '#00B8D9', '#FF5630'];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const normalizeMetric = (metric: any) => {
+  if (typeof metric === 'number') return { value: metric, trend: 0 };
+  if (metric && typeof metric.value === 'number') return metric;
+  return { value: 0, trend: 0 };
+};
+
 export default function DashboardPage() {
   const { data: usersData } = useUsers({ page: 1, limit: 5 });
   const { data: summary, isLoading: isLoadingSummary } = useDashboardSummary();
@@ -74,13 +81,16 @@ export default function DashboardPage() {
     return <DashboardSkeleton />;
   }
 
-  const metrics = summary || {
-    totalUsers: { value: 0, trend: 0 },
-    revenue: { value: 0, trend: 0 },
-    invoices: { value: 0, trend: 0 },
-    orders: { value: 0, trend: 0 },
-    newSignups: { value: 0, trend: 0 },
-    activationRate: { value: 0, trend: 0 }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rawMetrics: any = summary || {};
+  
+  const metrics = {
+    totalUsers: normalizeMetric(rawMetrics.totalUsers),
+    revenue: normalizeMetric(rawMetrics.revenue),
+    invoices: normalizeMetric(rawMetrics.invoices),
+    orders: normalizeMetric(rawMetrics.orders),
+    newSignups: normalizeMetric(rawMetrics.newSignups),
+    activationRate: normalizeMetric(rawMetrics.activationRate)
   };
 
   const chartData = charts || [];
