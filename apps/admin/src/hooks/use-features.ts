@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { getErrorMessage } from '@/lib/utils';
+import { getErrorMessage } from '@/lib/errors';
 
 // Types
 export interface Feature {
