@@ -227,7 +227,7 @@ export class PaymentController {
 
       await prisma.purchase.update({
         where: { id: purchase.id },
-        data: { paymentId: qrCode.paymentId },
+        data: { externalPaymentId: qrCode.paymentId },
       });
 
       return reply.status(201).send({
@@ -261,7 +261,7 @@ export class PaymentController {
         id: purchase.id,
         status: purchase.status,
         amount: Number(purchase.amount),
-        paidAt: purchase.paidAt,
+        externalPaymentId: purchase.externalPaymentId,
       });
     } catch (error: any) {
       return reply.status(500).send({ error: 'Erro ao buscar status' });

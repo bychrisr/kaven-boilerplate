@@ -149,7 +149,7 @@ async function confirmPurchase(
     where: { id: purchaseId },
     data: {
       status: 'COMPLETED',
-      paymentId,
+      externalPaymentId: paymentId,
     },
   });
 
