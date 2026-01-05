@@ -29,6 +29,10 @@ export async function paymentRoutes(fastify: FastifyInstance) {
   // Pix
   fastify.post('/pix/create', paymentController.createPixPayment.bind(paymentController));
   fastify.get('/pix/:id/status', paymentController.checkPixPaymentStatus.bind(paymentController));
+
+  // PagueBit
+  fastify.post('/paguebit/create', paymentController.createPagueBitPayment.bind(paymentController));
+  fastify.get('/paguebit/:id/status', paymentController.getPagueBitPaymentStatus.bind(paymentController));
 }
 
 export async function webhookRoutes(fastify: FastifyInstance) {
@@ -46,4 +50,7 @@ export async function webhookRoutes(fastify: FastifyInstance) {
 
   // Webhook do Pix
   fastify.post('/pix', paymentController.handlePixWebhook.bind(paymentController));
+
+  // Webhook do PagueBit
+  fastify.post('/paguebit', paymentController.handlePagueBitWebhook.bind(paymentController));
 }

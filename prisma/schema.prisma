@@ -921,3 +921,28 @@ enum PurchaseStatus {
   REFUNDED
   EXPIRED
 }
+
+model WebhookEvent {
+  id String @id @default(uuid())
+
+  /// ID externo do evento (para idempotência)
+  externalId String @unique @map("external_id")
+
+  /// Provider (PAGUEBIT, STRIPE, etc)
+  provider String
+
+  /// Tipo de evento
+  event String
+
+  /// Payload completo
+  payload Json
+
+  /// Quando foi processado
+  processedAt DateTime? @map("processed_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([provider])
+  @@index([event])
+  @@map("webhook_events")
+}
