@@ -210,7 +210,7 @@ export class PaymentController {
         data: {
           userId: data.userId,
           tenantId: data.tenantId,
-          productId,
+          productId: productId || undefined,
           amount,
           currency: 'BRL',
           status: 'PENDING',
