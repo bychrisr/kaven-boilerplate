@@ -84,10 +84,10 @@ export const SPACES: Record<string, SpaceConfig> = {
       {
         title: 'MONETIZATION',
         items: [
-          { icon: CreditCard, label: 'Plans', href: '/admin/plans' },
-          { icon: ShoppingCart, label: 'Products', href: '/admin/products' },
-          { icon: Target, label: 'Features', href: '/admin/features' },
-          { icon: Receipt, label: 'Subscriptions', href: '/admin/subscriptions' }
+          { icon: CreditCard, label: 'Plans', href: '/plans' },
+          { icon: ShoppingCart, label: 'Products', href: '/products' },
+          { icon: Target, label: 'Features', href: '/features' },
+          { icon: Receipt, label: 'Subscriptions', href: '/subscriptions' }
         ]
       },
       {
