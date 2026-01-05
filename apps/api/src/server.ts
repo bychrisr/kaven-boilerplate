@@ -21,6 +21,10 @@ import { auditRoutes } from './modules/audit/routes/audit.routes';
 import { observabilityRoutes } from './modules/observability/routes/observability.routes';
 import { dashboardRoutes } from './modules/dashboard/dashboard.routes';
 import { advancedMetricsMiddleware, onResponseMetricsHook } from './middleware/advanced-metrics.middleware';
+import { planRoutes } from './modules/plans/routes/plan.routes';
+import { featureRoutes } from './modules/plans/routes/feature.routes';
+import { productRoutes } from './modules/products/routes/product.routes';
+import { subscriptionRoutes } from './modules/subscriptions/routes/subscription.routes';
 
 const fastify = Fastify({
   logger: {
@@ -56,6 +60,10 @@ fastify.register(swagger, {
       { name: 'Payments', description: 'Sistema de pagamentos Stripe' },
       { name: 'Files', description: 'Upload e gerenciamento de arquivos' },
       { name: 'Health', description: 'Health checks e métricas' },
+      { name: 'Plans', description: 'Gerenciamento de planos de assinatura' },
+      { name: 'Products', description: 'Gerenciamento de produtos one-time' },
+      { name: 'Features', description: 'Gerenciamento de features e quotas' },
+      { name: 'Subscriptions', description: 'Gerenciamento de subscriptions e entitlement' },
     ],
   },
 });
@@ -147,6 +155,12 @@ fastify.register(fileRoutes, { prefix: '/api/files' });
 fastify.register(auditRoutes, { prefix: '/api/audit-logs' });
 fastify.register(observabilityRoutes, { prefix: '/api/observability' });
 fastify.register(dashboardRoutes, { prefix: '/api/dashboard' });
+
+// Plans & Products System
+fastify.register(planRoutes, { prefix: '/api' });
+fastify.register(productRoutes, { prefix: '/api' });
+fastify.register(featureRoutes, { prefix: '/api' });
+fastify.register(subscriptionRoutes, { prefix: '/api' });
 
 // 🕵️ FORENSIC AUDIT: Global Request Tracer
 import { randomUUID } from 'node:crypto';
