@@ -17,7 +17,7 @@ export default function EditPlanPage({ params }: { params: { id: string } }) {
     try {
       await updatePlan.mutateAsync({ id: params.id, ...data });
       toast.success('Plano atualizado com sucesso!');
-      router.push('/admin/plans');
+      router.push('/plans');
     } catch (error: any) {
       toast.error(error.message || 'Erro ao atualizar plano');
     }
@@ -35,7 +35,7 @@ export default function EditPlanPage({ params }: { params: { id: string } }) {
     return (
       <div className="flex flex-col items-center justify-center h-96 space-y-4">
         <p className="text-muted-foreground">Plano não encontrado</p>
-        <Link href="/admin/plans">
+        <Link href="/plans">
           <Button>Voltar para lista</Button>
         </Link>
       </div>
@@ -46,7 +46,7 @@ export default function EditPlanPage({ params }: { params: { id: string } }) {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link href="/admin/plans">
+        <Link href="/plans">
           <Button variant="ghost" size="icon">
             <ArrowLeft className="h-4 w-4" />
           </Button>

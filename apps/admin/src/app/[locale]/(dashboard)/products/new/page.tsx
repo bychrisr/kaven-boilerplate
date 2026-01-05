@@ -16,7 +16,7 @@ export default function NewProductPage() {
     try {
       await createProduct.mutateAsync(data);
       toast.success('Produto criado com sucesso!');
-      router.push('/admin/products');
+      router.push('/products');
     } catch (error: any) {
       toast.error(error.message || 'Erro ao criar produto');
     }
@@ -25,7 +25,7 @@ export default function NewProductPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Link href="/admin/products"><Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button></Link>
+        <Link href="/products"><Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button></Link>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Novo Produto</h1>
           <p className="text-muted-foreground mt-2">Crie um novo produto one-time ou add-on</p>

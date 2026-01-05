@@ -17,19 +17,19 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
     try {
       await updateProduct.mutateAsync({ id: params.id, ...data });
       toast.success('Produto atualizado com sucesso!');
-      router.push('/admin/products');
+      router.push('/products');
     } catch (error: any) {
       toast.error(error.message || 'Erro ao atualizar produto');
     }
   };
 
   if (isLoading) return <div className="flex items-center justify-center h-96"><div className="text-muted-foreground">Carregando produto...</div></div>;
-  if (!product) return <div className="flex flex-col items-center justify-center h-96 space-y-4"><p className="text-muted-foreground">Produto não encontrado</p><Link href="/admin/products"><Button>Voltar para lista</Button></Link></div>;
+  if (!product) return <div className="flex flex-col items-center justify-center h-96 space-y-4"><p className="text-muted-foreground">Produto não encontrado</p><Link href="/products"><Button>Voltar para lista</Button></Link></div>;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Link href="/admin/products"><Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button></Link>
+        <Link href="/products"><Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button></Link>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Editar Produto</h1>
           <p className="text-muted-foreground mt-2">Atualize as informações do produto "{product.name}"</p>

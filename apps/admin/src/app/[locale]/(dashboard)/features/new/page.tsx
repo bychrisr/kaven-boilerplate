@@ -16,7 +16,7 @@ export default function NewFeaturePage() {
     try {
       await createFeature.mutateAsync(data);
       toast.success('Feature criada com sucesso!');
-      router.push('/admin/features');
+      router.push('/features');
     } catch (error: any) {
       toast.error(error.message || 'Erro ao criar feature');
     }
@@ -25,7 +25,7 @@ export default function NewFeaturePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Link href="/admin/features"><Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button></Link>
+        <Link href="/features"><Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button></Link>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Nova Feature</h1>
           <p className="text-muted-foreground mt-2">Crie uma nova funcionalidade do sistema</p>

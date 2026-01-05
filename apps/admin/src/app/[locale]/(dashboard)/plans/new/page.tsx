@@ -16,7 +16,7 @@ export default function NewPlanPage() {
     try {
       await createPlan.mutateAsync(data);
       toast.success('Plano criado com sucesso!');
-      router.push('/admin/plans');
+      router.push('/plans');
     } catch (error: any) {
       toast.error(error.message || 'Erro ao criar plano');
     }
@@ -26,7 +26,7 @@ export default function NewPlanPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link href="/admin/plans">
+        <Link href="/plans">
           <Button variant="ghost" size="icon">
             <ArrowLeft className="h-4 w-4" />
           </Button>

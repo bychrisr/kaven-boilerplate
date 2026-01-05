@@ -57,7 +57,7 @@ export default function PlansPage() {
             Gerencie os planos de assinatura do sistema
           </p>
         </div>
-        <Link href="/admin/plans/new">
+        <Link href="/plans/new">
           <Button>
             <Plus className="mr-2 h-4 w-4" />
             Novo Plano
@@ -129,7 +129,7 @@ export default function PlansPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Link href={`/admin/plans/${plan.id}`}>
+                      <Link href={`/plans/${plan.id}`}>
                         <Button variant="ghost" size="icon">
                           <Pencil className="h-4 w-4" />
                         </Button>

@@ -33,7 +33,7 @@ export default function ProductsPage() {
           <h1 className="text-3xl font-bold tracking-tight">Produtos</h1>
           <p className="text-muted-foreground mt-2">Gerencie produtos one-time e add-ons</p>
         </div>
-        <Link href="/admin/products/new">
+        <Link href="/products/new">
           <Button><Plus className="mr-2 h-4 w-4" />Novo Produto</Button>
         </Link>
       </div>
@@ -65,7 +65,7 @@ export default function ProductsPage() {
                   <TableCell><Badge variant={product.isActive ? 'default' : 'secondary'}>{product.isActive ? 'Ativo' : 'Inativo'}</Badge></TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Link href={`/admin/products/${product.id}`}><Button variant="ghost" size="icon"><Pencil className="h-4 w-4" /></Button></Link>
+                      <Link href={`/products/${product.id}`}><Button variant="ghost" size="icon"><Pencil className="h-4 w-4" /></Button></Link>
                       <AlertDialog>
                         <AlertDialogTrigger asChild><Button variant="ghost" size="icon"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
                         <AlertDialogContent>
