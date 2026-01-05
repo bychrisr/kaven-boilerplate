@@ -145,8 +145,13 @@ export class PlanService {
         ...planData,
         prices: {
           create: prices.map(price => ({
-            ...price,
-            metadata: price.metadata ? JSON.parse(JSON.stringify(price.metadata)) : undefined,
+            interval: price.interval,
+            intervalCount: price.intervalCount,
+            amount: price.amount,
+            currency: price.currency,
+            originalAmount: price.originalAmount,
+            stripePriceId: price.stripePriceId,
+            pagueBitPriceId: price.pagueBitPriceId,
           })),
         },
       },

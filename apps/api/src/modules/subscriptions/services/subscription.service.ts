@@ -249,7 +249,7 @@ export class SubscriptionService {
         featureId: feature.id,
       },
       orderBy: {
-        createdAt: 'desc',
+        updatedAt: 'desc',
       },
     });
 
@@ -299,11 +299,17 @@ export class SubscriptionService {
     const currentUsage = await this.getQuotaUsage(tenantId, featureCode);
     const newUsage = currentUsage + amount;
 
+    const now = new Date();
+    const periodStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const periodEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
     await prisma.usageRecord.create({
       data: {
         tenantId,
         featureId: feature.id,
         currentUsage: newUsage,
+        periodStart,
+        periodEnd,
       },
     });
 

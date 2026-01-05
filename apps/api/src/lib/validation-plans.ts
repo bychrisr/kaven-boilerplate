@@ -37,7 +37,7 @@ export const createPlanSchema = z.object({
   tenantId: z.string().uuid().nullable().optional(),
   prices: z.array(priceSchema).min(1, { message: 'Plano deve ter pelo menos um preço' }),
   features: z.array(planFeatureSchema).optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 export const updatePlanSchema = z.object({
@@ -50,7 +50,7 @@ export const updatePlanSchema = z.object({
   sortOrder: z.number().int().optional(),
   badge: z.string().nullable().optional(),
   stripeProductId: z.string().nullable().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 export const listPlansSchema = z.object({
@@ -90,7 +90,7 @@ export const createProductSchema = z.object({
   imageUrl: z.string().url().optional(),
   tenantId: z.string().uuid().nullable().optional(),
   effects: z.array(productEffectSchema).min(1, { message: 'Produto deve ter pelo menos um efeito' }),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 export const updateProductSchema = z.object({
@@ -104,7 +104,7 @@ export const updateProductSchema = z.object({
   stock: z.number().int().optional(),
   maxPerTenant: z.number().int().optional(),
   imageUrl: z.string().url().nullable().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 export const listProductsSchema = z.object({
