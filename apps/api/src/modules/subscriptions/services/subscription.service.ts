@@ -249,7 +249,7 @@ export class SubscriptionService {
         featureId: feature.id,
       },
       orderBy: {
-        recordedAt: 'desc',
+        createdAt: 'desc',
       },
     });
 
@@ -304,7 +304,6 @@ export class SubscriptionService {
         tenantId,
         featureId: feature.id,
         currentUsage: newUsage,
-        recordedAt: new Date(),
       },
     });
 

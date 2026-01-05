@@ -107,7 +107,7 @@ export class ProductService {
 
     // Criar produto
     const product = await prisma.product.create({
-      data: productData,
+      data: productData as any, // Metadata and tenantId type compatibility
     });
 
     // Adicionar effects
@@ -135,7 +135,7 @@ export class ProductService {
     // Atualizar produto
     const product = await prisma.product.update({
       where: { id },
-      data,
+      data: data as any, // Metadata type compatibility
     });
 
     return this.getProductById(product.id);

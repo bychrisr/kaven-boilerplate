@@ -194,7 +194,7 @@ export class PlanService {
     // Atualizar plano
     const plan = await prisma.plan.update({
       where: { id },
-      data,
+      data: data as any, // Metadata type compatibility
     });
 
     return this.getPlanById(plan.id);

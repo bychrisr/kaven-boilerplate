@@ -1,0 +1,158 @@
+# PagueBit - Respostas Técnicas Confirmadas
+
+**Data:** 05 de janeiro de 2026  
+**Status:** ✅ Respostas recebidas da equipe PagueBit
+
+---
+
+## ✅ Respostas Confirmadas
+
+### 1. Status de Revisão
+
+**Pergunta:** Recebemos webhook com status `review`? Quanto tempo entre `review` e `not_approved`?
+
+**Resposta:**
+
+- ✅ Recebem webhook em **todas as trocas de status**
+- ⏱️ Reembolso geralmente demora **no máximo 1 hora**
+- ⚠️ Pode levar até **1 dia** em casos específicos
+
+**Implementação:**
+
+```typescript
+// Webhook handler deve tratar todos os status
+switch (payload.status) {
+  case 'pending':
+    // Aguardando pagamento
+    break;
+  case 'review':
+    // Em análise - NÃO confirmar ainda
+    // Aguardar approved ou not_approved
+    break;
+  case 'approved':
+    // ✅ ÚNICO que confirma recebimento
+    break;
+  case 'not_approved':
+    // Rejeitado/expirado/estornado
+    break;
+}
+```
+
+---
+
+### 2. Expiração de QR Code
+
+**Pergunta:** Após 10 minutos, pagamento muda para `expired` ou `pending`? Se cliente pagar expirado?
+
+**Resposta:**
+
+- ✅ Muda para `not_approved` (não existe status `expired`)
+- ✅ Se cliente pagar QR expirado → **é estornado automaticamente**
+
+**Implementação:**
+
+```typescript
+// Frontend: Countdown de 10 minutos
+const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+// Após 10 minutos
+if (Date.now() > expiresAt && payment.status === 'pending') {
+  // Aguardar webhook com status 'not_approved'
+  // Não tentar polling, QR já expirou
+}
+```
+
+---
+
+### 3. Cancelamento
+
+**Pergunta:** Existe endpoint para cancelar pagamento `pending`?
+
+**Resposta:**
+
+- ❌ Não existe endpoint de cancelamento
+- ✅ Após um tempo, pagamentos `pending` são alterados para `not_approved` automaticamente
+- ✅ Isso acontece quando o QR Code expira (10 minutos)
+
+**Implementação:**
+
+```typescript
+// Não precisa implementar cancelamento manual
+// Sistema PagueBit cancela automaticamente após expiração
+async function handleExpiredPayment(paymentId: string) {
+  // Apenas aguardar webhook com status 'not_approved'
+  // Não fazer nada manualmente
+}
+```
+
+---
+
+### 4. Rate Limiting
+
+**Pergunta:** API retorna headers informativos?
+
+**Resposta:**
+
+- ❌ Não retorna headers de rate limit
+
+**Implementação:**
+
+```typescript
+// Implementar retry com backoff exponencial
+async function callPagueBitAPI(endpoint: string, data: any, retries = 3) {
+  try {
+    return await axios.post(endpoint, data);
+  } catch (error) {
+    if (error.response?.status === 429 && retries > 0) {
+      const delay = Math.pow(2, 4 - retries) * 1000; // 2s, 4s, 8s
+      await sleep(delay);
+      return callPagueBitAPI(endpoint, data, retries - 1);
+    }
+    throw error;
+  }
+}
+```
+
+---
+
+## 📋 Resumo de Implementação
+
+### ✅ O Que Fazer:
+
+1. **Webhook Handler:**
+   - Tratar todos os status (pending, review, approved, not_approved)
+   - Implementar idempotência (usar `X-Paguebit-Event-Id`)
+   - Apenas `approved` confirma recebimento
+
+2. **Expiração de QR Code:**
+   - Frontend: Countdown de 10 minutos
+   - Após expiração: Aguardar webhook `not_approved`
+   - Não tentar polling após expiração
+
+3. **Cancelamento:**
+   - Não implementar endpoint de cancelamento
+   - Sistema cancela automaticamente após 10 minutos
+
+4. **Rate Limiting:**
+   - Implementar retry com backoff exponencial
+   - Limite conhecido: 300 req/min por IP
+   - Não confiar em headers (não existem)
+
+### ⏸️ Aguardando Resposta:
+
+- QR Code Estático (endpoint para buscar)
+- Integração com Loja Virtual (API de produtos)
+
+---
+
+## 🔄 Próximos Passos
+
+1. ✅ Implementar webhook handler completo
+2. ✅ Implementar expiração de QR Code no frontend
+3. ✅ Implementar retry com backoff
+4. ⏸️ Aguardar resposta sobre Loja Virtual
+5. ⏸️ Aguardar resposta sobre QR Estático
+
+---
+
+**Última Atualização:** 05/01/2026 11:23
