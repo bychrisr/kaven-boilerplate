@@ -183,6 +183,7 @@
   "Settings": {
     "title": "Settings",
     "subtitle": "Manage system settings and personalize your experience",
+    "language": "Language",
     "tabs": {
       "general": "General",
       "theme": "Theme",
