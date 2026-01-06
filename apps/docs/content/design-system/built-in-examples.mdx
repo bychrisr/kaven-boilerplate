@@ -1,51 +1,168 @@
-# Componentes Built-in
+---
+title: Built-in Components
+description: Exemplos dos componentes nativos do Nextra 4
+---
 
-Esta página demonstra os componentes built-in do Nextra.
+import { Callout, Steps, Tabs, Cards, FileTree } from 'nextra/components';
+import { InfoIcon, FileIcon, TerminalIcon } from 'lucide-react';
 
-## Callout
+# Built-in Components
 
-import { Callout } from 'nextra/components';
+Esta página demonstra os componentes nativos disponíveis no Nextra 4.
 
-<Callout type="info">
-  Informação útil que os usuários devem saber, mesmo ao escanear o conteúdo
-  rapidamente.
+## 1. Callout
+
+Alertas para destacar informações importantes.
+
+<Callout type="info" emoji="ℹ️">
+  **Info**: Este é um callout de informação padrão.
 </Callout>
 
-<Callout type="warning">
-  Informação urgente que precisa de atenção imediata do usuário para evitar
-  problemas.
+<Callout type="warning" emoji="⚠️">
+  **Warning**: Cuidado com breaking changes.
 </Callout>
 
-<Callout type="error">
-  Aviso sobre riscos ou resultados negativos de certas ações.
+<Callout type="error" emoji="🚫">
+  **Error**: Algo deu errado aqui.
 </Callout>
 
-## Steps
+<Callout type="default" emoji="💡">
+  **Tip**: Você pode usar qualquer emoji.
+</Callout>
 
-import { Steps } from 'nextra/components';
+## 2. Steps
+
+Ideal para tutoriais e guias sequenciais.
 
 <Steps>
+### Instalar dependências
 
-### Primeiro Passo
+```bash
+pnpm install
+```
 
-Este é o primeiro passo da descrição.
+### Configurar ambiente
 
-### Segundo Passo
+Crie um arquivo `.env` na raiz do projeto.
 
-Este é o segundo passo da descrição.
+### Rodar o projeto
 
-### Terceiro Passo
-
-Este é o terceiro passo da descrição.
+```bash
+pnpm dev
+```
 
 </Steps>
 
-## Cards
+## 3. Cards
 
-import { Cards } from 'nextra/components';
+Links visuais em grid.
 
 <Cards>
-  <Cards.Card title="Cores" href="/design-system/colors" />
-  <Cards.Card title="Tipografia" href="/design-system/typography" />
-  <Cards.Card title="Espaçamento" href="/design-system/spacing" />
+  <Cards.Card
+    icon={<InfoIcon />}
+    title="Documentação"
+    href="/platform/getting-started/installation"
+  />
+  <Cards.Card
+    icon={<TerminalIcon />}
+    title="API Reference"
+    href="/platform/backend/api-reference"
+  />
+  <Cards.Card icon={<FileIcon />} title="Design System" href="/design-system" />
 </Cards>
+
+## 4. Tabs
+
+Conteúdo organizado em abas.
+
+<Tabs items={['npm', 'pnpm', 'yarn']}>
+  <Tabs.Tab>```bash npm install nextra ```</Tabs.Tab>
+  <Tabs.Tab>```bash pnpm add nextra ```</Tabs.Tab>
+  <Tabs.Tab>```bash yarn add nextra ```</Tabs.Tab>
+</Tabs>
+
+## 5. FileTree
+
+Visualização de estrutura de diretórios.
+
+<FileTree>
+  <FileTree.Folder name="apps" defaultOpen>
+    <FileTree.Folder name="docs" defaultOpen>
+      <FileTree.File name="next.config.mjs" />
+      <FileTree.File name="package.json" />
+    </FileTree.Folder>
+    <FileTree.Folder name="admin">
+      <FileTree.File name="package.json" />
+    </FileTree.Folder>
+  </FileTree.Folder>
+  <FileTree.File name="package.json" />
+  <FileTree.File name="pnpm-lock.yaml" />
+</FileTree>
+
+## 7. LaTeX (Equações Matemáticas)
+
+> [!NOTE]
+> LaTeX requer configuração client-side adicional devido a limitações de serialização no Nextra 4. Por ora, use ferramentas como [MathJax CDN](https://www.mathjax.org/) ou [KaTeX](https://katex.org/) diretamente em componentes React customizados.
+
+Para referência, a sintaxe LaTeX seria:
+
+```text
+Inline: $e^{i\pi} + 1 = 0$
+
+Block:
+$$
+\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
+$$
+```
+
+## 8. Mermaid (Diagramas)
+
+> [!NOTE]
+> Mermaid requer configuração adicional de plugin. Por ora, use ferramentas externas como [Mermaid Live Editor](https://mermaid.live/) e incorpore as imagens geradas.
+
+Para referência, a sintaxe Mermaid seria:
+
+```text
+graph TD
+    A[Start] --> B{Is it working?}
+    B -->|Yes| C[Great!]
+    B -->|No| D[Debug]
+    D --> B
+    C --> E[End]
+```
+
+## 9. Code Blocks
+
+Syntax highlighting automático.
+
+```typescript
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+const getUser = async (id: string): Promise<User> => {
+  const response = await fetch(`/api/users/${id}`);
+  return response.json();
+};
+```
+
+## 10. GitHub Alert Syntax
+
+Suporte nativo para alertas no estilo GitHub.
+
+> [!NOTE]
+> Informação útil que os usuários devem saber.
+
+> [!TIP]
+> Dica para ajudar os usuários.
+
+> [!IMPORTANT]
+> Informação crítica para o sucesso do usuário.
+
+> [!WARNING]
+> Conteúdo urgente que requer atenção imediata.
+
+> [!CAUTION]
+> Avisos sobre riscos ou consequências negativas.

@@ -1,6 +1,5 @@
 import nextra from 'nextra'
 
-
 const withNextra = nextra({
   search: {
     codeblocks: false
@@ -8,6 +7,6 @@ const withNextra = nextra({
 })
 
 export default withNextra({
-    transpilePackages: ['lucide-react'],
-    reactStrictMode: true,
+  transpilePackages: ['lucide-react'],
+  reactStrictMode: true,
 })
