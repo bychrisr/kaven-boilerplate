@@ -20,9 +20,9 @@ function NodeMetricCard({
   status = 'good',
 }: Readonly<NodeMetricCardProps>) {
   const statusColors = {
-    good: 'bg-emerald-50 text-emerald-600',
-    warning: 'bg-amber-50 text-amber-600',
-    critical: 'bg-rose-50 text-rose-600',
+    good: 'bg-success-lighter text-success-main',
+    warning: 'bg-warning-lighter text-warning-main',
+    critical: 'bg-error-lighter text-error-main',
   };
 
   return (

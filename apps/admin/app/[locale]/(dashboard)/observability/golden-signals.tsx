@@ -83,21 +83,21 @@ export function GoldenSignals() {
           value={`${goldenSignals.latency.p95}ms`}
           subtitle={`p50: ${goldenSignals.latency.p50}ms | p99: ${goldenSignals.latency.p99}ms`}
           icon={Activity}
-          color="#3B82F6"
+          color="#00B8D9"
         />
         <GoldenSignalCard
           title="Traffic"
           value={goldenSignals.traffic.requestsPerSecond.toFixed(2)}
           subtitle={`${goldenSignals.traffic.totalRequests.toLocaleString()} total requests`}
           icon={TrendingUp}
-          color="#10B981"
+          color="#22C55E"
         />
         <GoldenSignalCard
           title="Errors"
           value={`${goldenSignals.errors.errorRate}%`}
           subtitle={`${goldenSignals.errors.errorRequests} failed requests`}
           icon={AlertTriangle}
-          color="#EF4444"
+          color="#FF5630"
           trend={goldenSignals.errors.errorRate > 1 ? 'up' : 'neutral'}
         />
         <GoldenSignalCard
@@ -105,7 +105,7 @@ export function GoldenSignals() {
           value={`${goldenSignals.saturation.memoryUsagePercent}%`}
           subtitle={`CPU: ${goldenSignals.saturation.cpuUsagePercent}%`}
           icon={Gauge}
-          color="#8B5CF6"
+          color="#8E33FF"
         />
       </div>
     </div>
