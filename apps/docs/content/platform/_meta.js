@@ -6,5 +6,6 @@ export default {
   frontend: 'Frontend',
   guides: 'Guides',
   features: 'Features',
+  'plans-and-products': 'Plans & Products System',
   'implementation-logs': 'Implementation Logs'
 }
