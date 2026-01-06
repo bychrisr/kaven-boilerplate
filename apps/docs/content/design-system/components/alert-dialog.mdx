@@ -1,0 +1,55 @@
+---
+title: Alert Dialog
+description: Diálogos de confirmação para ações importantes
+---
+
+# Alert Dialog
+
+> Modal de confirmação para ações destrutivas ou importantes.
+
+## Básico
+
+```tsx
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@/components/ui/alert-dialog';
+
+<AlertDialog>
+  <AlertDialogTrigger asChild>
+    <Button variant="outlined" color="error">
+      Excluir
+    </Button>
+  </AlertDialogTrigger>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
+      <AlertDialogDescription>
+        Esta ação não pode ser desfeita. Isso excluirá permanentemente o item.
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+      <AlertDialogAction onClick={handleDelete}>Excluir</AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>;
+```
+
+## API
+
+| Prop           | Tipo                      | Padrão | Descrição             |
+| -------------- | ------------------------- | ------ | --------------------- |
+| `open`         | `boolean`                 | -      | Controla visibilidade |
+| `onOpenChange` | `(open: boolean) => void` | -      | Callback quando muda  |
+
+## Relacionados
+
+- [Dialog](/design-system/components/dialog)

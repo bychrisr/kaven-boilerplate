@@ -1,0 +1,84 @@
+---
+title: Table
+description: Tabelas básicas para exibir dados tabulares
+---
+
+# Table
+
+> Componente de tabela básica para exibir dados em formato tabular.
+
+## Básico
+
+```tsx
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from '@/components/ui/table';
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Nome</TableHead>
+      <TableHead>Email</TableHead>
+      <TableHead>Status</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>João Silva</TableCell>
+      <TableCell>joao@example.com</TableCell>
+      <TableCell>Ativo</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Maria Santos</TableCell>
+      <TableCell>maria@example.com</TableCell>
+      <TableCell>Ativo</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>;
+```
+
+## Com Borda
+
+```tsx
+<Table className="border">{/* ... */}</Table>
+```
+
+## Striped
+
+```tsx
+<Table>
+  <TableBody>
+    <TableRow className="even:bg-muted/50">
+      <TableCell>Linha 1</TableCell>
+    </TableRow>
+    <TableRow className="even:bg-muted/50">
+      <TableCell>Linha 2</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+```
+
+## Hover
+
+```tsx
+<Table>
+  <TableBody>
+    <TableRow className="hover:bg-muted/50">
+      <TableCell>Linha com hover</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+```
+
+## API
+
+Componentes básicos sem props especiais. Use classes CSS para estilização.
+
+## Relacionados
+
+- [Data Table](/design-system/components/data-table) - Tabelas avançadas

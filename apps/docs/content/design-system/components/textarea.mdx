@@ -1,0 +1,83 @@
+---
+title: Textarea
+description: Campos de texto multilinha
+---
+
+# Textarea
+
+> Componente para entrada de texto em múltiplas linhas.
+
+## Básico
+
+```tsx
+import { Textarea } from '@/components/ui/textarea';
+
+<Textarea placeholder="Digite sua mensagem..." />;
+```
+
+## Com Label
+
+```tsx
+import { Label } from '@/components/ui/label';
+
+<div className="space-y-2">
+  <Label htmlFor="message">Mensagem</Label>
+  <Textarea id="message" placeholder="Digite sua mensagem..." rows={4} />
+</div>;
+```
+
+## Tamanhos
+
+```tsx
+// Small (3 linhas)
+<Textarea rows={3} />
+
+// Medium (5 linhas)
+<Textarea rows={5} />
+
+// Large (8 linhas)
+<Textarea rows={8} />
+```
+
+## Com Contador
+
+```tsx
+function TextareaWithCounter() {
+  const [value, setValue] = useState('');
+  const maxLength = 500;
+
+  return (
+    <div className="space-y-2">
+      <Textarea
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        maxLength={maxLength}
+        rows={4}
+      />
+      <p className="text-sm text-muted-foreground text-right">
+        {value.length}/{maxLength}
+      </p>
+    </div>
+  );
+}
+```
+
+## Disabled
+
+```tsx
+<Textarea disabled placeholder="Campo desabilitado" />
+```
+
+## API
+
+| Prop          | Tipo      | Padrão  | Descrição             |
+| ------------- | --------- | ------- | --------------------- |
+| `rows`        | `number`  | `3`     | Número de linhas      |
+| `maxLength`   | `number`  | -       | Limite de caracteres  |
+| `disabled`    | `boolean` | `false` | Desabilita o textarea |
+| `placeholder` | `string`  | -       | Texto placeholder     |
+
+## Relacionados
+
+- [TextField](/design-system/components/text-field) - Input com label integrado
+- [Input](/design-system/components/input) - Input de linha única

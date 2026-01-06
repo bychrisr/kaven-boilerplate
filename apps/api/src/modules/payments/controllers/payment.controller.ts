@@ -1,6 +1,10 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { stripeService } from '../stripe.service';
 import { pixService } from '../pix.service';
+import { pagueBitService } from '../providers/paguebit/paguebit.service';
+import { handlePagueBitWebhook } from '../providers/paguebit/paguebit.webhook';
+import { createPaymentSchema, type CreatePaymentInput } from '../../../lib/validation-payments';
+import { prisma } from '../../../lib/prisma';
 import { z } from 'zod';
 
 const createSubscriptionSchema = z.object({
@@ -163,6 +167,113 @@ export class PaymentController {
       console.error('Pix webhook error:', error);
       reply.status(400).send({ error: error.message });
     }
+  }
+
+  /**
+   * POST /api/payments/paguebit/create
+   * Criar pagamento PIX via PagueBit
+   */
+  async createPagueBitPayment(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const data = createPaymentSchema.parse(request.body) as CreatePaymentInput;
+
+      let amount: number;
+      let description: string;
+      let productId: string | null = null;
+      let metadata: any = {};
+
+      if (data.productId) {
+        const product = await prisma.product.findUnique({ where: { id: data.productId } });
+        if (!product || !product.isActive) {
+          return reply.status(404).send({ error: 'Produto não encontrado' });
+        }
+        amount = Number(product.price);
+        description = product.name;
+        productId = product.id;
+        metadata = { type: 'PRODUCT' };
+      } else if (data.planId) {
+        const plan = await prisma.plan.findUnique({
+          where: { id: data.planId },
+          include: { prices: { where: { isActive: true } } },
+        });
+        if (!plan || !plan.isActive || plan.prices.length === 0) {
+          return reply.status(404).send({ error: 'Plano não encontrado' });
+        }
+        amount = Number(plan.prices[0].amount);
+        description = plan.name;
+        metadata = { type: 'SUBSCRIPTION', planId: plan.id };
+      } else {
+        return reply.status(400).send({ error: 'productId ou planId obrigatório' });
+      }
+
+      const purchase = await prisma.purchase.create({
+        data: {
+          userId: data.userId,
+          tenantId: data.tenantId,
+          productId: productId || undefined,
+          amount,
+          currency: 'BRL',
+          status: 'PENDING',
+          metadata,
+        },
+      });
+
+      const qrCode = await pagueBitService.createDynamicQRCode({
+        amount,
+        description,
+        externalId: purchase.id,
+        metadata: { userId: data.userId, tenantId: data.tenantId },
+      });
+
+      await prisma.purchase.update({
+        where: { id: purchase.id },
+        data: { externalPaymentId: qrCode.paymentId },
+      });
+
+      return reply.status(201).send({
+        purchaseId: purchase.id,
+        paymentId: qrCode.paymentId,
+        qrCode: qrCode.qrCode,
+        qrCodeText: qrCode.qrCodeText,
+        expiresAt: qrCode.expiresAt,
+        amount,
+      });
+    } catch (error: any) {
+      console.error('Erro ao criar pagamento PagueBit:', error);
+      return reply.status(500).send({ error: 'Erro ao criar pagamento' });
+    }
+  }
+
+  /**
+   * GET /api/payments/paguebit/:id/status
+   * Verificar status de pagamento PagueBit
+   */
+  async getPagueBitPaymentStatus(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const { id } = request.params as { id: string };
+      const purchase = await prisma.purchase.findUnique({ where: { id } });
+
+      if (!purchase) {
+        return reply.status(404).send({ error: 'Pagamento não encontrado' });
+      }
+
+      return reply.send({
+        id: purchase.id,
+        status: purchase.status,
+        amount: Number(purchase.amount),
+        externalPaymentId: purchase.externalPaymentId,
+      });
+    } catch (error: any) {
+      return reply.status(500).send({ error: 'Erro ao buscar status' });
+    }
+  }
+
+  /**
+   * POST /api/webhooks/paguebit
+   * Webhook do PagueBit
+   */
+  async handlePagueBitWebhook(request: FastifyRequest, reply: FastifyReply) {
+    return handlePagueBitWebhook(request, reply);
   }
 }
 

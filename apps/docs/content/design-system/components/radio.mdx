@@ -1,0 +1,99 @@
+---
+title: Radio
+description: Botões de opção para seleção única
+---
+
+# Radio
+
+> Componente para seleção de uma única opção entre múltiplas.
+
+## Básico
+
+```tsx
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+
+<RadioGroup defaultValue="option1">
+  <div className="flex items-center space-x-2">
+    <RadioGroupItem value="option1" id="option1" />
+    <Label htmlFor="option1">Opção 1</Label>
+  </div>
+  <div className="flex items-center space-x-2">
+    <RadioGroupItem value="option2" id="option2" />
+    <Label htmlFor="option2">Opção 2</Label>
+  </div>
+  <div className="flex items-center space-x-2">
+    <RadioGroupItem value="option3" id="option3" />
+    <Label htmlFor="option3">Opção 3</Label>
+  </div>
+</RadioGroup>;
+```
+
+## Controlado
+
+```tsx
+const [value, setValue] = useState('option1');
+
+<RadioGroup value={value} onValueChange={setValue}>
+  <div className="flex items-center space-x-2">
+    <RadioGroupItem value="option1" id="r1" />
+    <Label htmlFor="r1">Opção 1</Label>
+  </div>
+  <div className="flex items-center space-x-2">
+    <RadioGroupItem value="option2" id="r2" />
+    <Label htmlFor="r2">Opção 2</Label>
+  </div>
+</RadioGroup>;
+```
+
+## Com Descrição
+
+```tsx
+<RadioGroup defaultValue="card">
+  <div className="flex items-center space-x-2">
+    <RadioGroupItem value="card" id="card" />
+    <div className="flex-1">
+      <Label htmlFor="card">Cartão de Crédito</Label>
+      <p className="text-sm text-muted-foreground">
+        Pague com cartão de crédito
+      </p>
+    </div>
+  </div>
+  <div className="flex items-center space-x-2">
+    <RadioGroupItem value="pix" id="pix" />
+    <div className="flex-1">
+      <Label htmlFor="pix">PIX</Label>
+      <p className="text-sm text-muted-foreground">Pagamento instantâneo</p>
+    </div>
+  </div>
+</RadioGroup>
+```
+
+## Disabled
+
+```tsx
+<RadioGroup defaultValue="option1">
+  <div className="flex items-center space-x-2">
+    <RadioGroupItem value="option1" id="o1" />
+    <Label htmlFor="o1">Habilitado</Label>
+  </div>
+  <div className="flex items-center space-x-2 opacity-50">
+    <RadioGroupItem value="option2" id="o2" disabled />
+    <Label htmlFor="o2">Desabilitado</Label>
+  </div>
+</RadioGroup>
+```
+
+## API
+
+| Prop            | Tipo                      | Padrão  | Descrição            |
+| --------------- | ------------------------- | ------- | -------------------- |
+| `value`         | `string`                  | -       | Valor selecionado    |
+| `onValueChange` | `(value: string) => void` | -       | Callback quando muda |
+| `defaultValue`  | `string`                  | -       | Valor inicial        |
+| `disabled`      | `boolean`                 | `false` | Desabilita o radio   |
+
+## Relacionados
+
+- [Checkbox](/design-system/components/checkbox) - Seleção múltipla
+- [Select](/design-system/components/select) - Dropdown de seleção

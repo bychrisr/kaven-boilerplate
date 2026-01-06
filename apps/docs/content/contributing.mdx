@@ -1,0 +1,468 @@
+---
+title: Como Documentar Features
+description: Guia completo para criar documentação de novas features no Kaven
+---
+
+# Como Documentar Features
+
+> Guia passo a passo para criar documentação de alta qualidade para novas features do projeto Kaven.
+
+## 📁 Estrutura de Pastas
+
+A documentação está organizada em `apps/docs/content/`:
+
+```
+apps/docs/content/
+├── _meta.js                    # Sidebar principal
+├── index.mdx                   # Home page
+├── changelog.mdx               # Changelog
+├── design-system/              # Design System
+│   ├── _meta.js               # Sidebar do Design System
+│   ├── foundation/            # Foundation pages
+│   │   ├── _meta.js
+│   │   └── *.mdx
+│   └── components/            # Components
+│       ├── _meta.js
+│       └── *.mdx
+└── platform/                   # Platform features (SUAS FEATURES AQUI!)
+    ├── _meta.js
+    ├── authentication.mdx
+    ├── payments.mdx
+    └── subscriptions.mdx
+```
+
+## 🆕 Criando Nova Documentação
+
+### 1. Criar o Arquivo MDX
+
+Crie um arquivo `.mdx` na pasta apropriada:
+
+```bash
+# Exemplo: documentar sistema de pagamentos
+touch apps/docs/content/platform/payments.mdx
+```
+
+### 2. Adicionar Frontmatter
+
+Todo arquivo `.mdx` deve começar com frontmatter YAML:
+
+```mdx
+---
+title: Payment System
+description: Sistema completo de pagamentos PIX com PagueBit
+---
+```
+
+**Campos obrigatórios:**
+
+- `title` - Título da página (aparece no browser tab e H1)
+- `description` - Descrição curta (SEO e meta tags)
+
+**Campos opcionais:**
+
+- `date` - Data de criação (formato: YYYY-MM-DD)
+- `author` - Autor da documentação
+- `tags` - Array de tags para categorização
+
+### 3. Estrutura do Conteúdo
+
+Use a seguinte estrutura padrão:
+
+```mdx
+---
+title: Sua Feature
+description: Descrição breve
+---
+
+# Sua Feature
+
+> Breve descrição em destaque (callout)
+
+## Visão Geral
+
+Explicação geral da feature, o que ela faz e por que existe.
+
+## Como Funciona
+
+Explicação técnica do funcionamento.
+
+### Fluxo Básico
+
+1. Passo 1
+2. Passo 2
+3. Passo 3
+
+## Exemplos de Uso
+
+### Exemplo Básico
+
+\`\`\`typescript
+// Código de exemplo
+const example = await featureService.doSomething();
+\`\`\`
+
+### Exemplo Avançado
+
+\`\`\`typescript
+// Exemplo mais complexo
+const advanced = await featureService.doAdvanced({
+option1: true,
+option2: 'value'
+});
+\`\`\`
+
+## API Reference
+
+### Métodos
+
+#### `methodName(params)`
+
+**Parâmetros:**
+
+- `param1` (string) - Descrição
+- `param2` (number, opcional) - Descrição
+
+**Retorna:** `Promise<Result>`
+
+**Exemplo:**
+\`\`\`typescript
+const result = await methodName('value', 123);
+\`\`\`
+
+## Configuração
+
+### Variáveis de Ambiente
+
+\`\`\`env
+FEATURE_API_KEY=your_key_here
+FEATURE_WEBHOOK_SECRET=your_secret
+\`\`\`
+
+## Troubleshooting
+
+### Erro Comum 1
+
+**Problema:** Descrição do erro
+
+**Solução:**
+\`\`\`typescript
+// Código da solução
+\`\`\`
+
+## Relacionados
+
+- [Feature Relacionada 1](/platform/related-1)
+- [Feature Relacionada 2](/platform/related-2)
+```
+
+## 🎨 Componentes Disponíveis
+
+### Callouts (Alertas)
+
+Use callouts do GitHub para destacar informações:
+
+```mdx
+> [!NOTE]
+> Informação útil que usuários devem saber.
+
+> [!TIP]
+> Dica para melhorar performance ou usabilidade.
+
+> [!IMPORTANT]
+> Informação crucial para o funcionamento correto.
+
+> [!WARNING]
+> Conteúdo que requer atenção do usuário.
+
+> [!CAUTION]
+> Avisos sobre ações perigosas ou irreversíveis.
+```
+
+### Code Blocks
+
+````mdx
+```typescript
+// Código TypeScript com syntax highlighting
+const example: string = 'Hello';
+```
+
+```bash
+# Comandos shell
+pnpm install
+pnpm dev
+```
+
+```diff
+- código removido
++ código adicionado
+  código inalterado
+```
+````
+
+### Tabs
+
+````mdx
+```tabs
+## TypeScript
+\`\`\`typescript
+const example = "TypeScript";
+\`\`\`
+
+## JavaScript
+\`\`\`javascript
+const example = "JavaScript";
+\`\`\`
+```
+````
+
+### Steps
+
+```mdx
+<Steps>
+
+### Passo 1
+
+Descrição do primeiro passo.
+
+### Passo 2
+
+Descrição do segundo passo.
+
+</Steps>
+```
+
+### Cards
+
+```mdx
+<Cards>
+  <Card title="Feature 1" href="/path/to/feature1" />
+  <Card title="Feature 2" href="/path/to/feature2" />
+</Cards>
+```
+
+### File Tree
+
+```mdx
+<FileTree>
+  <FileTree.Folder name="src" defaultOpen>
+    <FileTree.Folder name="modules">
+      <FileTree.File name="feature.ts" />
+      <FileTree.File name="service.ts" />
+    </FileTree.Folder>
+    <FileTree.File name="index.ts" />
+  </FileTree.Folder>
+</FileTree>
+```
+
+## 📋 Adicionar ao Sidebar
+
+### 1. Editar `_meta.js`
+
+Adicione sua página ao arquivo `_meta.js` da pasta correspondente:
+
+```javascript
+// apps/docs/content/platform/_meta.js
+export default {
+  index: 'Overview',
+  authentication: 'Authentication',
+  payments: 'Payments', // ← SUA NOVA PÁGINA
+  subscriptions: 'Subscriptions',
+};
+```
+
+### 2. Organizar com Categorias
+
+Use separators para organizar em categorias:
+
+```javascript
+export default {
+  // Categoria 1
+  '---core': {
+    type: 'separator',
+    title: '🔐 Core Features',
+  },
+  authentication: 'Authentication',
+  authorization: 'Authorization',
+
+  // Categoria 2
+  '---payments': {
+    type: 'separator',
+    title: '💳 Payments',
+  },
+  payments: 'Payments',
+  subscriptions: 'Subscriptions',
+};
+```
+
+### 3. Criar Subpastas
+
+Para features complexas, crie subpastas:
+
+```bash
+mkdir -p apps/docs/content/platform/payments
+touch apps/docs/content/platform/payments/_meta.js
+touch apps/docs/content/platform/payments/overview.mdx
+touch apps/docs/content/platform/payments/pix.mdx
+touch apps/docs/content/platform/payments/webhooks.mdx
+```
+
+```javascript
+// apps/docs/content/platform/payments/_meta.js
+export default {
+  overview: 'Overview',
+  pix: 'PIX Integration',
+  webhooks: 'Webhooks',
+};
+```
+
+## 🔍 Validação Antes do Commit
+
+**IMPORTANTE:** Sempre valide sua documentação antes de commitar!
+
+### 1. Build da Documentação
+
+Execute o build para verificar erros de estrutura:
+
+```bash
+pnpm --filter docs build
+```
+
+**Erros comuns detectados pelo build:**
+
+- ❌ Frontmatter inválido (YAML malformado)
+- ❌ Links quebrados para páginas inexistentes
+- ❌ Componentes MDX com sintaxe incorreta
+- ❌ Referências a arquivos que não existem no `_meta.js`
+- ❌ Imports de componentes inválidos
+
+### 2. Verificar Warnings
+
+Preste atenção aos warnings durante o build:
+
+```bash
+⚠ Warning: Page "feature-name" not found in _meta.js
+⚠ Warning: Invalid frontmatter in file.mdx
+⚠ Warning: Broken link detected: /invalid/path
+```
+
+### 3. Testar Localmente
+
+Inicie o servidor dev e navegue pela documentação:
+
+```bash
+pnpm --filter docs dev
+```
+
+**Verifique:**
+
+- ✅ Página aparece no sidebar corretamente
+- ✅ Links internos funcionam
+- ✅ Code blocks renderizam corretamente
+- ✅ Componentes (Callouts, Tabs, etc) aparecem
+- ✅ Imagens carregam (se houver)
+- ✅ Navegação entre páginas funciona
+
+### 4. Validar Sintaxe MDX
+
+Verifique se não há erros de sintaxe:
+
+````bash
+# Procurar por erros comuns
+grep -r "```mdx" apps/docs/content/  # Blocos MDX não fechados
+grep -r "<[A-Z]" apps/docs/content/   # Componentes React
+````
+
+### 5. Checklist de Validação
+
+Antes de commitar, confirme:
+
+- [ ] `pnpm --filter docs build` passou sem erros
+- [ ] Sem warnings críticos no build
+- [ ] Testado localmente em `localhost:3002`
+- [ ] Sidebar mostra a página corretamente
+- [ ] Todos os links internos funcionam
+- [ ] Code blocks renderizam corretamente
+- [ ] Frontmatter está correto (title, description)
+
+## ✅ Checklist de Qualidade
+
+Antes de commitar sua documentação, verifique:
+
+- [ ] Frontmatter completo (title, description)
+- [ ] Título H1 presente
+- [ ] Seções bem organizadas (H2, H3)
+- [ ] Exemplos de código funcionais
+- [ ] Links internos corretos
+- [ ] Callouts para informações importantes
+- [ ] API reference completa (se aplicável)
+- [ ] Troubleshooting com erros comuns
+- [ ] Links relacionados no final
+- [ ] Adicionado ao `_meta.js`
+- [ ] Build testado (`pnpm --filter docs build`)
+
+## 🚀 Comandos Úteis
+
+```bash
+# Iniciar servidor de desenvolvimento
+pnpm --filter docs dev
+
+# Build da documentação
+pnpm --filter docs build
+
+# Preview do build
+pnpm --filter docs start
+
+# Limpar cache
+rm -rf apps/docs/.next
+```
+
+## 📝 Exemplo Completo
+
+Veja exemplos de documentação bem feita:
+
+- [Payment System](/platform/payments) - Documentação de API
+- [Button Component](/design-system/components/button) - Documentação de UI
+- [Colors](/design-system/foundation/colors) - Documentação de Design Tokens
+
+## 🎯 Melhores Práticas
+
+### 1. Seja Conciso
+
+- Use frases curtas e diretas
+- Evite jargões desnecessários
+- Foque no essencial
+
+### 2. Use Exemplos Reais
+
+- Prefira código funcional a pseudocódigo
+- Use dados realistas nos exemplos
+- Mostre casos de uso comuns
+
+### 3. Organize Hierarquicamente
+
+- H1 para título principal (apenas um)
+- H2 para seções principais
+- H3 para subseções
+- Não pule níveis (H1 → H3)
+
+### 4. Mantenha Atualizado
+
+- Atualize quando a feature mudar
+- Adicione data de última atualização
+- Marque conteúdo deprecated
+
+### 5. Pense no Usuário
+
+- Comece com o caso de uso mais comum
+- Explique o "porquê" antes do "como"
+- Antecipe dúvidas e problemas
+
+## 🔗 Recursos Adicionais
+
+- [Nextra Documentation](https://nextra.site/docs)
+- [MDX Documentation](https://mdxjs.com/)
+- [GitHub Flavored Markdown](https://github.github.com/gfm/)
+
+---
+
+**Dúvidas?** Abra uma issue ou consulte a [documentação do Nextra](https://nextra.site/docs).

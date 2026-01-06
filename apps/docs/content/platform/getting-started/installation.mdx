@@ -1,0 +1,143 @@
+---
+title: Installation
+description: Guia completo de instalação do Kaven Platform
+---
+
+import { Callout, Steps } from 'nextra/components';
+
+# Installation
+
+Guia passo a passo para configurar o Kaven Platform localmente.
+
+<Callout type="warning">Requer Node.js 20+, Docker e pnpm instalados.</Callout>
+
+## Pré-requisitos
+
+- Node.js 20+
+- pnpm 8+
+- Docker + Docker Compose
+- PostgreSQL 15+ (via Docker)
+- Redis 7+ (via Docker)
+
+## Setup
+
+<Steps>
+
+### Clone o Repositório
+
+```bash
+git clone https://github.com/seu-usuario/kaven-boilerplate.git
+cd kaven-boilerplate
+```
+
+### Instale Dependências
+
+```bash
+pnpm install
+```
+
+### Configure Variáveis de Ambiente
+
+```bash
+cp .env.example .env
+```
+
+Edite `.env` com suas configurações:
+
+```env
+# Database
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/kaven
+
+# Redis
+REDIS_URL=redis://localhost:6379
+
+# JWT
+JWT_SECRET=your-secret-key-here
+JWT_REFRESH_SECRET=your-refresh-secret-here
+
+# Frontend
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+### Inicie Infraestrutura
+
+```bash
+docker-compose up -d
+```
+
+Isso iniciará:
+
+- PostgreSQL (porta 5432)
+- Redis (porta 6379)
+- Prometheus (porta 9090)
+- Grafana (porta 3001)
+
+### Execute Migrations
+
+```bash
+cd apps/api
+pnpm prisma migrate dev
+pnpm prisma generate
+```
+
+### Inicie Aplicação
+
+```bash
+# Terminal 1 - Backend
+cd apps/api
+pnpm dev
+
+# Terminal 2 - Frontend
+cd apps/admin
+pnpm dev
+
+# Terminal 3 - Docs (opcional)
+cd apps/docs
+pnpm dev
+```
+
+</Steps>
+
+## Verificação
+
+Acesse:
+
+- **Frontend**: http://localhost:3000
+- **Backend**: http://localhost:8000
+- **API Docs**: http://localhost:8000/docs
+- **Docs**: http://localhost:3002
+- **Grafana**: http://localhost:3001
+
+## Troubleshooting
+
+### Porta em uso
+
+```bash
+# Matar processo na porta 3000
+kill-port 3000
+
+# Ou usar outra porta
+pnpm dev -- -p 3001
+```
+
+### Erro de conexão com banco
+
+```bash
+# Verificar se Docker está rodando
+docker ps
+
+# Reiniciar containers
+docker-compose restart
+```
+
+### Prisma Client desatualizado
+
+```bash
+pnpm prisma generate
+```
+
+## Próximos Passos
+
+- [Configuration](/platform/getting-started/configuration)
+- [Development](/platform/guides/development)
+- [Deployment](/platform/guides/deployment)

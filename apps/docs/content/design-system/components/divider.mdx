@@ -1,0 +1,51 @@
+---
+title: Divider
+description: Separadores visuais entre conteúdos
+---
+
+# Divider
+
+> Linhas horizontais ou verticais para separar conteúdo.
+
+## Horizontal
+
+```tsx
+import { Divider } from '@/components/ui/divider';
+
+<div>
+  <p>Conteúdo acima</p>
+  <Divider />
+  <p>Conteúdo abaixo</p>
+</div>;
+```
+
+## Vertical
+
+```tsx
+<div className="flex items-center gap-4">
+  <span>Item 1</span>
+  <Divider orientation="vertical" className="h-6" />
+  <span>Item 2</span>
+</div>
+```
+
+## Com Texto
+
+```tsx
+<div className="relative">
+  <Divider />
+  <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2 text-sm text-muted-foreground">
+    OU
+  </span>
+</div>
+```
+
+## API
+
+| Prop          | Tipo                         | Padrão         | Descrição  |
+| ------------- | ---------------------------- | -------------- | ---------- |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Orientação |
+
+## Relacionados
+
+- [Card](/design-system/components/card)

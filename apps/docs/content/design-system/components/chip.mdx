@@ -1,0 +1,66 @@
+---
+title: Chip
+description: Chips removíveis para tags e filtros
+---
+
+# Chip
+
+> Pequenos elementos para exibir tags, filtros ou seleções removíveis.
+
+## Básico
+
+```tsx
+import { Chip } from '@/components/ui/chip';
+
+<Chip>Tag</Chip>;
+```
+
+## Com Ícone
+
+```tsx
+import { X } from 'lucide-react';
+
+<Chip onDelete={() => handleDelete()}>
+  Tag Removível
+  <X className="h-3 w-3 ml-1" />
+</Chip>;
+```
+
+## Cores
+
+```tsx
+<Chip color="primary">Primary</Chip>
+<Chip color="success">Success</Chip>
+<Chip color="error">Error</Chip>
+```
+
+## Variantes
+
+```tsx
+<Chip variant="filled">Filled</Chip>
+<Chip variant="outlined">Outlined</Chip>
+```
+
+## Grupo de Chips
+
+```tsx
+<div className="flex flex-wrap gap-2">
+  {tags.map((tag) => (
+    <Chip key={tag} onDelete={() => removeTag(tag)}>
+      {tag}
+    </Chip>
+  ))}
+</div>
+```
+
+## API
+
+| Prop       | Tipo                                | Padrão      | Descrição           |
+| ---------- | ----------------------------------- | ----------- | ------------------- |
+| `variant`  | `'filled' \| 'outlined'`            | `'filled'`  | Estilo              |
+| `color`    | `'primary' \| 'success' \| 'error'` | `'primary'` | Cor                 |
+| `onDelete` | `() => void`                        | -           | Callback ao remover |
+
+## Relacionados
+
+- [Badge](/design-system/components/badge)

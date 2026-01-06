@@ -1,0 +1,711 @@
+---
+title: Data Table
+description: Tabelas de dados avançadas com seleção, ordenação, paginação e ações em massa
+---
+
+# Data Table
+
+> Componente de tabela completo para exibição e manipulação de grandes conjuntos de dados. Inclui seleção múltipla, badges de status, ações em linha e integração com filtros.
+
+## Quando Usar
+
+- **Listagens de Dados**: Usuários, produtos, pedidos, transações
+- **Dashboards Administrativos**: Gerenciamento de recursos
+- **Relatórios**: Dados tabulares com ações
+- **CRUD Operations**: Visualização com edição/exclusão inline
+
+## Exemplo Básico
+
+Tabela de usuários da página Users List:
+
+<div className="preview-box">
+  <div className="rounded-2xl bg-card shadow-xl border border-border/50 overflow-hidden">
+    <div className="p-6 border-b border-border/50">
+      <h3 className="text-lg font-bold text-foreground">Usuários Recentes</h3>
+    </div>
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-border/50">
+        <thead className="bg-muted/50">
+          <tr>
+            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Usuário
+            </th>
+            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Role
+            </th>
+            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Cadastro
+            </th>
+            <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Ação
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-border/50 bg-card">
+          <tr className="hover:bg-muted/50 transition-colors">
+            <td className="px-6 py-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-primary-foreground font-bold text-sm">
+                  JS
+                </div>
+                <div>
+                  <div className="font-medium text-foreground">João Silva</div>
+                  <div className="text-sm text-muted-foreground">
+                    joao@example.com
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td className="px-6 py-4">
+              <span className="inline-flex rounded-md px-2 py-1 text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+                ADMIN
+              </span>
+            </td>
+            <td className="px-6 py-4 text-sm text-muted-foreground">
+              15/12/2025
+            </td>
+            <td className="px-6 py-4 text-right">
+              <button className="text-muted-foreground hover:text-foreground transition-colors">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <circle cx="12" cy="12" r="1" />
+                  <circle cx="12" cy="5" r="1" />
+                  <circle cx="12" cy="19" r="1" />
+                </svg>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+```tsx
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableHead,
+} from '@/components/ui/table';
+
+<div className="rounded-2xl bg-card shadow-xl border border-border/50 overflow-hidden">
+  <div className="p-6 border-b border-border/50">
+    <h3 className="text-lg font-bold text-foreground">Usuários Recentes</h3>
+  </div>
+  <div className="overflow-x-auto">
+    <table className="min-w-full divide-y divide-border/50">
+      <thead className="bg-muted/50">
+        <tr>
+          <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Usuário
+          </th>
+          <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Role
+          </th>
+          <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Cadastro
+          </th>
+          <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Ação
+          </th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-border/50 bg-card">
+        {users.map((user) => (
+          <tr key={user.id} className="hover:bg-muted/50 transition-colors">
+            <td className="px-6 py-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-primary-foreground font-bold text-sm">
+                  {user.name.charAt(0)}
+                </div>
+                <div>
+                  <div className="font-medium text-foreground">{user.name}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {user.email}
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td className="px-6 py-4">
+              <span className="inline-flex rounded-md px-2 py-1 text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+                {user.role}
+              </span>
+            </td>
+            <td className="px-6 py-4 text-sm text-muted-foreground">
+              {new Date(user.createdAt).toLocaleDateString('pt-BR')}
+            </td>
+            <td className="px-6 py-4 text-right">
+              <button className="text-muted-foreground hover:text-foreground transition-colors">
+                <MoreVertical className="h-5 w-5" />
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>;
+```
+
+## Variações
+
+### Com Seleção Múltipla
+
+Permite selecionar linhas para ações em massa:
+
+```tsx
+import { Checkbox } from '@/components/ui/checkbox';
+import { Trash2 } from 'lucide-react';
+
+const [selected, setSelected] = useState<string[]>([]);
+
+const handleSelectAll = (checked: boolean) => {
+  if (checked) {
+    setSelected(users.map((user) => user.id));
+  } else {
+    setSelected([]);
+  }
+};
+
+const handleSelectRow = (id: string) => {
+  if (selected.includes(id)) {
+    setSelected(selected.filter((item) => item !== id));
+  } else {
+    setSelected([...selected, id]);
+  }
+};
+
+<div className="rounded-2xl bg-card shadow-xl border border-border/50 overflow-hidden">
+  {/* Toolbar de Ações */}
+  {selected.length > 0 && (
+    <div className="p-4 bg-primary/5 border-b border-border/50 flex items-center justify-between">
+      <span className="text-sm font-medium text-foreground">
+        {selected.length} selecionado(s)
+      </span>
+      <Button
+        variant="contained"
+        color="error"
+        size="sm"
+        onClick={handleDeleteSelected}
+      >
+        <Trash2 className="h-4 w-4 mr-2" />
+        Excluir Selecionados
+      </Button>
+    </div>
+  )}
+
+  <div className="overflow-x-auto">
+    <table className="min-w-full divide-y divide-border/50">
+      <thead className="bg-muted/50">
+        <tr>
+          <th className="px-6 py-4 w-12">
+            <Checkbox
+              checked={selected.length === users.length}
+              onCheckedChange={handleSelectAll}
+            />
+          </th>
+          <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Usuário
+          </th>
+          {/* ... outras colunas ... */}
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-border/50 bg-card">
+        {users.map((user) => (
+          <tr
+            key={user.id}
+            className={cn(
+              'hover:bg-muted/50 transition-colors',
+              selected.includes(user.id) && 'bg-primary/5',
+            )}
+          >
+            <td className="px-6 py-4">
+              <Checkbox
+                checked={selected.includes(user.id)}
+                onCheckedChange={() => handleSelectRow(user.id)}
+              />
+            </td>
+            <td className="px-6 py-4">{/* ... conteúdo da célula ... */}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>;
+```
+
+### Com Paginação
+
+Integração com paginação para grandes datasets:
+
+```tsx
+import { Pagination } from '@/components/ui/pagination';
+
+const [page, setPage] = useState(0);
+const [rowsPerPage, setRowsPerPage] = useState(10);
+
+const { data } = useUsers({
+  page: page + 1, // API usa 1-indexed
+  limit: rowsPerPage,
+});
+
+const totalPages = Math.ceil((data?.pagination.total ?? 0) / rowsPerPage);
+
+<div className="rounded-2xl bg-card shadow-xl border border-border/50 overflow-hidden">
+  <div className="overflow-x-auto">
+    <table className="min-w-full divide-y divide-border/50">
+      {/* ... thead e tbody ... */}
+    </table>
+  </div>
+
+  {/* Footer com Paginação */}
+  <div className="p-4 border-t border-border/50 flex items-center justify-between">
+    <div className="text-sm text-muted-foreground">
+      Mostrando {page * rowsPerPage + 1} a{' '}
+      {Math.min((page + 1) * rowsPerPage, data?.pagination.total ?? 0)} de{' '}
+      {data?.pagination.total ?? 0} resultados
+    </div>
+    <Pagination
+      count={totalPages}
+      page={page + 1}
+      onChange={(newPage) => setPage(newPage - 1)}
+      size="md"
+      color="primary"
+    />
+  </div>
+</div>;
+```
+
+### Com Filtros e Busca
+
+Tabela completa com filtros integrados (exemplo da página Users):
+
+```tsx
+import { Input } from '@/components/ui/input';
+import { Select } from '@/components/ui/radix-select';
+import { Search } from 'lucide-react';
+
+const [filterName, setFilterName] = useState('');
+const [filterStatus, setFilterStatus] = useState('all');
+
+<div className="space-y-4">
+  {/* Barra de Filtros */}
+  <div className="flex flex-col md:flex-row gap-4">
+    <div className="relative flex-1">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+      <Input
+        placeholder="Buscar por nome ou email..."
+        value={filterName}
+        onChange={(e) => setFilterName(e.target.value)}
+        className="pl-10"
+      />
+    </div>
+    <Select value={filterStatus} onValueChange={setFilterStatus}>
+      <SelectTrigger className="w-full md:w-48">
+        <SelectValue placeholder="Status" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">Todos</SelectItem>
+        <SelectItem value="active">Ativos</SelectItem>
+        <SelectItem value="pending">Pendentes</SelectItem>
+        <SelectItem value="banned">Banidos</SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
+
+  {/* Tabela */}
+  <div className="rounded-2xl bg-card shadow-xl border border-border/50 overflow-hidden">
+    {/* ... tabela ... */}
+  </div>
+</div>;
+```
+
+## Badges de Status
+
+Badges semânticos para status de usuários:
+
+```tsx
+const getRoleBadgeClasses = (role: string) => {
+  if (role === 'SUPER_ADMIN')
+    return 'bg-destructive/10 text-destructive border border-destructive/20';
+  if (role === 'TENANT_ADMIN')
+    return 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20';
+  return 'bg-blue-500/10 text-blue-500 border border-blue-500/20';
+};
+
+<span
+  className={`inline-flex rounded-md px-2 py-1 text-xs font-bold ${getRoleBadgeClasses(user.role)}`}
+>
+  {user.role}
+</span>;
+```
+
+| Status      | Classes                                        | Uso                  |
+| ----------- | ---------------------------------------------- | -------------------- |
+| **Active**  | `bg-emerald-500/15 text-emerald-500`           | Usuários ativos      |
+| **Pending** | `bg-amber-500/15 text-amber-600`               | Aguardando aprovação |
+| **Banned**  | `bg-destructive/15 text-destructive`           | Usuários banidos     |
+| **Admin**   | `bg-primary/10 text-primary border-primary/20` | Administradores      |
+
+## API / Propriedades
+
+### Table Components
+
+| Componente      | Descrição                       |
+| --------------- | ------------------------------- |
+| `<Table>`       | Container principal da tabela   |
+| `<TableHeader>` | Cabeçalho da tabela (`<thead>`) |
+| `<TableBody>`   | Corpo da tabela (`<tbody>`)     |
+| `<TableRow>`    | Linha da tabela (`<tr>`)        |
+| `<TableHead>`   | Célula de cabeçalho (`<th>`)    |
+| `<TableCell>`   | Célula de dados (`<td>`)        |
+
+### Table Props
+
+| Propriedade | Tipo        | Padrão | Descrição              |
+| ----------- | ----------- | ------ | ---------------------- |
+| `className` | `string`    | -      | Classes CSS adicionais |
+| `children`  | `ReactNode` | -      | Conteúdo da tabela     |
+
+### TableRow Props
+
+| Propriedade | Tipo         | Padrão  | Descrição                   |
+| ----------- | ------------ | ------- | --------------------------- |
+| `selected`  | `boolean`    | `false` | Se a linha está selecionada |
+| `onClick`   | `() => void` | -       | Callback ao clicar na linha |
+| `className` | `string`     | -       | Classes CSS adicionais      |
+
+### DataTable Props (Componente Completo)
+
+| Propriedade         | Tipo                      | Padrão                     | Descrição                    |
+| ------------------- | ------------------------- | -------------------------- | ---------------------------- |
+| `data`              | `T[]`                     | `[]`                       | Array de dados a exibir      |
+| `columns`           | `Column<T>[]`             | -                          | Definição das colunas        |
+| `selectable`        | `boolean`                 | `false`                    | Habilita seleção múltipla    |
+| `onSelectionChange` | `(ids: string[]) => void` | -                          | Callback quando seleção muda |
+| `pagination`        | `PaginationConfig`        | -                          | Configuração de paginação    |
+| `loading`           | `boolean`                 | `false`                    | Estado de carregamento       |
+| `emptyMessage`      | `string`                  | `"Nenhum dado encontrado"` | Mensagem quando vazio        |
+
+## Acessibilidade
+
+### ARIA Labels
+
+```tsx
+<table
+  role="table"
+  aria-label="Lista de usuários"
+  aria-describedby="table-description"
+>
+  <caption id="table-description" className="sr-only">
+    Tabela de usuários com informações de nome, email, role e data de cadastro
+  </caption>
+  {/* ... */}
+</table>
+```
+
+### Navegação por Teclado
+
+```tsx
+<tr
+  tabIndex={0}
+  onKeyDown={(e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      handleSelectRow(user.id);
+    }
+  }}
+>
+  {/* ... */}
+</tr>
+```
+
+### Screen Readers
+
+```tsx
+<Checkbox
+  aria-label={`Selecionar usuário ${user.name}`}
+  checked={selected.includes(user.id)}
+  onCheckedChange={() => handleSelectRow(user.id)}
+/>
+```
+
+## Exemplos Avançados
+
+### Tabela Completa da Página Users
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { useUsers, useDeleteUser } from '@/hooks/use-users';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableHead,
+} from '@/components/ui/table';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Pagination } from '@/components/ui/pagination';
+import { Search, Trash2, MoreVertical } from 'lucide-react';
+
+export function UserTable() {
+  const [filterName, setFilterName] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selected, setSelected] = useState<string[]>([]);
+
+  const { data, isLoading } = useUsers({
+    page: page + 1,
+    limit: rowsPerPage,
+    search: filterName || undefined,
+    status: filterStatus !== 'all' ? filterStatus.toUpperCase() : undefined,
+  });
+
+  const { mutate: deleteUser } = useDeleteUser();
+
+  const users = data?.users ?? [];
+  const totalUsers = data?.pagination.total ?? 0;
+  const totalPages = Math.ceil(totalUsers / rowsPerPage);
+
+  const handleSelectAll = (checked: boolean) => {
+    setSelected(checked ? users.map((u) => u.id) : []);
+  };
+
+  const handleSelectRow = (id: string) => {
+    setSelected((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
+    );
+  };
+
+  const handleDeleteSelected = () => {
+    selected.forEach((id) => deleteUser(id));
+    setSelected([]);
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Filtros */}
+      <div className="flex gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <Input
+            placeholder="Buscar usuários..."
+            value={filterName}
+            onChange={(e) => setFilterName(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+      </div>
+
+      {/* Tabela */}
+      <div className="rounded-2xl bg-card shadow-xl border border-border/50 overflow-hidden">
+        {/* Toolbar de Ações */}
+        {selected.length > 0 && (
+          <div className="p-4 bg-primary/5 border-b border-border/50 flex items-center justify-between">
+            <span className="text-sm font-medium">
+              {selected.length} selecionado(s)
+            </span>
+            <Button
+              variant="contained"
+              color="error"
+              size="sm"
+              onClick={handleDeleteSelected}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Excluir
+            </Button>
+          </div>
+        )}
+
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-border/50">
+            <thead className="bg-muted/50">
+              <tr>
+                <th className="px-6 py-4 w-12">
+                  <Checkbox
+                    checked={
+                      selected.length === users.length && users.length > 0
+                    }
+                    onCheckedChange={handleSelectAll}
+                  />
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Usuário
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Role
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Cadastro
+                </th>
+                <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Ação
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/50 bg-card">
+              {users.map((user) => (
+                <tr
+                  key={user.id}
+                  className={cn(
+                    'hover:bg-muted/50 transition-colors',
+                    selected.includes(user.id) && 'bg-primary/5',
+                  )}
+                >
+                  <td className="px-6 py-4">
+                    <Checkbox
+                      checked={selected.includes(user.id)}
+                      onCheckedChange={() => handleSelectRow(user.id)}
+                    />
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-primary-foreground font-bold text-sm">
+                        {user.name.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="font-medium text-foreground">
+                          {user.name}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {user.email}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <Badge
+                      variant={user.role === 'ADMIN' ? 'default' : 'secondary'}
+                    >
+                      {user.role}
+                    </Badge>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">
+                    {new Date(user.createdAt).toLocaleDateString('pt-BR')}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <button className="text-muted-foreground hover:text-foreground transition-colors">
+                      <MoreVertical className="h-5 w-5" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Paginação */}
+        <div className="p-4 border-t border-border/50 flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            Mostrando {page * rowsPerPage + 1} a{' '}
+            {Math.min((page + 1) * rowsPerPage, totalUsers)} de {totalUsers}
+          </div>
+          <Pagination
+            count={totalPages}
+            page={page + 1}
+            onChange={(newPage) => setPage(newPage - 1)}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+## Melhores Práticas
+
+### ✅ Fazer
+
+- **Use hover states** para melhor feedback visual
+- **Implemente loading states** com skeletons
+- **Formate datas** com `toLocaleDateString()`
+- **Use badges semânticos** para status
+- **Adicione paginação** para grandes datasets
+- **Implemente busca/filtros** para melhor UX
+- **Use checkboxes** para seleção múltipla
+- **Adicione ações inline** (editar, excluir)
+- **Torne responsivo** com `overflow-x-auto`
+
+### ❌ Não Fazer
+
+- ❌ **Não carregue todos os dados** de uma vez - use paginação
+- ❌ **Não omita estados vazios** - mostre mensagem quando sem dados
+- ❌ **Não ignore loading** - sempre mostre skeleton
+- ❌ **Não use cores aleatórias** para badges
+- ❌ **Não esconda ações importantes** - torne visíveis
+- ❌ **Não ignore acessibilidade** - adicione ARIA labels
+- ❌ **Não quebre em mobile** - use overflow horizontal
+
+## Estados Especiais
+
+### Loading State
+
+```tsx
+import { Skeleton } from '@/components/ui/skeleton';
+
+{
+  isLoading ? (
+    <div className="space-y-2">
+      {[...Array(5)].map((_, i) => (
+        <div key={i} className="flex items-center gap-4 p-4">
+          <Skeleton className="h-10 w-10 rounded-full" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-4 w-1/3" />
+            <Skeleton className="h-3 w-1/2" />
+          </div>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <Table>{/* ... */}</Table>
+  );
+}
+```
+
+### Empty State
+
+```tsx
+{
+  users.length === 0 ? (
+    <div className="text-center py-12">
+      <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+      <h3 className="text-lg font-semibold text-foreground mb-2">
+        Nenhum usuário encontrado
+      </h3>
+      <p className="text-sm text-muted-foreground mb-4">
+        Tente ajustar os filtros ou adicione um novo usuário
+      </p>
+      <Button variant="contained" color="primary">
+        <Plus className="h-4 w-4 mr-2" />
+        Novo Usuário
+      </Button>
+    </div>
+  ) : (
+    <Table>{/* ... */}</Table>
+  );
+}
+```
+
+## Relacionados
+
+- [Pagination](/design-system/components/pagination) - Componente de paginação
+- [Badges](/design-system/components/badge) - Para status e labels
+- [Checkboxes](/design-system/components/checkbox) - Seleção múltipla
+- [Buttons](/design-system/components/button) - Ações e CTAs
+- [Skeletons](/design-system/components/skeleton) - Loading states

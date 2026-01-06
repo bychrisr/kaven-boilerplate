@@ -1,0 +1,38 @@
+---
+title: Transfer List
+description: Seleção dupla com transferência entre listas
+---
+
+# Transfer List
+
+> Componente para transferir itens entre duas listas.
+
+## Básico
+
+```tsx
+import { TransferList } from '@/components/ui/transfer-list';
+
+const [left, setLeft] = useState(['Item 1', 'Item 2']);
+const [right, setRight] = useState(['Item 3']);
+
+<TransferList
+  left={left}
+  right={right}
+  onLeftChange={setLeft}
+  onRightChange={setRight}
+/>;
+```
+
+## API
+
+| Prop            | Tipo                        | Padrão | Descrição               |
+| --------------- | --------------------------- | ------ | ----------------------- |
+| `left`          | `string[]`                  | -      | Itens da lista esquerda |
+| `right`         | `string[]`                  | -      | Itens da lista direita  |
+| `onLeftChange`  | `(items: string[]) => void` | -      | Callback lista esquerda |
+| `onRightChange` | `(items: string[]) => void` | -      | Callback lista direita  |
+
+## Relacionados
+
+- [List](/design-system/components/list)
+- [Checkbox](/design-system/components/checkbox)

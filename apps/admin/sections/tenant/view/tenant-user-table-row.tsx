@@ -35,7 +35,7 @@ interface UserRow {
 }
 
 interface Props {
-  row: UserRow;
+  row: any; // User from API
   selected: boolean;
   onSelectRow: () => void;
 }
@@ -52,12 +52,14 @@ export function TenantUserTableRow({ row, selected, onSelectRow }: Props) {
     });
   };
 
-  const statusVariant = {
-    ACTIVE: "default", 
-    PENDING: "secondary",
+  const statusMap = {
+    ACTIVE: "default",
+    PENDING: "secondary", 
     BANNED: "destructive",
     REJECTED: "outline"
-  }[status] || "outline";
+  } as const;
+
+  const statusVariant = statusMap[status as keyof typeof statusMap] || "outline";
 
   return (
     <TableRow 

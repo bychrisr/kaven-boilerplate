@@ -1,0 +1,102 @@
+---
+title: Kaven Platform
+description: Documentação completa da plataforma Kaven - Arquitetura, Backend, Frontend e Guias
+---
+
+import { Cards, Callout } from 'nextra/components';
+
+# Kaven Platform
+
+Plataforma SaaS multi-tenant completa com autenticação, RBAC, pagamentos e observabilidade.
+
+<Callout type="info">
+  Baseado em Next.js 16, React 19, Prisma e PostgreSQL com arquitetura
+  escalável.
+</Callout>
+
+## 🚀 Quick Start
+
+<Cards>
+  <Cards.Card
+    title="Getting Started"
+    href="/platform/getting-started/installation"
+    arrow
+  />
+  <Cards.Card
+    title="Arquitetura"
+    href="/platform/architecture/overview"
+    arrow
+  />
+  <Cards.Card
+    title="Backend API"
+    href="/platform/backend/api-reference"
+    arrow
+  />
+  <Cards.Card title="Frontend" href="/platform/frontend/routing" arrow />
+</Cards>
+
+## 📦 Stack Tecnológica
+
+### Frontend
+
+- **Framework**: Next.js 16 (App Router)
+- **UI**: React 19 + Tailwind CSS 4
+- **State**: TanStack Query + Zustand
+- **Forms**: React Hook Form + Zod
+- **i18n**: next-intl
+
+### Backend
+
+- **Runtime**: Node.js 20+
+- **Framework**: Express.js
+- **ORM**: Prisma
+- **Database**: PostgreSQL
+- **Cache**: Redis
+- **Queue**: BullMQ
+
+### DevOps
+
+- **Containerization**: Docker + Docker Compose
+- **Monitoring**: Prometheus + Grafana
+- **Logging**: Winston
+- **CI/CD**: GitHub Actions
+
+## 🏗️ Arquitetura
+
+```
+┌─────────────────┐
+│   Next.js App   │
+│   (Frontend)    │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│   Express API   │
+│   (Backend)     │
+└────────┬────────┘
+         │
+    ┌────┴────┐
+    ▼         ▼
+┌────────┐ ┌────────┐
+│ Prisma │ │ Redis  │
+│   +    │ │   +    │
+│  PG    │ │ BullMQ │
+└────────┘ └────────┘
+```
+
+## 🎯 Features Principais
+
+- ✅ **Multi-tenancy** - Isolamento completo de dados
+- ✅ **Authentication** - JWT + Refresh Tokens
+- ✅ **RBAC** - Controle de acesso baseado em roles
+- ✅ **Payments** - Integração com Stripe/PagueBit
+- ✅ **Observability** - Métricas, logs e traces
+- ✅ **i18n** - Suporte a múltiplos idiomas
+- ✅ **Dark Mode** - Tema claro/escuro
+
+## 📚 Explore
+
+- [Installation](/platform/getting-started/installation) - Setup inicial
+- [Architecture](/platform/architecture/overview) - Visão arquitetural
+- [API Reference](/platform/backend/api-reference) - Documentação da API
+- [Deployment](/platform/guides/deployment) - Deploy em produção

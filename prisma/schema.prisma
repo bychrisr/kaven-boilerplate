@@ -73,19 +73,19 @@ enum PaymentStatus {
 // ===========================
 
 model PlatformConfig {
-  id           String   @id @default(uuid())
-  companyName  String   @default("Kaven SaaS")
+  id           String  @id @default(uuid())
+  companyName  String  @default("Kaven SaaS")
   description  String?
-  primaryColor String   @default("#00A76F")
-  logoUrl      String?  // URL do logo principal
-  faviconUrl   String?  // URL do favicon
-  
+  primaryColor String  @default("#00A76F")
+  logoUrl      String? // URL do logo principal
+  faviconUrl   String? // URL do favicon
+
   // Configurações Regionais
-  language     String   @default("pt-BR")
-  currency     String   @default("BRL")
-  numberFormat String   @default("1.000,00") // 1.000,00 or 1,000.00
-  
-  updatedAt    DateTime @updatedAt
+  language     String @default("pt-BR")
+  currency     String @default("BRL")
+  numberFormat String @default("1.000,00") // 1.000,00 or 1,000.00
+
+  updatedAt DateTime @updatedAt
 }
 
 // ===========================
@@ -109,6 +109,10 @@ model Tenant {
   orders        Order[]
   auditLogs     AuditLog[]
   files         File[]
+  Plan          Plan[]
+  Product       Product[]
+  Purchase      Purchase[]
+  UsageRecord   UsageRecord[]
 
   @@index([slug])
   @@index([domain])
@@ -160,6 +164,7 @@ model User {
   // Security Relations
   securityAuditLogs      SecurityAuditLog[]
   securityConfigsUpdated SecurityConfig[]
+  Purchase               Purchase[]
 
   @@index([email])
   @@index([tenantId])
@@ -210,27 +215,69 @@ model AuditLog {
 // ===========================
 
 model Subscription {
-  id                   String             @id @default(uuid())
-  tenantId             String
-  stripeCustomerId     String?            @unique
-  stripeSubscriptionId String?            @unique
-  status               SubscriptionStatus @default(TRIALING)
-  planName             String // Ex: "FREE", "STARTER", "PRO"
-  priceMonthly         Decimal            @db.Decimal(10, 2)
-  currentPeriodStart   DateTime
-  currentPeriodEnd     DateTime
-  cancelAtPeriodEnd    Boolean            @default(false)
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
-  deletedAt            DateTime?
+  id String @id @default(uuid())
+
+  /// Associated tenant
+  tenantId String @unique @map("tenant_id")
+
+  /// Associated plan
+  planId String @map("plan_id")
+
+  /// Associated price (specific billing interval)
+  priceId String? @map("price_id")
+
+  /// Stripe Customer ID
+  stripeCustomerId String? @unique @map("stripe_customer_id")
+
+  /// Stripe Subscription ID
+  stripeSubscriptionId String? @unique @map("stripe_subscription_id")
+
+  /// Subscription status
+  status SubscriptionStatus @default(TRIALING)
+
+  /// Current billing period start
+  currentPeriodStart DateTime? @map("current_period_start")
+
+  /// Current billing period end
+  currentPeriodEnd DateTime? @map("current_period_end")
+
+  /// Whether to cancel at period end
+  cancelAtPeriodEnd Boolean @default(false) @map("cancel_at_period_end")
+
+  /// Cancellation timestamp
+  canceledAt DateTime? @map("canceled_at")
+
+  /// Cancellation reason
+  cancelReason String? @map("cancel_reason")
+
+  /// Trial end timestamp
+  trialEnd DateTime? @map("trial_end")
+
+  /// Discount/coupon code applied
+  discountCode String? @map("discount_code")
+
+  /// Discount percentage (0-100)
+  discountPercent Int? @map("discount_percent")
+
+  /// Additional metadata
+  metadata Json?
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
   // Relations
   tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plan     Plan      @relation(fields: [planId], references: [id], onDelete: Restrict)
+  price    Price?    @relation(fields: [priceId], references: [id], onDelete: SetNull)
   invoices Invoice[]
 
   @@index([tenantId])
+  @@index([planId])
   @@index([status])
   @@index([stripeSubscriptionId])
+  @@index([currentPeriodEnd])
+  @@map("subscriptions")
 }
 
 model Invoice {
@@ -443,4 +490,459 @@ model SecurityAuditLog {
   @@index([userId])
   @@index([action])
   @@index([createdAt])
+}
+
+// ============================================
+// PLANS & PRODUCTS SYSTEM
+// ============================================
+
+/// Feature definitions (catalog of all possible features)
+model Feature {
+  id String @id @default(uuid())
+
+  /// Unique feature code (e.g., "USERS", "STORAGE_MB", "API_ACCESS")
+  code String @unique
+
+  /// Display name
+  name String
+
+  /// Description for admin/docs
+  description String?
+
+  /// Feature type
+  type FeatureType @default(BOOLEAN)
+
+  /// Default value for features not explicitly set
+  defaultValue String? @map("default_value")
+
+  /// Unit for quota features (e.g., "users", "MB", "calls")
+  unit String?
+
+  /// Category for grouping in UI
+  category String?
+
+  /// Sort order in UI
+  sortOrder Int @default(0) @map("sort_order")
+
+  /// Whether feature is active
+  isActive Boolean @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  planFeatures   PlanFeature[]
+  productEffects ProductEffect[]
+  usageRecords   UsageRecord[]
+
+  @@index([code])
+  @@index([category])
+  @@index([isActive])
+  @@map("features")
+}
+
+/// Plan definitions (subscription tiers)
+model Plan {
+  id String @id @default(uuid())
+
+  /// Tenant that owns this plan (null = global/platform plan)
+  tenantId String? @map("tenant_id")
+
+  /// Unique plan code (e.g., "free", "basic", "pro", "enterprise")
+  code String
+
+  /// Display name
+  name String
+
+  /// Description (supports markdown)
+  description String?
+
+  /// Plan type
+  type PlanType @default(SUBSCRIPTION)
+
+  /// Trial period in days (0 = no trial)
+  trialDays Int @default(0) @map("trial_days")
+
+  /// Whether this is the default plan for new tenants
+  isDefault Boolean @default(false) @map("is_default")
+
+  /// Whether plan is visible in pricing page
+  isPublic Boolean @default(true) @map("is_public")
+
+  /// Whether plan is currently available for purchase
+  isActive Boolean @default(true) @map("is_active")
+
+  /// Sort order in pricing page
+  sortOrder Int @default(0) @map("sort_order")
+
+  /// Badge/label (e.g., "Popular", "Best Value")
+  badge String?
+
+  /// Stripe Product ID (for Stripe sync)
+  stripeProductId String? @unique @map("stripe_product_id")
+
+  /// Additional metadata
+  metadata Json?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  tenant        Tenant?        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  prices        Price[]
+  features      PlanFeature[]
+  subscriptions Subscription[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([isActive])
+  @@index([isPublic])
+  @@index([sortOrder])
+  @@map("plans")
+}
+
+/// Price variations for plans (monthly, yearly, etc.)
+model Price {
+  id String @id @default(uuid())
+
+  /// Associated plan
+  planId String @map("plan_id")
+
+  /// Price identifier/code
+  code String?
+
+  /// Billing interval
+  interval BillingInterval @default(MONTHLY)
+
+  /// Number of intervals (e.g., 3 for quarterly)
+  intervalCount Int @default(1) @map("interval_count")
+
+  /// Price amount (in smallest unit, e.g., cents)
+  amount Decimal @db.Decimal(10, 2)
+
+  /// Currency code (ISO 4217)
+  currency String @default("BRL")
+
+  /// Original price (for showing discounts)
+  originalAmount Decimal? @map("original_amount") @db.Decimal(10, 2)
+
+  /// Whether price is currently active
+  isActive Boolean @default(true) @map("is_active")
+
+  /// Stripe Price ID
+  stripePriceId String? @unique @map("stripe_price_id")
+
+  /// PagueBit Price ID (for future use)
+  pagueBitPriceId String? @map("paguebit_price_id")
+
+  /// Additional metadata
+  metadata Json?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  plan          Plan           @relation(fields: [planId], references: [id], onDelete: Cascade)
+  subscriptions Subscription[]
+
+  @@unique([planId, interval, currency])
+  @@index([planId])
+  @@index([isActive])
+  @@index([currency])
+  @@map("prices")
+}
+
+/// Features assigned to plans with limits/values
+model PlanFeature {
+  id String @id @default(uuid())
+
+  /// Associated plan
+  planId String @map("plan_id")
+
+  /// Associated feature
+  featureId String @map("feature_id")
+
+  /// Whether feature is enabled (for BOOLEAN features)
+  enabled Boolean @default(true)
+
+  /// Limit value (for QUOTA features, -1 = unlimited)
+  limitValue Int? @map("limit_value")
+
+  /// Custom value (for CUSTOM features)
+  customValue String? @map("custom_value")
+
+  /// Override default in UI display
+  displayOverride String? @map("display_override")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  plan    Plan    @relation(fields: [planId], references: [id], onDelete: Cascade)
+  feature Feature @relation(fields: [featureId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, featureId])
+  @@index([planId])
+  @@index([featureId])
+  @@map("plan_features")
+}
+
+/// Products for one-time purchases
+model Product {
+  id String @id @default(uuid())
+
+  /// Tenant that owns this product (null = global/platform product)
+  tenantId String? @map("tenant_id")
+
+  /// Unique product code
+  code String
+
+  /// Display name
+  name String
+
+  /// Description (supports markdown)
+  description String?
+
+  /// Product type
+  type ProductType @default(ONE_TIME)
+
+  /// Price amount
+  price Decimal @db.Decimal(10, 2)
+
+  /// Currency code
+  currency String @default("BRL")
+
+  /// Original price (for showing discounts)
+  originalPrice Decimal? @map("original_price") @db.Decimal(10, 2)
+
+  /// Whether product is currently available
+  isActive Boolean @default(true) @map("is_active")
+
+  /// Whether product is visible publicly
+  isPublic Boolean @default(true) @map("is_public")
+
+  /// Sort order
+  sortOrder Int @default(0) @map("sort_order")
+
+  /// Stock quantity (-1 = unlimited)
+  stock Int @default(-1)
+
+  /// Maximum purchases per tenant (-1 = unlimited)
+  maxPerTenant Int @default(-1) @map("max_per_tenant")
+
+  /// Stripe Product ID
+  stripeProductId String? @unique @map("stripe_product_id")
+
+  /// Stripe Price ID
+  stripePriceId String? @unique @map("stripe_price_id")
+
+  /// Image URL
+  imageUrl String? @map("image_url")
+
+  /// Additional metadata
+  metadata Json?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  tenant    Tenant?         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  effects   ProductEffect[]
+  purchases Purchase[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([isActive])
+  @@index([type])
+  @@map("products")
+}
+
+/// Effects that products have on features/quotas
+model ProductEffect {
+  id String @id @default(uuid())
+
+  /// Associated product
+  productId String @map("product_id")
+
+  /// Associated feature
+  featureId String @map("feature_id")
+
+  /// Effect type
+  effectType EffectType @default(ADD) @map("effect_type")
+
+  /// Value to add/set
+  value Int?
+
+  /// Whether effect is permanent (survives subscription changes)
+  isPermanent Boolean @default(false) @map("is_permanent")
+
+  /// Duration in days (null = permanent, 0 = until period end)
+  durationDays Int? @map("duration_days")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  feature Feature @relation(fields: [featureId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, featureId])
+  @@index([productId])
+  @@index([featureId])
+  @@map("product_effects")
+}
+
+/// Purchase records for one-time products
+model Purchase {
+  id String @id @default(uuid())
+
+  /// Associated tenant
+  tenantId String @map("tenant_id")
+
+  /// Associated product
+  productId String @map("product_id")
+
+  /// User who made the purchase
+  userId String? @map("user_id")
+
+  /// Purchase status
+  status PurchaseStatus @default(PENDING)
+
+  /// Amount paid
+  amount Decimal @db.Decimal(10, 2)
+
+  /// Currency
+  currency String @default("BRL")
+
+  /// Payment method used
+  paymentMethod PaymentMethod @default(PIX) @map("payment_method")
+
+  /// External payment ID (Stripe, PagueBit, etc.)
+  externalPaymentId String? @map("external_payment_id")
+
+  /// When effects expire (null = never)
+  expiresAt DateTime? @map("expires_at")
+
+  /// Additional metadata
+  metadata Json?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  user    User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([productId])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("purchases")
+}
+
+/// Usage tracking for quota features
+model UsageRecord {
+  id String @id @default(uuid())
+
+  /// Associated tenant
+  tenantId String @map("tenant_id")
+
+  /// Associated feature
+  featureId String @map("feature_id")
+
+  /// Current usage value
+  currentUsage Int @default(0) @map("current_usage")
+
+  /// Period start
+  periodStart DateTime @map("period_start")
+
+  /// Period end
+  periodEnd DateTime @map("period_end")
+
+  /// Last reset timestamp
+  lastReset DateTime @default(now()) @map("last_reset")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  feature Feature @relation(fields: [featureId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, featureId, periodStart])
+  @@index([tenantId])
+  @@index([featureId])
+  @@index([periodEnd])
+  @@map("usage_records")
+}
+
+// ============================================
+// ENUMS FOR PLANS & PRODUCTS
+// ============================================
+
+enum FeatureType {
+  BOOLEAN // Feature is on/off
+  QUOTA // Feature has a numeric limit
+  CUSTOM // Feature has a custom string value
+}
+
+enum PlanType {
+  SUBSCRIPTION // Recurring billing
+  LIFETIME // One-time payment, lifetime access
+}
+
+enum BillingInterval {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+  LIFETIME
+  FOREVER // Free tier
+}
+
+enum ProductType {
+  ONE_TIME // Single purchase
+  CONSUMABLE // Can be purchased multiple times
+  ADD_ON // Adds to subscription
+}
+
+enum EffectType {
+  ADD // Add value to current limit
+  SET // Set absolute value
+  MULTIPLY // Multiply current limit
+  ENABLE // Enable boolean feature
+}
+
+enum PurchaseStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  EXPIRED
+}
+
+model WebhookEvent {
+  id String @id @default(uuid())
+
+  /// ID externo do evento (para idempotência)
+  externalId String @unique @map("external_id")
+
+  /// Provider (PAGUEBIT, STRIPE, etc)
+  provider String
+
+  /// Tipo de evento
+  event String
+
+  /// Payload completo
+  payload Json
+
+  /// Quando foi processado
+  processedAt DateTime? @map("processed_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([provider])
+  @@index([event])
+  @@map("webhook_events")
 }

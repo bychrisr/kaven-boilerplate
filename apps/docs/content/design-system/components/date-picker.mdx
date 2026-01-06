@@ -1,0 +1,118 @@
+---
+title: Date Picker
+description: Seletor de datas com calendário
+---
+
+# Date Picker
+
+> Componente para seleção de datas com interface de calendário.
+
+## Básico
+
+```tsx
+import { DatePicker } from '@/components/ui/date-picker';
+
+function MyForm() {
+  const [date, setDate] = useState<Date>();
+
+  return (
+    <DatePicker
+      selected={date}
+      onSelect={setDate}
+      placeholder="Selecione uma data"
+    />
+  );
+}
+```
+
+## Com Label
+
+```tsx
+<div className="space-y-2">
+  <Label htmlFor="birthdate">Data de Nascimento</Label>
+  <DatePicker id="birthdate" selected={birthdate} onSelect={setBirthdate} />
+</div>
+```
+
+## Range de Datas
+
+```tsx
+<DatePicker
+  mode="range"
+  selected={dateRange}
+  onSelect={setDateRange}
+  placeholder="Selecione período"
+/>
+```
+
+## Com Restrições
+
+```tsx
+// Data mínima
+<DatePicker
+  selected={date}
+  onSelect={setDate}
+  minDate={new Date()}
+  placeholder="Data futura"
+/>
+
+// Data máxima
+<DatePicker
+  selected={date}
+  onSelect={setDate}
+  maxDate={new Date()}
+  placeholder="Data passada"
+/>
+
+// Dias desabilitados
+<DatePicker
+  selected={date}
+  onSelect={setDate}
+  disabled={(date) => date.getDay() === 0 || date.getDay() === 6}
+  placeholder="Apenas dias úteis"
+/>
+```
+
+## Formatos
+
+```tsx
+// Formato brasileiro
+<DatePicker
+  selected={date}
+  onSelect={setDate}
+  dateFormat="dd/MM/yyyy"
+/>
+
+// Formato americano
+<DatePicker
+  selected={date}
+  onSelect={setDate}
+  dateFormat="MM/dd/yyyy"
+/>
+
+// Com hora
+<DatePicker
+  selected={date}
+  onSelect={setDate}
+  showTimeSelect
+  dateFormat="dd/MM/yyyy HH:mm"
+/>
+```
+
+## API
+
+| Prop          | Tipo                                | Padrão                 | Descrição                     |
+| ------------- | ----------------------------------- | ---------------------- | ----------------------------- |
+| `selected`    | `Date \| undefined`                 | -                      | Data selecionada              |
+| `onSelect`    | `(date: Date \| undefined) => void` | -                      | Callback quando muda          |
+| `mode`        | `'single' \| 'range' \| 'multiple'` | `'single'`             | Modo de seleção               |
+| `minDate`     | `Date`                              | -                      | Data mínima permitida         |
+| `maxDate`     | `Date`                              | -                      | Data máxima permitida         |
+| `disabled`    | `(date: Date) => boolean`           | -                      | Função para desabilitar datas |
+| `placeholder` | `string`                            | `'Selecione uma data'` | Texto placeholder             |
+| `dateFormat`  | `string`                            | `'dd/MM/yyyy'`         | Formato de exibição           |
+
+## Relacionados
+
+- [Input](/design-system/components/input) - Campos de texto
+- [Select](/design-system/components/select) - Seleção de opções

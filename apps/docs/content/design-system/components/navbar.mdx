@@ -1,0 +1,91 @@
+---
+title: Navbar
+description: Barra de navegação principal da aplicação
+---
+
+# Navbar
+
+> Barra de navegação superior para navegação principal e ações globais.
+
+## Básico
+
+```tsx
+import { Navbar } from '@/components/ui/navbar';
+
+<Navbar>
+  <div className="flex items-center gap-4">
+    <Logo />
+    <nav className="flex gap-4">
+      <Link href="/dashboard">Dashboard</Link>
+      <Link href="/users">Usuários</Link>
+      <Link href="/settings">Configurações</Link>
+    </nav>
+  </div>
+  <div className="flex items-center gap-2">
+    <Button variant="outlined">Login</Button>
+  </div>
+</Navbar>;
+```
+
+## Com Menu Mobile
+
+```tsx
+<Navbar>
+  <div className="flex items-center justify-between w-full">
+    <Logo />
+
+    {/* Desktop Menu */}
+    <nav className="hidden md:flex gap-4">
+      <Link href="/dashboard">Dashboard</Link>
+      <Link href="/users">Usuários</Link>
+    </nav>
+
+    {/* Mobile Menu Button */}
+    <Button className="md:hidden" variant="text" size="icon">
+      <Menu className="h-5 w-5" />
+    </Button>
+  </div>
+</Navbar>
+```
+
+## Com Avatar e Dropdown
+
+```tsx
+<Navbar>
+  <Logo />
+  <nav className="flex-1 flex justify-center gap-6">
+    <Link href="/dashboard">Dashboard</Link>
+    <Link href="/users">Usuários</Link>
+  </nav>
+  <DropdownMenu>
+    <DropdownMenuTrigger>
+      <Avatar src={user.avatar} alt={user.name} />
+    </DropdownMenuTrigger>
+    <DropdownMenuContent>
+      <DropdownMenuItem>Perfil</DropdownMenuItem>
+      <DropdownMenuItem>Configurações</DropdownMenuItem>
+      <DropdownMenuItem>Sair</DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+</Navbar>
+```
+
+## Sticky
+
+```tsx
+<Navbar className="sticky top-0 z-50 bg-background/95 backdrop-blur">
+  {/* Conteúdo */}
+</Navbar>
+```
+
+## API
+
+| Prop        | Tipo        | Padrão | Descrição              |
+| ----------- | ----------- | ------ | ---------------------- |
+| `className` | `string`    | -      | Classes CSS adicionais |
+| `children`  | `ReactNode` | -      | Conteúdo da navbar     |
+
+## Relacionados
+
+- [Drawer](/design-system/components/drawer) - Menu lateral
+- [Breadcrumbs](/design-system/components/breadcrumbs) - Navegação hierárquica

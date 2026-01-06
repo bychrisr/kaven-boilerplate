@@ -1,0 +1,52 @@
+---
+title: Paper
+description: Superfície elevada para agrupar conteúdo
+---
+
+# Paper
+
+> Componente de superfície com elevação para agrupar conteúdo relacionado.
+
+## Básico
+
+```tsx
+import { Paper } from '@/components/ui/paper';
+
+<Paper>
+  <p>Conteúdo em superfície elevada</p>
+</Paper>;
+```
+
+## Elevações
+
+```tsx
+<Paper elevation={0}>Sem elevação</Paper>
+<Paper elevation={1}>Elevação 1</Paper>
+<Paper elevation={2}>Elevação 2</Paper>
+<Paper elevation={3}>Elevação 3</Paper>
+```
+
+## Variantes
+
+```tsx
+// Outlined
+<Paper variant="outlined">
+  Com borda
+</Paper>
+
+// Elevation
+<Paper variant="elevation" elevation={2}>
+  Com sombra
+</Paper>
+```
+
+## API
+
+| Prop        | Tipo                        | Padrão        | Descrição         |
+| ----------- | --------------------------- | ------------- | ----------------- |
+| `variant`   | `'elevation' \| 'outlined'` | `'elevation'` | Estilo            |
+| `elevation` | `0 \| 1 \| 2 \| 3`          | `1`           | Nível de elevação |
+
+## Relacionados
+
+- [Card](/design-system/components/card)

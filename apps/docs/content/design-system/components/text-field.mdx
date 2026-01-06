@@ -1,0 +1,74 @@
+---
+title: TextField
+description: Input com label integrado para formulários
+---
+
+# TextField
+
+> Componente de input com label, helper text e validação integrados.
+
+## Básico
+
+```tsx
+import { TextField } from '@/components/ui/text-field';
+
+<TextField label="Email" placeholder="seu@email.com" type="email" />;
+```
+
+## Com Helper Text
+
+```tsx
+<TextField label="Senha" type="password" helperText="Mínimo 8 caracteres" />
+```
+
+## Com Erro
+
+```tsx
+<TextField
+  label="Email"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  error={!!errors.email}
+  helperText={errors.email?.message}
+/>
+```
+
+## Obrigatório
+
+```tsx
+<TextField label="Nome Completo" required placeholder="João Silva" />
+```
+
+## Disabled
+
+```tsx
+<TextField label="Campo Desabilitado" disabled value="Não editável" />
+```
+
+## Multiline (Textarea)
+
+```tsx
+<TextField
+  label="Descrição"
+  multiline
+  rows={4}
+  placeholder="Digite uma descrição..."
+/>
+```
+
+## API
+
+| Prop         | Tipo      | Padrão  | Descrição                  |
+| ------------ | --------- | ------- | -------------------------- |
+| `label`      | `string`  | -       | Label do campo             |
+| `helperText` | `string`  | -       | Texto de ajuda             |
+| `error`      | `boolean` | `false` | Estado de erro             |
+| `required`   | `boolean` | `false` | Campo obrigatório          |
+| `disabled`   | `boolean` | `false` | Desabilita o campo         |
+| `multiline`  | `boolean` | `false` | Textarea ao invés de input |
+| `rows`       | `number`  | `3`     | Linhas (se multiline)      |
+
+## Relacionados
+
+- [Input](/design-system/components/input) - Input básico
+- [Textarea](/design-system/components/textarea) - Textarea standalone

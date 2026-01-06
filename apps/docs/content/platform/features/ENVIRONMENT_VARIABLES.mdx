@@ -1,0 +1,276 @@
+---
+title: Environment Variables
+description: Auto-migrated documentation
+---
+
+# Environment Variables Configuration
+
+## Overview
+
+O Kaven usa um **único arquivo `.env`** na raiz do projeto para todas as variáveis de ambiente (backend e frontend).
+
+## Estrutura
+
+```
+kaven-boilerplate/
+├── .env                    # ✅ Backend variables (API)
+├── .env.example            # ✅ Template (commitado)
+└── apps/
+    ├── admin/              # Frontend (Next.js)
+    │   └── .env.local      # ✅ Frontend variables (NEXT_PUBLIC_*)
+    └── api/                # Backend (Express)
+        └── src/config/env.ts  # Validação com Zod
+```
+
+**Importante:** Em monorepo, variáveis `NEXT_PUBLIC_*` devem estar em `apps/admin/.env.local`.
+
+## Setup Inicial
+
+1. **Copiar template:**
+
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Preencher valores reais:**
+   - Edite `.env` com suas credenciais
+   - **NUNCA** commite o `.env` (já está no `.gitignore`)
+
+## Variáveis Obrigatórias
+
+### Database
+
+```bash
+DATABASE_URL="postgresql://kaven:kaven_dev_password@localhost:5432/kaven_dev"
+```
+
+### Redis
+
+```bash
+REDIS_URL="redis://localhost:6379"
+```
+
+### JWT & Security
+
+```bash
+# Mínimo 32 caracteres cada
+JWT_SECRET="your-super-secret-jwt-key-with-at-least-32-characters-long"
+JWT_EXPIRES_IN="2h"
+REFRESH_TOKEN_SECRET="your-super-secret-refresh-key-with-at-least-32-characters-long"
+ENCRYPTION_KEY="your-super-secret-encryption-key-with-at-least-32-characters-long"
+```
+
+### Server
+
+```bash
+NODE_ENV="development"
+PORT=8000
+CORS_ORIGIN="http://localhost:3000"
+FRONTEND_URL="http://localhost:3000"
+RATE_LIMIT_MAX=100
+LOG_LEVEL="info"
+```
+
+### App Config
+
+```bash
+MULTI_TENANT_MODE="true"
+```
+
+## Variáveis Opcionais
+
+### Stripe (Pagamentos)
+
+```bash
+STRIPE_SECRET_KEY=""
+STRIPE_WEBHOOK_SECRET=""
+```
+
+### SMTP (Email)
+
+```bash
+SMTP_HOST=""
+SMTP_PORT=587
+SMTP_SECURE="false"
+SMTP_USER=""
+SMTP_PASS=""
+EMAIL_FROM="Kaven <noreply@kaven.com>"
+```
+
+### Google Maps (Frontend)
+
+```bash
+# Obter em: https://console.cloud.google.com/
+# Ativar Places API
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
+```
+
+## Variáveis Frontend (Next.js)
+
+**Importante:** Variáveis acessíveis no cliente Next.js **devem** começar com `NEXT_PUBLIC_`.
+
+```bash
+# ✅ Acessível no frontend
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=...
+
+# ❌ NÃO acessível no frontend
+GOOGLE_MAPS_API_KEY=...
+```
+
+## Validação
+
+### Backend (Zod)
+
+O backend valida todas as variáveis em `apps/api/src/config/env.ts`:
+
+```typescript
+export const envSchema = z.object({
+  NODE_ENV: z.enum(['development', 'production', 'test', 'staging']),
+  DATABASE_URL: z.string().min(1),
+  JWT_SECRET: z.string().min(32), // Mínimo 32 chars
+  // ...
+});
+```
+
+Se alguma variável estiver **faltando ou inválida**, o servidor **não inicia** e mostra o erro.
+
+### Frontend
+
+Next.js automaticamente expõe variáveis `NEXT_PUBLIC_*` para o cliente.
+
+## Como Funciona
+
+### Backend (API)
+
+O arquivo `apps/api/src/config/env.ts` carrega variáveis da raiz:
+
+```typescript
+import * as dotenv from 'dotenv';
+
+if (process.env['NODE_ENV'] !== 'production') {
+  dotenv.config(); // Carrega .env da raiz automaticamente
+}
+```
+
+### Frontend (Admin)
+
+Next.js carrega automaticamente `.env` da raiz e expõe `NEXT_PUBLIC_*` para o cliente.
+
+## Google Maps API - Setup Completo
+
+### 1. Obter API Key
+
+1. Acesse [Google Cloud Console](https://console.cloud.google.com/)
+2. Crie um projeto (ou use existente)
+3. Ative a **Places API**:
+   - Menu → APIs & Services → Library
+   - Busque "Places API"
+   - Clique "Enable"
+4. Crie credenciais:
+   - Menu → APIs & Services → Credentials
+   - "Create Credentials" → "API Key"
+   - Copie a chave
+
+### 2. Adicionar no `.env.local`
+
+**Em monorepo, adicione em `apps/admin/.env.local`:**
+
+```bash
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIzaSyBOOLr3BeqTjbVf773DlIPlr0r9j9c885Y
+```
+
+**Também adicione no `.env` da raiz** (para referência e outros apps):
+
+```bash
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIzaSyBOOLr3BeqTjbVf773DlIPlr0r9j9c885Y
+```
+
+### 3. Reiniciar Servidor
+
+```bash
+# Parar (Ctrl+C) e reiniciar
+pnpm dev
+```
+
+### 4. Verificar
+
+O componente `AddressAutocomplete` deve funcionar com autocomplete de endereços.
+
+## Produção
+
+### Checklist
+
+- [ ] Gerar JWT_SECRET forte (min 32 chars)
+- [ ] Gerar REFRESH_TOKEN_SECRET forte (min 32 chars)
+- [ ] Gerar ENCRYPTION_KEY forte (min 32 chars)
+- [ ] Configurar DATABASE_URL de produção
+- [ ] Configurar REDIS_URL de produção
+- [ ] Configurar CORS_ORIGIN com domínio real
+- [ ] Configurar FRONTEND_URL com domínio real
+- [ ] Adicionar restrições na Google Maps API Key
+- [ ] Configurar SMTP para emails
+- [ ] Configurar Stripe com chaves de produção
+
+### Secrets Management
+
+**NUNCA** commite `.env` com valores reais!
+
+Use secrets do seu provedor:
+
+- **Vercel**: Environment Variables no dashboard
+- **Railway**: Variables no projeto
+- **AWS**: Parameter Store / Secrets Manager
+- **Docker**: Secrets ou environment files
+
+## Troubleshooting
+
+### "Environment validation failed"
+
+O backend não inicia se variáveis obrigatórias estiverem faltando.
+
+**Solução:**
+
+1. Verifique se `.env` existe na raiz
+2. Confirme que todas as variáveis obrigatórias estão preenchidas
+3. JWT_SECRET, REFRESH_TOKEN_SECRET e ENCRYPTION_KEY devem ter **mínimo 32 caracteres**
+
+### Google Maps não funciona
+
+**Solução:**
+
+1. Verifique se `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` está no `.env`
+2. Confirme que Places API está ativada no Google Cloud
+3. Reinicie o servidor Next.js (`pnpm dev`)
+4. Verifique console do navegador por erros de API
+
+### Variável não aparece no frontend
+
+**Causa:** Variáveis do frontend **devem** começar com `NEXT_PUBLIC_`.
+
+**Solução:**
+
+```bash
+# ❌ Não funciona
+GOOGLE_MAPS_API_KEY=...
+
+# ✅ Funciona
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=...
+```
+
+### "dotenv not loading variables"
+
+**Causa:** Servidor não reiniciado após alterar `.env`.
+
+**Solução:**
+
+```bash
+# Parar servidor (Ctrl+C)
+pnpm dev
+```
+
+## Referências
+
+- [Next.js Environment Variables](https://nextjs.org/docs/app/building-your-application/configuring/environment-variables)
+- [dotenv Documentation](https://github.com/motdotla/dotenv)
+- [Zod Documentation](https://zod.dev/)
+- [Google Maps Platform](https://developers.google.com/maps)

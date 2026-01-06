@@ -1,0 +1,135 @@
+---
+title: Dropdown Menu
+description: Menus dropdown para ações e navegação
+---
+
+# Dropdown Menu
+
+> Menu suspenso para exibir lista de ações ou opções.
+
+## Básico
+
+```tsx
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu';
+
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button variant="outlined">Abrir Menu</Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent>
+    <DropdownMenuItem>Perfil</DropdownMenuItem>
+    <DropdownMenuItem>Configurações</DropdownMenuItem>
+    <DropdownMenuItem>Sair</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>;
+```
+
+## Com Ícones
+
+```tsx
+import { User, Settings, LogOut } from 'lucide-react';
+
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button variant="text" size="icon">
+      <MoreVertical className="h-5 w-5" />
+    </Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent>
+    <DropdownMenuItem>
+      <User className="mr-2 h-4 w-4" />
+      Perfil
+    </DropdownMenuItem>
+    <DropdownMenuItem>
+      <Settings className="mr-2 h-4 w-4" />
+      Configurações
+    </DropdownMenuItem>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem className="text-destructive">
+      <LogOut className="mr-2 h-4 w-4" />
+      Sair
+    </DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>;
+```
+
+## Com Grupos
+
+```tsx
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button>Menu</Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent>
+    <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
+    <DropdownMenuSeparator />
+    <DropdownMenuGroup>
+      <DropdownMenuItem>Perfil</DropdownMenuItem>
+      <DropdownMenuItem>Configurações</DropdownMenuItem>
+    </DropdownMenuGroup>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem>Sair</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+```
+
+## Com Checkbox
+
+```tsx
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button>Filtros</Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent>
+    <DropdownMenuCheckboxItem checked={showActive}>
+      Mostrar Ativos
+    </DropdownMenuCheckboxItem>
+    <DropdownMenuCheckboxItem checked={showPending}>
+      Mostrar Pendentes
+    </DropdownMenuCheckboxItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+```
+
+## Posicionamento
+
+```tsx
+// Align start (padrão)
+<DropdownMenuContent align="start">...</DropdownMenuContent>
+
+// Align center
+<DropdownMenuContent align="center">...</DropdownMenuContent>
+
+// Align end
+<DropdownMenuContent align="end">...</DropdownMenuContent>
+
+// Side
+<DropdownMenuContent side="bottom">...</DropdownMenuContent>
+<DropdownMenuContent side="top">...</DropdownMenuContent>
+<DropdownMenuContent side="left">...</DropdownMenuContent>
+<DropdownMenuContent side="right">...</DropdownMenuContent>
+```
+
+## API
+
+| Prop           | Tipo                      | Padrão | Descrição             |
+| -------------- | ------------------------- | ------ | --------------------- |
+| `open`         | `boolean`                 | -      | Controla visibilidade |
+| `onOpenChange` | `(open: boolean) => void` | -      | Callback quando muda  |
+
+### DropdownMenuContent Props
+
+| Prop    | Tipo                                     | Padrão     | Descrição   |
+| ------- | ---------------------------------------- | ---------- | ----------- |
+| `align` | `'start' \| 'center' \| 'end'`           | `'start'`  | Alinhamento |
+| `side`  | `'top' \| 'right' \| 'bottom' \| 'left'` | `'bottom'` | Posição     |
+
+## Relacionados
+
+- [Select](/design-system/components/select) - Seleção de opções
+- [Dialog](/design-system/components/dialog) - Modais

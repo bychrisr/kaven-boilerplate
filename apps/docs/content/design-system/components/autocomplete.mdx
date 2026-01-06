@@ -1,0 +1,67 @@
+---
+title: Autocomplete
+description: Input com sugestões automáticas
+---
+
+# Autocomplete
+
+> Campo de entrada com sugestões automáticas baseadas no texto digitado.
+
+## Básico
+
+```tsx
+import { Autocomplete } from '@/components/ui/autocomplete';
+
+const options = [
+  { value: '1', label: 'Opção 1' },
+  { value: '2', label: 'Opção 2' },
+  { value: '3', label: 'Opção 3' },
+];
+
+<Autocomplete
+  options={options}
+  value={value}
+  onChange={setValue}
+  placeholder="Digite para buscar..."
+/>;
+```
+
+## Com Busca Assíncrona
+
+```tsx
+function AsyncAutocomplete() {
+  const [options, setOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const handleSearch = async (query: string) => {
+    setLoading(true);
+    const results = await searchAPI(query);
+    setOptions(results);
+    setLoading(false);
+  };
+
+  return (
+    <Autocomplete
+      options={options}
+      onSearch={handleSearch}
+      loading={loading}
+      placeholder="Buscar..."
+    />
+  );
+}
+```
+
+## API
+
+| Prop       | Tipo                                    | Padrão  | Descrição              |
+| ---------- | --------------------------------------- | ------- | ---------------------- |
+| `options`  | `Array<{value: string, label: string}>` | `[]`    | Opções disponíveis     |
+| `value`    | `string`                                | -       | Valor selecionado      |
+| `onChange` | `(value: string) => void`               | -       | Callback quando muda   |
+| `onSearch` | `(query: string) => void`               | -       | Callback de busca      |
+| `loading`  | `boolean`                               | `false` | Estado de carregamento |
+
+## Relacionados
+
+- [Select](/design-system/components/select)
+- [Input](/design-system/components/input)

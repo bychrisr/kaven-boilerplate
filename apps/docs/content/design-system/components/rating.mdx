@@ -1,0 +1,61 @@
+---
+title: Rating
+description: Avaliação com estrelas
+---
+
+# Rating
+
+> Componente para exibir e coletar avaliações com estrelas.
+
+## Básico
+
+```tsx
+import { Rating } from '@/components/ui/rating';
+
+<Rating value={4} />;
+```
+
+## Editável
+
+```tsx
+function ProductRating() {
+  const [rating, setRating] = useState(0);
+
+  return <Rating value={rating} onChange={setRating} max={5} />;
+}
+```
+
+## Tamanhos
+
+```tsx
+<Rating value={4} size="sm" />
+<Rating value={4} size="md" />
+<Rating value={4} size="lg" />
+```
+
+## Com Metade
+
+```tsx
+<Rating value={3.5} precision={0.5} />
+```
+
+## Read Only
+
+```tsx
+<Rating value={4} readOnly />
+```
+
+## API
+
+| Prop        | Tipo                      | Padrão  | Descrição                  |
+| ----------- | ------------------------- | ------- | -------------------------- |
+| `value`     | `number`                  | `0`     | Valor atual                |
+| `onChange`  | `(value: number) => void` | -       | Callback quando muda       |
+| `max`       | `number`                  | `5`     | Número de estrelas         |
+| `precision` | `number`                  | `1`     | Precisão (0.5 para metade) |
+| `readOnly`  | `boolean`                 | `false` | Somente leitura            |
+| `size`      | `'sm' \| 'md' \| 'lg'`    | `'md'`  | Tamanho                    |
+
+## Relacionados
+
+- [Slider](/design-system/components/slider)

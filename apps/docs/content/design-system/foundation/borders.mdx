@@ -1,0 +1,47 @@
+---
+title: Borders
+description: Sistema de bordas e raios
+---
+
+# Borders
+
+> Bordas e border radius para definir formas e separações.
+
+## Border Radius
+
+| Classe         | Valor  | Uso                |
+| -------------- | ------ | ------------------ |
+| `rounded-none` | 0px    | Sem arredondamento |
+| `rounded-sm`   | 4px    | Sutil              |
+| `rounded`      | 8px    | Padrão             |
+| `rounded-md`   | 12px   | Médio              |
+| `rounded-lg`   | 16px   | Grande             |
+| `rounded-xl`   | 24px   | Extra grande       |
+| `rounded-2xl`  | 32px   | Enorme             |
+| `rounded-full` | 9999px | Circular           |
+
+## Border Width
+
+| Classe     | Valor |
+| ---------- | ----- |
+| `border`   | 1px   |
+| `border-2` | 2px   |
+| `border-4` | 4px   |
+
+## Exemplos
+
+```tsx
+// Card com border radius padrão
+<div className="border border-border rounded-lg p-6">
+  Card
+</div>
+
+// Botão circular
+<button className="rounded-full p-4">
+  Botão
+</button>
+```
+
+## Relacionados
+
+- [Shadows](/design-system/foundation/shadows)

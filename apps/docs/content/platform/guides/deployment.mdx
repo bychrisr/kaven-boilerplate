@@ -1,0 +1,186 @@
+---
+title: Deployment
+description: Guia de deploy em produção
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Deployment
+
+Guia para deploy do Kaven Platform em produção.
+
+<Callout type="info">
+  Suporta deploy em Vercel, Railway, AWS, e qualquer plataforma com Docker.
+</Callout>
+
+## Vercel (Frontend)
+
+<Steps>
+
+### Conecte Repositório
+
+1. Acesse [vercel.com](https://vercel.com)
+2. Importe seu repositório
+3. Selecione `apps/admin` como root directory
+
+### Configure Variáveis
+
+```env
+NEXT_PUBLIC_API_URL=https://api.seu-dominio.com
+```
+
+### Deploy
+
+```bash
+vercel --prod
+```
+
+</Steps>
+
+## Railway (Backend)
+
+<Steps>
+
+### Crie Novo Projeto
+
+1. Acesse [railway.app](https://railway.app)
+2. New Project → Deploy from GitHub
+3. Selecione seu repositório
+
+### Adicione Serviços
+
+- PostgreSQL
+- Redis
+- API (apps/api)
+
+### Configure Variáveis
+
+```env
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+REDIS_URL=${{Redis.REDIS_URL}}
+JWT_SECRET=your-production-secret
+FRONTEND_URL=https://seu-dominio.vercel.app
+```
+
+### Deploy
+
+Railway faz deploy automático em cada push.
+
+</Steps>
+
+## Docker (Self-Hosted)
+
+### Build Images
+
+```bash
+# Backend
+docker build -t kaven-api -f apps/api/Dockerfile .
+
+# Frontend
+docker build -t kaven-admin -f apps/admin/Dockerfile .
+```
+
+### Docker Compose
+
+```yaml
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+
+  api:
+    image: kaven-api
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+
+  admin:
+    image: kaven-admin
+    environment:
+      NEXT_PUBLIC_API_URL: ${API_URL}
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+```
+
+## Checklist Pré-Deploy
+
+- [ ] Variáveis de ambiente configuradas
+- [ ] Migrations executadas
+- [ ] SSL/TLS configurado
+- [ ] CORS configurado corretamente
+- [ ] Rate limiting habilitado
+- [ ] Logs configurados
+- [ ] Backups automáticos
+- [ ] Monitoring (Prometheus/Grafana)
+
+## Segurança
+
+<Callout type="warning">
+  **NUNCA** commite secrets no repositório. Use variáveis de ambiente.
+</Callout>
+
+### Secrets Obrigatórios
+
+- `JWT_SECRET` - Chave JWT (min 32 chars)
+- `JWT_REFRESH_SECRET` - Chave refresh token
+- `DATABASE_URL` - URL do banco
+- `STRIPE_SECRET_KEY` - Chave Stripe (se usar)
+
+### Headers de Segurança
+
+```typescript
+// Helmet.js configurado no backend
+app.use(helmet());
+```
+
+## Monitoring
+
+### Prometheus
+
+```yaml
+# prometheus.yml
+scrape_configs:
+  - job_name: 'kaven-api'
+    static_configs:
+      - targets: ['api:8000']
+```
+
+### Grafana
+
+Dashboards incluídos:
+
+- System Metrics
+- HTTP Metrics
+- Database Metrics
+
+## Backup
+
+### PostgreSQL
+
+```bash
+# Backup diário
+pg_dump $DATABASE_URL > backup-$(date +%Y%m%d).sql
+
+# Restore
+psql $DATABASE_URL < backup.sql
+```
+
+## Links Relacionados
+
+- [Installation](/platform/getting-started/installation)
+- [Configuration](/platform/getting-started/configuration)
+- [Monitoring](/platform/guides/monitoring)

@@ -1,0 +1,61 @@
+---
+title: Slider
+description: Controles deslizantes para seleção de valores
+---
+
+# Slider
+
+> Controle deslizante para selecionar valores em um intervalo.
+
+## Básico
+
+```tsx
+import { Slider } from '@/components/ui/slider';
+
+<Slider defaultValue={[50]} max={100} step={1} />;
+```
+
+## Com Label
+
+```tsx
+function VolumeSlider() {
+  const [value, setValue] = useState([50]);
+
+  return (
+    <div className="space-y-2">
+      <div className="flex justify-between">
+        <Label>Volume</Label>
+        <span className="text-sm text-muted-foreground">{value}%</span>
+      </div>
+      <Slider value={value} onValueChange={setValue} max={100} />
+    </div>
+  );
+}
+```
+
+## Range
+
+```tsx
+<Slider defaultValue={[25, 75]} max={100} step={1} />
+```
+
+## Disabled
+
+```tsx
+<Slider defaultValue={[50]} max={100} disabled />
+```
+
+## API
+
+| Prop            | Tipo                        | Padrão  | Descrição            |
+| --------------- | --------------------------- | ------- | -------------------- |
+| `value`         | `number[]`                  | -       | Valor atual          |
+| `onValueChange` | `(value: number[]) => void` | -       | Callback quando muda |
+| `min`           | `number`                    | `0`     | Valor mínimo         |
+| `max`           | `number`                    | `100`   | Valor máximo         |
+| `step`          | `number`                    | `1`     | Incremento           |
+| `disabled`      | `boolean`                   | `false` | Desabilita o slider  |
+
+## Relacionados
+
+- [Input](/design-system/components/input)

@@ -1,0 +1,126 @@
+---
+title: Input
+description: Campos de entrada de texto com validação e estados
+---
+
+# Input
+
+> Componente base para entrada de texto com suporte a ícones, validação e diferentes estados.
+
+## Variações
+
+### Básico
+
+```tsx
+import { Input } from '@/components/ui/input';
+
+<Input placeholder="Digite seu email..." />;
+```
+
+### Com Label
+
+```tsx
+import { Label } from '@/components/ui/label';
+
+<div className="space-y-2">
+  <Label htmlFor="email">Email</Label>
+  <Input id="email" type="email" placeholder="seu@email.com" />
+</div>;
+```
+
+### Com Ícone
+
+```tsx
+import { Search, Mail } from 'lucide-react';
+
+<div className="relative">
+  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+  <Input className="pl-10" placeholder="Buscar..." />
+</div>
+
+<div className="relative">
+  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+  <Input className="pl-10" type="email" placeholder="Email" />
+</div>
+```
+
+### Estados
+
+```tsx
+// Disabled
+<Input disabled placeholder="Desabilitado" />
+
+// Error
+<Input className="border-error-main focus-visible:ring-error-main" placeholder="Email inválido" />
+
+// Success
+<Input className="border-success-main focus-visible:ring-success-main" placeholder="Email válido" />
+```
+
+### Tamanhos
+
+```tsx
+<Input className="h-8 text-sm" placeholder="Small" />
+<Input className="h-10" placeholder="Medium (default)" />
+<Input className="h-12 text-base" placeholder="Large" />
+```
+
+## Com React Hook Form
+
+```tsx
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+
+const schema = z.object({
+  email: z.string().email('Email inválido'),
+});
+
+function MyForm() {
+  const {
+    register,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(schema),
+  });
+
+  return (
+    <div className="space-y-2">
+      <Label htmlFor="email">Email</Label>
+      <Input
+        id="email"
+        {...register('email')}
+        className={errors.email ? 'border-error-main' : ''}
+      />
+      {errors.email && (
+        <p className="text-sm text-error-main">{errors.email.message}</p>
+      )}
+    </div>
+  );
+}
+```
+
+## API
+
+| Prop          | Tipo      | Padrão   | Descrição                                  |
+| ------------- | --------- | -------- | ------------------------------------------ |
+| `type`        | `string`  | `'text'` | Tipo do input (text, email, password, etc) |
+| `placeholder` | `string`  | -        | Texto placeholder                          |
+| `disabled`    | `boolean` | `false`  | Desabilita o input                         |
+| `className`   | `string`  | -        | Classes CSS adicionais                     |
+
+## Acessibilidade
+
+```tsx
+// Sempre use Label com htmlFor
+<Label htmlFor="username">Nome de usuário</Label>
+<Input id="username" aria-describedby="username-help" />
+<p id="username-help" className="text-sm text-muted-foreground">
+  Mínimo 3 caracteres
+</p>
+```
+
+## Relacionados
+
+- [TextField](/design-system/components/text-field) - Input com label integrado
+- [Form](/design-system/components/form) - Formulários completos

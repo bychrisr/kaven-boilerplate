@@ -1,0 +1,41 @@
+---
+title: Bottom Navigation
+description: Navegação inferior para mobile
+---
+
+# Bottom Navigation
+
+> Barra de navegação fixa na parte inferior para aplicações mobile.
+
+## Básico
+
+```tsx
+import {
+  BottomNavigation,
+  BottomNavigationAction,
+} from '@/components/ui/bottom-navigation';
+import { Home, Search, Favorite, Person } from 'lucide-react';
+
+<BottomNavigation value={value} onChange={setValue}>
+  <BottomNavigationAction label="Home" icon={<Home />} value="home" />
+  <BottomNavigationAction label="Buscar" icon={<Search />} value="search" />
+  <BottomNavigationAction
+    label="Favoritos"
+    icon={<Favorite />}
+    value="favorites"
+  />
+  <BottomNavigationAction label="Perfil" icon={<Person />} value="profile" />
+</BottomNavigation>;
+```
+
+## API
+
+| Prop       | Tipo                      | Padrão | Descrição            |
+| ---------- | ------------------------- | ------ | -------------------- |
+| `value`    | `string`                  | -      | Item ativo           |
+| `onChange` | `(value: string) => void` | -      | Callback quando muda |
+
+## Relacionados
+
+- [Navbar](/design-system/components/navbar)
+- [Tabs](/design-system/components/tabs)

@@ -65,11 +65,10 @@ export class StripeService {
     const subscription = await prisma.subscription.create({
       data: {
         tenantId,
+        planId: 'default-plan-id', // TODO: buscar plano default ou receber como parâmetro
         stripeCustomerId: customerId,
         stripeSubscriptionId: stripeSubscription.id,
         status: 'TRIALING',
-        planName: 'STARTER', // TODO: extrair do priceId
-        priceMonthly: 29.99, // TODO: extrair do priceId
         currentPeriodStart: new Date((stripeSubscription as any).current_period_start * 1000),
         currentPeriodEnd: new Date((stripeSubscription as any).current_period_end * 1000),
       },

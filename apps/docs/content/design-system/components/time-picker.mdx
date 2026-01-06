@@ -1,0 +1,45 @@
+---
+title: Time Picker
+description: Seletor de horário
+---
+
+# Time Picker
+
+> Componente para seleção de horário.
+
+## Básico
+
+```tsx
+import { TimePicker } from '@/components/ui/time-picker';
+
+<TimePicker
+  value={time}
+  onChange={setTime}
+  placeholder="Selecione um horário"
+/>;
+```
+
+## Formato 24h
+
+```tsx
+<TimePicker value={time} onChange={setTime} format="24h" />
+```
+
+## Com Segundos
+
+```tsx
+<TimePicker value={time} onChange={setTime} showSeconds />
+```
+
+## API
+
+| Prop          | Tipo                   | Padrão  | Descrição            |
+| ------------- | ---------------------- | ------- | -------------------- |
+| `value`       | `Date \| string`       | -       | Horário selecionado  |
+| `onChange`    | `(time: Date) => void` | -       | Callback quando muda |
+| `format`      | `'12h' \| '24h'`       | `'24h'` | Formato de hora      |
+| `showSeconds` | `boolean`              | `false` | Mostrar segundos     |
+
+## Relacionados
+
+- [Date Picker](/design-system/components/date-picker)

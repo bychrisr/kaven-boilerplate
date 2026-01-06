@@ -54,6 +54,7 @@
       "overview": "Visão Geral",
       "management": "Gerenciamento",
       "finance": "Finanças",
+      "monetization": "Monetização",
       "support": "Suporte",
       "marketing": "Marketing",
       "devops": "DevOps",
@@ -71,6 +72,10 @@
       "invoices": "Faturas",
       "payments": "Pagamentos",
       "billing": "Cobrança",
+      "plans": "Planos",
+      "products": "Produtos",
+      "features": "Funcionalidades",
+      "subscriptions": "Assinaturas",
       "tickets": "Chamados",
       "impersonation": "Impersonificação",
       "2fa reset": "Resetar 2FA",
@@ -183,6 +188,7 @@
   "Settings": {
     "title": "Configurações",
     "subtitle": "Gerencie as configurações do sistema e personalize sua experiência",
+    "language": "Idioma",
     "tabs": {
       "general": "Geral",
       "theme": "Tema",

@@ -54,6 +54,7 @@
       "overview": "Overview",
       "management": "Management",
       "finance": "Finance",
+      "monetization": "Monetization",
       "support": "Support",
       "marketing": "Marketing",
       "devops": "DevOps",
@@ -71,6 +72,10 @@
       "invoices": "Invoices",
       "payments": "Payments",
       "billing": "Billing",
+      "plans": "Plans",
+      "products": "Products",
+      "features": "Features",
+      "subscriptions": "Subscriptions",
       "tickets": "Tickets",
       "impersonation": "Impersonation",
       "2fa reset": "2FA Reset",
@@ -183,6 +188,7 @@
   "Settings": {
     "title": "Settings",
     "subtitle": "Manage system settings and personalize your experience",
+    "language": "Language",
     "tabs": {
       "general": "General",
       "theme": "Theme",

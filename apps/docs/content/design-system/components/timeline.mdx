@@ -1,0 +1,63 @@
+---
+title: Timeline
+description: Linha do tempo para exibir eventos cronológicos
+---
+
+# Timeline
+
+> Componente para exibir eventos em ordem cronológica.
+
+## Básico
+
+```tsx
+import {
+  Timeline,
+  TimelineItem,
+  TimelineDot,
+  TimelineContent,
+} from '@/components/ui/timeline';
+
+<Timeline>
+  <TimelineItem>
+    <TimelineDot />
+    <TimelineContent>
+      <h4 className="font-semibold">Evento 1</h4>
+      <p className="text-sm text-muted-foreground">Há 2 horas</p>
+    </TimelineContent>
+  </TimelineItem>
+  <TimelineItem>
+    <TimelineDot />
+    <TimelineContent>
+      <h4 className="font-semibold">Evento 2</h4>
+      <p className="text-sm text-muted-foreground">Há 5 horas</p>
+    </TimelineContent>
+  </TimelineItem>
+</Timeline>;
+```
+
+## Com Cores
+
+```tsx
+<Timeline>
+  <TimelineItem>
+    <TimelineDot className="bg-success-main" />
+    <TimelineContent>Concluído</TimelineContent>
+  </TimelineItem>
+  <TimelineItem>
+    <TimelineDot className="bg-warning-main" />
+    <TimelineContent>Em progresso</TimelineContent>
+  </TimelineItem>
+  <TimelineItem>
+    <TimelineDot className="bg-muted" />
+    <TimelineContent>Pendente</TimelineContent>
+  </TimelineItem>
+</Timeline>
+```
+
+## API
+
+Componentes básicos sem props especiais.
+
+## Relacionados
+
+- [Stepper](/design-system/components/stepper)

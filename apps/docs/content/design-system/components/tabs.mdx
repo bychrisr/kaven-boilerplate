@@ -1,0 +1,76 @@
+---
+title: Tabs
+description: Navegação por abas para organizar conteúdo
+---
+
+# Tabs
+
+> Componente de abas para alternar entre diferentes visualizações de conteúdo.
+
+## Exemplo Básico
+
+```tsx
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+
+<Tabs defaultValue="account">
+  <TabsList>
+    <TabsTrigger value="account">Conta</TabsTrigger>
+    <TabsTrigger value="password">Senha</TabsTrigger>
+    <TabsTrigger value="settings">Configurações</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="account">Conteúdo da aba Conta</TabsContent>
+  <TabsContent value="password">Conteúdo da aba Senha</TabsContent>
+  <TabsContent value="settings">Conteúdo da aba Configurações</TabsContent>
+</Tabs>;
+```
+
+## Com Badges (User Page)
+
+```tsx
+const statusCounts = {
+  all: 150,
+  active: 120,
+  pending: 20,
+  banned: 10,
+};
+
+<Tabs value={filterStatus} onValueChange={setFilterStatus}>
+  <TabsList>
+    {STATUS_OPTIONS.map((tab) => (
+      <TabsTrigger key={tab.value} value={tab.value}>
+        {tab.label}
+        <Badge className="ml-2">{statusCounts[tab.value]}</Badge>
+      </TabsTrigger>
+    ))}
+  </TabsList>
+</Tabs>;
+```
+
+## Variantes
+
+```tsx
+// Underline style
+<TabsList className="border-b">
+  <TabsTrigger className="border-b-2 border-transparent data-[state=active]:border-primary">
+    Tab 1
+  </TabsTrigger>
+</TabsList>
+
+// Pills style
+<TabsList className="bg-muted p-1 rounded-lg">
+  <TabsTrigger className="rounded-md">Tab 1</TabsTrigger>
+</TabsList>
+```
+
+## API
+
+| Prop            | Tipo                      | Padrão | Descrição              |
+| --------------- | ------------------------- | ------ | ---------------------- |
+| `defaultValue`  | `string`                  | -      | Aba inicial ativa      |
+| `value`         | `string`                  | -      | Aba ativa (controlado) |
+| `onValueChange` | `(value: string) => void` | -      | Callback quando muda   |
+
+## Relacionados
+
+- [Accordion](/design-system/components/accordion) - Conteúdo colapsável

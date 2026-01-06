@@ -1,0 +1,98 @@
+---
+title: Checkbox
+description: Caixas de seleção para múltiplas escolhas
+---
+
+# Checkbox
+
+> Componente para seleção múltipla de opções.
+
+## Básico
+
+```tsx
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+
+<div className="flex items-center space-x-2">
+  <Checkbox id="terms" />
+  <Label htmlFor="terms">Aceito os termos e condições</Label>
+</div>;
+```
+
+## Controlado
+
+```tsx
+const [checked, setChecked] = useState(false);
+
+<Checkbox checked={checked} onCheckedChange={setChecked} />;
+```
+
+## Em Tabelas (Data Table)
+
+```tsx
+// Select all
+<Checkbox
+  checked={selected.length === users.length}
+  onCheckedChange={handleSelectAll}
+  aria-label="Selecionar todos"
+/>
+
+// Select row
+<Checkbox
+  checked={selected.includes(user.id)}
+  onCheckedChange={() => handleSelectRow(user.id)}
+  aria-label={`Selecionar ${user.name}`}
+/>
+```
+
+## Estados
+
+```tsx
+// Checked
+<Checkbox checked />
+
+// Unchecked
+<Checkbox checked={false} />
+
+// Indeterminate
+<Checkbox checked="indeterminate" />
+
+// Disabled
+<Checkbox disabled />
+```
+
+## Com Formulário
+
+```tsx
+import { useForm } from 'react-hook-form';
+
+function MyForm() {
+  const { register } = useForm();
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center space-x-2">
+        <Checkbox id="newsletter" {...register('newsletter')} />
+        <Label htmlFor="newsletter">Receber newsletter</Label>
+      </div>
+      <div className="flex items-center space-x-2">
+        <Checkbox id="updates" {...register('updates')} />
+        <Label htmlFor="updates">Receber atualizações</Label>
+      </div>
+    </div>
+  );
+}
+```
+
+## API
+
+| Prop              | Tipo                         | Padrão  | Descrição             |
+| ----------------- | ---------------------------- | ------- | --------------------- |
+| `checked`         | `boolean \| 'indeterminate'` | `false` | Estado do checkbox    |
+| `onCheckedChange` | `(checked: boolean) => void` | -       | Callback quando muda  |
+| `disabled`        | `boolean`                    | `false` | Desabilita o checkbox |
+
+## Relacionados
+
+- [Radio](/design-system/components/radio) - Seleção única
+- [Switch](/design-system/components/switch) - Toggle on/off

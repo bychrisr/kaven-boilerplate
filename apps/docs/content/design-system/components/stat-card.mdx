@@ -1,0 +1,486 @@
+---
+title: Stat Card
+description: Cards de estatísticas com indicadores de tendência, mini-gráficos e ícones semânticos
+---
+
+# Stat Card
+
+> Cards especializados para exibir métricas e KPIs com visualização de tendências e mini-gráficos integrados. Componente signature do Dashboard Kaven.
+
+## Quando Usar
+
+- **Dashboards**: Exibir métricas principais (usuários, receita, conversões)
+- **Relatórios**: Apresentar KPIs com comparação temporal
+- **Analytics**: Mostrar dados com contexto visual imediato
+- **Painéis Executivos**: Resumir informações críticas de negócio
+
+## Exemplo Básico
+
+Este é o card de "Total de Usuários" usado no Dashboard principal:
+
+<div className="preview-box">
+  <div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50 max-w-md">
+    <div className="flex items-center gap-4 mb-4">
+      <div className="p-3 bg-primary/10 rounded-full">
+        <svg
+          className="h-6 w-6 text-primary"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+          />
+        </svg>
+      </div>
+      <span className="text-sm font-bold text-foreground uppercase tracking-wider">
+        Total de Usuários
+      </span>
+    </div>
+    <div className="flex items-end justify-between">
+      <div>
+        <h3 className="text-3xl font-bold text-foreground mb-2">2,456</h3>
+        <div className="flex items-center gap-2 text-sm">
+          <span className="flex items-center font-semibold px-1.5 py-0.5 rounded text-green-500 bg-green-500/10">
+            <svg
+              className="h-3 w-3 mr-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 10l7-7m0 0l7 7m-7-7v18"
+              />
+            </svg>
+            +12%
+          </span>
+          <span className="text-muted-foreground">últimos 7 dias</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+```tsx
+import { Users, ArrowUp } from 'lucide-react';
+
+<div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
+  <div className="flex items-center gap-4 mb-4">
+    <div className="p-3 bg-primary/10 rounded-full">
+      <Users className="h-6 w-6 text-primary" />
+    </div>
+    <span className="text-sm font-bold text-foreground uppercase tracking-wider">
+      Total de Usuários
+    </span>
+  </div>
+  <div className="flex items-end justify-between">
+    <div>
+      <h3 className="text-3xl font-bold text-foreground mb-2">2,456</h3>
+      <div className="flex items-center gap-2 text-sm">
+        <span className="flex items-center font-semibold px-1.5 py-0.5 rounded text-green-500 bg-green-500/10">
+          <ArrowUp className="h-3 w-3 mr-1" />
+          +12%
+        </span>
+        <span className="text-muted-foreground">últimos 7 dias</span>
+      </div>
+    </div>
+  </div>
+</div>;
+```
+
+## Variações
+
+### Com Mini-Gráfico
+
+Adicione um mini-gráfico para visualização de tendência:
+
+```tsx
+import { ResponsiveContainer, BarChart, Bar } from 'recharts';
+
+<div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
+  {/* Header com ícone */}
+  <div className="flex items-center gap-4 mb-4">
+    <div className="p-3 bg-primary/10 rounded-full">
+      <Users className="h-6 w-6 text-primary" />
+    </div>
+    <span className="text-sm font-bold text-foreground uppercase tracking-wider">
+      Total de Usuários
+    </span>
+  </div>
+
+  {/* Valor e Trend */}
+  <div className="flex items-end justify-between">
+    <div>
+      <h3 className="text-3xl font-bold text-foreground mb-2">2,456</h3>
+      <div className="flex items-center gap-2 text-sm">
+        <span className="flex items-center font-semibold px-1.5 py-0.5 rounded text-green-500 bg-green-500/10">
+          <ArrowUp className="h-3 w-3 mr-1" />
+          +12%
+        </span>
+        <span className="text-muted-foreground">últimos 7 dias</span>
+      </div>
+    </div>
+
+    {/* Mini Chart */}
+    <div className="h-12 w-24">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={[{ v: 20 }, { v: 40 }, { v: 30 }, { v: 70 }, { v: 50 }]}
+        >
+          <Bar dataKey="v" fill="hsl(var(--primary))" radius={[2, 2, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+</div>;
+```
+
+### Trend Negativo
+
+Para métricas em queda:
+
+```tsx
+<div className="flex items-center gap-2 text-sm">
+  <span className="flex items-center font-semibold px-1.5 py-0.5 rounded text-destructive bg-destructive/10">
+    <ArrowDown className="h-3 w-3 mr-1" />
+    -8%
+  </span>
+  <span className="text-muted-foreground">vs. período anterior</span>
+</div>
+```
+
+## Cores Semânticas
+
+| Cor         | Classe do Ícone    | Classe do Background | Uso                                   |
+| ----------- | ------------------ | -------------------- | ------------------------------------- |
+| **Primary** | `text-primary`     | `bg-primary/10`      | Métricas principais (usuários, total) |
+| **Blue**    | `text-blue-500`    | `bg-blue-500/10`     | Receita, vendas, conversões           |
+| **Yellow**  | `text-yellow-500`  | `bg-yellow-500/10`   | Alertas, pendências, taxas            |
+| **Green**   | `text-green-500`   | `bg-green-500/10`    | Sucesso, crescimento, aprovações      |
+| **Red**     | `text-destructive` | `bg-destructive/10`  | Erros, cancelamentos, problemas       |
+
+## Tamanhos
+
+### Compacto (Mobile)
+
+```tsx
+<div className="rounded-2xl bg-card p-4 shadow-xl border border-border/50">
+  <div className="flex items-center gap-3 mb-3">
+    <div className="p-2 bg-primary/10 rounded-full">
+      <Users className="h-5 w-5 text-primary" />
+    </div>
+    <span className="text-xs font-bold text-foreground uppercase tracking-wider">
+      Total de Usuários
+    </span>
+  </div>
+  <h3 className="text-2xl font-bold text-foreground mb-1">2,456</h3>
+</div>
+```
+
+### Padrão (Desktop)
+
+```tsx
+<div className="rounded-2xl bg-card p-6 shadow-xl border border-border/50">
+  <div className="flex items-center gap-4 mb-4">
+    <div className="p-3 bg-primary/10 rounded-full">
+      <Users className="h-6 w-6 text-primary" />
+    </div>
+    <span className="text-sm font-bold text-foreground uppercase tracking-wider">
+      Total de Usuários
+    </span>
+  </div>
+  <h3 className="text-3xl font-bold text-foreground mb-2">2,456</h3>
+</div>
+```
+
+### Responsivo (Recomendado)
+
+```tsx
+<div className="rounded-2xl bg-card p-4 md:p-6 shadow-xl border border-border/50">
+  <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+    <div className="p-2 md:p-3 bg-primary/10 rounded-full">
+      <Users className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+    </div>
+    <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">
+      Total de Usuários
+    </span>
+  </div>
+  <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">
+    2,456
+  </h3>
+</div>
+```
+
+## API / Propriedades
+
+### StatCard Component (Proposta)
+
+| Propriedade  | Tipo                                                  | Padrão             | Descrição                                    |
+| ------------ | ----------------------------------------------------- | ------------------ | -------------------------------------------- |
+| `title`      | `string`                                              | -                  | Título do card (ex: "Total de Usuários")     |
+| `value`      | `string \| number`                                    | -                  | Valor principal a ser exibido                |
+| `icon`       | `LucideIcon`                                          | -                  | Ícone do Lucide React                        |
+| `trend`      | `number`                                              | `0`                | Percentual de mudança (positivo ou negativo) |
+| `trendLabel` | `string`                                              | `"últimos 7 dias"` | Label descritivo da tendência                |
+| `color`      | `'primary' \| 'blue' \| 'yellow' \| 'green' \| 'red'` | `'primary'`        | Cor semântica do card                        |
+| `chartData`  | `Array<{v: number}>`                                  | -                  | Dados para mini-gráfico (opcional)           |
+| `className`  | `string`                                              | -                  | Classes CSS adicionais                       |
+| `loading`    | `boolean`                                             | `false`            | Estado de carregamento                       |
+
+### Exemplo de Uso (Componente Proposto)
+
+```tsx
+import { StatCard } from '@/components/ui/stat-card';
+import { Users } from 'lucide-react';
+
+<StatCard
+  title="Total de Usuários"
+  value={2456}
+  icon={Users}
+  trend={12}
+  trendLabel="últimos 7 dias"
+  color="primary"
+  chartData={[{ v: 20 }, { v: 40 }, { v: 30 }, { v: 70 }, { v: 50 }]}
+/>;
+```
+
+## Acessibilidade
+
+### ARIA Labels
+
+```tsx
+<div
+  className="stat-card"
+  role="region"
+  aria-label="Estatística: Total de Usuários"
+>
+  <h3 aria-live="polite">2,456</h3>
+  <span aria-label="Tendência positiva de 12 porcento">+12%</span>
+</div>
+```
+
+### Contraste de Cores
+
+- ✅ Todos os textos têm contraste mínimo de 4.5:1
+- ✅ Ícones usam cores semânticas com background de 10% de opacidade
+- ✅ Trend indicators têm background para melhor legibilidade
+
+### Leitores de Tela
+
+```tsx
+<span className="sr-only">
+  Total de usuários: 2.456. Aumento de 12% nos últimos 7 dias.
+</span>
+```
+
+## Exemplos Avançados
+
+### Grid de Métricas (Dashboard Real)
+
+```tsx
+<div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+  {/* Total Users */}
+  <div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
+    <div className="flex items-center gap-4 mb-4">
+      <div className="p-3 bg-primary/10 rounded-full">
+        <Users className="h-6 w-6 text-primary" />
+      </div>
+      <span className="text-sm font-bold text-foreground uppercase tracking-wider">
+        Total de Usuários
+      </span>
+    </div>
+    <div className="flex items-end justify-between">
+      <div>
+        <h3 className="text-3xl font-bold text-foreground mb-2">
+          {metrics.totalUsers.value.toLocaleString()}
+        </h3>
+        <div className="flex items-center gap-2 text-sm">
+          <span
+            className={`flex items-center font-semibold px-1.5 py-0.5 rounded ${
+              metrics.totalUsers.trend >= 0
+                ? 'text-green-500 bg-green-500/10'
+                : 'text-destructive bg-destructive/10'
+            }`}
+          >
+            {metrics.totalUsers.trend >= 0 ? (
+              <ArrowUp className="h-3 w-3 mr-1" />
+            ) : (
+              <ArrowDown className="h-3 w-3 mr-1" />
+            )}
+            {metrics.totalUsers.trend > 0 ? '+' : ''}
+            {metrics.totalUsers.trend}%
+          </span>
+          <span className="text-muted-foreground">últimos 7 dias</span>
+        </div>
+      </div>
+      <div className="h-12 w-24">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={[{ v: 20 }, { v: 40 }, { v: 30 }, { v: 70 }, { v: 50 }]}
+          >
+            <Bar dataKey="v" fill="hsl(var(--primary))" radius={[2, 2, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  </div>
+
+  {/* New Signups */}
+  <div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
+    <div className="flex items-center gap-4 mb-4">
+      <div className="p-3 bg-blue-500/10 rounded-full">
+        <Users className="h-6 w-6 text-blue-500" />
+      </div>
+      <span className="text-sm font-bold text-foreground uppercase tracking-wider">
+        Novos Cadastros
+      </span>
+    </div>
+    <div className="flex items-end justify-between">
+      <div>
+        <h3 className="text-3xl font-bold text-foreground mb-2">
+          {metrics.newSignups.value}
+        </h3>
+        <div className="flex items-center gap-2 text-sm">
+          <span className="flex items-center font-semibold px-1.5 py-0.5 rounded text-green-500 bg-green-500/10">
+            <ArrowUp className="h-3 w-3 mr-1" />+{metrics.newSignups.trend}%
+          </span>
+          <span className="text-muted-foreground">vs. período anterior</span>
+        </div>
+      </div>
+      <div className="h-12 w-24">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={[
+              { v: 10 },
+              { v: 25 },
+              { v: 15 },
+              { v: 30 },
+              { v: metrics.newSignups.value },
+            ]}
+          >
+            <Bar dataKey="v" fill="#00B8D9" radius={[2, 2, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  </div>
+
+  {/* Activation Rate */}
+  <div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
+    <div className="flex items-center gap-4 mb-4">
+      <div className="p-3 bg-yellow-500/10 rounded-full">
+        <FileText className="h-6 w-6 text-yellow-500" />
+      </div>
+      <span className="text-sm font-bold text-foreground uppercase tracking-wider">
+        Taxa de Ativação
+      </span>
+    </div>
+    <div className="flex items-end justify-between">
+      <div>
+        <h3 className="text-3xl font-bold text-foreground mb-2">
+          {metrics.activationRate.value}%
+        </h3>
+        <div className="flex items-center gap-2 text-sm">
+          <span className="flex items-center font-semibold px-1.5 py-0.5 rounded text-green-500 bg-green-500/10">
+            <ArrowUp className="h-3 w-3 mr-1" />+{metrics.activationRate.trend}%
+          </span>
+          <span className="text-muted-foreground">vs. período anterior</span>
+        </div>
+      </div>
+      <div className="h-12 w-24">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={[
+              { v: 30 },
+              { v: 28 },
+              { v: 25 },
+              { v: 24 },
+              { v: metrics.activationRate.value },
+            ]}
+          >
+            <Bar dataKey="v" fill="#FFAB00" radius={[2, 2, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+### Com Estado de Loading
+
+```tsx
+import { Skeleton } from '@/components/ui/skeleton';
+
+{
+  isLoading ? (
+    <div className="rounded-2xl bg-card p-6 shadow-xl border border-border/50">
+      <div className="flex items-center gap-4 mb-4">
+        <Skeleton className="h-12 w-12 rounded-full" />
+        <Skeleton className="h-4 w-32" />
+      </div>
+      <Skeleton className="h-10 w-24 mb-2" />
+      <Skeleton className="h-4 w-40" />
+    </div>
+  ) : (
+    <StatCard {...props} />
+  );
+}
+```
+
+## Melhores Práticas
+
+### ✅ Fazer
+
+- **Use ícones semânticos** que representem claramente a métrica
+- **Formate números** com `toLocaleString()` para melhor legibilidade
+- **Mostre contexto temporal** (últimos 7 dias, vs. mês anterior)
+- **Use cores consistentes** para tipos de métricas similares
+- **Implemente loading states** para melhor UX
+- **Torne responsivo** com classes `md:` e `lg:`
+- **Adicione mini-gráficos** para métricas com histórico relevante
+
+### ❌ Não Fazer
+
+- ❌ **Não use cores aleatórias** - siga a paleta semântica
+- ❌ **Não omita unidades** - sempre mostre % ou R$ quando aplicável
+- ❌ **Não exiba valores sem contexto** - sempre mostre a tendência
+- ❌ **Não use ícones genéricos** - cada métrica deve ter ícone específico
+- ❌ **Não ignore estados de erro** - mostre feedback quando dados falharem
+- ❌ **Não sobrecarregue com informação** - mantenha foco no valor principal
+
+## Design Tokens
+
+### Espaçamento
+
+```css
+--stat-card-padding: 1.5rem; /* p-6 */
+--stat-card-gap: 1rem; /* gap-4 */
+--stat-card-border-radius: 1rem; /* rounded-2xl */
+```
+
+### Sombras
+
+```css
+--stat-card-shadow:
+  0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); /* shadow-xl */
+```
+
+### Bordas
+
+```css
+--stat-card-border: 1px solid hsl(var(--border) / 0.5); /* border border-border/50 */
+```
+
+## Relacionados
+
+- [Cards](/design-system/components/card) - Card base genérico
+- [Badges](/design-system/components/badge) - Para status e labels
+- [Charts](/design-system/components/charts) - Gráficos completos
+- [Skeletons](/design-system/components/skeleton) - Loading states

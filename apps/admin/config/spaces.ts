@@ -18,6 +18,7 @@ import {
   Activity,
   Database,
   Settings,
+  Book,
   LucideIcon
 } from 'lucide-react';
 
@@ -82,6 +83,15 @@ export const SPACES: Record<string, SpaceConfig> = {
         ]
       },
       {
+        title: 'MONETIZATION',
+        items: [
+          { icon: CreditCard, label: 'Plans', href: '/plans' },
+          { icon: ShoppingCart, label: 'Products', href: '/products' },
+          { icon: Target, label: 'Features', href: '/features' },
+          { icon: Receipt, label: 'Subscriptions', href: '/subscriptions' }
+        ]
+      },
+      {
         title: 'SUPPORT',
         items: [
           { icon: Headphones, label: 'Tickets', href: '/support/tickets' },
@@ -115,6 +125,20 @@ export const SPACES: Record<string, SpaceConfig> = {
           { icon: Server, label: 'Servers', href: '/devops/servers' },
           { icon: Database, label: 'Databases', href: '/devops/databases' },
           { icon: FileText, label: 'Logs', href: '/devops/logs' }
+        ]
+      },
+      {
+        title: 'RESOURCES',
+        items: [
+          { 
+            icon: Book, 
+            label: 'Documentation', 
+            href: 'http://localhost:3002',
+            children: [
+              { label: 'Platform Wiki', href: 'http://localhost:3002/platform', external: true },
+              { label: 'Design System', href: 'http://localhost:3002/design-system', external: true }
+            ]
+          }
         ]
       }
     ],

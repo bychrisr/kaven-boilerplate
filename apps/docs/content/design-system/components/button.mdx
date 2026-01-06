@@ -1,0 +1,100 @@
+---
+title: Button
+description: Botões para ações e CTAs com 9 cores, 6 tamanhos e 3 estilos
+---
+
+# Button
+
+> Componente de botão completo com suporte a loading states, ícones, e todas as variações semânticas do Kaven Design System.
+
+## Variações
+
+### Contained (Filled)
+
+Botões com background sólido e sombra z8.
+
+```tsx
+import { Button } from '@/components/ui/button';
+
+<Button variant="contained" color="primary">Primary</Button>
+<Button variant="contained" color="secondary">Secondary</Button>
+<Button variant="contained" color="success">Success</Button>
+<Button variant="contained" color="warning">Warning</Button>
+<Button variant="contained" color="error">Error</Button>
+<Button variant="contained" color="info">Info</Button>
+```
+
+### Outlined
+
+Botões com borda e background transparente.
+
+```tsx
+<Button variant="outlined" color="primary">Primary</Button>
+<Button variant="outlined" color="error">Error</Button>
+```
+
+### Text
+
+Botões sem background ou borda.
+
+```tsx
+<Button variant="text" color="primary">Primary</Button>
+<Button variant="text" color="error">Delete</Button>
+```
+
+## Tamanhos
+
+```tsx
+<Button size="xs">Extra Small</Button>
+<Button size="sm">Small</Button>
+<Button size="md">Medium</Button>
+<Button size="lg">Large</Button>
+<Button size="xl">Extra Large</Button>
+```
+
+## Com Ícones
+
+```tsx
+import { Plus, Trash2, Download } from 'lucide-react';
+
+<Button variant="contained" color="primary">
+  <Plus />
+  Novo Usuário
+</Button>
+
+<Button variant="outlined" color="error">
+  <Trash2 />
+  Excluir
+</Button>
+
+// Icon only
+<Button variant="contained" color="primary" size="icon">
+  <Plus />
+</Button>
+```
+
+## Loading State
+
+```tsx
+<Button loading>Carregando...</Button>
+<Button loading variant="outlined" color="primary">
+  Salvando
+</Button>
+```
+
+## API
+
+| Prop        | Tipo                                                                      | Padrão        | Descrição                         |
+| ----------- | ------------------------------------------------------------------------- | ------------- | --------------------------------- |
+| `variant`   | `'contained' \| 'outlined' \| 'text'`                                     | `'contained'` | Estilo do botão                   |
+| `color`     | `'primary' \| 'secondary' \| 'success' \| 'warning' \| 'error' \| 'info'` | `'primary'`   | Cor semântica                     |
+| `size`      | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'icon'`                          | `'md'`        | Tamanho                           |
+| `loading`   | `boolean`                                                                 | `false`       | Estado de carregamento            |
+| `disabled`  | `boolean`                                                                 | `false`       | Desabilita o botão                |
+| `fullWidth` | `boolean`                                                                 | `false`       | Largura total                     |
+| `asChild`   | `boolean`                                                                 | `false`       | Renderiza como child (Radix Slot) |
+
+## Relacionados
+
+- [Icon Button](/design-system/components/icon-button)
+- [Button Group](/design-system/components/button-group)

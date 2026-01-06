@@ -1,0 +1,105 @@
+---
+title: Alert
+description: Alertas e mensagens de feedback para o usuário
+---
+
+# Alert
+
+> Componente para exibir mensagens importantes com diferentes níveis de severidade.
+
+## Variações
+
+### Tipos
+
+```tsx
+import { Alert } from '@/components/ui/alert';
+import { Info, CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
+
+// Info
+<Alert severity="info">
+  <Info className="h-4 w-4" />
+  <div>
+    <h4 className="font-bold">Informação</h4>
+    <p>Esta é uma mensagem informativa.</p>
+  </div>
+</Alert>
+
+// Success
+<Alert severity="success">
+  <CheckCircle className="h-4 w-4" />
+  <div>
+    <h4 className="font-bold">Sucesso!</h4>
+    <p>Operação realizada com sucesso.</p>
+  </div>
+</Alert>
+
+// Warning
+<Alert severity="warning">
+  <AlertTriangle className="h-4 w-4" />
+  <div>
+    <h4 className="font-bold">Atenção</h4>
+    <p>Verifique os dados antes de continuar.</p>
+  </div>
+</Alert>
+
+// Error
+<Alert severity="error">
+  <XCircle className="h-4 w-4" />
+  <div>
+    <h4 className="font-bold">Erro</h4>
+    <p>Não foi possível completar a operação.</p>
+  </div>
+</Alert>
+```
+
+### Com Ação
+
+```tsx
+<Alert severity="warning">
+  <AlertTriangle className="h-4 w-4" />
+  <div className="flex-1">
+    <h4 className="font-bold">Atualização disponível</h4>
+    <p>Uma nova versão está disponível.</p>
+  </div>
+  <Button variant="text" size="sm">
+    Atualizar
+  </Button>
+</Alert>
+```
+
+### Dismissible
+
+```tsx
+import { X } from 'lucide-react';
+
+function DismissibleAlert() {
+  const [show, setShow] = useState(true);
+
+  if (!show) return null;
+
+  return (
+    <Alert severity="info">
+      <Info className="h-4 w-4" />
+      <div className="flex-1">
+        <p>Esta mensagem pode ser fechada.</p>
+      </div>
+      <button onClick={() => setShow(false)}>
+        <X className="h-4 w-4" />
+      </button>
+    </Alert>
+  );
+}
+```
+
+## API
+
+| Prop       | Tipo                                          | Padrão       | Descrição          |
+| ---------- | --------------------------------------------- | ------------ | ------------------ |
+| `severity` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'`     | Tipo de alerta     |
+| `variant`  | `'filled' \| 'outlined' \| 'standard'`        | `'standard'` | Estilo visual      |
+| `children` | `ReactNode`                                   | -            | Conteúdo do alerta |
+
+## Relacionados
+
+- [Snackbar](/design-system/components/snackbar) - Notificações temporárias
+- [Dialog](/design-system/components/dialog) - Modais de confirmação

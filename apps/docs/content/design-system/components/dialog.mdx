@@ -1,0 +1,117 @@
+---
+title: Dialog
+description: Modais e diálogos para interações focadas
+---
+
+# Dialog
+
+> Componente de modal para exibir conteúdo sobreposto que requer atenção do usuário.
+
+## Variações
+
+### Básico
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+
+function BasicDialog() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Abrir Dialog</Button>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Título do Dialog</DialogTitle>
+            <DialogDescription>
+              Descrição do conteúdo do dialog.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">Conteúdo principal do dialog.</div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outlined" onClick={() => setOpen(false)}>
+              Cancelar
+            </Button>
+            <Button variant="contained" onClick={() => setOpen(false)}>
+              Confirmar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+```
+
+### Com Formulário
+
+```tsx
+<Dialog open={open} onOpenChange={setOpen}>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Novo Usuário</DialogTitle>
+    </DialogHeader>
+    <form onSubmit={handleSubmit}>
+      <div className="space-y-4 py-4">
+        <div className="space-y-2">
+          <Label htmlFor="name">Nome</Label>
+          <Input id="name" placeholder="João Silva" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input id="email" type="email" placeholder="joao@example.com" />
+        </div>
+      </div>
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="outlined" onClick={() => setOpen(false)}>
+          Cancelar
+        </Button>
+        <Button type="submit" variant="contained">
+          Salvar
+        </Button>
+      </div>
+    </form>
+  </DialogContent>
+</Dialog>
+```
+
+### Tamanhos
+
+```tsx
+// Small
+<DialogContent className="max-w-sm">...</DialogContent>
+
+// Medium (default)
+<DialogContent className="max-w-md">...</DialogContent>
+
+// Large
+<DialogContent className="max-w-lg">...</DialogContent>
+
+// Extra Large
+<DialogContent className="max-w-2xl">...</DialogContent>
+
+// Full Width
+<DialogContent className="max-w-4xl">...</DialogContent>
+```
+
+## API
+
+| Prop           | Tipo                      | Padrão | Descrição                    |
+| -------------- | ------------------------- | ------ | ---------------------------- |
+| `open`         | `boolean`                 | -      | Controla visibilidade        |
+| `onOpenChange` | `(open: boolean) => void` | -      | Callback quando muda         |
+| `modal`        | `boolean`                 | `true` | Bloqueia interação com fundo |
+
+## Relacionados
+
+- [Alert Dialog](/design-system/components/alert-dialog) - Diálogos de confirmação
+- [Drawer](/design-system/components/drawer) - Side panels

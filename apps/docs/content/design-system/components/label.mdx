@@ -1,0 +1,48 @@
+---
+title: Label
+description: Labels para campos de formulário
+---
+
+# Label
+
+> Componente de label para associar texto a campos de formulário.
+
+## Básico
+
+```tsx
+import { Label } from '@/components/ui/label';
+
+<Label htmlFor="email">Email</Label>
+<Input id="email" type="email" />
+```
+
+## Obrigatório
+
+```tsx
+<Label htmlFor="name">
+  Nome <span className="text-destructive">*</span>
+</Label>
+<Input id="name" required />
+```
+
+## Com Helper Text
+
+```tsx
+<div className="space-y-2">
+  <Label htmlFor="password">Senha</Label>
+  <Input id="password" type="password" />
+  <p className="text-sm text-muted-foreground">Mínimo 8 caracteres</p>
+</div>
+```
+
+## API
+
+| Prop       | Tipo        | Padrão | Descrição             |
+| ---------- | ----------- | ------ | --------------------- |
+| `htmlFor`  | `string`    | -      | ID do campo associado |
+| `children` | `ReactNode` | -      | Texto do label        |
+
+## Relacionados
+
+- [Input](/design-system/components/input)
+- [TextField](/design-system/components/text-field)

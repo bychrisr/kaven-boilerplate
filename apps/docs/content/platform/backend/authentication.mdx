@@ -1,0 +1,204 @@
+---
+title: Authentication
+description: Sistema de autenticação com JWT e 2FA
+---
+
+import { Callout } from 'nextra/components';
+
+# Authentication
+
+Sistema completo de autenticação com JWT, refresh tokens e 2FA.
+
+## Fluxo de Autenticação
+
+```
+┌─────────┐                ┌─────────┐                ┌──────────┐
+│ Client  │                │   API   │                │ Database │
+└────┬────┘                └────┬────┘                └────┬─────┘
+     │                          │                          │
+     │  POST /auth/login        │                          │
+     ├─────────────────────────>│                          │
+     │                          │  Verify credentials      │
+     │                          ├─────────────────────────>│
+     │                          │<─────────────────────────┤
+     │                          │  Generate tokens         │
+     │  accessToken +           │                          │
+     │  refreshToken            │                          │
+     │<─────────────────────────┤                          │
+     │                          │                          │
+     │  GET /users (with token) │                          │
+     ├─────────────────────────>│                          │
+     │                          │  Verify JWT              │
+     │                          │  Query data              │
+     │                          ├─────────────────────────>│
+     │  User data               │<─────────────────────────┤
+     │<─────────────────────────┤                          │
+```
+
+## JWT Tokens
+
+### Access Token
+
+- **Duração**: 15 minutos
+- **Uso**: Autenticação de requests
+- **Storage**: Memory (não localStorage)
+
+### Refresh Token
+
+- **Duração**: 7 dias
+- **Uso**: Renovar access token
+- **Storage**: httpOnly cookie
+
+## Endpoints
+
+### Login
+
+```typescript
+POST /api/auth/login
+
+{
+  "email": "user@example.com",
+  "password": "senha123",
+  "twoFactorCode": "123456" // Se 2FA habilitado
+}
+
+// Response
+{
+  "accessToken": "eyJhbGc...",
+  "refreshToken": "uuid",
+  "user": { ... }
+}
+```
+
+### Refresh Token
+
+```typescript
+POST /api/auth/refresh
+
+{
+  "refreshToken": "uuid"
+}
+
+// Response
+{
+  "accessToken": "eyJhbGc..."
+}
+```
+
+### Logout
+
+```typescript
+POST /api/auth/logout
+
+{
+  "refreshToken": "uuid"
+}
+```
+
+## 2FA (Two-Factor Authentication)
+
+### Setup
+
+```typescript
+POST /api/auth/2fa/setup
+
+// Response
+{
+  "secret": "JBSWY3DPEHPK3PXP",
+  "qrCodeUrl": "data:image/png;base64,...",
+  "backupCodes": ["12345678", "87654321", ...]
+}
+```
+
+### Verify
+
+```typescript
+POST /api/auth/2fa/verify
+
+{
+  "code": "123456"
+}
+```
+
+### Disable
+
+```typescript
+POST /api/auth/2fa/disable
+
+{
+  "code": "123456"
+}
+```
+
+## Frontend Integration
+
+### Auth Store
+
+```typescript
+import { useAuthStore } from '@/stores/auth.store';
+
+const { user, isAuthenticated, setAuth, clearAuth } = useAuthStore();
+
+// Login
+const handleLogin = async (credentials) => {
+  const response = await api.post('/auth/login', credentials);
+  setAuth(
+    response.data.user,
+    response.data.accessToken,
+    response.data.refreshToken,
+  );
+};
+
+// Logout
+const handleLogout = async () => {
+  await api.post('/auth/logout', { refreshToken });
+  clearAuth();
+};
+```
+
+### Protected Routes
+
+```typescript
+// middleware.ts
+export function middleware(request: NextRequest) {
+  const token = request.cookies.get('accessToken');
+
+  if (!token) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ['/dashboard/:path*'],
+};
+```
+
+## Segurança
+
+<Callout type="warning">
+  **NUNCA** armazene tokens em localStorage. Use memory ou httpOnly cookies.
+</Callout>
+
+### Best Practices
+
+- ✅ Access token em memory
+- ✅ Refresh token em httpOnly cookie
+- ✅ HTTPS em produção
+- ✅ CSRF protection
+- ✅ Rate limiting em login
+- ✅ 2FA para admins
+
+### Password Requirements
+
+- Mínimo 8 caracteres
+- Pelo menos 1 maiúscula
+- Pelo menos 1 número
+- Pelo menos 1 caractere especial
+
+## Links Relacionados
+
+- [API Reference](/platform/backend/api-reference)
+- [RBAC](/platform/backend/rbac)
+- [Security](/platform/guides/security)

@@ -1,0 +1,105 @@
+---
+title: Architecture
+description: Arquitetura baseada no Sections Pattern para separação de responsabilidades
+---
+
+import { Callout } from 'nextra/components';
+
+# Architecture
+
+Arquitetura baseada no **Sections Pattern** para separação clara de responsabilidades.
+
+<Callout type="info">
+  O Sections Pattern reduz páginas de 500+ linhas para apenas 10-15 linhas.
+</Callout>
+
+## Sections Pattern
+
+### Conceito
+
+Separar lógica de negócio (sections) de rotas (pages).
+
+**Estrutura:**
+
+```
+app/(dashboard)/users/page.tsx  → 10 linhas (rota)
+sections/user/user-view.tsx     → Lógica completa
+```
+
+### Benefícios
+
+1. **Páginas Simples**: 10-15 linhas apenas
+2. **Reutilização**: Sections podem ser usadas em múltiplas rotas
+3. **Testabilidade**: Testar sections independentemente
+4. **Manutenibilidade**: Mudanças isoladas
+
+### Exemplo
+
+**Page (Rota):**
+
+```tsx
+// app/(dashboard)/users/page.tsx
+import { UserView } from '@/sections/user/user-view';
+
+export default function UsersPage() {
+  return <UserView />;
+}
+```
+
+**Section (Lógica):**
+
+```tsx
+// sections/user/user-view.tsx
+export function UserView() {
+  const { users, isLoading } = useUsers();
+
+  return (
+    <div>
+      <UserToolbar />
+      <UserTable users={users} loading={isLoading} />
+    </div>
+  );
+}
+```
+
+## Estrutura de Diretórios
+
+```
+sections/
+├── user/
+│   ├── user-view.tsx
+│   ├── user-toolbar.tsx
+│   ├── user-table-row.tsx
+│   └── index.ts
+├── tenant/
+│   ├── tenant-view.tsx
+│   ├── tenant-card.tsx
+│   └── index.ts
+└── dashboard/
+    ├── dashboard-view.tsx
+    └── dashboard-widget-summary.tsx
+```
+
+## Component Hierarchy
+
+```
+Page (Route)
+  └── View (Section)
+      ├── Toolbar
+      ├── Table
+      └── Actions
+```
+
+## Boas Práticas
+
+### ✅ Fazer
+
+- Uma section por feature
+- Componentes pequenos e focados
+- Exportar via index.ts
+
+### ❌ Não Fazer
+
+- Lógica nas pages
+- Sections muito grandes
+- Imports diretos de componentes internos

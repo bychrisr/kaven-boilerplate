@@ -1,0 +1,62 @@
+---
+title: Tooltip
+description: Dicas contextuais ao passar o mouse
+---
+
+# Tooltip
+
+> Pequenas dicas que aparecem ao passar o mouse sobre elementos.
+
+## Básico
+
+```tsx
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/tooltip';
+
+<Tooltip>
+  <TooltipTrigger asChild>
+    <Button variant="text" size="icon">
+      <Info />
+    </Button>
+  </TooltipTrigger>
+  <TooltipContent>Informação adicional</TooltipContent>
+</Tooltip>;
+```
+
+## Posições
+
+```tsx
+<Tooltip>
+  <TooltipTrigger>Hover</TooltipTrigger>
+  <TooltipContent side="top">Top</TooltipContent>
+</Tooltip>
+
+<Tooltip>
+  <TooltipTrigger>Hover</TooltipTrigger>
+  <TooltipContent side="right">Right</TooltipContent>
+</Tooltip>
+
+<Tooltip>
+  <TooltipTrigger>Hover</TooltipTrigger>
+  <TooltipContent side="bottom">Bottom</TooltipContent>
+</Tooltip>
+
+<Tooltip>
+  <TooltipTrigger>Hover</TooltipTrigger>
+  <TooltipContent side="left">Left</TooltipContent>
+</Tooltip>
+```
+
+## API
+
+| Prop            | Tipo                                     | Padrão  | Descrição   |
+| --------------- | ---------------------------------------- | ------- | ----------- |
+| `side`          | `'top' \| 'right' \| 'bottom' \| 'left'` | `'top'` | Posição     |
+| `delayDuration` | `number`                                 | `200`   | Delay em ms |
+
+## Relacionados
+
+- [Popover](/design-system/components/popover)

@@ -1,0 +1,165 @@
+---
+title: Icon Button
+description: Botões com apenas ícone para ações compactas
+---
+
+# Icon Button
+
+> Botões circulares ou quadrados contendo apenas um ícone, ideais para barras de ferramentas e ações secundárias.
+
+## Básico
+
+```tsx
+import { Button } from '@/components/ui/button';
+import { Plus, Trash2, Edit, Settings } from 'lucide-react';
+
+<Button variant="contained" size="icon">
+  <Plus />
+</Button>;
+```
+
+## Variantes
+
+```tsx
+// Contained
+<Button variant="contained" color="primary" size="icon">
+  <Plus />
+</Button>
+
+// Outlined
+<Button variant="outlined" color="primary" size="icon">
+  <Edit />
+</Button>
+
+// Text
+<Button variant="text" size="icon">
+  <Settings />
+</Button>
+```
+
+## Tamanhos
+
+```tsx
+// Small
+<Button variant="contained" size="icon-sm">
+  <Plus className="h-4 w-4" />
+</Button>
+
+// Medium (padrão)
+<Button variant="contained" size="icon">
+  <Plus />
+</Button>
+
+// Large
+<Button variant="contained" size="icon-lg">
+  <Plus className="h-6 w-6" />
+</Button>
+
+// Extra Large
+<Button variant="contained" size="icon-xl">
+  <Plus className="h-7 w-7" />
+</Button>
+```
+
+## Cores
+
+```tsx
+<Button variant="contained" color="primary" size="icon">
+  <Plus />
+</Button>
+
+<Button variant="contained" color="error" size="icon">
+  <Trash2 />
+</Button>
+
+<Button variant="contained" color="success" size="icon">
+  <Check />
+</Button>
+```
+
+## Em Tabelas (Data Table)
+
+```tsx
+<Button
+  variant="text"
+  size="icon"
+  className="text-muted-foreground hover:text-foreground"
+>
+  <MoreVertical className="h-5 w-5" />
+</Button>
+```
+
+## Floating Action Button (FAB)
+
+```tsx
+<Button
+  variant="contained"
+  color="primary"
+  size="icon-lg"
+  className="fixed bottom-6 right-6 rounded-full shadow-lg"
+>
+  <Plus className="h-6 w-6" />
+</Button>
+```
+
+## Com Tooltip
+
+```tsx
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/tooltip';
+
+<Tooltip>
+  <TooltipTrigger asChild>
+    <Button variant="text" size="icon">
+      <Settings />
+    </Button>
+  </TooltipTrigger>
+  <TooltipContent>Configurações</TooltipContent>
+</Tooltip>;
+```
+
+## Loading State
+
+```tsx
+<Button variant="contained" size="icon" disabled>
+  <Loader2 className="h-4 w-4 animate-spin" />
+</Button>
+```
+
+## API
+
+Usa as mesmas props do [Button](/design-system/components/button), com `size` específico:
+
+| Size      | Classe    | Dimensões |
+| --------- | --------- | --------- |
+| `icon-sm` | `size-8`  | 32x32px   |
+| `icon`    | `size-9`  | 36x36px   |
+| `icon-lg` | `size-10` | 40x40px   |
+| `icon-xl` | `size-12` | 48x48px   |
+
+## Acessibilidade
+
+```tsx
+// Sempre adicione aria-label
+<Button variant="text" size="icon" aria-label="Excluir item">
+  <Trash2 />
+</Button>
+
+// Ou use Tooltip para contexto visual
+<Tooltip>
+  <TooltipTrigger asChild>
+    <Button variant="text" size="icon" aria-label="Editar">
+      <Edit />
+    </Button>
+  </TooltipTrigger>
+  <TooltipContent>Editar</TooltipContent>
+</Tooltip>
+```
+
+## Relacionados
+
+- [Button](/design-system/components/button) - Botões com texto
+- [Tooltip](/design-system/components/tooltip) - Dicas contextuais

@@ -1,0 +1,40 @@
+# Guia Frontend
+
+## Stack Tecnológica
+
+- **Framework**: Next.js 14+ (App Router)
+- **UI**: Tailwind CSS + shadcn/ui
+- **State**: Zustand + TanStack Query
+- **Forms**: React Hook Form + Zod
+
+## Padrões de Desenvolvimento
+
+### Data Fetching (React Query)
+
+Utilizamos hooks customizados para encapsular a lógica de busca de dados.
+
+```typescript
+import { useUsers } from '@/hooks/use-users';
+
+function UsersPage() {
+  const { data, isLoading } = useUsers();
+
+  if (isLoading) return <Spinner />;
+
+  return <UserList users={data} />;
+}
+```
+
+### Gerenciamento de Estado (Zustand)
+
+Para estados globais de UI (sidebar, temas, auth).
+
+```typescript
+import { useUIStore } from '@/stores/ui.store';
+
+const { sidebarOpen, toggleSidebar } = useUIStore();
+```
+
+### Formulários
+
+Sempre utilize `react-hook-form` com validação via `zod`.

@@ -1,0 +1,114 @@
+---
+title: Badge
+description: Badges e labels para status e categorização
+---
+
+# Badge
+
+> Pequenos indicadores de status, contadores ou labels categóricos.
+
+## Variações
+
+### Cores
+
+```tsx
+import { Badge } from '@/components/ui/badge';
+
+<Badge color="primary">Primary</Badge>
+<Badge color="secondary">Secondary</Badge>
+<Badge color="success">Success</Badge>
+<Badge color="warning">Warning</Badge>
+<Badge color="error">Error</Badge>
+<Badge color="info">Info</Badge>
+```
+
+### Variantes
+
+```tsx
+// Filled (default)
+<Badge variant="filled" color="primary">Filled</Badge>
+
+// Outlined
+<Badge variant="outlined" color="primary">Outlined</Badge>
+
+// Soft
+<Badge variant="soft" color="primary">Soft</Badge>
+```
+
+### Status de Usuário (Dashboard)
+
+```tsx
+// Active
+<Badge className="bg-emerald-500/15 text-emerald-500">
+  Active
+</Badge>
+
+// Pending
+<Badge className="bg-amber-500/15 text-amber-600">
+  Pending
+</Badge>
+
+// Banned
+<Badge className="bg-destructive/15 text-destructive">
+  Banned
+</Badge>
+```
+
+### Com Ícone
+
+```tsx
+import { Check, X, Clock } from 'lucide-react';
+
+<Badge color="success">
+  <Check className="h-3 w-3 mr-1" />
+  Aprovado
+</Badge>
+
+<Badge color="error">
+  <X className="h-3 w-3 mr-1" />
+  Rejeitado
+</Badge>
+
+<Badge color="warning">
+  <Clock className="h-3 w-3 mr-1" />
+  Pendente
+</Badge>
+```
+
+### Contador
+
+```tsx
+<div className="relative inline-block">
+  <Button variant="text">Notificações</Button>
+  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 rounded-full bg-error-main text-white text-xs">
+    3
+  </Badge>
+</div>
+```
+
+## API
+
+| Prop       | Tipo                                                                      | Padrão      | Descrição         |
+| ---------- | ------------------------------------------------------------------------- | ----------- | ----------------- |
+| `variant`  | `'filled' \| 'outlined' \| 'soft'`                                        | `'filled'`  | Estilo visual     |
+| `color`    | `'primary' \| 'secondary' \| 'success' \| 'warning' \| 'error' \| 'info'` | `'primary'` | Cor semântica     |
+| `children` | `ReactNode`                                                               | -           | Conteúdo do badge |
+
+## Uso Real (User Table)
+
+```tsx
+const getRoleBadgeClasses = (role: string) => {
+  if (role === 'SUPER_ADMIN')
+    return 'bg-destructive/10 text-destructive border border-destructive/20';
+  if (role === 'TENANT_ADMIN')
+    return 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20';
+  return 'bg-blue-500/10 text-blue-500 border border-blue-500/20';
+};
+
+<Badge className={getRoleBadgeClasses(user.role)}>{user.role}</Badge>;
+```
+
+## Relacionados
+
+- [Chip](/design-system/components/chip) - Badges removíveis
+- [Avatar](/design-system/components/avatar) - Avatares com badges

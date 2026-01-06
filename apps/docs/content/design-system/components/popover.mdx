@@ -1,0 +1,62 @@
+---
+title: Popover
+description: Overlays flutuantes para conteúdo adicional
+---
+
+# Popover
+
+> Overlay flutuante para exibir conteúdo adicional ao clicar.
+
+## Básico
+
+```tsx
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from '@/components/ui/popover';
+
+<Popover>
+  <PopoverTrigger asChild>
+    <Button variant="outlined">Abrir Popover</Button>
+  </PopoverTrigger>
+  <PopoverContent>
+    <div className="space-y-2">
+      <h4 className="font-semibold">Título</h4>
+      <p className="text-sm">Conteúdo do popover.</p>
+    </div>
+  </PopoverContent>
+</Popover>;
+```
+
+## Com Formulário
+
+```tsx
+<Popover>
+  <PopoverTrigger asChild>
+    <Button>Configurações</Button>
+  </PopoverTrigger>
+  <PopoverContent className="w-80">
+    <div className="space-y-4">
+      <h4 className="font-semibold">Configurações</h4>
+      <div className="space-y-2">
+        <Label>Nome</Label>
+        <Input />
+      </div>
+      <Button className="w-full">Salvar</Button>
+    </div>
+  </PopoverContent>
+</Popover>
+```
+
+## API
+
+| Prop           | Tipo                      | Padrão | Descrição             |
+| -------------- | ------------------------- | ------ | --------------------- |
+| `open`         | `boolean`                 | -      | Controla visibilidade |
+| `onOpenChange` | `(open: boolean) => void` | -      | Callback quando muda  |
+
+## Relacionados
+
+- [Tooltip](/design-system/components/tooltip)
+- [Dropdown Menu](/design-system/components/dropdown-menu)

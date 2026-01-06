@@ -152,8 +152,13 @@ export class InvoiceService {
         subscription: {
           select: {
             id: true,
-            planName: true,
+            planId: true,
             status: true,
+            plan: {
+              select: {
+                name: true,
+              },
+            },
           },
         },
       },

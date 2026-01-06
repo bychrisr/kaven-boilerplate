@@ -1,0 +1,56 @@
+---
+title: Button Group
+description: Grupos de botões relacionados
+---
+
+# Button Group
+
+> Agrupa botões relacionados em um único componente.
+
+## Básico
+
+```tsx
+import { ButtonGroup, Button } from '@/components/ui/button-group';
+
+<ButtonGroup>
+  <Button>Opção 1</Button>
+  <Button>Opção 2</Button>
+  <Button>Opção 3</Button>
+</ButtonGroup>;
+```
+
+## Variantes
+
+```tsx
+<ButtonGroup variant="contained">
+  <Button>Contained</Button>
+  <Button>Buttons</Button>
+</ButtonGroup>
+
+<ButtonGroup variant="outlined">
+  <Button>Outlined</Button>
+  <Button>Buttons</Button>
+</ButtonGroup>
+```
+
+## Vertical
+
+```tsx
+<ButtonGroup orientation="vertical">
+  <Button>Opção 1</Button>
+  <Button>Opção 2</Button>
+  <Button>Opção 3</Button>
+</ButtonGroup>
+```
+
+## API
+
+| Prop          | Tipo                                  | Padrão         | Descrição         |
+| ------------- | ------------------------------------- | -------------- | ----------------- |
+| `variant`     | `'contained' \| 'outlined' \| 'text'` | `'outlined'`   | Estilo dos botões |
+| `orientation` | `'horizontal' \| 'vertical'`          | `'horizontal'` | Orientação        |
+
+## Relacionados
+
+- [Button](/design-system/components/button)
+- [Toggle Button](/design-system/components/toggle-button)

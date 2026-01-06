@@ -1,0 +1,99 @@
+---
+title: Select
+description: Dropdowns para seleção de opções
+---
+
+# Select
+
+> Componente de seleção dropdown com suporte a busca e múltiplas opções.
+
+## Básico (Radix Select)
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/radix-select';
+
+<Select value={value} onValueChange={setValue}>
+  <SelectTrigger className="w-48">
+    <SelectValue placeholder="Selecione..." />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="option1">Opção 1</SelectItem>
+    <SelectItem value="option2">Opção 2</SelectItem>
+    <SelectItem value="option3">Opção 3</SelectItem>
+  </SelectContent>
+</Select>;
+```
+
+## Com Label
+
+```tsx
+<div className="space-y-2">
+  <Label htmlFor="status">Status</Label>
+  <Select value={filterStatus} onValueChange={setFilterStatus}>
+    <SelectTrigger id="status">
+      <SelectValue placeholder="Todos" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="all">Todos</SelectItem>
+      <SelectItem value="active">Ativos</SelectItem>
+      <SelectItem value="pending">Pendentes</SelectItem>
+      <SelectItem value="banned">Banidos</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
+```
+
+## Com Grupos
+
+```tsx
+<Select>
+  <SelectTrigger>
+    <SelectValue placeholder="Selecione uma fruta" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectGroup>
+      <SelectLabel>Frutas</SelectLabel>
+      <SelectItem value="apple">Maçã</SelectItem>
+      <SelectItem value="banana">Banana</SelectItem>
+    </SelectGroup>
+    <SelectGroup>
+      <SelectLabel>Vegetais</SelectLabel>
+      <SelectItem value="carrot">Cenoura</SelectItem>
+      <SelectItem value="potato">Batata</SelectItem>
+    </SelectGroup>
+  </SelectContent>
+</Select>
+```
+
+## Tamanhos
+
+```tsx
+// Small
+<SelectTrigger className="h-8 text-sm">...</SelectTrigger>
+
+// Medium (default)
+<SelectTrigger className="h-10">...</SelectTrigger>
+
+// Large
+<SelectTrigger className="h-12 text-base">...</SelectTrigger>
+```
+
+## API
+
+| Prop            | Tipo                      | Padrão  | Descrição            |
+| --------------- | ------------------------- | ------- | -------------------- |
+| `value`         | `string`                  | -       | Valor selecionado    |
+| `onValueChange` | `(value: string) => void` | -       | Callback quando muda |
+| `disabled`      | `boolean`                 | `false` | Desabilita o select  |
+| `placeholder`   | `string`                  | -       | Texto placeholder    |
+
+## Relacionados
+
+- [Autocomplete](/design-system/components/autocomplete) - Select com busca
+- [Input](/design-system/components/input) - Campos de texto

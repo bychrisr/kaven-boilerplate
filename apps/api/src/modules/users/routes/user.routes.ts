@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { userController } from '../controllers/user.controller';
 import { authMiddleware } from '../../../middleware/auth.middleware';
 import { requireTenantAdmin, requireResourceOwnership } from '../../../middleware/rbac.middleware';
+import { requireFeature } from '../../../middleware/feature-guard.middleware';
 
 export async function userRoutes(fastify: FastifyInstance) {
   // GET /api/users/stats - Obter estatísticas
@@ -28,9 +29,9 @@ export async function userRoutes(fastify: FastifyInstance) {
     handler: userController.getById.bind(userController),
   });
 
-  // POST /api/users - Criar usuário (requer TENANT_ADMIN)
+  // POST /api/users - Criar usuário (requer TENANT_ADMIN + quota USERS)
   fastify.post('/', {
-    preHandler: [authMiddleware, requireTenantAdmin],
+    preHandler: [authMiddleware, requireTenantAdmin, requireFeature('USERS', 1)],
     handler: userController.create.bind(userController),
   });
 
