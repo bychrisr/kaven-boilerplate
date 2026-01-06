@@ -48,7 +48,7 @@ export function ProductForm({ onSubmit, defaultValues, isLoading }: ProductFormP
   const { data: features } = useFeatures({ isActive: true });
 
   const form = useForm<ProductFormData>({
-    resolver: zodResolver(productSchema),
+    resolver: zodResolver(productSchema) as any,
     defaultValues: {
       code: defaultValues?.code || '',
       name: defaultValues?.name || '',

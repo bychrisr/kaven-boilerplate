@@ -30,7 +30,7 @@ interface FeatureFormProps {
 
 export function FeatureForm({ onSubmit, isLoading }: FeatureFormProps) {
   const form = useForm<FeatureFormData>({
-    resolver: zodResolver(featureSchema),
+    resolver: zodResolver(featureSchema) as any,
     defaultValues: {
       code: '',
       name: '',

@@ -52,7 +52,7 @@ export function PlanForm({ onSubmit, defaultValues, isLoading }: PlanFormProps) 
   const { data: features } = useFeatures({ isActive: true });
 
   const form = useForm<PlanFormData>({
-    resolver: zodResolver(planSchema),
+    resolver: zodResolver(planSchema) as any,
     defaultValues: {
       code: defaultValues?.code || '',
       name: defaultValues?.name || '',
