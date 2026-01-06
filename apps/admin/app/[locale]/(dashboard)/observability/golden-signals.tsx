@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
 import { observabilityApi } from '@/lib/api/observability';
 import { Activity, TrendingUp, AlertTriangle, Gauge } from 'lucide-react';
@@ -69,6 +70,7 @@ function GoldenSignalCard({
 }
 
 export function GoldenSignals() {
+  const t = useTranslations('Observability.goldenSignals');
   const { data, isLoading } = useQuery({
     queryKey: ['advanced-metrics'],
     queryFn: observabilityApi.getAdvancedMetrics,
@@ -78,10 +80,8 @@ export function GoldenSignals() {
   if (isLoading || !data) {
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="rounded-lg border border-gray-200 bg-white p-6">
-            <div className="h-20 animate-pulse rounded bg-gray-50" />
-          </div>
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="h-32 animate-pulse rounded-lg bg-muted" />
         ))}
       </div>
     );
@@ -92,37 +92,37 @@ export function GoldenSignals() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold text-foreground">Golden Signals</h2>
+        <h2 className="text-lg font-semibold text-foreground">{t('title')}</h2>
         <p className="text-sm text-muted-foreground">
-          Métricas essenciais de saúde do sistema (Google SRE)
+          {t('description')}
         </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <GoldenSignalCard
-          title="Latency (p95)"
+          title={t('latency')}
           value={`${goldenSignals.latency.p95}ms`}
           subtitle={`p50: ${goldenSignals.latency.p50}ms | p99: ${goldenSignals.latency.p99}ms`}
           icon={Activity}
           variant="info"
         />
         <GoldenSignalCard
-          title="Traffic"
+          title={t('traffic')}
           value={goldenSignals.traffic.requestsPerSecond.toFixed(2)}
-          subtitle={`${goldenSignals.traffic.totalRequests.toLocaleString()} total requests`}
+          subtitle={`${goldenSignals.traffic.totalRequests.toLocaleString()} ${t('totalRequests')}`}
           icon={TrendingUp}
           variant="success"
         />
         <GoldenSignalCard
-          title="Errors"
+          title={t('errors')}
           value={`${goldenSignals.errors.errorRate}%`}
-          subtitle={`${goldenSignals.errors.errorRequests} failed requests`}
+          subtitle={`${goldenSignals.errors.errorRequests} ${t('failedRequests')}`}
           icon={AlertTriangle}
           variant="error"
           trend={goldenSignals.errors.errorRate > 1 ? 'up' : 'neutral'}
         />
         <GoldenSignalCard
-          title="Saturation"
+          title={t('saturation')}
           value={`${goldenSignals.saturation.memoryUsagePercent}%`}
           subtitle={`CPU: ${goldenSignals.saturation.cpuUsagePercent}%`}
           icon={Gauge}
