@@ -10,7 +10,7 @@ interface GoldenSignalCardProps {
   subtitle?: string;
   icon: typeof Activity;
   trend?: 'up' | 'down' | 'neutral';
-  color: string;
+  variant: 'info' | 'success' | 'error' | 'secondary';
 }
 
 function GoldenSignalCard({
@@ -19,26 +19,47 @@ function GoldenSignalCard({
   subtitle,
   icon: Icon,
   trend,
-  color,
+  variant,
 }: Readonly<GoldenSignalCardProps>) {
   const trendColors = {
-    up: 'text-emerald-600',
-    down: 'text-rose-600',
+    up: 'text-success-main',
+    down: 'text-error-main',
     neutral: 'text-gray-500',
   };
 
+  const variantStyles = {
+    info: {
+      bg: 'bg-info-lighter',
+      text: 'text-info-main',
+    },
+    success: {
+      bg: 'bg-success-lighter',
+      text: 'text-success-main',
+    },
+    error: {
+      bg: 'bg-error-lighter',
+      text: 'text-error-main',
+    },
+    secondary: {
+      bg: 'bg-secondary-lighter',
+      text: 'text-secondary-main',
+    },
+  };
+
+  const styles = variantStyles[variant];
+
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md">
+    <div className="rounded-lg border border-border bg-card p-6 transition-shadow hover:shadow-md">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-gray-600">{title}</p>
-        <div className={`rounded-full p-3`} style={{ backgroundColor: `${color}15` }}>
-          <Icon className="h-6 w-6" style={{ color }} />
+        <p className="text-sm font-medium text-muted-foreground">{title}</p>
+        <div className={`rounded-full p-3 ${styles.bg}`}>
+          <Icon className={`h-6 w-6 ${styles.text}`} />
         </div>
       </div>
       <div className="mt-3">
-        <p className="text-3xl font-bold text-gray-900">{value}</p>
+        <p className="text-3xl font-bold text-foreground">{value}</p>
         {subtitle && (
-          <p className={`mt-1 text-sm ${trend ? trendColors[trend] : 'text-gray-500'}`}>
+          <p className={`mt-1 text-sm ${trend ? trendColors[trend] : 'text-muted-foreground'}`}>
             {subtitle}
           </p>
         )}
@@ -83,21 +104,21 @@ export function GoldenSignals() {
           value={`${goldenSignals.latency.p95}ms`}
           subtitle={`p50: ${goldenSignals.latency.p50}ms | p99: ${goldenSignals.latency.p99}ms`}
           icon={Activity}
-          color="#00B8D9"
+          variant="info"
         />
         <GoldenSignalCard
           title="Traffic"
           value={goldenSignals.traffic.requestsPerSecond.toFixed(2)}
           subtitle={`${goldenSignals.traffic.totalRequests.toLocaleString()} total requests`}
           icon={TrendingUp}
-          color="#22C55E"
+          variant="success"
         />
         <GoldenSignalCard
           title="Errors"
           value={`${goldenSignals.errors.errorRate}%`}
           subtitle={`${goldenSignals.errors.errorRequests} failed requests`}
           icon={AlertTriangle}
-          color="#FF5630"
+          variant="error"
           trend={goldenSignals.errors.errorRate > 1 ? 'up' : 'neutral'}
         />
         <GoldenSignalCard
@@ -105,7 +126,7 @@ export function GoldenSignals() {
           value={`${goldenSignals.saturation.memoryUsagePercent}%`}
           subtitle={`CPU: ${goldenSignals.saturation.cpuUsagePercent}%`}
           icon={Gauge}
-          color="#8E33FF"
+          variant="secondary"
         />
       </div>
     </div>
