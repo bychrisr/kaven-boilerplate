@@ -1,42 +1,92 @@
 ---
 title: Drawer
-description: Painel lateral deslizante para navegação ou conteúdo adicional
+description: Painéis laterais deslizantes para navegação e conteúdo
 ---
 
 # Drawer
 
-Painel lateral deslizante para navegação, filtros ou conteúdo adicional.
+> Painel lateral que desliza sobre o conteúdo para exibir navegação ou informações adicionais.
 
-## Uso Básico
+## Variações
+
+### Básico
 
 ```tsx
-<Drawer open={isOpen} onClose={handleClose} anchor="right">
-  <DrawerHeader>
-    <h3>Filtros</h3>
-  </DrawerHeader>
-  <DrawerContent>{/* Conteúdo do drawer */}</DrawerContent>
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
+
+function BasicDrawer() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Abrir Drawer</Button>
+
+      <Drawer open={open} onOpenChange={setOpen}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Título do Drawer</DrawerTitle>
+          </DrawerHeader>
+          <div className="p-4">Conteúdo do drawer</div>
+        </DrawerContent>
+      </Drawer>
+    </>
+  );
+}
+```
+
+### Posições
+
+```tsx
+// Left (padrão)
+<Drawer side="left">...</Drawer>
+
+// Right
+<Drawer side="right">...</Drawer>
+
+// Top
+<Drawer side="top">...</Drawer>
+
+// Bottom
+<Drawer side="bottom">...</Drawer>
+```
+
+### Com Navegação
+
+```tsx
+<Drawer open={open} onOpenChange={setOpen}>
+  <DrawerContent className="w-80">
+    <DrawerHeader>
+      <DrawerTitle>Menu</DrawerTitle>
+    </DrawerHeader>
+    <nav className="p-4 space-y-2">
+      <Link href="/dashboard" className="block p-2 hover:bg-muted rounded">
+        Dashboard
+      </Link>
+      <Link href="/users" className="block p-2 hover:bg-muted rounded">
+        Usuários
+      </Link>
+      <Link href="/settings" className="block p-2 hover:bg-muted rounded">
+        Configurações
+      </Link>
+    </nav>
+  </DrawerContent>
 </Drawer>
 ```
 
-## Posições
+## API
 
-```tsx
-<Drawer anchor="left">Esquerda</Drawer>
-<Drawer anchor="right">Direita (padrão)</Drawer>
-<Drawer anchor="top">Topo</Drawer>
-<Drawer anchor="bottom">Baixo</Drawer>
-```
+| Prop           | Tipo                                     | Padrão   | Descrição             |
+| -------------- | ---------------------------------------- | -------- | --------------------- |
+| `open`         | `boolean`                                | -        | Controla visibilidade |
+| `onOpenChange` | `(open: boolean) => void`                | -        | Callback quando muda  |
+| `side`         | `'left' \| 'right' \| 'top' \| 'bottom'` | `'left'` | Posição do drawer     |
 
-## Boas Práticas
+## Relacionados
 
-### ✅ Fazer
-
-- Usar para navegação secundária
-- Fornecer botão de fechar
-- Manter largura consistente (280-320px)
-
-### ❌ Não Fazer
-
-- Drawer muito largo (> 400px)
-- Conteúdo não scrollável
-- Múltiplos drawers simultâneos
+- [Dialog](/design-system/components/dialog) - Modais centralizados
+- [Navbar](/design-system/components/navbar) - Navegação principal

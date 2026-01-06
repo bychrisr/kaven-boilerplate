@@ -1,62 +1,74 @@
 ---
 title: TextField
-description: Campo de entrada de texto com validação e estados
+description: Input com label integrado para formulários
 ---
 
 # TextField
 
-Campo de entrada de texto versátil com suporte a validação, máscaras e estados.
+> Componente de input com label, helper text e validação integrados.
 
-## Uso Básico
+## Básico
 
-import { TextField } from '../../../components/ui/text-field';
+```tsx
+import { TextField } from '@/components/ui/text-field';
 
-## Uso Básico
+<TextField label="Email" placeholder="seu@email.com" type="email" />;
+```
 
-<div className="preview-box">
-  <TextField label="Nome" placeholder="Digite seu nome" />
-</div>
+## Com Helper Text
+
+```tsx
+<TextField label="Senha" type="password" helperText="Mínimo 8 caracteres" />
+```
+
+## Com Erro
 
 ```tsx
 <TextField
-  label="Nome"
-  placeholder="Digite seu nome"
-  value={value}
-  onChange={handleChange}
+  label="Email"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  error={!!errors.email}
+  helperText={errors.email?.message}
 />
 ```
 
-## Variantes
+## Obrigatório
 
 ```tsx
-<TextField variant="outlined">Outlined (padrão)</TextField>
-<TextField variant="filled">Filled</TextField>
+<TextField label="Nome Completo" required placeholder="João Silva" />
 ```
 
-## Estados
+## Disabled
 
 ```tsx
-<TextField error helperText="Campo obrigatório" />
-<TextField disabled />
-<TextField readOnly />
+<TextField label="Campo Desabilitado" disabled value="Não editável" />
 ```
 
-## Com Ícone
+## Multiline (Textarea)
 
 ```tsx
-<TextField startIcon={<SearchIcon />} placeholder="Buscar..." />
+<TextField
+  label="Descrição"
+  multiline
+  rows={4}
+  placeholder="Digite uma descrição..."
+/>
 ```
 
-## Boas Práticas
+## API
 
-### ✅ Fazer
+| Prop         | Tipo      | Padrão  | Descrição                  |
+| ------------ | --------- | ------- | -------------------------- |
+| `label`      | `string`  | -       | Label do campo             |
+| `helperText` | `string`  | -       | Texto de ajuda             |
+| `error`      | `boolean` | `false` | Estado de erro             |
+| `required`   | `boolean` | `false` | Campo obrigatório          |
+| `disabled`   | `boolean` | `false` | Desabilita o campo         |
+| `multiline`  | `boolean` | `false` | Textarea ao invés de input |
+| `rows`       | `number`  | `3`     | Linhas (se multiline)      |
 
-- Fornecer label descritivo
-- Usar placeholder como exemplo
-- Mostrar mensagens de erro claras
+## Relacionados
 
-### ❌ Não Fazer
-
-- Label e placeholder iguais
-- Inputs muito largos
-- Validação apenas no submit
+- [Input](/design-system/components/input) - Input básico
+- [Textarea](/design-system/components/textarea) - Textarea standalone
