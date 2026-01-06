@@ -1,0 +1,147 @@
+---
+title: Frontend
+description: Guia de desenvolvimento frontend com Next.js e React
+---
+
+import { Callout } from 'nextra/components';
+
+# Frontend
+
+Guia completo de desenvolvimento frontend.
+
+## Stack Tecnológica
+
+- **Framework**: Next.js 16 (App Router)
+- **UI**: Tailwind CSS 4 + shadcn/ui
+- **State**: Zustand + TanStack Query
+- **Forms**: React Hook Form + Zod
+- **HTTP**: Axios
+
+## Estrutura
+
+```
+apps/admin/
+├── app/
+│   ├── (auth)/              # Rotas de autenticação
+│   │   ├── login/
+│   │   ├── register/
+│   │   └── 2fa-setup/
+│   │
+│   └── (dashboard)/         # Rotas do dashboard
+│       ├── users/
+│       ├── tenants/
+│       └── invoices/
+│
+├── components/              # Componentes reutilizáveis
+│   └── ui/                 # shadcn/ui components
+│
+├── hooks/                   # Custom hooks
+│   ├── use-users.ts
+│   └── use-auth.ts
+│
+├── lib/                     # Bibliotecas
+│   ├── api.ts              # Axios client
+│   └── errors.ts           # Error handling
+│
+├── providers/               # React providers
+│   └── query-provider.tsx
+│
+└── stores/                  # Zustand stores
+    ├── auth.store.ts
+    └── ui.store.ts
+```
+
+## Autenticação
+
+### Auth Store (Zustand)
+
+```typescript
+import { useAuthStore } from '@/stores/auth.store';
+
+const { user, isAuthenticated, setAuth, clearAuth } = useAuthStore();
+
+// Login
+setAuth(user, accessToken, refreshToken);
+
+// Logout
+clearAuth();
+```
+
+### API Client
+
+```typescript
+import api from '@/lib/api';
+
+// Request automático com token
+const response = await api.get('/api/users');
+
+// Refresh token automático em 401
+```
+
+## Data Fetching
+
+### TanStack Query
+
+```typescript
+import { useUsers } from '@/hooks/use-users';
+
+const { data, isLoading, error } = useUsers({
+  page: 1,
+  limit: 10,
+});
+```
+
+## Forms
+
+### React Hook Form + Zod
+
+```typescript
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
+const form = useForm({
+  resolver: zodResolver(schema),
+});
+```
+
+## Routing
+
+### App Router
+
+```
+app/
+├── (auth)/
+│   └── login/
+│       └── page.tsx
+│
+└── (dashboard)/
+    ├── page.tsx              # /
+    └── users/
+        ├── page.tsx          # /users
+        └── [id]/
+            └── page.tsx      # /users/:id
+```
+
+## Boas Práticas
+
+<Callout type="warning">
+  Sempre use TypeScript strict mode e valide dados com Zod.
+</Callout>
+
+- Use Server Components quando possível
+- Client Components apenas quando necessário
+- Prefetch com `<Link prefetch>`
+- Otimize imagens com `<Image>`
+- Use `loading.tsx` e `error.tsx`
+
+## Links Relacionados
+
+- [API Integration](/platform/frontend/api-integration)
+- [State Management](/platform/frontend/state-management)
+- [Forms](/platform/frontend/forms)

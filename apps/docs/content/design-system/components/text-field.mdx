@@ -1,0 +1,62 @@
+---
+title: TextField
+description: Campo de entrada de texto com validação e estados
+---
+
+# TextField
+
+Campo de entrada de texto versátil com suporte a validação, máscaras e estados.
+
+## Uso Básico
+
+import { TextField } from '../../../components/ui/text-field';
+
+## Uso Básico
+
+<div className="preview-box">
+  <TextField label="Nome" placeholder="Digite seu nome" />
+</div>
+
+```tsx
+<TextField
+  label="Nome"
+  placeholder="Digite seu nome"
+  value={value}
+  onChange={handleChange}
+/>
+```
+
+## Variantes
+
+```tsx
+<TextField variant="outlined">Outlined (padrão)</TextField>
+<TextField variant="filled">Filled</TextField>
+```
+
+## Estados
+
+```tsx
+<TextField error helperText="Campo obrigatório" />
+<TextField disabled />
+<TextField readOnly />
+```
+
+## Com Ícone
+
+```tsx
+<TextField startIcon={<SearchIcon />} placeholder="Buscar..." />
+```
+
+## Boas Práticas
+
+### ✅ Fazer
+
+- Fornecer label descritivo
+- Usar placeholder como exemplo
+- Mostrar mensagens de erro claras
+
+### ❌ Não Fazer
+
+- Label e placeholder iguais
+- Inputs muito largos
+- Validação apenas no submit

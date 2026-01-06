@@ -1,0 +1,42 @@
+---
+title: Pagination
+description: Navegação entre páginas de dados
+---
+
+# Pagination
+
+Componente para navegar entre páginas de dados tabulares.
+
+## Uso Básico
+
+import { Pagination } from '../../../components/ui/pagination';
+
+## Uso Básico
+
+<div className="preview-box">
+  <Pagination count={10} page={1} />
+</div>
+
+```tsx
+<Pagination page={currentPage} count={totalPages} onChange={handlePageChange} />
+```
+
+## Com Info
+
+```tsx
+<Pagination page={1} count={10} showInfo totalItems={95} itemsPerPage={10} />
+```
+
+## Boas Práticas
+
+### ✅ Fazer
+
+- Mostrar total de páginas
+- Fornecer navegação rápida
+- Indicar página atual
+
+### ❌ Não Fazer
+
+- Muitas páginas sem ellipsis
+- Botões muito pequenos
+- Sem indicação de progresso

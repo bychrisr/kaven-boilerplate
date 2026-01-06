@@ -1,0 +1,175 @@
+---
+title: Button
+description: Componente de botão com múltiplas variantes e cores semânticas
+---
+
+import { Callout, Tabs } from 'nextra/components';
+
+# Button
+
+Componente de botão versátil com suporte a múltiplas variantes, cores e estados.
+
+<Callout type="info">
+  O componente Button está localizado em `components/ui/button.tsx` e usa Radix
+  UI + Tailwind CSS.
+</Callout>
+
+## Variantes
+
+import { Button } from '../../../components/ui/button';
+
+### Contained (Preenchido)
+
+Botão sólido para ações primárias.
+
+<div className="preview-box">
+  <Button variant="contained" color="primary">
+    Salvar
+  </Button>
+  <Button variant="contained" color="secondary">
+    Voltar
+  </Button>
+  <Button variant="contained" color="error">
+    Deletar
+  </Button>
+</div>
+
+```tsx
+import { Button } from '@/components/ui/button';
+
+<Button variant="contained" color="primary">
+  Salvar
+</Button>;
+```
+
+**Características:**
+
+- Background colorido
+- Texto branco
+- Shadow z8
+- Padding 12px 24px
+
+### Outlined (Contornado)
+
+Botão com borda para ações secundárias.
+
+```tsx
+<Button variant="outlined" color="primary">
+  Cancelar
+</Button>
+```
+
+**Características:**
+
+- Background transparente
+- Border 1px solid
+- Texto colorido
+
+### Text (Texto)
+
+Botão minimalista para ações terciárias.
+
+```tsx
+<Button variant="text" color="primary">
+  Ver mais
+</Button>
+```
+
+## Cores Semânticas
+
+```tsx
+<Button color="primary">Primary</Button>
+<Button color="secondary">Secondary</Button>
+<Button color="success">Success</Button>
+<Button color="error">Error</Button>
+<Button color="warning">Warning</Button>
+<Button color="info">Info</Button>
+```
+
+## Tamanhos
+
+```tsx
+<Button size="sm">Pequeno</Button>
+<Button size="md">Médio (padrão)</Button>
+<Button size="lg">Grande</Button>
+```
+
+| Tamanho | Altura | Padding Horizontal |
+| ------- | ------ | ------------------ |
+| `sm`    | 32px   | 16px               |
+| `md`    | 40px   | 24px               |
+| `lg`    | 48px   | 32px               |
+
+## Estados
+
+### Disabled
+
+```tsx
+<Button disabled>Desabilitado</Button>
+```
+
+### Loading
+
+```tsx
+<Button loading>Carregando...</Button>
+```
+
+### Com Ícone
+
+```tsx
+import { PlusIcon } from 'lucide-react';
+
+<Button>
+  <PlusIcon className="w-4 h-4 mr-2" />
+  Adicionar
+</Button>;
+```
+
+## Boas Práticas
+
+<Callout type="warning">
+  Limite a 1-2 botões primários (contained) por tela para manter hierarquia
+  clara.
+</Callout>
+
+### ✅ Fazer
+
+- Usar `contained` para ação primária
+- Usar `outlined` para ações secundárias
+- Usar `text` para ações terciárias
+- Manter texto conciso (máx 2-3 palavras)
+- Usar ícones para clareza
+
+### ❌ Não Fazer
+
+- Múltiplos botões `contained` na mesma área
+- Botões muito pequenos (< 40px altura)
+- Texto muito longo
+- Usar apenas ícones sem label (acessibilidade)
+
+## Acessibilidade
+
+- Sempre forneça `aria-label` para botões só com ícone
+- Use `disabled` ao invés de `pointer-events-none`
+- Mantenha contraste adequado (WCAG AA)
+- Área de toque mínima: 44x44px (mobile)
+
+## API
+
+```typescript
+interface ButtonProps {
+  variant?: 'contained' | 'outlined' | 'text';
+  color?: 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info';
+  size?: 'sm' | 'md' | 'lg';
+  disabled?: boolean;
+  loading?: boolean;
+  children: React.ReactNode;
+  onClick?: () => void;
+}
+```
+
+## Links Relacionados
+
+- [Colors](/design-system/tokens/colors)
+- [Typography](/design-system/tokens/typography)
+- [Card](/design-system/components/card)

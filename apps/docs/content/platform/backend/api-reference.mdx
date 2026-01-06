@@ -1,0 +1,204 @@
+---
+title: API Reference
+description: Documentação completa da API REST do Kaven Platform
+---
+
+import { Callout } from 'nextra/components';
+
+# API Reference
+
+API REST completa para SaaS multi-tenant.
+
+<Callout type="info">
+  **Base URL**: `http://localhost:8000` **Docs Interativas**:
+  `http://localhost:8000/docs` (Swagger UI)
+</Callout>
+
+## Autenticação
+
+Todos os endpoints protegidos requerem header:
+
+```
+Authorization: Bearer <access_token>
+```
+
+## Auth Endpoints (12)
+
+### POST /api/auth/register
+
+Registra novo usuário.
+
+```json
+{
+  "email": "user@example.com",
+  "password": "senha123",
+  "name": "João Silva",
+  "tenantSlug": "empresa1" // Opcional
+}
+```
+
+### POST /api/auth/login
+
+Realiza login e retorna tokens.
+
+```json
+{
+  "email": "user@example.com",
+  "password": "senha123",
+  "twoFactorCode": "123456" // Opcional
+}
+```
+
+**Response:**
+
+```json
+{
+  "accessToken": "eyJhbGc...",
+  "refreshToken": "uuid",
+  "user": { ... }
+}
+```
+
+### POST /api/auth/refresh
+
+Renova access token.
+
+### POST /api/auth/logout
+
+Invalida refresh token.
+
+### POST /api/auth/2fa/setup
+
+Configura 2FA (TOTP).
+
+**Response:**
+
+```json
+{
+  "secret": "JBSWY3DPEHPK3PXP",
+  "qrCodeUrl": "data:image/png;base64,...",
+  "backupCodes": ["12345678", ...]
+}
+```
+
+## User Endpoints (6)
+
+### GET /api/users
+
+Lista usuários com paginação.
+
+**Query Params:**
+
+- `page` (default: 1)
+- `limit` (default: 10)
+- `search` - Busca em name/email
+- `status` - ACTIVE, PENDING, BANNED, REJECTED
+
+**Auth:** TENANT_ADMIN ou SUPER_ADMIN
+
+### GET /api/users/me
+
+Retorna usuário autenticado.
+
+### POST /api/users
+
+Cria novo usuário.
+
+**Auth:** TENANT_ADMIN
+
+### PUT /api/users/:id
+
+Atualiza usuário.
+
+### DELETE /api/users/:id
+
+Deleta usuário (soft delete).
+
+## Tenant Endpoints (5)
+
+### GET /api/tenants
+
+Lista tenants.
+
+**Auth:** SUPER_ADMIN
+
+### POST /api/tenants
+
+Cria novo tenant.
+
+```json
+{
+  "name": "Empresa ABC",
+  "slug": "empresa-abc",
+  "domain": "empresa-abc.app.com"
+}
+```
+
+## Payment Endpoints (7)
+
+### POST /api/payments/subscription
+
+Cria subscription no Stripe.
+
+### POST /api/payments/pix/create
+
+Cria pagamento Pix.
+
+```json
+{
+  "tenantId": "uuid",
+  "amount": 100.0,
+  "description": "Pagamento de assinatura"
+}
+```
+
+**Response:**
+
+```json
+{
+  "id": "uuid",
+  "pixCode": "00020126580014br.gov.bcb.pix...",
+  "qrCodeUrl": "data:image/png;base64,...",
+  "amount": 100.0,
+  "status": "PENDING"
+}
+```
+
+## RBAC
+
+### Roles
+
+- **SUPER_ADMIN**: Acesso total
+- **TENANT_ADMIN**: Acesso ao seu tenant
+- **USER**: Acesso limitado
+
+### Middlewares
+
+- `authMiddleware`: Verifica JWT
+- `requireSuperAdmin`: Requer SUPER_ADMIN
+- `requireTenantAdmin`: Requer TENANT_ADMIN+
+- `requireResourceOwnership`: Verifica ownership
+
+## Rate Limiting
+
+- **Global**: 100 req/min por IP
+- **Login**: 5 req/min
+- **Register**: 3 req/min
+
+## Total de Endpoints
+
+- Auth: 12
+- Users: 6
+- Tenants: 5
+- Payments: 7
+- Invoices: 5
+- Orders: 3
+- Health: 4
+
+**Total**: 44 endpoints REST
+
+## Links Relacionados
+
+- [Architecture](/platform/architecture/overview)
+- [Authentication](/platform/backend/authentication)
+- [Frontend Integration](/platform/frontend/api-integration)

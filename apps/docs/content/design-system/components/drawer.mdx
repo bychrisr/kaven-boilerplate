@@ -1,0 +1,42 @@
+---
+title: Drawer
+description: Painel lateral deslizante para navegação ou conteúdo adicional
+---
+
+# Drawer
+
+Painel lateral deslizante para navegação, filtros ou conteúdo adicional.
+
+## Uso Básico
+
+```tsx
+<Drawer open={isOpen} onClose={handleClose} anchor="right">
+  <DrawerHeader>
+    <h3>Filtros</h3>
+  </DrawerHeader>
+  <DrawerContent>{/* Conteúdo do drawer */}</DrawerContent>
+</Drawer>
+```
+
+## Posições
+
+```tsx
+<Drawer anchor="left">Esquerda</Drawer>
+<Drawer anchor="right">Direita (padrão)</Drawer>
+<Drawer anchor="top">Topo</Drawer>
+<Drawer anchor="bottom">Baixo</Drawer>
+```
+
+## Boas Práticas
+
+### ✅ Fazer
+
+- Usar para navegação secundária
+- Fornecer botão de fechar
+- Manter largura consistente (280-320px)
+
+### ❌ Não Fazer
+
+- Drawer muito largo (> 400px)
+- Conteúdo não scrollável
+- Múltiplos drawers simultâneos

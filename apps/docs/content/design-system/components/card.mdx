@@ -1,0 +1,79 @@
+---
+title: Card
+description: Container para agrupar conteúdo relacionado com elevação consistente
+---
+
+import { Callout } from 'nextra/components';
+
+# Card
+
+Container versátil para agrupar conteúdo relacionado com elevação e padding consistentes.
+
+import { Card } from '../../../components/ui/card';
+
+## Uso Básico
+
+<div className="preview-box">
+  <Card className="p-6">
+    <h3 className="font-bold">Título</h3>
+    <p>Conteúdo do card</p>
+  </Card>
+</div>
+
+```tsx
+import { Card } from '@/components/ui/card';
+
+<Card>
+  <h3>Título</h3>
+  <p>Conteúdo do card</p>
+</Card>;
+```
+
+## Estilos Padrão
+
+- **Radius**: xl (16px)
+- **Shadow**: z12
+- **Padding**: 24px
+- **Background**: Branco
+- **Border**: 1px solid gray-200
+
+## Variantes
+
+### Com Header
+
+```tsx
+<Card>
+  <CardHeader title="Título" subtitle="Subtítulo" />
+  <CardContent>Conteúdo principal</CardContent>
+</Card>
+```
+
+### Com Actions
+
+```tsx
+<Card>
+  <CardContent>Conteúdo</CardContent>
+  <CardActions>
+    <Button>Cancelar</Button>
+    <Button variant="contained">Salvar</Button>
+  </CardActions>
+</Card>
+```
+
+## Boas Práticas
+
+<Callout type="info">
+  Use padding consistente de 24px e agrupe apenas conteúdo relacionado.
+</Callout>
+
+### ✅ Fazer
+
+- Usar padding 24px
+- Agrupar conteúdo relacionado
+- Manter hierarquia clara
+
+### ❌ Não Fazer
+
+- Cards muito grandes (dividir em seções)
+- Padding inconsistente
+- Muitos cards aninhados

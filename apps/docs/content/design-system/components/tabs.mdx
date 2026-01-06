@@ -1,0 +1,53 @@
+---
+title: Tabs
+description: Navegação por abas para organizar conteúdo relacionado
+---
+
+# Tabs
+
+Componente de navegação por abas para organizar conteúdo relacionado em painéis.
+
+## Uso Básico
+
+import { TabsDemo } from '../../../components/demos/tabs-demo';
+
+## Uso Básico
+
+<div className="preview-box">
+  <TabsDemo />
+</div>
+
+```tsx
+<Tabs value={activeTab} onChange={handleChange}>
+  <TabList>
+    <Tab value="1">Perfil</Tab>
+    <Tab value="2">Configurações</Tab>
+    <Tab value="3">Notificações</Tab>
+  </TabList>
+  <TabPanel value="1">Conteúdo do perfil</TabPanel>
+  <TabPanel value="2">Conteúdo das configurações</TabPanel>
+  <TabPanel value="3">Conteúdo das notificações</TabPanel>
+</Tabs>
+```
+
+## Variantes
+
+```tsx
+<Tabs variant="default">Padrão</Tabs>
+<Tabs variant="pills">Pills</Tabs>
+<Tabs variant="underline">Underline</Tabs>
+```
+
+## Boas Práticas
+
+### ✅ Fazer
+
+- Limitar a 5-7 abas
+- Labels concisas
+- Indicar aba ativa claramente
+
+### ❌ Não Fazer
+
+- Muitas abas (usar menu)
+- Labels muito longas
+- Conteúdo não relacionado

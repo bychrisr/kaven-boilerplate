@@ -1,8 +1,10 @@
 export default {
   index: 'Introdução',
-  colors: 'Cores',
-  typography: 'Tipografia',
-  spacing: 'Espaçamento',
+  tokens: 'Tokens de Design',
   components: 'Componentes',
+  patterns: 'Padrões',
+  principles: 'Princípios',
+  'legacy-tokens': 'Legacy Tokens',
+  'legacy-components': 'Legacy Components',
   'built-in-examples': 'Exemplos Built-in'
 }

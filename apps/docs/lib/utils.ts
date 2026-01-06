@@ -6,6 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatDate(date: Date | string): string {
+  // Implementar com date-fns quando necessário
   return new Date(date).toLocaleDateString();
 }
 

@@ -1,0 +1,149 @@
+---
+title: Arquitetura
+description: Visão geral da arquitetura do Kaven Platform
+---
+
+import { Callout } from 'nextra/components';
+
+# Arquitetura
+
+Sistema SaaS multi-tenant com arquitetura modular e escalável.
+
+<Callout type="info">
+  Arquitetura baseada em microserviços com separação clara entre frontend,
+  backend e infraestrutura.
+</Callout>
+
+## Diagrama Geral
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      FRONTEND (Next.js)                      │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │  Auth Pages  │  │  Dashboard   │  │  Admin Panel │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+└─────────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    API GATEWAY (Express)                     │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │  Middlewares: Auth, RBAC, Tenant, Metrics, RLS      │   │
+│  └──────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+                             │
+         ┌───────────────────┼───────────────────┐
+         ▼                   ▼                   ▼
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│  Auth Module │    │ User Module  │    │Tenant Module │
+└──────────────┘    └──────────────┘    └──────────────┘
+         ▼                   ▼                   ▼
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│Payment Module│    │Invoice Module│    │ Order Module │
+└──────────────┘    └──────────────┘    └──────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    INFRASTRUCTURE                            │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
+│  │PostgreSQL│  │  Redis   │  │Prometheus│  │ Grafana  │   │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Estrutura de Diretórios
+
+```
+kaven-boilerplate/
+├── apps/
+│   ├── api/                    # Backend API (Express)
+│   │   ├── src/
+│   │   │   ├── lib/           # Bibliotecas compartilhadas
+│   │   │   ├── middleware/    # Middlewares globais
+│   │   │   ├── modules/       # Módulos de negócio
+│   │   │   └── server.ts      # Entry point
+│   │   └── prisma/
+│   │       └── schema.prisma  # Database schema
+│   │
+│   ├── admin/                 # Frontend Admin (Next.js)
+│   │   ├── app/
+│   │   │   ├── (auth)/       # Auth pages
+│   │   │   └── (dashboard)/  # Dashboard pages
+│   │   ├── components/       # Shared components
+│   │   ├── hooks/            # Custom hooks
+│   │   └── stores/           # Zustand stores
+│   │
+│   └── docs/                  # Documentation (Nextra)
+│
+└── prisma/
+    └── schema.prisma          # Shared schema
+```
+
+## Camadas da Aplicação
+
+### 1. Presentation Layer (Frontend)
+
+- Next.js 16 App Router
+- React 19 + Tailwind CSS 4
+- TanStack Query para data fetching
+- Zustand para state management
+
+### 2. API Layer (Backend)
+
+- Express.js com TypeScript
+- Middlewares: Auth, RBAC, Tenant, Metrics
+- Modular architecture (auth, users, tenants, payments)
+
+### 3. Business Logic Layer
+
+- Services isolados por módulo
+- Validação com Zod
+- Error handling centralizado
+
+### 4. Data Layer
+
+- Prisma ORM
+- PostgreSQL com RLS (Row-Level Security)
+- Redis para cache e sessions
+
+### 5. Infrastructure Layer
+
+- Docker + Docker Compose
+- Prometheus + Grafana
+- Winston para logging
+
+## Multi-Tenancy
+
+### Middleware Camaleão
+
+Detecção automática de tenant via:
+
+1. **Header**: `X-Tenant-ID: uuid`
+2. **Path**: `/tenants/:slug/...`
+3. **Subdomain**: `empresa1.app.com`
+
+### Prisma RLS
+
+Auto-injeta `tenantId` em queries para isolamento de dados.
+
+## Segurança
+
+- JWT + Refresh Tokens
+- RBAC (Role-Based Access Control)
+- 2FA (TOTP)
+- Rate Limiting
+- CORS configurado
+- Helmet.js para headers de segurança
+
+## Observabilidade
+
+- **Métricas**: Prometheus
+- **Dashboards**: Grafana
+- **Logs**: Winston + JSON format
+- **Traces**: Audit logs no banco
+
+## Links Relacionados
+
+- [Backend](/platform/backend/api-reference)
+- [Frontend](/platform/frontend/routing)
+- [Multi-Tenancy](/platform/architecture/multi-tenancy)

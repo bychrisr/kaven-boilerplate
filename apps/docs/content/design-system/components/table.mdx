@@ -1,0 +1,104 @@
+---
+title: Table
+description: Componente para exibir dados tabulares com ordenação e paginação
+---
+
+# Table
+
+Componente robusto para exibir dados tabulares com suporte a ordenação, paginação e seleção.
+
+## Uso Básico
+
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableHead,
+} from '../../../components/ui/table';
+
+## Uso Básico
+
+<div className="preview-box">
+  <Table>
+    <TableHeader>
+      <TableRow>
+        <TableHead>Nome</TableHead>
+        <TableHead>Email</TableHead>
+        <TableHead>Status</TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      <TableRow>
+        <TableCell>João Silva</TableCell>
+        <TableCell>joao@example.com</TableCell>
+        <TableCell>Ativo</TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell>Maria Santos</TableCell>
+        <TableCell>maria@example.com</TableCell>
+        <TableCell>Inativo</TableCell>
+      </TableRow>
+    </TableBody>
+  </Table>
+</div>
+
+```tsx
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableHead,
+} from '@/components/ui/table';
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Nome</TableHead>
+      <TableHead>Email</TableHead>
+      <TableHead>Status</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    {data.map((row) => (
+      <TableRow key={row.id}>
+        <TableCell>{row.name}</TableCell>
+        <TableCell>{row.email}</TableCell>
+        <TableCell>{row.status}</TableCell>
+      </TableRow>
+    ))}
+  </TableBody>
+</Table>;
+```
+
+## Estilos
+
+- **Border**: 1px solid gray-300
+- **Hover**: Background gray-50
+- **Header**: Background gray-100
+- **Padding**: 16px
+
+## Com Ordenação
+
+```tsx
+<TableHeaderCell sortable sortDirection={sortDirection} onSort={handleSort}>
+  Nome
+</TableHeaderCell>
+```
+
+## Boas Práticas
+
+### ✅ Fazer
+
+- Usar TableHead e TableBody
+- Fornecer key único para TableRow
+- Implementar paginação para muitos dados
+
+### ❌ Não Fazer
+
+- Tabelas muito largas sem scroll
+- Muitas colunas (considerar card grid)
+- Células sem padding

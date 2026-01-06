@@ -1,0 +1,159 @@
+---
+title: Shadows
+description: Sistema de sombras para criar hierarquia e profundidade visual
+---
+
+import { Callout, Tabs } from 'nextra/components';
+
+# Shadows
+
+O sistema de sombras do Kaven Platform cria hierarquia visual e profundidade, ajudando a diferenciar elementos e estabelecer relações espaciais na interface.
+
+<Callout type="info">
+  As sombras são aplicadas automaticamente aos componentes através de classes
+  utilitárias do Tailwind CSS.
+</Callout>
+
+## Escala de Sombras
+
+Nossa escala de sombras segue o padrão do Tailwind CSS, com níveis de elevação progressivos:
+
+### shadow-sm
+
+Sombra sutil para elementos levemente elevados.
+
+<div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-4">
+  <p className="text-sm text-gray-600 dark:text-gray-300">
+    Elemento com shadow-sm
+  </p>
+</div>
+
+```tsx
+<div className="shadow-sm">Conteúdo</div>
+```
+
+### shadow (padrão)
+
+Sombra padrão para cards e containers.
+
+<div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 mb-4">
+  <p className="text-sm text-gray-600 dark:text-gray-300">
+    Elemento com shadow padrão
+  </p>
+</div>
+
+```tsx
+<div className="shadow">Conteúdo</div>
+```
+
+### shadow-md
+
+Sombra média para elementos com destaque moderado.
+
+<div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md mb-4">
+  <p className="text-sm text-gray-600 dark:text-gray-300">
+    Elemento com shadow-md
+  </p>
+</div>
+
+```tsx
+<div className="shadow-md">Conteúdo</div>
+```
+
+### shadow-lg
+
+Sombra grande para modais e dropdowns.
+
+<div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg mb-4">
+  <p className="text-sm text-gray-600 dark:text-gray-300">
+    Elemento com shadow-lg
+  </p>
+</div>
+
+```tsx
+<div className="shadow-lg">Conteúdo</div>
+```
+
+### shadow-xl
+
+Sombra extra grande para elementos flutuantes importantes.
+
+<div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl mb-4">
+  <p className="text-sm text-gray-600 dark:text-gray-300">
+    Elemento com shadow-xl
+  </p>
+</div>
+
+```tsx
+<div className="shadow-xl">Conteúdo</div>
+```
+
+### shadow-2xl
+
+Sombra máxima para elementos de máxima prioridade.
+
+<div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-2xl mb-4">
+  <p className="text-sm text-gray-600 dark:text-gray-300">
+    Elemento com shadow-2xl
+  </p>
+</div>
+
+```tsx
+<div className="shadow-2xl">Conteúdo</div>
+```
+
+## Quando Usar
+
+<Callout type="warning">
+  Use sombras com moderação. Muitas sombras podem criar uma interface
+  visualmente poluída.
+</Callout>
+
+| Nível        | Uso Recomendado               |
+| ------------ | ----------------------------- |
+| `shadow-sm`  | Inputs, botões secundários    |
+| `shadow`     | Cards, containers padrão      |
+| `shadow-md`  | Cards destacados, tooltips    |
+| `shadow-lg`  | Dropdowns, popovers           |
+| `shadow-xl`  | Modais, dialogs               |
+| `shadow-2xl` | Elementos críticos flutuantes |
+
+## Dark Mode
+
+As sombras são automaticamente ajustadas no dark mode para manter a hierarquia visual:
+
+<Tabs items={['Light Mode', 'Dark Mode']}>
+  <Tabs.Tab>
+    <div className="p-6 bg-gray-50 rounded-lg">
+      <div className="p-4 bg-white rounded-lg shadow-lg">
+        <p className="text-sm">Card com sombra em light mode</p>
+      </div>
+    </div>
+  </Tabs.Tab>
+  <Tabs.Tab>
+    <div className="p-6 bg-gray-900 rounded-lg">
+      <div className="p-4 bg-gray-800 rounded-lg shadow-lg">
+        <p className="text-sm text-gray-300">Card com sombra em dark mode</p>
+      </div>
+    </div>
+  </Tabs.Tab>
+</Tabs>
+
+## Boas Práticas
+
+1. **Hierarquia**: Use sombras maiores para elementos mais importantes
+2. **Consistência**: Mantenha o mesmo nível de sombra para elementos similares
+3. **Contexto**: Sombras maiores para elementos flutuantes (modais, dropdowns)
+4. **Performance**: Evite sombras em elementos que animam frequentemente
+
+## Acessibilidade
+
+- Sombras não devem ser a única forma de diferenciar elementos
+- Combine com bordas ou cores para usuários com baixa visão
+- Garanta contraste adequado entre elemento e fundo
+
+## Links Relacionados
+
+- [Colors](/design-system/tokens/colors) - Sistema de cores
+- [Spacing](/design-system/tokens/spacing) - Sistema de espaçamento
+- [Components](/design-system/components) - Componentes que usam sombras

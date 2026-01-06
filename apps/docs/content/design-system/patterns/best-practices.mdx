@@ -1,0 +1,158 @@
+---
+title: Best Practices
+description: Guidelines e padrões para uso consistente do Design System
+---
+
+import { Callout } from 'nextra/components';
+
+# Best Practices
+
+Guidelines e padrões para garantir consistência e qualidade no uso do Design System.
+
+## Código
+
+### TypeScript
+
+```tsx
+// ✅ Bom - Tipagem explícita
+interface UserProps {
+  user: User;
+  onEdit: (id: string) => void;
+}
+
+// ❌ Ruim - any
+function UserCard(props: any) {}
+```
+
+### Componentes
+
+```tsx
+// ✅ Bom - Componente focado
+function UserCard({ user }: UserCardProps) {
+  return (
+    <Card>
+      <h3>{user.name}</h3>
+      <p>{user.email}</p>
+    </Card>
+  );
+}
+
+// ❌ Ruim - Componente monolítico
+function UserPage() {
+  // 500 linhas de código...
+}
+```
+
+## Design
+
+### Hierarquia Visual
+
+```tsx
+// ✅ Bom - Hierarquia clara
+<div>
+  <h1 className="text-4xl font-bold">Título</h1>
+  <h2 className="text-2xl font-semibold">Subtítulo</h2>
+  <p className="text-base">Conteúdo</p>
+</div>
+
+// ❌ Ruim - Sem hierarquia
+<div>
+  <h1 className="text-xl">Título</h1>
+  <p className="text-xl">Conteúdo</p>
+</div>
+```
+
+### Espaçamento
+
+<Callout type="warning">Sempre use múltiplos de 8px para espaçamento.</Callout>
+
+```tsx
+// ✅ Bom - Múltiplos de 8
+<div className="space-y-6">
+  <Card className="p-6">Item 1</Card>
+  <Card className="p-6">Item 2</Card>
+</div>
+
+// ❌ Ruim - Valores arbitrários
+<div className="space-y-[13px]">
+  <Card className="p-[17px]">Item</Card>
+</div>
+```
+
+### Cores
+
+```tsx
+// ✅ Bom - Cores semânticas
+<Alert severity="success">Sucesso!</Alert>
+<Button color="primary">Salvar</Button>
+
+// ❌ Ruim - Cores hardcoded
+<div className="bg-[#1877F2]">Conteúdo</div>
+```
+
+## Performance
+
+### Otimizações
+
+```tsx
+// ✅ Bom - Memoização
+const MemoizedComponent = React.memo(ExpensiveComponent);
+
+// ✅ Bom - useMemo para cálculos pesados
+const sortedUsers = useMemo(
+  () => users.sort((a, b) => a.name.localeCompare(b.name)),
+  [users],
+);
+
+// ❌ Ruim - Recalcular a cada render
+const sortedUsers = users.sort((a, b) => a.name.localeCompare(b.name));
+```
+
+## Acessibilidade
+
+### ARIA Labels
+
+```tsx
+// ✅ Bom - Label descritivo
+<button aria-label="Fechar modal">
+  <CloseIcon />
+</button>
+
+// ❌ Ruim - Sem label
+<button>
+  <CloseIcon />
+</button>
+```
+
+### Contraste
+
+<Callout type="info">
+  Mantenha contraste mínimo de 4.5:1 para texto normal (WCAG AA).
+</Callout>
+
+## Testes
+
+### Unit Tests
+
+```tsx
+// ✅ Bom - Testar comportamento
+it('deve chamar onEdit ao clicar no botão', () => {
+  const onEdit = jest.fn();
+  render(<UserCard user={mockUser} onEdit={onEdit} />);
+
+  fireEvent.click(screen.getByRole('button', { name: /editar/i }));
+
+  expect(onEdit).toHaveBeenCalledWith(mockUser.id);
+});
+```
+
+## Resumo
+
+| Categoria      | Fazer ✅           | Não Fazer ❌               |
+| -------------- | ------------------ | -------------------------- |
+| TypeScript     | Tipagem explícita  | any, unknown sem validação |
+| Componentes    | Pequenos e focados | Monolíticos (>200 linhas)  |
+| Espaçamento    | Múltiplos de 8px   | Valores arbitrários        |
+| Cores          | Tokens semânticos  | Hardcoded                  |
+| Performance    | Memoização         | Recálculos desnecessários  |
+| Acessibilidade | ARIA labels        | Elementos sem contexto     |

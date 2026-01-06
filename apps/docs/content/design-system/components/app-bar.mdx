@@ -1,0 +1,73 @@
+---
+title: AppBar
+description: Barra de navegação superior da aplicação
+---
+
+# AppBar
+
+Barra de navegação superior com suporte a logo, menu e ações.
+
+## Uso Básico
+
+import { AppBar, Toolbar } from '../../../components/ui/app-bar';
+import { Button } from '../../../components/ui/button';
+import { Avatar, AvatarFallback } from '../../../components/ui/avatar';
+
+## Uso Básico
+
+<div className="preview-box">
+  <AppBar position="static" className="w-full">
+    <div className="flex w-full items-center justify-between">
+      <div className="font-bold">Logo</div>
+      <div className="flex gap-4">
+        <Button variant="text">Dashboard</Button>
+        <Button variant="text">Usuários</Button>
+      </div>
+      <div className="flex items-center gap-2">
+        <Avatar>
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
+      </div>
+    </div>
+  </AppBar>
+</div>
+
+```tsx
+<AppBar>
+  <AppBarLogo>
+    <Logo />
+  </AppBarLogo>
+  <AppBarNav>
+    <NavItem href="/dashboard">Dashboard</NavItem>
+    <NavItem href="/users">Usuários</NavItem>
+  </AppBarNav>
+  <AppBarActions>
+    <IconButton>
+      <NotificationIcon />
+    </IconButton>
+    <Avatar />
+  </AppBarActions>
+</AppBar>
+```
+
+## Posições
+
+```tsx
+<AppBar position="fixed">Fixo (padrão)</AppBar>
+<AppBar position="sticky">Sticky</AppBar>
+<AppBar position="static">Static</AppBar>
+```
+
+## Boas Práticas
+
+### ✅ Fazer
+
+- Manter altura consistente (64px)
+- Logo à esquerda
+- Ações à direita
+
+### ❌ Não Fazer
+
+- AppBar muito alto
+- Muitos itens de navegação
+- Sem responsividade mobile

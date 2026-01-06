@@ -1,0 +1,52 @@
+---
+title: Dialog
+description: Modal para exibir conteúdo sobreposto
+---
+
+# Dialog
+
+Componente modal para exibir conteúdo sobreposto com backdrop.
+
+import { DialogDemo } from '../../../components/demos/dialog-demo';
+
+## Uso Básico
+
+<div className="preview-box">
+  <DialogDemo />
+</div>
+
+```tsx
+<Dialog open={isOpen} onClose={handleClose}>
+  <DialogTitle>Confirmar ação</DialogTitle>
+  <DialogContent>Tem certeza que deseja continuar?</DialogContent>
+  <DialogActions>
+    <Button onClick={handleClose}>Cancelar</Button>
+    <Button variant="contained" onClick={handleConfirm}>
+      Confirmar
+    </Button>
+  </DialogActions>
+</Dialog>
+```
+
+## Tamanhos
+
+```tsx
+<Dialog size="sm">Pequeno</Dialog>
+<Dialog size="md">Médio (padrão)</Dialog>
+<Dialog size="lg">Grande</Dialog>
+<Dialog size="full">Tela cheia</Dialog>
+```
+
+## Boas Práticas
+
+### ✅ Fazer
+
+- Fornecer botão de fechar
+- Usar para ações importantes
+- Manter conteúdo focado
+
+### ❌ Não Fazer
+
+- Modais muito grandes
+- Múltiplos modais empilhados
+- Conteúdo não relacionado

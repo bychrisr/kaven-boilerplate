@@ -1,0 +1,86 @@
+---
+title: "Legacy Tokens Overview"
+description: Migrated from legacy docs
+---
+
+# 🎨 Design Tokens
+
+Reference guide for all global design tokens used in the Kaven Boilerplate.
+
+## 🌈 Colors (Semantic)
+
+Our color system uses semantic tokens to support Light/Dark modes automatically. **Always use the semantic variable**, not the raw hex.
+
+### Core Structure
+
+| Token                   | Dark Mode (Default) | Use Case                                    |
+| ----------------------- | ------------------- | ------------------------------------------- |
+| `bg-background`         | `#161C24`           | Main application background (Body)          |
+| `bg-sidebar`            | `#161C24`           | Sidebar background (matches body for depth) |
+| `bg-card`               | `#212B36`           | Cards, Modals, Dropdowns (Floating surface) |
+| `text-foreground`       | `#FFFFFF`           | Primary text content                        |
+| `text-muted-foreground` | `#919EAB`           | Secondary text, captions, placeholders      |
+
+### Brand Colors
+
+| Token          | Value (Ref) | Use Case                              |
+| -------------- | ----------- | ------------------------------------- |
+| `bg-primary`   | `#00A76F`   | Main actions, active states, branding |
+| `bg-secondary` | `#8E33FF`   | Secondary actions, highlights         |
+| `bg-success`   | `#22C55E`   | Success states, positive trends       |
+| `bg-warning`   | `#FFAB00`   | Warning alerts, attention needed      |
+| `bg-error`     | `#FF5630`   | Destructive actions, negative trends  |
+| `bg-info`      | `#00B8D9`   | Informational badges, charts          |
+
+### Interactive States
+
+| Token             | Description                                  |
+| ----------------- | -------------------------------------------- |
+| `hover:bg-accent` | Subtle interaction background for list items |
+| `bg-muted`        | Disabled states or secondary backgrounds     |
+| `border-border`   | Subtle borders (`rgba(145, 158, 171, 0.24)`) |
+
+---
+
+## ✒️ Typography
+
+We use **Geist Sans** for UI and **Geist Mono** for code.
+
+| Class       | Font Weight | Size | Line Height |
+| ----------- | ----------- | ---- | ----------- |
+| `text-xs`   | 400/500     | 12px | 16px        |
+| `text-sm`   | 400/500     | 14px | 20px        |
+| `text-base` | 400/600     | 16px | 24px        |
+| `text-lg`   | 600/700     | 18px | 28px        |
+| `text-xl`   | 700         | 20px | 28px        |
+| `text-2xl`  | 700         | 24px | 32px        |
+| `text-3xl`  | 700         | 30px | 36px        |
+
+---
+
+## 📱 Breakpoints
+
+We follow mobile-first principles.
+
+| Prefix   | Min-Width | Device                            |
+| -------- | --------- | --------------------------------- |
+| `(none)` | 0px       | Mobile (Portrait)                 |
+| `sm:`    | 640px     | Mobile (Landscape) / Small Tablet |
+| `md:`    | 768px     | Tablet (Portrait)                 |
+| `lg:`    | 1024px    | Tablet (Landscape) / Laptop       |
+| `xl:`    | 1280px    | Desktop                           |
+| `2xl:`   | 1536px    | Large Screens                     |
+
+---
+
+## 🌑 Shadows & Effects
+
+| Class              | Description                           |
+| ------------------ | ------------------------------------- |
+| `shadow-sm`        | Subtle component depth                |
+| `shadow-md`        | Dropdowns, popovers                   |
+| `shadow-lg`        | Floating cards                        |
+| `shadow-xl`        | Modals, prominent cards               |
+| `backdrop-blur-xl` | Glassmorphism effect (Header/Overlay) |
+
+> **Note:** Shadows in Dark Mode are subtle or replaced by Border highlights (`border-white/5`).

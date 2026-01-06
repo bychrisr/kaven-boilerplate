@@ -1,0 +1,312 @@
+---
+title: Email Service
+description: Auto-migrated documentation
+---
+
+# Email Service - Guia de Uso
+
+## 📋 Visão Geral
+
+O **Email Service** gerencia envio de emails transacionais usando Nodemailer com suporte a SMTP e modo desenvolvimento.
+
+---
+
+## ✉️ Emails Implementados
+
+### 1. Welcome Email
+
+Enviado automaticamente após registro de novo usuário.
+
+**Trigger:** `POST /api/auth/register`
+
+**Template:** Design responsivo com gradiente roxo, botão CTA para dashboard.
+
+### 2. Email Verification
+
+Enviado para verificar endereço de email do usuário.
+
+**Trigger:** `POST /api/auth/register` (planejado)
+
+**Template:** Design responsivo com link de verificação, expira em 24h.
+
+### 3. Password Reset
+
+Enviado quando usuário solicita reset de senha.
+
+**Trigger:** `POST /api/auth/forgot-password`
+
+**Template:** Design responsivo com gradiente rosa, link expira em 1h.
+
+### 4. Invoice Notification
+
+Enviado quando nova invoice é gerada.
+
+**Trigger:** Webhook Stripe ou criação manual
+
+**Template:** Design responsivo com detalhes da invoice (número, valor, vencimento).
+
+---
+
+## 🔧 Configuração
+
+### Variáveis de Ambiente
+
+```env
+# SMTP Configuration
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="587"
+SMTP_SECURE="false"  # true para porta 465
+SMTP_USER="your-email@gmail.com"
+SMTP_PASS="your-app-password"
+EMAIL_FROM="Kaven <noreply@kaven.com>"
+FRONTEND_URL="http://localhost:3000"
+```
+
+### Gmail App Password
+
+1. Ativar 2FA na conta Google
+2. Ir em **Conta Google** → **Segurança** → **Senhas de app**
+3. Gerar senha de app para "Mail"
+4. Usar senha gerada em `SMTP_PASS`
+
+### SendGrid (Alternativa)
+
+```env
+SMTP_HOST="smtp.sendgrid.net"
+SMTP_PORT="587"
+SMTP_USER="apikey"
+SMTP_PASS="SG.your-api-key"
+```
+
+---
+
+## 💻 Uso no Código
+
+### Importar Service
+
+```typescript
+import { emailService } from '../lib/email.service';
+```
+
+### Enviar Welcome Email
+
+```typescript
+await emailService.sendWelcomeEmail({
+  email: 'user@example.com',
+  name: 'John Doe',
+});
+```
+
+### Enviar Verification Email
+
+```typescript
+const token = generateVerificationToken();
+await emailService.sendVerificationEmail(
+  { email: 'user@example.com', name: 'John Doe' },
+  token,
+);
+```
+
+### Enviar Password Reset
+
+```typescript
+const resetToken = generateResetToken();
+await emailService.sendPasswordResetEmail(
+  { email: 'user@example.com', name: 'John Doe' },
+  resetToken,
+);
+```
+
+### Enviar Invoice
+
+```typescript
+await emailService.sendInvoiceEmail(
+  { email: 'user@example.com', name: 'John Doe' },
+  {
+    invoiceNumber: 'INV-001',
+    amountDue: 99.9,
+    dueDate: new Date('2025-01-15'),
+  },
+);
+```
+
+---
+
+## 🧪 Modo Desenvolvimento
+
+Quando variáveis SMTP não estão configuradas, o service entra em **modo desenvolvimento**:
+
+- ✅ Não envia emails reais
+- ✅ Loga informações no console
+- ✅ Usa `jsonTransport` do Nodemailer
+- ✅ Permite testar fluxo sem SMTP
+
+**Exemplo de log:**
+
+```
+⚠️  Email service não configurado. Emails não serão enviados.
+📧 [DEV] Email que seria enviado: {
+  to: 'user@example.com',
+  subject: 'Bem-vindo ao Kaven!',
+  messageId: '<abc123@nodemailer.com>'
+}
+```
+
+---
+
+## 🎨 Templates HTML
+
+Todos os templates são:
+
+- ✅ **Responsivos** (mobile-first)
+- ✅ **Inline CSS** (compatibilidade com email clients)
+- ✅ **Gradientes modernos**
+- ✅ **Botões CTA destacados**
+- ✅ **Footer com branding**
+
+### Estrutura Padrão
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body style="background-color: #f4f4f4;">
+    <table width="600" style="background-color: #ffffff;">
+      <!-- Header com gradiente -->
+      <tr>
+        <td style="background: linear-gradient(...)">...</td>
+      </tr>
+
+      <!-- Body com conteúdo -->
+      <tr>
+        <td style="padding: 40px;">...</td>
+      </tr>
+
+      <!-- Footer -->
+      <tr>
+        <td style="background-color: #f8f9fa;">...</td>
+      </tr>
+    </table>
+  </body>
+</html>
+```
+
+---
+
+## 🧪 Testes
+
+### 1. Testar Registro (Welcome Email)
+
+```bash
+curl -X POST http://localhost:8000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@example.com",
+    "password": "Test123!",
+    "name": "Test User"
+  }'
+
+# Verificar logs do servidor para email
+```
+
+### 2. Testar Password Reset
+
+```bash
+curl -X POST http://localhost:8000/api/auth/forgot-password \
+  -H "Content-Type: application/json" \
+  -d '{"email": "test@example.com"}'
+
+# Verificar logs do servidor
+```
+
+### 3. Testar com SMTP Real
+
+1. Configurar variáveis SMTP no `.env`
+2. Reiniciar servidor
+3. Fazer requisição de registro
+4. Verificar inbox do email
+
+---
+
+## 📊 Integração Atual
+
+| Endpoint                         | Email Enviado  | Status          |
+| -------------------------------- | -------------- | --------------- |
+| `POST /api/auth/register`        | Welcome Email  | ✅ Implementado |
+| `POST /api/auth/forgot-password` | Password Reset | ✅ Implementado |
+| `POST /api/auth/verify-email`    | Verification   | 🚧 Planejado    |
+| Webhook Stripe                   | Invoice        | 🚧 Planejado    |
+
+---
+
+## 🚀 Próximas Melhorias
+
+- [ ] Queue system (BullMQ) para emails assíncronos
+- [ ] Retry automático em caso de falha
+- [ ] Templates customizáveis por tenant
+- [ ] Tracking de emails (open rate, click rate)
+- [ ] Suporte a anexos
+- [ ] Emails em múltiplos idiomas
+- [ ] Preview de emails antes de enviar
+
+---
+
+## ⚠️ Troubleshooting
+
+### Email não está sendo enviado
+
+1. Verificar variáveis SMTP no `.env`
+2. Verificar logs do servidor
+3. Testar credenciais SMTP manualmente
+4. Verificar firewall/porta bloqueada
+
+### Gmail bloqueando emails
+
+1. Usar senha de app (não senha normal)
+2. Ativar "Acesso a apps menos seguros" (não recomendado)
+3. Usar SendGrid ou outro provedor
+
+### Templates não renderizando
+
+1. Verificar HTML inline CSS
+2. Testar em https://litmus.com ou https://emailonacid.com
+3. Usar tabelas ao invés de divs
+
+---
+
+## 📝 Exemplo Completo
+
+```typescript
+import { emailService } from './lib/email.service';
+
+// Após criar usuário
+const user = await prisma.user.create({
+  data: { email, password, name },
+});
+
+// Enviar welcome email
+await emailService.sendWelcomeEmail(user);
+
+// Gerar token de verificação
+const verificationToken = crypto.randomBytes(32).toString('hex');
+
+// Salvar token no banco
+await prisma.emailVerificationToken.create({
+  data: {
+    token: verificationToken,
+    userId: user.id,
+    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24h
+  },
+});
+
+// Enviar email de verificação
+await emailService.sendVerificationEmail(user, verificationToken);
+```
+
+---
+
+**Versão:** 1.0.0  
+**Última atualização:** 2025-12-19

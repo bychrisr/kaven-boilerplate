@@ -1,0 +1,342 @@
+---
+title: Setup Wizard
+description: Auto-migrated documentation
+---
+
+# Setup Wizard - Kaven Boilerplate
+
+## Visão Geral
+
+O Setup Wizard é um assistente de configuração inicial do sistema Kaven Boilerplate. Ele guia o usuário através de 4 etapas para configurar o projeto, criar o Admin Tenant e definir as personas administrativas.
+
+## Arquitetura
+
+### Frontend
+
+**Localização:** `apps/admin/app/setup/page.tsx`
+
+O Setup Wizard é uma página Next.js client-side que gerencia o estado da configuração e navega entre os 4 passos.
+
+### Backend
+
+**Endpoint:** `POST /api/setup/init`  
+**Localização:** `apps/admin/app/api/setup/init/route.ts`
+
+Recebe a configuração, valida com Zod e executa o seed do banco de dados via `SetupService`.
+
+**Service:** `SetupService`  
+**Localização:** `apps/admin/lib/services/setup.service.ts`
+
+Serviço reutilizável que encapsula toda a lógica de seed do banco de dados.
+
+## Componentes
+
+### 1. Stepper
+
+**Localização:** `apps/admin/components/setup/stepper.tsx`
+
+Componente de navegação visual que mostra o progresso entre os 4 passos.
+
+**Props:**
+
+- `steps`: Array de objetos com `title` e `description`
+- `currentStep`: Índice do passo atual (0-based)
+
+**Design:**
+
+- Círculos numerados com cores: verde (completo), azul (atual), cinza (pendente)
+- Linhas conectoras entre os passos
+- Texto: branco (atual/completo), cinza (pendente)
+
+### 2. ArchitectureCard
+
+**Localização:** `apps/admin/components/setup/architecture-card.tsx`
+
+Card selecionável para escolha de arquitetura (Single vs Multi-tenant).
+
+**Props:**
+
+- `title`: Título do card
+- `description`: Descrição da arquitetura
+- `icon`: Ícone React (lucide-react)
+- `selected`: Boolean indicando se está selecionado
+- `onClick`: Callback ao clicar
+- `children`: Conteúdo adicional (lista de features)
+
+**Design:**
+
+- Background: `bg-[#161C24]` (dark)
+- Border: `border-2 border-gray-700` (normal), `border-primary-main ring-2` (selecionado)
+- Hover: `hover:border-gray-600 hover:shadow-lg`
+- Ícone: `bg-gray-800 text-gray-400` (normal), `bg-primary-main text-white` (selecionado)
+
+### 3. RoleToggle
+
+**Localização:** `apps/admin/components/setup/role-toggle.tsx`
+
+Toggle para seleção de personas do Admin Tenant.
+
+**Props:**
+
+- `icon`: Ícone React
+- `title`: Nome da persona
+- `description`: Descrição da persona
+- `checked`: Boolean do estado do toggle
+- `onCheckedChange`: Callback quando muda (recebe boolean)
+- `disabled`: Boolean para desabilitar
+- `badge`: Texto opcional (ex: "Obrigatório")
+
+**Design:**
+
+- Background: `bg-[#161C24]` (normal), `bg-[#1a2332]` (checked)
+- Border: `border-2 border-gray-700` (normal), `border-primary-main/40` (checked)
+- Switch: Componente `Switch` customizado
+
+### 4. PasswordRequirements
+
+**Localização:** `apps/admin/components/setup/password-requirements.tsx`
+
+Componente de validação visual de senha em tempo real.
+
+**Props:**
+
+- `password`: String da senha atual
+
+**Validações:**
+
+- ✓ Mínimo 8 caracteres
+- ✓ Uma letra maiúscula (A-Z)
+- ✓ Uma letra minúscula (a-z)
+- ✓ Um número (0-9)
+
+**Design:**
+
+- Ícones: `CheckCircle` (verde) quando válido, `XCircle` (vermelho) quando inválido
+- Cores: `text-green-400` (válido), `text-gray-400` (inválido)
+- Baseado no `SimplePasswordValidator` do projeto Axisor
+
+## Fluxo de Configuração
+
+### Step 1: Branding & Global Settings
+
+**Campos:**
+
+- Nome do Projeto (text)
+- Email do Administrador (email)
+- Senha do Administrador (password com validação visual)
+- Idioma Padrão (select: pt-BR | en-US)
+- Moeda Padrão (select: BRL | USD)
+- Cor Primária (color picker + text input)
+
+**Validação:**
+
+- Nome: mínimo 3, máximo 100 caracteres
+- Email: formato válido
+- Senha: 8+ caracteres, maiúscula, minúscula, número
+- Cor: formato hex válido (#RRGGBB)
+
+### Step 2: Architecture Selection
+
+**Opções:**
+
+- **Single Tenant**: Uma aplicação, uma organização
+- **Multi-Tenant (Camaleão)**: SaaS com múltiplos clientes
+
+**Features Single Tenant:**
+
+- Ideal para ferramentas internas
+- Mais simples de gerenciar
+- Sem isolamento de dados
+
+**Features Multi-Tenant:**
+
+- Ideal para SaaS
+- Isolamento por tenant
+- Subdomínios automáticos
+
+### Step 3: Administrative Team Configuration
+
+**Personas:**
+
+- **Super Admin (The Architect)**: Obrigatório, acesso total
+- **CFO / Financeiro**: Gestão de pagamentos, faturas e Stripe
+- **Customer Success**: Suporte, impersonation e reset de 2FA
+- **Marketing / Growth**: Analytics, CRM e campanhas
+- **DevOps**: Logs, monitoramento e saúde do sistema
+
+**Comportamento:**
+
+- Super Admin sempre criado (disabled=true, checked=true)
+- Demais personas opcionais (toggles funcionais)
+
+### Step 4: Finalization
+
+**Resumo:**
+
+- Nome do projeto
+- Email do administrador
+- Arquitetura escolhida
+- Número de usuários a serem criados
+
+**Ação:**
+
+- Botão "Instalar" com loading state
+- Envia configuração para `/api/setup/init`
+- Salva preferências no localStorage
+- Redireciona para `/login` após sucesso
+
+## Validação
+
+### Schema Zod
+
+**Localização:** `apps/admin/lib/validations/setup.ts`
+
+```typescript
+export const setupConfigSchema = z.object({
+  companyName: z.string().min(3).max(100),
+  adminEmail: z.string().email(),
+  adminPassword: z
+    .string()
+    .min(8)
+    .regex(/[A-Z]/, 'Maiúscula')
+    .regex(/[a-z]/, 'Minúscula')
+    .regex(/[0-9]/, 'Número'),
+  language: z.enum(['pt-BR', 'en-US']),
+  currency: z.enum(['BRL', 'USD']),
+  primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
+  modules: z.object({
+    createFinance: z.boolean(),
+    createSupport: z.boolean(),
+    createMarketing: z.boolean(),
+    createDevOps: z.boolean(),
+  }),
+  mode: z.enum(['SINGLE_TENANT', 'MULTI_TENANT']),
+});
+```
+
+### Tratamento de Erros
+
+**Erro de Validação (400):**
+
+```json
+{
+  "success": false,
+  "error": "Invalid configuration",
+  "details": [{ "field": "adminPassword", "message": "Senha deve conter..." }]
+}
+```
+
+**Erro Genérico (500):**
+
+```json
+{
+  "success": false,
+  "error": "Setup failed",
+  "message": "Descrição do erro"
+}
+```
+
+## Design System
+
+### Tema Dark Glassmorphism
+
+Todos os componentes seguem o padrão dark estabelecido na página de login:
+
+**Cores:**
+
+- Background principal: `bg-gradient-to-br from-[#161C24] via-[#1C252E] to-[#212B36]`
+- Cards/Containers: `bg-[#212B36]` com `border border-gray-700/50`
+- Inputs: `bg-[#161C24] border-gray-700 text-white`
+- Texto primário: `text-white`
+- Texto secundário: `text-gray-400`
+
+**Componentes de Input:**
+
+- TextField: `px-4 py-2.5` (altura consistente)
+- Select: `px-4 py-2.5` (mesma altura)
+- Input: `px-4 py-2.5` (mesma altura)
+- Color picker: `h-[42px]` (altura fixa para compensar type="color")
+
+**Switch:**
+
+- Track: `bg-gray-600` (unchecked), `bg-primary-main` (checked)
+- Thumb: `bg-white` com transição suave
+- Classes hardcoded (não usa concatenação dinâmica para Tailwind JIT)
+
+## Uso
+
+### Acesso
+
+O Setup Wizard deve ser acessado na primeira execução do sistema, quando o banco de dados está vazio.
+
+**URL:** `http://localhost:3002/setup`
+
+### Fluxo Completo
+
+1. Usuário acessa `/setup`
+2. Preenche informações básicas (Step 1)
+3. Escolhe arquitetura (Step 2)
+4. Seleciona personas administrativas (Step 3)
+5. Revisa configuração (Step 4)
+6. Clica em "Instalar"
+7. Sistema cria:
+   - Admin Tenant
+   - Super Admin user
+   - Personas selecionadas (Finance, Support, Marketing, DevOps)
+8. Redireciona para `/login`
+
+### Dados Criados
+
+**Tenant:**
+
+- Nome: valor de `companyName`
+- Slug: gerado automaticamente
+- Modo: SINGLE_TENANT ou MULTI_TENANT
+
+**Usuários:**
+
+- Super Admin: sempre criado
+- Personas opcionais: criadas conforme seleção
+
+**Metadata:**
+Cada usuário tem metadata com internal role:
+
+```json
+{
+  "internalRole": "ARCHITECT" | "FINANCE" | "SUPPORT" | "MARKETING" | "DEVOPS"
+}
+```
+
+## Segurança
+
+### Validação de Senha
+
+**Requisitos obrigatórios:**
+
+- Mínimo 8 caracteres
+- Pelo menos uma letra maiúscula
+- Pelo menos uma letra minúscula
+- Pelo menos um número
+
+**Feedback visual:**
+
+- Componente `PasswordRequirements` mostra status em tempo real
+- Validação client-side (UX) + server-side (segurança)
+
+### Proteção do Endpoint
+
+O endpoint `/api/setup/init` deve ser protegido em produção para permitir execução apenas uma vez ou com autenticação administrativa.
+
+## Próximos Passos
+
+1. **Proteção do Setup:** Adicionar verificação se sistema já foi configurado
+2. **Middleware de Setup:** Redirecionar para `/setup` se banco vazio
+3. **Testes E2E:** Validar fluxo completo do wizard
+4. **Internacionalização:** Suporte completo para pt-BR e en-US
+5. **Temas customizados:** Aplicar `primaryColor` escolhida no sistema
+
+## Referências
+
+- **Design:** Baseado na página de login (`apps/admin/app/(auth)/login/login-form.tsx`)
+- **Validação de senha:** Inspirado no `SimplePasswordValidator` do projeto Axisor
+- **Arquitetura Multi-Tenant:** Documentada em `docs/ARCHITECTURE.md`

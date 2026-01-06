@@ -1,0 +1,103 @@
+---
+title: "Form Validation Logic"
+description: Migrated from legacy docs
+---
+
+# User Create Page - Real-time Validation
+
+## Overview
+
+Implementação de validação em tempo real com feedback visual (bordas verde/vermelha) no formulário de criação de usuário.
+
+## Validation Strategy
+
+### Biblioteca Escolhida: React Hook Form (já em uso)
+
+**Por que não adicionar nova biblioteca:**
+
+- ✅ React Hook Form já instalado e configurado
+- ✅ Performance superior (menos re-renders que Formik)
+- ✅ Integração nativa com Zod
+- ✅ Suporte built-in para validação em tempo real
+- ✅ TypeScript first-class support
+
+### Modo de Validação: `onBlur`
+
+**Configuração:**
+
+```typescript
+useForm({
+  mode: 'onBlur', // Valida quando campo perde foco
+  reValidateMode: 'onChange', // Re-valida em tempo real após primeira validação
+});
+```
+
+**Vantagens do `onBlur`:**
+
+- ✅ Melhor UX - não interrompe digitação do usuário
+- ✅ Melhor performance - menos re-renders
+- ✅ Feedback após interação completa com o campo
+- ✅ Recomendado pela documentação oficial
+
+**Alternativas consideradas:**
+
+- `onChange` - Valida a cada tecla (muito intrusivo, performance ruim)
+- `onTouched` - Valida no primeiro blur, depois onChange (meio-termo)
+- `onSubmit` - Valida apenas ao submeter (feedback tardio)
+
+## Visual Feedback
+
+### Estados do Campo
+
+1. **Default (não tocado):** Border padrão
+2. **Error (inválido):** Border vermelha + mensagem de erro
+3. **Success (válido):** Border verde
+4. **Disabled (auto-preenchido):** Border cinza, não editável
+
+### Implementação
+
+```typescript
+// Verificar se campo foi tocado e tem erro
+const hasError = errors.fieldName && touchedFields.fieldName;
+
+// Verificar se campo foi tocado e está válido
+const isValid = !errors.fieldName && touchedFields.fieldName && watch('fieldName');
+
+// Classes condicionais
+className={cn(
+  "bg-transparent",
+  hasError && "border-red-500 focus:border-red-500",
+  isValid && "border-green-500 focus:border-green-500"
+)}
+```
+
+### Acessibilidade (A11y)
+
+- `aria-invalid="true"` em campos com erro
+- `role="alert"` em mensagens de erro
+- Mensagens de erro claras e específicas
+
+## Fields com Validação Visual
+
+1. **Full name** - Mínimo 3 caracteres
+2. **Email** - Formato de email válido
+3. **Phone** - Validação customizada (já implementada)
+4. **Password** - Mínimo 6 caracteres
+5. **Company** - Opcional
+6. **Address fields** - Validação após autocomplete
+
+## Referências
+
+- [React Hook Form - Validation Modes](https://react-hook-form.com/api/useform#mode)
+- [React Hook Form - formState](https://react-hook-form.com/api/useform/formstate)
+- [Best Practices - onBlur vs onChange](https://www.strobecorp.com/blog/react-hook-form-validation)
+
+## Implementation Checklist
+
+- [x] Pesquisar melhores práticas de validação
+- [x] Escolher estratégia (React Hook Form + onBlur)
+- [ ] Configurar modo de validação no useForm
+- [ ] Implementar classes condicionais para bordas
+- [ ] Adicionar feedback visual em todos os campos
+- [ ] Testar UX e performance
+- [ ] Documentar padrão para outros formulários
