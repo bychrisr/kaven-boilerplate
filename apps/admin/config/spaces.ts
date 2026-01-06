@@ -116,7 +116,7 @@ export const SPACES: Record<string, SpaceConfig> = {
             href: '#',
             children: [
                { label: 'Dashboard', href: '/observability' },
-               { label: 'Audit Logs', href: '/observability?tab=audit' },
+               { label: 'Audit Logs', href: '/audit-logs' },
                { label: 'Grafana', href: 'http://localhost:3001', external: true },
                { label: 'Prometheus', href: 'http://localhost:9090', external: true }
             ]
