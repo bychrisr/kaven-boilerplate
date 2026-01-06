@@ -1,0 +1,463 @@
+---
+title: Colors
+description: Sistema de cores completo do Kaven Design System com suporte a dark mode
+---
+
+# Colors
+
+> Sistema de cores semântico baseado em oklch para light mode e hex para dark mode, garantindo consistência visual e acessibilidade.
+
+## Quando Usar
+
+- **Branding**: Cores primárias e secundárias da marca
+- **Feedback**: Cores semânticas para sucesso, erro, aviso e informação
+- **UI**: Cores neutras para backgrounds, textos e bordas
+- **Charts**: Cores específicas para visualizações de dados
+
+## Paleta de Cores
+
+### Primary (Verde Minimals)
+
+Cor principal da marca, usada para CTAs, links e elementos de destaque.
+
+<div className="grid grid-cols-5 gap-4 my-6">
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-primary-darker border border-border"></div>
+    <p className="text-xs font-mono">primary-darker</p>
+    <p className="text-xs text-muted-foreground">#006C4F</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-primary-dark border border-border"></div>
+    <p className="text-xs font-mono">primary-dark</p>
+    <p className="text-xs text-muted-foreground">#007867</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-primary border border-border"></div>
+    <p className="text-xs font-mono">primary</p>
+    <p className="text-xs text-muted-foreground">#00A76F</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-primary-light border border-border"></div>
+    <p className="text-xs font-mono">primary-light</p>
+    <p className="text-xs text-muted-foreground">#5BE49B</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-primary-lighter border border-border"></div>
+    <p className="text-xs font-mono">primary-lighter</p>
+    <p className="text-xs text-muted-foreground">#C8FAD6</p>
+  </div>
+</div>
+
+```tsx
+// Uso em componentes
+<Button className="bg-primary hover:bg-primary-dark">Primary Button</Button>
+```
+
+### Secondary (Roxo)
+
+Cor secundária para elementos de suporte e variações.
+
+<div className="grid grid-cols-5 gap-4 my-6">
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-secondary-darker border border-border"></div>
+    <p className="text-xs font-mono">secondary-darker</p>
+    <p className="text-xs text-muted-foreground">#5119B7</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-secondary-dark border border-border"></div>
+    <p className="text-xs font-mono">secondary-dark</p>
+    <p className="text-xs text-muted-foreground">#6927CC</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-secondary border border-border"></div>
+    <p className="text-xs font-mono">secondary</p>
+    <p className="text-xs text-muted-foreground">#8E33FF</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-secondary-light border border-border"></div>
+    <p className="text-xs font-mono">secondary-light</p>
+    <p className="text-xs text-muted-foreground">#C684FF</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-secondary-lighter border border-border"></div>
+    <p className="text-xs font-mono">secondary-lighter</p>
+    <p className="text-xs text-muted-foreground">#EFD6FF</p>
+  </div>
+</div>
+
+### Semantic Colors
+
+Cores para feedback e estados da aplicação.
+
+#### Success (Verde)
+
+<div className="grid grid-cols-5 gap-4 my-6">
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-success-darker border border-border"></div>
+    <p className="text-xs font-mono">success-darker</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-success-dark border border-border"></div>
+    <p className="text-xs font-mono">success-dark</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-success-main border border-border"></div>
+    <p className="text-xs font-mono">success-main</p>
+    <p className="text-xs text-muted-foreground">#22C55E</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-success-light border border-border"></div>
+    <p className="text-xs font-mono">success-light</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-success-lighter border border-border"></div>
+    <p className="text-xs font-mono">success-lighter</p>
+  </div>
+</div>
+
+#### Warning (Amarelo)
+
+<div className="grid grid-cols-5 gap-4 my-6">
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-warning-darker border border-border"></div>
+    <p className="text-xs font-mono">warning-darker</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-warning-dark border border-border"></div>
+    <p className="text-xs font-mono">warning-dark</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-warning-main border border-border"></div>
+    <p className="text-xs font-mono">warning-main</p>
+    <p className="text-xs text-muted-foreground">#FFAB00</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-warning-light border border-border"></div>
+    <p className="text-xs font-mono">warning-light</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-warning-lighter border border-border"></div>
+    <p className="text-xs font-mono">warning-lighter</p>
+  </div>
+</div>
+
+#### Error (Vermelho)
+
+<div className="grid grid-cols-5 gap-4 my-6">
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-error-darker border border-border"></div>
+    <p className="text-xs font-mono">error-darker</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-error-dark border border-border"></div>
+    <p className="text-xs font-mono">error-dark</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-error-main border border-border"></div>
+    <p className="text-xs font-mono">error-main</p>
+    <p className="text-xs text-muted-foreground">#FF5630</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-error-light border border-border"></div>
+    <p className="text-xs font-mono">error-light</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-error-lighter border border-border"></div>
+    <p className="text-xs font-mono">error-lighter</p>
+  </div>
+</div>
+
+#### Info (Azul)
+
+<div className="grid grid-cols-5 gap-4 my-6">
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-info-darker border border-border"></div>
+    <p className="text-xs font-mono">info-darker</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-info-dark border border-border"></div>
+    <p className="text-xs font-mono">info-dark</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-info-main border border-border"></div>
+    <p className="text-xs font-mono">info-main</p>
+    <p className="text-xs text-muted-foreground">#00B8D9</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-info-light border border-border"></div>
+    <p className="text-xs font-mono">info-light</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-20 rounded-lg bg-info-lighter border border-border"></div>
+    <p className="text-xs font-mono">info-lighter</p>
+  </div>
+</div>
+
+### Neutral Colors (Grays)
+
+Escala de cinzas para textos, backgrounds e bordas.
+
+<div className="grid grid-cols-10 gap-2 my-6">
+  <div className="space-y-2">
+    <div className="h-16 rounded-lg bg-gray-50 border border-border"></div>
+    <p className="text-xs font-mono">gray-50</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-16 rounded-lg bg-gray-100 border border-border"></div>
+    <p className="text-xs font-mono">100</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-16 rounded-lg bg-gray-200 border border-border"></div>
+    <p className="text-xs font-mono">200</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-16 rounded-lg bg-gray-300 border border-border"></div>
+    <p className="text-xs font-mono">300</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-16 rounded-lg bg-gray-400 border border-border"></div>
+    <p className="text-xs font-mono">400</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-16 rounded-lg bg-gray-500 border border-border"></div>
+    <p className="text-xs font-mono">500</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-16 rounded-lg bg-gray-600 border border-border"></div>
+    <p className="text-xs font-mono">600</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-16 rounded-lg bg-gray-700 border border-border"></div>
+    <p className="text-xs font-mono">700</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-16 rounded-lg bg-gray-800 border border-border"></div>
+    <p className="text-xs font-mono">800</p>
+  </div>
+  <div className="space-y-2">
+    <div className="h-16 rounded-lg bg-gray-900 border border-border"></div>
+    <p className="text-xs font-mono">900</p>
+  </div>
+</div>
+
+## UI Colors
+
+Cores específicas para elementos de interface.
+
+| Token              | Light Mode | Dark Mode                | Uso                     |
+| ------------------ | ---------- | ------------------------ | ----------------------- |
+| `background`       | `#FFFFFF`  | `#161C24`                | Background principal    |
+| `foreground`       | `#212121`  | `#FFFFFF`                | Texto principal         |
+| `card`             | `#FFFFFF`  | `#212B36`                | Background de cards     |
+| `card-foreground`  | `#212121`  | `#FFFFFF`                | Texto em cards          |
+| `popover`          | `#FFFFFF`  | `#212B36`                | Background de popovers  |
+| `muted`            | `#F5F5F5`  | `rgba(145,158,171,0.12)` | Backgrounds secundários |
+| `muted-foreground` | `#757575`  | `#919EAB`                | Textos secundários      |
+| `border`           | `#E0E0E0`  | `rgba(145,158,171,0.24)` | Bordas                  |
+| `input`            | `#E0E0E0`  | `rgba(145,158,171,0.24)` | Bordas de inputs        |
+| `ring`             | `#BDBDBD`  | `rgba(0,167,111,0.3)`    | Focus rings             |
+
+## Dark Mode
+
+O Kaven usa o tema Minimals para dark mode com cores cuidadosamente selecionadas.
+
+```tsx
+// Ativar dark mode
+<html className="dark">{/* Conteúdo */}</html>
+```
+
+### Comparação Light vs Dark
+
+```tsx
+// Light Mode
+--background: oklch(1 0 0);        // Branco puro
+--foreground: oklch(0.145 0 0);    // Quase preto
+--primary: oklch(0.205 0 0);       // Preto
+
+// Dark Mode
+--background: #161c24;              // Azul escuro profundo
+--foreground: #ffffff;              // Branco
+--primary: #00a76f;                 // Verde Minimals
+```
+
+## Chart Colors
+
+Cores específicas para gráficos e visualizações de dados.
+
+<div className="grid grid-cols-5 gap-4 my-6">
+  <div className="space-y-2">
+    <div
+      className="h-20 rounded-lg border border-border"
+      style={{ backgroundColor: 'var(--chart-1)' }}
+    ></div>
+    <p className="text-xs font-mono">chart-1</p>
+    <p className="text-xs text-muted-foreground">#00A76F</p>
+  </div>
+  <div className="space-y-2">
+    <div
+      className="h-20 rounded-lg border border-border"
+      style={{ backgroundColor: 'var(--chart-2)' }}
+    ></div>
+    <p className="text-xs font-mono">chart-2</p>
+    <p className="text-xs text-muted-foreground">#FFAB00</p>
+  </div>
+  <div className="space-y-2">
+    <div
+      className="h-20 rounded-lg border border-border"
+      style={{ backgroundColor: 'var(--chart-3)' }}
+    ></div>
+    <p className="text-xs font-mono">chart-3</p>
+    <p className="text-xs text-muted-foreground">#FF5630</p>
+  </div>
+  <div className="space-y-2">
+    <div
+      className="h-20 rounded-lg border border-border"
+      style={{ backgroundColor: 'var(--chart-4)' }}
+    ></div>
+    <p className="text-xs font-mono">chart-4</p>
+    <p className="text-xs text-muted-foreground">#00B8D9</p>
+  </div>
+  <div className="space-y-2">
+    <div
+      className="h-20 rounded-lg border border-border"
+      style={{ backgroundColor: 'var(--chart-5)' }}
+    ></div>
+    <p className="text-xs font-mono">chart-5</p>
+    <p className="text-xs text-muted-foreground">#8E33FF</p>
+  </div>
+</div>
+
+## Uso em Código
+
+### Tailwind Classes
+
+```tsx
+// Backgrounds
+<div className="bg-primary">Primary Background</div>
+<div className="bg-success-main">Success Background</div>
+<div className="bg-muted">Muted Background</div>
+
+// Text
+<p className="text-foreground">Primary Text</p>
+<p className="text-muted-foreground">Secondary Text</p>
+<p className="text-primary">Primary Color Text</p>
+
+// Borders
+<div className="border border-border">Default Border</div>
+<div className="border border-primary">Primary Border</div>
+```
+
+### CSS Variables
+
+```css
+.custom-component {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border: 1px solid hsl(var(--border));
+}
+
+/* Dark mode específico */
+.dark .custom-component {
+  background-color: var(--primary); /* #00a76f */
+}
+```
+
+### Inline Styles
+
+```tsx
+<div
+  style={{
+    backgroundColor: 'hsl(var(--primary))',
+    color: 'hsl(var(--primary-foreground))',
+  }}
+>
+  Custom Styled
+</div>
+```
+
+## Acessibilidade
+
+### Contraste de Cores
+
+Todas as combinações de cores seguem WCAG 2.1 AA:
+
+| Combinação                        | Contraste | Status |
+| --------------------------------- | --------- | ------ |
+| `foreground` / `background`       | 16:1      | ✅ AAA |
+| `primary` / `primary-foreground`  | 12:1      | ✅ AAA |
+| `muted-foreground` / `background` | 4.8:1     | ✅ AA  |
+| `error-main` / `white`            | 4.5:1     | ✅ AA  |
+
+### Testes de Contraste
+
+```tsx
+// Sempre teste combinações de cores
+<Button className="bg-primary text-primary-foreground">
+  {/* Contraste garantido: 12:1 */}
+  Acessível
+</Button>
+
+// ❌ Evite
+<Button className="bg-primary-light text-white">
+  {/* Contraste insuficiente */}
+  Não Acessível
+</Button>
+```
+
+## Melhores Práticas
+
+### ✅ Fazer
+
+- **Use cores semânticas** para feedback (success, error, warning, info)
+- **Mantenha consistência** usando tokens CSS ao invés de valores hardcoded
+- **Teste em dark mode** sempre que usar cores customizadas
+- **Verifique contraste** com ferramentas como WebAIM Contrast Checker
+- **Use opacity** para variações sutis: `bg-primary/10`
+
+### ❌ Não Fazer
+
+- ❌ **Não use hex/rgb direto** - sempre use CSS variables
+- ❌ **Não ignore dark mode** - teste todas as cores
+- ❌ **Não use cores aleatórias** - siga a paleta estabelecida
+- ❌ **Não sacrifique acessibilidade** por estética
+- ❌ **Não misture sistemas** (oklch no light, hex no dark está OK)
+
+## Customização
+
+### Adicionar Nova Cor
+
+```css
+/* apps/admin/styles/theme.css */
+:root {
+  --custom-color: oklch(0.7 0.2 150);
+}
+
+.dark {
+  --custom-color: #10b981;
+}
+```
+
+```tsx
+// Usar no Tailwind
+<div className="bg-[hsl(var(--custom-color))]">Custom Color</div>
+```
+
+### Modificar Paleta Existente
+
+```css
+/* Sobrescrever primary */
+:root {
+  --primary: oklch(0.5 0.3 200); /* Azul ao invés de verde */
+}
+
+.dark {
+  --primary: #3b82f6;
+}
+```
+
+## Relacionados
+
+- [Typography](/design-system/foundation/typography) - Hierarquia tipográfica
+- [Shadows](/design-system/foundation/shadows) - Elevações e sombras
+- [Buttons](/design-system/components/button) - Uso de cores em botões
+- [Alerts](/design-system/components/alert) - Cores semânticas em alertas

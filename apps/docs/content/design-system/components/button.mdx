@@ -1,175 +1,100 @@
 ---
 title: Button
-description: Componente de botão com múltiplas variantes e cores semânticas
+description: Botões para ações e CTAs com 9 cores, 6 tamanhos e 3 estilos
 ---
-
-import { Callout, Tabs } from 'nextra/components';
 
 # Button
 
-Componente de botão versátil com suporte a múltiplas variantes, cores e estados.
+> Componente de botão completo com suporte a loading states, ícones, e todas as variações semânticas do Kaven Design System.
 
-<Callout type="info">
-  O componente Button está localizado em `components/ui/button.tsx` e usa Radix
-  UI + Tailwind CSS.
-</Callout>
+## Variações
 
-## Variantes
+### Contained (Filled)
 
-import { Button } from '../../../components/ui/button';
-
-### Contained (Preenchido)
-
-Botão sólido para ações primárias.
-
-<div className="preview-box">
-  <Button variant="contained" color="primary">
-    Salvar
-  </Button>
-  <Button variant="contained" color="secondary">
-    Voltar
-  </Button>
-  <Button variant="contained" color="error">
-    Deletar
-  </Button>
-</div>
+Botões com background sólido e sombra z8.
 
 ```tsx
 import { Button } from '@/components/ui/button';
 
-<Button variant="contained" color="primary">
-  Salvar
-</Button>;
+<Button variant="contained" color="primary">Primary</Button>
+<Button variant="contained" color="secondary">Secondary</Button>
+<Button variant="contained" color="success">Success</Button>
+<Button variant="contained" color="warning">Warning</Button>
+<Button variant="contained" color="error">Error</Button>
+<Button variant="contained" color="info">Info</Button>
 ```
 
-**Características:**
+### Outlined
 
-- Background colorido
-- Texto branco
-- Shadow z8
-- Padding 12px 24px
-
-### Outlined (Contornado)
-
-Botão com borda para ações secundárias.
+Botões com borda e background transparente.
 
 ```tsx
-<Button variant="outlined" color="primary">
-  Cancelar
-</Button>
+<Button variant="outlined" color="primary">Primary</Button>
+<Button variant="outlined" color="error">Error</Button>
 ```
 
-**Características:**
+### Text
 
-- Background transparente
-- Border 1px solid
-- Texto colorido
-
-### Text (Texto)
-
-Botão minimalista para ações terciárias.
+Botões sem background ou borda.
 
 ```tsx
-<Button variant="text" color="primary">
-  Ver mais
-</Button>
-```
-
-## Cores Semânticas
-
-```tsx
-<Button color="primary">Primary</Button>
-<Button color="secondary">Secondary</Button>
-<Button color="success">Success</Button>
-<Button color="error">Error</Button>
-<Button color="warning">Warning</Button>
-<Button color="info">Info</Button>
+<Button variant="text" color="primary">Primary</Button>
+<Button variant="text" color="error">Delete</Button>
 ```
 
 ## Tamanhos
 
 ```tsx
-<Button size="sm">Pequeno</Button>
-<Button size="md">Médio (padrão)</Button>
-<Button size="lg">Grande</Button>
+<Button size="xs">Extra Small</Button>
+<Button size="sm">Small</Button>
+<Button size="md">Medium</Button>
+<Button size="lg">Large</Button>
+<Button size="xl">Extra Large</Button>
 ```
 
-| Tamanho | Altura | Padding Horizontal |
-| ------- | ------ | ------------------ |
-| `sm`    | 32px   | 16px               |
-| `md`    | 40px   | 24px               |
-| `lg`    | 48px   | 32px               |
-
-## Estados
-
-### Disabled
+## Com Ícones
 
 ```tsx
-<Button disabled>Desabilitado</Button>
+import { Plus, Trash2, Download } from 'lucide-react';
+
+<Button variant="contained" color="primary">
+  <Plus />
+  Novo Usuário
+</Button>
+
+<Button variant="outlined" color="error">
+  <Trash2 />
+  Excluir
+</Button>
+
+// Icon only
+<Button variant="contained" color="primary" size="icon">
+  <Plus />
+</Button>
 ```
 
-### Loading
+## Loading State
 
 ```tsx
 <Button loading>Carregando...</Button>
+<Button loading variant="outlined" color="primary">
+  Salvando
+</Button>
 ```
-
-### Com Ícone
-
-```tsx
-import { PlusIcon } from 'lucide-react';
-
-<Button>
-  <PlusIcon className="w-4 h-4 mr-2" />
-  Adicionar
-</Button>;
-```
-
-## Boas Práticas
-
-<Callout type="warning">
-  Limite a 1-2 botões primários (contained) por tela para manter hierarquia
-  clara.
-</Callout>
-
-### ✅ Fazer
-
-- Usar `contained` para ação primária
-- Usar `outlined` para ações secundárias
-- Usar `text` para ações terciárias
-- Manter texto conciso (máx 2-3 palavras)
-- Usar ícones para clareza
-
-### ❌ Não Fazer
-
-- Múltiplos botões `contained` na mesma área
-- Botões muito pequenos (< 40px altura)
-- Texto muito longo
-- Usar apenas ícones sem label (acessibilidade)
-
-## Acessibilidade
-
-- Sempre forneça `aria-label` para botões só com ícone
-- Use `disabled` ao invés de `pointer-events-none`
-- Mantenha contraste adequado (WCAG AA)
-- Área de toque mínima: 44x44px (mobile)
 
 ## API
 
-```typescript
-interface ButtonProps {
-  variant?: 'contained' | 'outlined' | 'text';
-  color?: 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info';
-  size?: 'sm' | 'md' | 'lg';
-  disabled?: boolean;
-  loading?: boolean;
-  children: React.ReactNode;
-  onClick?: () => void;
-}
-```
+| Prop        | Tipo                                                                      | Padrão        | Descrição                         |
+| ----------- | ------------------------------------------------------------------------- | ------------- | --------------------------------- |
+| `variant`   | `'contained' \| 'outlined' \| 'text'`                                     | `'contained'` | Estilo do botão                   |
+| `color`     | `'primary' \| 'secondary' \| 'success' \| 'warning' \| 'error' \| 'info'` | `'primary'`   | Cor semântica                     |
+| `size`      | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'icon'`                          | `'md'`        | Tamanho                           |
+| `loading`   | `boolean`                                                                 | `false`       | Estado de carregamento            |
+| `disabled`  | `boolean`                                                                 | `false`       | Desabilita o botão                |
+| `fullWidth` | `boolean`                                                                 | `false`       | Largura total                     |
+| `asChild`   | `boolean`                                                                 | `false`       | Renderiza como child (Radix Slot) |
 
-## Links Relacionados
+## Relacionados
 
-- [Colors](/design-system/tokens/colors)
-- [Typography](/design-system/tokens/typography)
-- [Card](/design-system/components/card)
+- [Icon Button](/design-system/components/icon-button)
+- [Button Group](/design-system/components/button-group)

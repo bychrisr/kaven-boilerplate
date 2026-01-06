@@ -5,38 +5,87 @@ description: Navegação entre páginas de dados
 
 # Pagination
 
-Componente para navegar entre páginas de dados tabulares.
+> Componente para navegar entre múltiplas páginas de conteúdo.
 
-## Uso Básico
-
-import { Pagination } from '../../../components/ui/pagination';
-
-## Uso Básico
-
-<div className="preview-box">
-  <Pagination count={10} page={1} />
-</div>
+## Exemplo Básico
 
 ```tsx
-<Pagination page={currentPage} count={totalPages} onChange={handlePageChange} />
+import { Pagination } from '@/components/ui/pagination';
+
+<Pagination count={10} page={page} onChange={(newPage) => setPage(newPage)} />;
 ```
 
-## Com Info
+## Com Data Table
 
 ```tsx
-<Pagination page={1} count={10} showInfo totalItems={95} itemsPerPage={10} />
+const [page, setPage] = useState(0);
+const [rowsPerPage, setRowsPerPage] = useState(10);
+
+const { data } = useUsers({
+  page: page + 1,
+  limit: rowsPerPage,
+});
+
+const totalPages = Math.ceil((data?.pagination.total ?? 0) / rowsPerPage);
+
+<div className="p-4 border-t border-border/50 flex items-center justify-between">
+  <div className="text-sm text-muted-foreground">
+    Mostrando {page * rowsPerPage + 1} a{' '}
+    {Math.min((page + 1) * rowsPerPage, data?.pagination.total ?? 0)} de{' '}
+    {data?.pagination.total ?? 0} resultados
+  </div>
+  <Pagination
+    count={totalPages}
+    page={page + 1}
+    onChange={(newPage) => setPage(newPage - 1)}
+    size="md"
+    color="primary"
+  />
+</div>;
 ```
 
-## Boas Práticas
+## Tamanhos
 
-### ✅ Fazer
+```tsx
+<Pagination count={10} size="sm" />
+<Pagination count={10} size="md" />
+<Pagination count={10} size="lg" />
+```
 
-- Mostrar total de páginas
-- Fornecer navegação rápida
-- Indicar página atual
+## Variantes
 
-### ❌ Não Fazer
+```tsx
+// Com primeira/última página
+<Pagination
+  count={10}
+  page={page}
+  onChange={setPage}
+  showFirstButton
+  showLastButton
+/>
 
-- Muitas páginas sem ellipsis
-- Botões muito pequenos
-- Sem indicação de progresso
+// Compacto
+<Pagination
+  count={10}
+  page={page}
+  onChange={setPage}
+  siblingCount={0}
+  boundaryCount={1}
+/>
+```
+
+## API
+
+| Prop              | Tipo                       | Padrão      | Descrição                    |
+| ----------------- | -------------------------- | ----------- | ---------------------------- |
+| `count`           | `number`                   | -           | Total de páginas             |
+| `page`            | `number`                   | `1`         | Página atual (1-indexed)     |
+| `onChange`        | `(page: number) => void`   | -           | Callback quando muda         |
+| `size`            | `'sm' \| 'md' \| 'lg'`     | `'md'`      | Tamanho                      |
+| `color`           | `'primary' \| 'secondary'` | `'primary'` | Cor                          |
+| `showFirstButton` | `boolean`                  | `false`     | Mostra botão primeira página |
+| `showLastButton`  | `boolean`                  | `false`     | Mostra botão última página   |
+
+## Relacionados
+
+- [Data Table](/design-system/components/data-table) - Tabelas com paginação

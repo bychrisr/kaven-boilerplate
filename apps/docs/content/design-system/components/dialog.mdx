@@ -1,52 +1,117 @@
 ---
 title: Dialog
-description: Modal para exibir conteúdo sobreposto
+description: Modais e diálogos para interações focadas
 ---
 
 # Dialog
 
-Componente modal para exibir conteúdo sobreposto com backdrop.
+> Componente de modal para exibir conteúdo sobreposto que requer atenção do usuário.
 
-import { DialogDemo } from '../../../components/demos/dialog-demo';
+## Variações
 
-## Uso Básico
-
-<div className="preview-box">
-  <DialogDemo />
-</div>
+### Básico
 
 ```tsx
-<Dialog open={isOpen} onClose={handleClose}>
-  <DialogTitle>Confirmar ação</DialogTitle>
-  <DialogContent>Tem certeza que deseja continuar?</DialogContent>
-  <DialogActions>
-    <Button onClick={handleClose}>Cancelar</Button>
-    <Button variant="contained" onClick={handleConfirm}>
-      Confirmar
-    </Button>
-  </DialogActions>
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+
+function BasicDialog() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Abrir Dialog</Button>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Título do Dialog</DialogTitle>
+            <DialogDescription>
+              Descrição do conteúdo do dialog.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">Conteúdo principal do dialog.</div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outlined" onClick={() => setOpen(false)}>
+              Cancelar
+            </Button>
+            <Button variant="contained" onClick={() => setOpen(false)}>
+              Confirmar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+```
+
+### Com Formulário
+
+```tsx
+<Dialog open={open} onOpenChange={setOpen}>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Novo Usuário</DialogTitle>
+    </DialogHeader>
+    <form onSubmit={handleSubmit}>
+      <div className="space-y-4 py-4">
+        <div className="space-y-2">
+          <Label htmlFor="name">Nome</Label>
+          <Input id="name" placeholder="João Silva" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input id="email" type="email" placeholder="joao@example.com" />
+        </div>
+      </div>
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="outlined" onClick={() => setOpen(false)}>
+          Cancelar
+        </Button>
+        <Button type="submit" variant="contained">
+          Salvar
+        </Button>
+      </div>
+    </form>
+  </DialogContent>
 </Dialog>
 ```
 
-## Tamanhos
+### Tamanhos
 
 ```tsx
-<Dialog size="sm">Pequeno</Dialog>
-<Dialog size="md">Médio (padrão)</Dialog>
-<Dialog size="lg">Grande</Dialog>
-<Dialog size="full">Tela cheia</Dialog>
+// Small
+<DialogContent className="max-w-sm">...</DialogContent>
+
+// Medium (default)
+<DialogContent className="max-w-md">...</DialogContent>
+
+// Large
+<DialogContent className="max-w-lg">...</DialogContent>
+
+// Extra Large
+<DialogContent className="max-w-2xl">...</DialogContent>
+
+// Full Width
+<DialogContent className="max-w-4xl">...</DialogContent>
 ```
 
-## Boas Práticas
+## API
 
-### ✅ Fazer
+| Prop           | Tipo                      | Padrão | Descrição                    |
+| -------------- | ------------------------- | ------ | ---------------------------- |
+| `open`         | `boolean`                 | -      | Controla visibilidade        |
+| `onOpenChange` | `(open: boolean) => void` | -      | Callback quando muda         |
+| `modal`        | `boolean`                 | `true` | Bloqueia interação com fundo |
 
-- Fornecer botão de fechar
-- Usar para ações importantes
-- Manter conteúdo focado
+## Relacionados
 
-### ❌ Não Fazer
-
-- Modais muito grandes
-- Múltiplos modais empilhados
-- Conteúdo não relacionado
+- [Alert Dialog](/design-system/components/alert-dialog) - Diálogos de confirmação
+- [Drawer](/design-system/components/drawer) - Side panels

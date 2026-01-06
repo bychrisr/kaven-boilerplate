@@ -1,75 +1,105 @@
 ---
 title: Alert
-description: Componente para exibir mensagens de feedback ao usuário
+description: Alertas e mensagens de feedback para o usuário
 ---
 
 # Alert
 
-Componente para exibir mensagens de feedback com diferentes níveis de severidade.
+> Componente para exibir mensagens importantes com diferentes níveis de severidade.
 
-import { Alert } from '../../../components/ui/alert';
+## Variações
 
-### Success
-
-<div className="preview-box">
-  <Alert severity="success">Operação realizada com sucesso!</Alert>
-</div>
+### Tipos
 
 ```tsx
-<Alert severity="success">Operação realizada com sucesso!</Alert>
-```
+import { Alert } from '@/components/ui/alert';
+import { Info, CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
 
-### Error
+// Info
+<Alert severity="info">
+  <Info className="h-4 w-4" />
+  <div>
+    <h4 className="font-bold">Informação</h4>
+    <p>Esta é uma mensagem informativa.</p>
+  </div>
+</Alert>
 
-```tsx
-<Alert severity="error">Ocorreu um erro ao processar a solicitação.</Alert>
-```
+// Success
+<Alert severity="success">
+  <CheckCircle className="h-4 w-4" />
+  <div>
+    <h4 className="font-bold">Sucesso!</h4>
+    <p>Operação realizada com sucesso.</p>
+  </div>
+</Alert>
 
-### Warning
+// Warning
+<Alert severity="warning">
+  <AlertTriangle className="h-4 w-4" />
+  <div>
+    <h4 className="font-bold">Atenção</h4>
+    <p>Verifique os dados antes de continuar.</p>
+  </div>
+</Alert>
 
-```tsx
-<Alert severity="warning">Atenção: Esta ação não pode ser desfeita.</Alert>
-```
-
-### Info
-
-```tsx
-<Alert severity="info">Informação importante sobre o sistema.</Alert>
-```
-
-## Com Título
-
-```tsx
-<Alert severity="success" title="Sucesso">
-  Seus dados foram salvos corretamente.
+// Error
+<Alert severity="error">
+  <XCircle className="h-4 w-4" />
+  <div>
+    <h4 className="font-bold">Erro</h4>
+    <p>Não foi possível completar a operação.</p>
+  </div>
 </Alert>
 ```
 
-## Com Ação
+### Com Ação
 
 ```tsx
-<Alert
-  severity="error"
-  action={
-    <Button size="sm" variant="text">
-      Tentar novamente
-    </Button>
-  }
->
-  Falha ao carregar dados.
+<Alert severity="warning">
+  <AlertTriangle className="h-4 w-4" />
+  <div className="flex-1">
+    <h4 className="font-bold">Atualização disponível</h4>
+    <p>Uma nova versão está disponível.</p>
+  </div>
+  <Button variant="text" size="sm">
+    Atualizar
+  </Button>
 </Alert>
 ```
 
-## Boas Práticas
+### Dismissible
 
-### ✅ Fazer
+```tsx
+import { X } from 'lucide-react';
 
-- Usar severity apropriado
-- Mensagens claras e concisas
-- Fornecer ação quando aplicável
+function DismissibleAlert() {
+  const [show, setShow] = useState(true);
 
-### ❌ Não Fazer
+  if (!show) return null;
 
-- Mensagens muito longas
-- Múltiplos alerts na mesma área
-- Usar para conteúdo permanente
+  return (
+    <Alert severity="info">
+      <Info className="h-4 w-4" />
+      <div className="flex-1">
+        <p>Esta mensagem pode ser fechada.</p>
+      </div>
+      <button onClick={() => setShow(false)}>
+        <X className="h-4 w-4" />
+      </button>
+    </Alert>
+  );
+}
+```
+
+## API
+
+| Prop       | Tipo                                          | Padrão       | Descrição          |
+| ---------- | --------------------------------------------- | ------------ | ------------------ |
+| `severity` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'`     | Tipo de alerta     |
+| `variant`  | `'filled' \| 'outlined' \| 'standard'`        | `'standard'` | Estilo visual      |
+| `children` | `ReactNode`                                   | -            | Conteúdo do alerta |
+
+## Relacionados
+
+- [Snackbar](/design-system/components/snackbar) - Notificações temporárias
+- [Dialog](/design-system/components/dialog) - Modais de confirmação

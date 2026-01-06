@@ -1,79 +1,74 @@
 ---
 title: Card
-description: Container para agrupar conteúdo relacionado com elevação consistente
+description: Containers para agrupar conteúdo relacionado
 ---
-
-import { Callout } from 'nextra/components';
 
 # Card
 
-Container versátil para agrupar conteúdo relacionado com elevação e padding consistentes.
+> Superfície elevada para agrupar informações relacionadas.
 
-import { Card } from '../../../components/ui/card';
-
-## Uso Básico
-
-<div className="preview-box">
-  <Card className="p-6">
-    <h3 className="font-bold">Título</h3>
-    <p>Conteúdo do card</p>
-  </Card>
-</div>
+## Exemplo Básico
 
 ```tsx
 import { Card } from '@/components/ui/card';
 
-<Card>
-  <h3>Título</h3>
-  <p>Conteúdo do card</p>
+<Card className="p-6">
+  <h3 className="text-lg font-bold mb-2">Título do Card</h3>
+  <p className="text-muted-foreground">
+    Conteúdo do card com informações relevantes.
+  </p>
 </Card>;
 ```
 
-## Estilos Padrão
+## Com Seções
 
-- **Radius**: xl (16px)
-- **Shadow**: z12
-- **Padding**: 24px
-- **Background**: Branco
-- **Border**: 1px solid gray-200
+```tsx
+<Card>
+  <div className="p-6 border-b border-border/50">
+    <h3 className="text-lg font-bold">Header</h3>
+  </div>
+  <div className="p-6">
+    <p>Conteúdo principal</p>
+  </div>
+  <div className="p-6 border-t border-border/50 bg-muted/50">
+    <Button variant="contained" fullWidth>
+      Ação
+    </Button>
+  </div>
+</Card>
+```
 
 ## Variantes
 
-### Com Header
+```tsx
+// Outlined
+<Card className="border-2">...</Card>
+
+// Elevated (com sombra)
+<Card className="shadow-xl">...</Card>
+
+// Flat (sem borda)
+<Card className="border-none shadow-none">...</Card>
+```
+
+## Interativo
 
 ```tsx
-<Card>
-  <CardHeader title="Título" subtitle="Subtítulo" />
-  <CardContent>Conteúdo principal</CardContent>
+<Card className="cursor-pointer hover:shadow-lg transition-shadow">
+  <div className="p-6">
+    <h3>Card Clicável</h3>
+  </div>
 </Card>
 ```
 
-### Com Actions
+## API
 
-```tsx
-<Card>
-  <CardContent>Conteúdo</CardContent>
-  <CardActions>
-    <Button>Cancelar</Button>
-    <Button variant="contained">Salvar</Button>
-  </CardActions>
-</Card>
-```
+| Prop        | Tipo        | Padrão | Descrição              |
+| ----------- | ----------- | ------ | ---------------------- |
+| `className` | `string`    | -      | Classes CSS adicionais |
+| `children`  | `ReactNode` | -      | Conteúdo do card       |
 
-## Boas Práticas
+## Relacionados
 
-<Callout type="info">
-  Use padding consistente de 24px e agrupe apenas conteúdo relacionado.
-</Callout>
-
-### ✅ Fazer
-
-- Usar padding 24px
-- Agrupar conteúdo relacionado
-- Manter hierarquia clara
-
-### ❌ Não Fazer
-
-- Cards muito grandes (dividir em seções)
-- Padding inconsistente
-- Muitos cards aninhados
+- [Stat Card](/design-system/components/stat-card) - Cards de métricas
+- [Paper](/design-system/components/paper) - Superfície base

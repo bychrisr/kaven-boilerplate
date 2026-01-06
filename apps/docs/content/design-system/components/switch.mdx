@@ -1,0 +1,84 @@
+---
+title: Switch
+description: Toggle switches para ativar/desativar opções
+---
+
+# Switch
+
+> Componente de alternância para estados on/off.
+
+## Básico
+
+```tsx
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+
+<div className="flex items-center space-x-2">
+  <Switch id="airplane-mode" />
+  <Label htmlFor="airplane-mode">Modo Avião</Label>
+</div>;
+```
+
+## Controlado
+
+```tsx
+const [enabled, setEnabled] = useState(false);
+
+<Switch checked={enabled} onCheckedChange={setEnabled} />;
+```
+
+## Tamanhos
+
+```tsx
+// Small
+<Switch className="h-5 w-9" />
+
+// Medium (default)
+<Switch className="h-6 w-11" />
+
+// Large
+<Switch className="h-7 w-14" />
+```
+
+## Com Descrição
+
+```tsx
+<div className="flex items-center justify-between">
+  <div className="space-y-0.5">
+    <Label htmlFor="marketing">Emails de Marketing</Label>
+    <p className="text-sm text-muted-foreground">
+      Receba emails sobre novos produtos e ofertas
+    </p>
+  </div>
+  <Switch id="marketing" />
+</div>
+```
+
+## Estados
+
+```tsx
+// On
+<Switch checked />
+
+// Off
+<Switch checked={false} />
+
+// Disabled
+<Switch disabled />
+
+// Disabled On
+<Switch checked disabled />
+```
+
+## API
+
+| Prop              | Tipo                         | Padrão  | Descrição            |
+| ----------------- | ---------------------------- | ------- | -------------------- |
+| `checked`         | `boolean`                    | `false` | Estado do switch     |
+| `onCheckedChange` | `(checked: boolean) => void` | -       | Callback quando muda |
+| `disabled`        | `boolean`                    | `false` | Desabilita o switch  |
+
+## Relacionados
+
+- [Checkbox](/design-system/components/checkbox) - Seleção múltipla
+- [Radio](/design-system/components/radio) - Seleção única

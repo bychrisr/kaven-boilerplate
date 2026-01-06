@@ -1,10 +1,67 @@
 export default {
   index: 'Introdução',
-  tokens: 'Tokens de Design',
-  components: 'Componentes',
-  patterns: 'Padrões',
-  principles: 'Princípios',
-  'legacy-tokens': 'Legacy Tokens',
-  'legacy-components': 'Legacy Components',
-  'built-in-examples': 'Exemplos Built-in'
-}
+  foundation: {
+    title: 'Foundation',
+    type: 'separator',
+  },
+  'foundation/colors': 'Colors',
+  'foundation/typography': 'Typography',
+  'foundation/spacing': 'Spacing',
+  'foundation/shadows': 'Shadows',
+  'foundation/borders': 'Borders',
+  components: {
+    title: 'Components',
+    type: 'separator',
+  },
+  'components/forms': {
+    title: '📝 Forms',
+    type: 'menu',
+    items: {
+      'components/button': 'Button',
+      'components/input': 'Input',
+      'components/text-field': 'TextField',
+      'components/select': 'Select',
+      'components/checkbox': 'Checkbox',
+      'components/radio': 'Radio',
+      'components/switch': 'Switch',
+      'components/textarea': 'Textarea',
+      'components/date-picker': 'Date Picker',
+      'components/autocomplete': 'Autocomplete',
+    },
+  },
+  'components/feedback': {
+    title: '💬 Feedback',
+    type: 'menu',
+    items: {
+      'components/alert': 'Alert',
+      'components/dialog': 'Dialog',
+      'components/snackbar': 'Snackbar',
+      'components/drawer': 'Drawer',
+      'components/skeleton': 'Skeleton',
+      'components/progress': 'Progress',
+    },
+  },
+  'components/data': {
+    title: '📊 Data Display',
+    type: 'menu',
+    items: {
+      'components/stat-card': 'Stat Card',
+      'components/data-table': 'Data Table',
+      'components/table': 'Table',
+      'components/badge': 'Badge',
+      'components/card': 'Card',
+      'components/list': 'List',
+    },
+  },
+  'components/navigation': {
+    title: '🧭 Navigation',
+    type: 'menu',
+    items: {
+      'components/navbar': 'Navbar',
+      'components/tabs': 'Tabs',
+      'components/breadcrumbs': 'Breadcrumbs',
+      'components/pagination': 'Pagination',
+      'components/dropdown-menu': 'Dropdown Menu',
+    },
+  },
+};
