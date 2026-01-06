@@ -115,11 +115,11 @@ export const SPACES: Record<string, SpaceConfig> = {
             label: 'Monitoring', 
             href: '#',
             children: [
-               { label: 'Dashboard', href: '/monitoring' },
+               { label: 'Dashboard', href: '/observability' },
                { label: 'Grafana', href: 'http://localhost:3001', external: true },
                { label: 'Prometheus', href: 'http://localhost:9090', external: true },
-               { label: 'System Health', href: '/dashboard/observability' },
-               { label: 'Audit Logs', href: '/dashboard/observability?tab=audit' }
+               { label: 'System Health', href: '/observability' },
+               { label: 'Audit Logs', href: '/observability?tab=audit' }
             ]
           },
           { icon: Server, label: 'Servers', href: '/devops/servers' },
