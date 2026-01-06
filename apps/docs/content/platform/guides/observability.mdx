@@ -1,226 +1,433 @@
 ---
 title: Observability
-description: Auto-migrated from legacy documentation
+description: Sistema completo de observabilidade com Golden Signals, métricas Node.js e monitoramento em tempo real
+date: 2026-01-06
+author: Chris + Claude Sonnet 4.5
+version: 2.0.0
+tags: [observability, monitoring, metrics, golden-signals, prometheus, grafana]
 ---
 
-# Observabilidade e Auditoria
+# Observability
 
-Esta documentação detalha o sistema de observabilidade nativa e auditoria do Kaven Boilerplate. O objetivo deste módulo é fornecer visibilidade operacional (métricas) e responsabilidade (auditoria) diretamente no painel administrativo, complementando soluções de infraestrutura como Prometheus/Grafana.
+> Monitoramento avançado baseado em padrões Prometheus/Grafana com Golden Signals e métricas específicas de Node.js
+
+## Visão Geral
+
+O Kaven Boilerplate implementa um sistema robusto de observabilidade que combina:
+
+- ✅ **Golden Signals** (Google SRE) - Latency, Traffic, Errors, Saturation
+- ✅ **Métricas Node.js** - Event Loop Lag, Memory Heap, Active Handles/Requests
+- ✅ **Visualização em Tempo Real** - Dashboard com atualização automática
+- ✅ **Cores Semânticas** - Design System integrado para status visual
+- ✅ **Internacionalização** - Suporte a pt-BR e EN
+
+**Acesso:** `/observability`
 
 ---
 
-## 1. Monitoramento de Sistema (R.E.D. Method + Golden Signals)
+## Golden Signals
 
-O dashboard de observabilidade (`/dashboard/observability`) implementa uma combinação do método R.E.D. (Rate, Errors, Duration) e dos **Golden Signals** (Google SRE), utilizando métricas coletadas internamente pelo Node.js e `prom-client`.
+Implementação dos 4 sinais essenciais de saúde do sistema (Google SRE):
 
-### Métricas Básicas (R.E.D.)
+### 1. Latency (Tempo de Resposta)
 
-| Indicador               | Fonte Técnica                          | Descrição                                       | Utilidade                                              |
-| ----------------------- | -------------------------------------- | ----------------------------------------------- | ------------------------------------------------------ |
-| **Uptime**              | `process.uptime()`                     | Tempo em segundos desde o início do processo.   | Verificar estabilidade e reinicializações indesejadas. |
-| **Requests/sec** (Rate) | `prom-client` counter                  | Média móvel de requisições HTTP por segundo.    | Identificar picos de tráfego e carga.                  |
-| **Error Rate** (Errors) | `prom-client` counter (status 4xx/5xx) | Contagem e proporção de falhas nas requisições. | Alerta imediato de bugs ou ataques.                    |
-| **Memory RSS**          | `process.memoryUsage().rss`            | Memória física residente alocada pelo processo. | Detectar memory leaks.                                 |
+Mede o tempo que leva para processar requisições.
 
-### Golden Signals (Métricas Avançadas)
+**Métricas:**
 
-Implementadas no endpoint `/api/observability/advanced`:
-
-#### 1. Latency (Tempo de Resposta)
-
-- **p50 (mediana):** 50% das requisições são mais rápidas que este valor
+- **p50 (mediana):** 50% das requisições são mais rápidas
 - **p95:** 95% das requisições são mais rápidas (SLA típico)
 - **p99:** 99% das requisições são mais rápidas (tail latency)
 
-**Fonte:** Histograma de latências coletado via middleware `advanced-metrics.middleware.ts`
+**Fonte:** Histograma de latências via `advanced-metrics.middleware.ts`
 
-#### 2. Traffic (Volume de Requisições)
+**Cor:** Info (Cyan) - `bg-info-lighter text-info-main`
 
-- **Requests/sec:** Taxa atual de requisições
+```typescript
+// Exemplo de valores
+{
+  latency: {
+    p50: 45,   // 45ms
+    p95: 120,  // 120ms
+    p99: 250   // 250ms
+  }
+}
+```
+
+---
+
+### 2. Traffic (Volume de Requisições)
+
+Mede a demanda no sistema.
+
+**Métricas:**
+
+- **Requests/sec:** Taxa atual de requisições por segundo
 - **Total Requests:** Contador acumulado desde o início
 
-#### 3. Errors (Taxa de Falhas)
+**Fonte:** Counter via `prom-client`
+
+**Cor:** Success (Green) - `bg-success-lighter text-success-main`
+
+```typescript
+{
+  traffic: {
+    requestsPerSecond: 12.5,
+    totalRequests: 45678
+  }
+}
+```
+
+---
+
+### 3. Errors (Taxa de Falhas)
+
+Mede a confiabilidade do sistema.
+
+**Métricas:**
 
 - **Error Requests:** Contagem de requisições com status 5xx
 - **Error Rate (%):** Percentual de falhas sobre o total
 
-#### 4. Saturation (Utilização de Recursos)
+**Fonte:** Counter de status 5xx via middleware
+
+**Cor:** Error (Red) - `bg-error-lighter text-error-main`
+
+```typescript
+{
+  errors: {
+    errorRequests: 23,
+    errorRate: 0.5  // 0.5%
+  }
+}
+```
+
+> [!WARNING]
+> Error Rate > 1% indica problema crítico que requer investigação imediata.
+
+---
+
+### 4. Saturation (Utilização de Recursos)
+
+Mede o quanto o sistema está sendo utilizado.
+
+**Métricas:**
 
 - **CPU Usage (%):** Percentual de uso de CPU
 - **Memory Usage (%):** Heap usado / Heap total
 
-### Métricas Específicas de Node.js
+**Fonte:** `process.cpuUsage()` e `process.memoryUsage()`
 
-#### Event Loop Lag ⭐
+**Cor:** Secondary (Purple) - `bg-secondary-lighter text-secondary-main`
+
+```typescript
+{
+  saturation: {
+    cpuUsagePercent: 45,
+    memoryUsagePercent: 67
+  }
+}
+```
+
+---
+
+## Métricas Node.js
+
+Métricas específicas do runtime Node.js para diagnóstico avançado.
+
+### 1. Event Loop Lag ⭐
 
 **Crítico para Node.js!** Mede o atraso entre quando uma tarefa deveria executar vs quando realmente executa.
 
-- **< 10ms:** ✅ Saudável
-- **10-50ms:** ⚠️ Atenção
-- **> 50ms:** 🔴 Crítico (event loop bloqueado)
+**Thresholds:**
 
-**Fonte:** `perf_hooks` com monitoramento contínuo via `setInterval`
+- **< 10ms:** ✅ Saudável (status: good)
+- **10-50ms:** ⚠️ Atenção (status: warning)
+- **> 50ms:** 🔴 Crítico - Event loop bloqueado (status: critical)
 
-#### Memory Heap Detalhado
+**Fonte:** `perf_hooks` com monitoramento contínuo
+
+```typescript
+{
+  eventLoopLag: 8.5; // ms
+}
+```
+
+> [!IMPORTANT]
+> Event Loop Lag alto indica código bloqueante (operações síncronas pesadas, loops infinitos, etc).
+
+---
+
+### 2. Memory Heap
+
+Detalhamento da memória heap do processo.
+
+**Métricas:**
 
 - **Used MB:** Memória heap atualmente em uso
 - **Total MB:** Memória heap total alocada
 - **External:** Memória C++ vinculada a objetos JavaScript
 
-#### Active Handles/Requests
+**Thresholds:**
 
-- **Active Handles:** File descriptors, sockets, timers ativos
-- **Active Requests:** Requisições em andamento
-
-### Visualização
-
-Os dados são exibidos em formato de **Sparklines** (gráficos de linha simplificados) que acumulam dados no frontend (React state) para simular uma janela de tempo real de 60 segundos, atualizada via polling a cada 2 segundos.
-
-#### Implementação Técnica (Frontend)
-
-- **Biblioteca:** `recharts` (v3.6.0)
-- **Componentes:**
-  - `GoldenSignals` (4 cards principais)
-  - `NodeJsMetrics` (métricas específicas de Node.js)
-- **Características:**
-  - Cards com status visual (cores baseadas em thresholds)
-  - Tooltip interativo mostrando valores ao passar o mouse
-  - Estado de loading com skeleton animado
-  - Atualização automática a cada 2 segundos
-
-**Cores por Métrica:**
-
-- Latency: Azul (`#3B82F6`)
-- Traffic: Verde (`#10B981`)
-- Errors: Vermelho (`#EF4444`)
-- Saturation: Roxo (`#8B5CF6`)
-
----
-
-## 2. Sistema de Auditoria (Audit Logs)
-
-O Sistema de Auditoria é a espinha dorsal de segurança para ambientes Multi-Tenant. Ele garante que _todas_ as ações críticas sejam registradas de forma imutável e contextualizada.
-
-### Estrutura do Log
-
-Cada entrada na tabela `AuditLog` responde às perguntas: **Quem? Onde? O Quê? Quando? Como?**
-
-```json
-{
-  "actor": "User ID (UUID)",
-  "tenant": "Tenant ID (UUID) [Opcional - null se for ação de sistema]",
-  "action": "domínio.recurso.verbo",
-  "entity": "Nome da Entidade (User, Invoice, etc.)",
-  "entityId": "ID do recurso afetado",
-  "metadata": { "json": "livre para detalhes" },
-  "ipAddress": "1.2.3.4",
-  "userAgent": "Mozilla/5.0...",
-  "status": "SUCCESS | FAILURE"
-}
-```
-
-### Taxonomia de Ações (Actions)
-
-Use esta referência ao instrumentar novas funcionalidades. Mantenha o padrão `domain.event`.
-
-#### Autenticação (`auth.*`)
-
-- `auth.login.success`: Login bem-sucedido.
-- `auth.login.failed`: Falha de login (senha errada, usuário não encontrado). _Metadata: \{ email \}_
-- `auth.register`: Novo usuário registrado.
-- `auth.logout`: Logout explícito.
-- `auth.password_reset.request`: Solicitação de reset enviada.
-- `auth.password_reset.complete`: Senha alterada com sucesso.
-- `auth.2fa.setup`: 2FA configurado.
-- `auth.2fa.disable`: 2FA removido.
-
-#### Usuários (`user.*`)
-
-- `user.create`: Usuário criado manualmente (por admin).
-- `user.update`: Perfil atualizado. _Metadata: fields: ['name', 'role']_
-
-- `user.delete`: Usuário removido/arquivado.
-- `user.promote`: Mudança de Role (ex: USER -> TENANT_ADMIN).
-
-#### Tenants (`tenant.*`)
-
-- `tenant.create`: Novo tenant criado.
-- `tenant.update`: Configurações de tenant alteradas.
-- `tenant.subscription.change`: Mudança de plano.
-
-#### Financeiro (`invoice.*`, `order.*`)
-
-- `invoice.create`: Fatura gerada.
-- `invoice.pay`: Pagamento registrado.
-- `invoice.void`: Fatura cancelada.
-- `order.create`: Pedido criado.
-
-### Visualização no Frontend
-
-A tabela de auditoria (`AuditLogTable`) utiliza **badges coloridos** para facilitar a identificação visual:
-
-- 🔴 **Vermelho (destructive):** Ações de `delete` ou `failed`
-- 🟢 **Verde (default):** Ações de `create` ou `success`
-- 🟡 **Amarelo (secondary):** Ações de `update`
-- ⚪ **Cinza (outline):** Outras ações
-
----
-
-## 3. Guia de Implementação para Desenvolvedores
-
-### Como registrar um novo evento?
-
-Injete o `AuditService` no seu serviço ou controller e chame o método `create`.
-
-**Exemplo:**
+- **< 70%:** ✅ Saudável
+- **70-85%:** ⚠️ Atenção
+- **> 85%:** 🔴 Crítico - Risco de memory leak
 
 ```typescript
-import { AuditService } from '../../audit/services/audit.service';
-
-export class FeatureService {
-  constructor(private audit: AuditService) {}
-
-  async doSomethingCritical(user: User, resourceId: string) {
-    // 1. Executa a lógica
-    const result = await db.update(...);
-
-    // 2. Registra auditoria (Fire & Forget ou Await dependendo da criticidade)
-    await this.audit.create({
-      action: 'feature.critical_action',
-      entity: 'FeatureResource',
-      entityId: resourceId,
-      actorId: user.id,
-      tenantId: user.tenantId, // IMPORTANTE para isolamento!
-      metadata: {
-        previousValue: 'A',
-        newValue: 'B',
-        reason: 'User request'
-      },
-      req: request // Opcional: extrai IP/UserAgent automaticamente se passar o objeto Request
-    });
+{
+  memoryHeap: {
+    used: 245,      // MB
+    total: 512,     // MB
+    external: 12,   // MB
+    usedMB: 245,
+    totalMB: 512
   }
 }
 ```
 
-### Como consumir os dados?
+---
 
-1.  **Via API:**
-    - `GET /api/audit-logs?action=auth.login.failed`
-    - Filtros suportados: `startDate`, `endDate`, `actorId`, `entityType`.
+### 3. Active Handles
 
-2.  **Via Prisma (Backend):**
-    ```typescript
-    prisma.auditLog.findMany({
-      where: {
-        tenantId: currentTenantId, // RLS deve ser respeitado!
-      },
-    });
-    ```
+Número de handles ativos (file descriptors, sockets, timers).
+
+**Thresholds:**
+
+- **< 100:** ✅ Saudável
+- **100-200:** ⚠️ Atenção
+- **> 200:** 🔴 Crítico - Possível leak de recursos
+
+```typescript
+{
+  activeHandles: 45;
+}
+```
 
 ---
 
-## 4. Segurança e Retenção
+### 4. Active Requests
 
-- **Isolamento:** Logs pertencentes a um tenant SÓ podem ser vistos por admins desse tenant ou SUPER_ADMINS.
-- **Imutabilidade:** Não existem endpoints de API para `UPDATE` ou `DELETE` de logs. A remoção só deve ocorrer via scripts de retenção (ex: limpeza após 1 ano) diretamente no banco.
-- **Dados Sensíveis:** NUNCA grave senhas, tokens completos ou PII sensível (CPF, Cartão) no campo `metadata`.
+Número de requisições HTTP em andamento.
+
+**Thresholds:**
+
+- **< 10:** ✅ Saudável
+- **10-50:** ⚠️ Atenção
+- **> 50:** 🔴 Crítico - Sistema sobrecarregado
+
+```typescript
+{
+  activeRequests: 3;
+}
+```
+
+---
+
+## API Reference
+
+### `GET /api/observability/advanced`
+
+Retorna todas as métricas avançadas (Golden Signals + Node.js).
+
+**Response:**
+
+```typescript
+interface AdvancedMetrics {
+  goldenSignals: {
+    latency: { p50: number; p95: number; p99: number };
+    traffic: { requestsPerSecond: number; totalRequests: number };
+    errors: { errorRequests: number; errorRate: number };
+    saturation: { cpuUsagePercent: number; memoryUsagePercent: number };
+  };
+  nodejs: {
+    eventLoopLag: number;
+    memoryHeap: {
+      used: number;
+      total: number;
+      external: number;
+      usedMB: number;
+      totalMB: number;
+    };
+    activeHandles: number;
+    activeRequests: number;
+  };
+  httpDetails: {
+    statusDistribution: Record<string, number>;
+    uptime: number;
+  };
+}
+```
+
+**Exemplo:**
+
+```bash
+curl http://localhost:8000/api/observability/advanced
+```
+
+---
+
+## Implementação Frontend
+
+### Componentes
+
+**`GoldenSignals.tsx`:**
+
+- 4 cards com métricas principais
+- Cores semânticas do Design System
+- Atualização automática a cada 5 segundos
+- Skeleton loading durante carregamento
+
+**`NodeJsMetrics.tsx`:**
+
+- 4 cards com métricas específicas de Node.js
+- Status visual baseado em thresholds
+- Cores dinâmicas (good/warning/critical)
+
+### Uso
+
+```typescript
+import { GoldenSignals } from './golden-signals';
+import { NodeJsMetrics } from './nodejs-metrics';
+
+export default function ObservabilityPage() {
+  return (
+    <div className="space-y-8">
+      <GoldenSignals />
+      <NodeJsMetrics />
+    </div>
+  );
+}
+```
+
+---
+
+## Internacionalização
+
+Todas as métricas são traduzidas automaticamente:
+
+**pt-BR:**
+
+```json
+{
+  "Observability": {
+    "goldenSignals": {
+      "latency": "Latency (p95)",
+      "totalRequests": "total requests"
+    },
+    "nodejsMetrics": {
+      "eventLoopLag": "Event Loop Lag",
+      "memoryHeapDesc": "de {total}MB total"
+    }
+  }
+}
+```
+
+**EN:**
+
+```json
+{
+  "Observability": {
+    "goldenSignals": {
+      "latency": "Latency (p95)",
+      "totalRequests": "total requests"
+    },
+    "nodejsMetrics": {
+      "eventLoopLag": "Event Loop Lag",
+      "memoryHeapDesc": "of {total}MB total"
+    }
+  }
+}
+```
+
+---
+
+## Integração com Prometheus/Grafana
+
+O sistema expõe métricas no formato Prometheus:
+
+### Endpoint Prometheus
+
+```bash
+# Métricas no formato Prometheus
+GET /metrics
+```
+
+### Exemplo de Configuração Grafana
+
+```yaml
+# prometheus.yml
+scrape_configs:
+  - job_name: 'kaven-api'
+    static_configs:
+      - targets: ['localhost:8000']
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+```
+
+---
+
+## Troubleshooting
+
+### Event Loop Lag Alto
+
+**Sintomas:**
+
+- Lag > 50ms consistentemente
+- Aplicação lenta/travando
+
+**Causas Comuns:**
+
+- Operações síncronas pesadas (crypto, JSON.parse de arquivos grandes)
+- Loops infinitos ou recursão profunda
+- Blocking I/O
+
+**Solução:**
+
+```typescript
+// ❌ ERRADO - Bloqueante
+const data = fs.readFileSync('large-file.json');
+const parsed = JSON.parse(data);
+
+// ✅ CORRETO - Assíncrono
+const data = await fs.promises.readFile('large-file.json');
+const parsed = JSON.parse(data);
+```
+
+---
+
+### Memory Leak
+
+**Sintomas:**
+
+- Memory usage crescendo constantemente
+- Heap > 85% por longos períodos
+
+**Causas Comuns:**
+
+- Event listeners não removidos
+- Timers/intervals não limpos
+- Cache sem limite de tamanho
+- Closures retendo referências
+
+**Solução:**
+
+```typescript
+// ✅ Sempre limpar event listeners
+useEffect(() => {
+  const handler = () => {
+    /* ... */
+  };
+  window.addEventListener('resize', handler);
+
+  return () => window.removeEventListener('resize', handler);
+}, []);
+```
+
+---
+
+## Relacionados
+
+- [Audit Logs](/platform/guides/audit-logs) - Sistema de auditoria
+- [Internationalization](/platform/architecture/INTERNATIONALIZATION) - Sistema de i18n
+- [Design System - Colors](/design-system/foundation/colors) - Cores semânticas

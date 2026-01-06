@@ -1,0 +1,526 @@
+---
+title: Audit Logs
+description: Sistema completo de auditoria com rastreamento de ações críticas, isolamento multi-tenant e visualização em tempo real
+date: 2026-01-06
+author: Chris + Claude Sonnet 4.5
+version: 1.0.0
+tags: [audit, logs, security, compliance, multi-tenant, tracking]
+---
+
+# Audit Logs
+
+> Sistema robusto de auditoria que rastreia todas as ações críticas do sistema com isolamento multi-tenant e visualização em tempo real
+
+## Visão Geral
+
+O sistema de Audit Logs é a espinha dorsal de segurança e compliance do Kaven Boilerplate. Ele garante que **todas** as ações críticas sejam registradas de forma imutável e contextualizada.
+
+**Funcionalidades:**
+
+- ✅ **Rastreamento Completo** - Quem, O quê, Quando, Onde, Como
+- ✅ **Isolamento Multi-Tenant** - Logs segregados por tenant
+- ✅ **Imutabilidade** - Logs não podem ser editados ou deletados via API
+- ✅ **Visualização em Tempo Real** - Interface com paginação e filtros
+- ✅ **Cores Semânticas** - Badges coloridos para identificação visual
+- ✅ **Internacionalização** - Suporte a pt-BR e EN
+
+**Acesso:** `/audit-logs`
+
+---
+
+## Estrutura do Log
+
+Cada entrada na tabela `AuditLog` responde às perguntas essenciais:
+
+| Pergunta    | Campo                    | Descrição                                 |
+| ----------- | ------------------------ | ----------------------------------------- |
+| **Quem?**   | `userId`                 | ID do usuário que executou a ação         |
+| **Onde?**   | `tenantId`               | ID do tenant (null para ações de sistema) |
+| **O quê?**  | `action`                 | Ação executada (formato: `domain.event`)  |
+| **Quando?** | `createdAt`              | Timestamp da ação                         |
+| **Como?**   | `ipAddress`, `userAgent` | Contexto da requisição                    |
+
+### Schema Prisma
+
+```prisma
+model AuditLog {
+  id        String   @id @default(uuid())
+  action    String   // Ex: "auth.login.success"
+  entity    String   // Ex: "User"
+  entityId  String   // Ex: "user_123"
+  userId    String   // Quem executou
+  user      User?    @relation(fields: [userId], references: [id])
+  tenantId  String?  // Isolamento multi-tenant
+  metadata  Json     // Dados adicionais
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([tenantId])
+  @@index([action])
+  @@index([createdAt])
+}
+```
+
+---
+
+## Taxonomia de Ações
+
+Use esta referência ao instrumentar novas funcionalidades. Mantenha o padrão `domain.event`.
+
+### Autenticação (`auth.*`)
+
+| Ação                           | Descrição                    | Metadata Sugerida                       |
+| ------------------------------ | ---------------------------- | --------------------------------------- |
+| `auth.login.success`           | Login bem-sucedido           | `{ method: 'email' \| 'google' }`       |
+| `auth.login.failed`            | Falha de login               | `{ email, reason: 'invalid_password' }` |
+| `auth.register`                | Novo usuário registrado      | `{ method: 'email' \| 'google' }`       |
+| `auth.logout`                  | Logout explícito             | `{}`                                    |
+| `auth.password_reset.request`  | Solicitação de reset enviada | `{ email }`                             |
+| `auth.password_reset.complete` | Senha alterada com sucesso   | `{}`                                    |
+| `auth.2fa.setup`               | 2FA configurado              | `{ method: 'totp' \| 'sms' }`           |
+| `auth.2fa.disable`             | 2FA removido                 | `{}`                                    |
+
+---
+
+### Usuários (`user.*`)
+
+| Ação              | Descrição                              | Metadata Sugerida                      |
+| ----------------- | -------------------------------------- | -------------------------------------- |
+| `user.create`     | Usuário criado manualmente (por admin) | `{ role, email }`                      |
+| `user.update`     | Perfil atualizado                      | `{ fields: ['name', 'role'] }`         |
+| `user.delete`     | Usuário removido/arquivado             | `{ reason }`                           |
+| `user.promote`    | Mudança de Role                        | `{ from: 'USER', to: 'TENANT_ADMIN' }` |
+| `user.suspend`    | Usuário suspenso                       | `{ reason, duration }`                 |
+| `user.reactivate` | Usuário reativado                      | `{}`                                   |
+
+---
+
+### Tenants (`tenant.*`)
+
+| Ação                         | Descrição                         | Metadata Sugerida                  |
+| ---------------------------- | --------------------------------- | ---------------------------------- |
+| `tenant.create`              | Novo tenant criado                | `{ name, plan }`                   |
+| `tenant.update`              | Configurações de tenant alteradas | `{ fields: ['name', 'settings'] }` |
+| `tenant.subscription.change` | Mudança de plano                  | `{ from: 'basic', to: 'premium' }` |
+| `tenant.delete`              | Tenant removido                   | `{ reason }`                       |
+
+---
+
+### Financeiro (`invoice.*`, `payment.*`)
+
+| Ação                | Descrição            | Metadata Sugerida                     |
+| ------------------- | -------------------- | ------------------------------------- |
+| `invoice.create`    | Fatura gerada        | `{ amount, currency }`                |
+| `invoice.pay`       | Pagamento registrado | `{ amount, method: 'pix' \| 'card' }` |
+| `invoice.void`      | Fatura cancelada     | `{ reason }`                          |
+| `payment.create`    | Pagamento PIX criado | `{ amount, qrCode }`                  |
+| `payment.confirmed` | Pagamento confirmado | `{ transactionId }`                   |
+| `payment.failed`    | Pagamento falhou     | `{ reason, errorCode }`               |
+
+---
+
+## Visualização Frontend
+
+### Cores Semânticas
+
+A tabela de auditoria utiliza **badges coloridos** do Design System para facilitar identificação visual:
+
+| Tipo de Ação   | Cor                | Classes Tailwind                                            |
+| -------------- | ------------------ | ----------------------------------------------------------- |
+| Delete/Failed  | 🔴 Error (Red)     | `bg-error-lighter text-error-main border-error-light`       |
+| Create/Success | 🟢 Success (Green) | `bg-success-lighter text-success-main border-success-light` |
+| Update         | 🔵 Info (Blue)     | `bg-info-lighter text-info-main border-info-light`          |
+| Outras         | ⚪ Muted (Gray)    | `bg-muted text-muted-foreground border-border`              |
+
+### Componente `AuditLogTable`
+
+```typescript
+'use client';
+import { useTranslations } from 'next-intl';
+import { useQuery } from '@tanstack/react-query';
+
+export function AuditLogTable() {
+  const t = useTranslations('AuditLogs');
+  const [page, setPage] = useState(1);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['audit-logs', page],
+    queryFn: () => observabilityApi.getAuditLogs({ page, limit: 10 }),
+    refetchInterval: 10000, // 10 segundos
+  });
+
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>{t('table.columns.dateTime')}</th>
+          <th>{t('table.columns.action')}</th>
+          <th>{t('table.columns.actor')}</th>
+          <th>{t('table.columns.entity')}</th>
+          <th>{t('table.columns.details')}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data?.logs.map(log => (
+          <tr key={log.id}>
+            <td>{format(new Date(log.createdAt), 'dd/MM/yyyy HH:mm:ss')}</td>
+            <td>
+              <span className={getActionBadgeClasses(log.action)}>
+                {log.action}
+              </span>
+            </td>
+            <td>{log.user?.name || log.userId}</td>
+            <td>{log.entity}</td>
+            <td>
+              <Dialog>
+                <DialogTrigger>
+                  <Eye className="h-4 w-4" />
+                </DialogTrigger>
+                <DialogContent>
+                  <pre>{JSON.stringify(log.metadata, null, 2)}</pre>
+                </DialogContent>
+              </Dialog>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+```
+
+---
+
+## API Reference
+
+### `GET /api/audit-logs`
+
+Retorna logs de auditoria com paginação e filtros.
+
+**Query Parameters:**
+
+- `page` (number, opcional) - Página atual (default: 1)
+- `limit` (number, opcional) - Itens por página (default: 10, max: 100)
+- `action` (string, opcional) - Filtrar por ação específica
+- `userId` (string, opcional) - Filtrar por usuário
+- `startDate` (ISO string, opcional) - Data inicial
+- `endDate` (ISO string, opcional) - Data final
+
+**Response:**
+
+```typescript
+interface AuditLogsResponse {
+  logs: AuditLog[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+```
+
+**Exemplo:**
+
+```bash
+# Buscar logs de login falhado
+curl "http://localhost:8000/api/audit-logs?action=auth.login.failed&page=1&limit=20"
+
+# Buscar logs de um usuário específico
+curl "http://localhost:8000/api/audit-logs?userId=user_123"
+
+# Buscar logs em um período
+curl "http://localhost:8000/api/audit-logs?startDate=2026-01-01&endDate=2026-01-31"
+```
+
+---
+
+## Guia de Implementação
+
+### Como Registrar um Evento
+
+Injete o `AuditService` no seu serviço ou controller e chame o método `create`.
+
+**Exemplo Básico:**
+
+```typescript
+import { AuditService } from '@/audit/services/audit.service';
+
+export class UserService {
+  constructor(private audit: AuditService) {}
+
+  async updateUser(userId: string, data: UpdateUserDto, actor: User) {
+    // 1. Executar a lógica
+    const user = await this.db.user.update({
+      where: { id: userId },
+      data,
+    });
+
+    // 2. Registrar auditoria
+    await this.audit.create({
+      action: 'user.update',
+      entity: 'User',
+      entityId: userId,
+      actorId: actor.id,
+      tenantId: actor.tenantId,
+      metadata: {
+        fields: Object.keys(data),
+        previousValues: {
+          /* ... */
+        },
+        newValues: data,
+      },
+    });
+
+    return user;
+  }
+}
+```
+
+**Exemplo com Request Context:**
+
+```typescript
+async login(email: string, password: string, req: Request) {
+  try {
+    const user = await this.validateCredentials(email, password);
+
+    // Login bem-sucedido
+    await this.audit.create({
+      action: 'auth.login.success',
+      entity: 'User',
+      entityId: user.id,
+      actorId: user.id,
+      tenantId: user.tenantId,
+      metadata: { method: 'email' },
+      req, // Extrai IP e UserAgent automaticamente
+    });
+
+    return user;
+  } catch (error) {
+    // Login falhado
+    await this.audit.create({
+      action: 'auth.login.failed',
+      entity: 'User',
+      entityId: null,
+      actorId: null,
+      tenantId: null,
+      metadata: {
+        email,
+        reason: error.message
+      },
+      req,
+    });
+
+    throw error;
+  }
+}
+```
+
+---
+
+## Segurança e Compliance
+
+### Isolamento Multi-Tenant
+
+Logs pertencentes a um tenant **SÓ** podem ser vistos por:
+
+- Admins desse tenant (`TENANT_ADMIN`)
+- Super admins (`SUPER_ADMIN`)
+
+**Implementação (RLS - Row Level Security):**
+
+```typescript
+// Middleware de autorização
+async getAuditLogs(user: User, filters: AuditLogFilters) {
+  const where: Prisma.AuditLogWhereInput = {};
+
+  // RLS: Filtrar por tenant se não for SUPER_ADMIN
+  if (user.role !== 'SUPER_ADMIN') {
+    where.tenantId = user.tenantId;
+  }
+
+  // Aplicar filtros adicionais
+  if (filters.action) where.action = filters.action;
+  if (filters.userId) where.userId = filters.userId;
+
+  return await prisma.auditLog.findMany({ where });
+}
+```
+
+---
+
+### Imutabilidade
+
+**Não existem endpoints de API para `UPDATE` ou `DELETE` de logs.**
+
+A remoção só deve ocorrer via:
+
+- Scripts de retenção (ex: limpeza após 1 ano)
+- Acesso direto ao banco de dados
+- Políticas de compliance (LGPD/GDPR)
+
+**Exemplo de Script de Retenção:**
+
+```typescript
+// scripts/cleanup-old-audit-logs.ts
+async function cleanupOldLogs() {
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+  const deleted = await prisma.auditLog.deleteMany({
+    where: {
+      createdAt: { lt: oneYearAgo },
+    },
+  });
+
+  console.log(`Deleted ${deleted.count} logs older than 1 year`);
+}
+```
+
+---
+
+### Dados Sensíveis
+
+> [!CAUTION]
+> **NUNCA grave no campo `metadata`:**
+>
+> - Senhas (mesmo hasheadas)
+> - Tokens completos (JWT, API keys)
+> - PII sensível (CPF, Cartão de Crédito, SSN)
+> - Dados médicos ou financeiros completos
+
+**✅ Permitido:**
+
+```json
+{
+  "metadata": {
+    "email": "user@example.com",
+    "cardLast4": "1234",
+    "amount": 10000,
+    "reason": "User request"
+  }
+}
+```
+
+**❌ Proibido:**
+
+```json
+{
+  "metadata": {
+    "password": "hash123",
+    "token": "eyJhbGciOiJIUzI1...",
+    "cpf": "123.456.789-00",
+    "cardNumber": "1234 5678 9012 3456"
+  }
+}
+```
+
+---
+
+## Internacionalização
+
+Todas as labels da tabela são traduzidas automaticamente:
+
+**pt-BR:**
+
+```json
+{
+  "AuditLogs": {
+    "title": "Logs de Auditoria",
+    "table": {
+      "columns": {
+        "dateTime": "Data/Hora",
+        "action": "Ação",
+        "actor": "Ator",
+        "entity": "Entidade",
+        "details": "Detalhes"
+      },
+      "empty": "Nenhum log encontrado"
+    },
+    "pagination": {
+      "previous": "Anterior",
+      "next": "Próxima",
+      "pageOf": "Página {page} de {total}"
+    }
+  }
+}
+```
+
+---
+
+## Troubleshooting
+
+### Logs Não Aparecem na Interface
+
+**Causa:** Filtro de tenant incorreto ou permissões insuficientes
+
+**Solução:**
+
+1. Verificar role do usuário (`TENANT_ADMIN` ou `SUPER_ADMIN`)
+2. Verificar se `tenantId` está correto no log
+3. Verificar console do navegador para erros de API
+
+---
+
+### Performance Degradada
+
+**Causa:** Muitos logs sem índices ou queries não otimizadas
+
+**Solução:**
+
+```sql
+-- Criar índices no banco
+CREATE INDEX idx_audit_logs_tenant_created ON "AuditLog"("tenantId", "createdAt" DESC);
+CREATE INDEX idx_audit_logs_action ON "AuditLog"("action");
+CREATE INDEX idx_audit_logs_user ON "AuditLog"("userId");
+```
+
+---
+
+### Erro CORS ao Buscar Logs
+
+**Causa:** API não está aceitando requisições do frontend
+
+**Solução:**
+
+```typescript
+// apps/api/src/server.ts
+fastify.register(cors, {
+  origin: [
+    'http://localhost:3000', // ← Adicionar origem do admin
+    'http://localhost:3002',
+  ],
+  credentials: true,
+});
+```
+
+---
+
+## Melhores Práticas
+
+### ✅ Fazer
+
+- **Registre todas as ações críticas** - Criação, atualização, deleção
+- **Use metadata estruturada** - JSON bem formatado
+- **Inclua contexto** - IP, UserAgent quando possível
+- **Respeite RLS** - Sempre filtrar por tenant
+- **Teste isolamento** - Verificar que tenants não veem logs de outros
+
+### ❌ Não Fazer
+
+- **Grave dados sensíveis** - Senhas, tokens, PII completo
+- **Permita edição/deleção via API** - Logs devem ser imutáveis
+- **Ignore performance** - Sempre use índices
+- **Esqueça de traduzir** - Adicionar em pt.json E en.json
+- **Misture logs de sistema com tenant** - Use `tenantId: null` para sistema
+
+---
+
+## Relacionados
+
+- [Observability](/platform/guides/observability) - Métricas e monitoramento
+- [Internationalization](/platform/architecture/INTERNATIONALIZATION) - Sistema de i18n
+- [Design System - Colors](/design-system/foundation/colors) - Cores semânticas
+- [Multi-Tenancy](/platform/architecture/multi-tenancy) - Isolamento de dados
