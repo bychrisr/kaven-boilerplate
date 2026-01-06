@@ -230,5 +230,56 @@
     "actions": {
       "save": "Salvar Alterações"
     }
+  },
+  "AuditLogs": {
+    "title": "Logs de Auditoria",
+    "description": "Histórico completo de ações críticas do sistema",
+    "sectionTitle": "Registros de Auditoria",
+    "sectionDescription": "Rastreamento de todas as ações administrativas e mudanças no sistema",
+    "table": {
+      "columns": {
+        "dateTime": "Data/Hora",
+        "action": "Ação",
+        "actor": "Ator",
+        "entity": "Entidade",
+        "details": "Detalhes"
+      },
+      "empty": "Nenhum log encontrado",
+      "detailsModal": {
+        "title": "Detalhes do Log",
+        "idLabel": "ID"
+      }
+    },
+    "pagination": {
+      "previous": "Anterior",
+      "next": "Próxima",
+      "pageOf": "Página {page} de {total}"
+    }
+  },
+  "Observability": {
+    "title": "Observabilidade",
+    "description": "Monitoramento avançado baseado em padrões Prometheus/Grafana",
+    "goldenSignals": {
+      "title": "Golden Signals",
+      "description": "Métricas essenciais de saúde do sistema (Google SRE)",
+      "latency": "Latency (p95)",
+      "traffic": "Traffic",
+      "errors": "Errors",
+      "saturation": "Saturation",
+      "totalRequests": "total requests",
+      "failedRequests": "failed requests"
+    },
+    "nodejsMetrics": {
+      "title": "Node.js Metrics",
+      "description": "Métricas específicas do runtime Node.js",
+      "eventLoopLag": "Event Loop Lag",
+      "eventLoopLagDesc": "Atraso do event loop",
+      "memoryHeap": "Memory Heap",
+      "memoryHeapDesc": "de {total}MB total",
+      "activeHandles": "Active Handles",
+      "activeHandlesDesc": "File descriptors, sockets, etc",
+      "activeRequests": "Active Requests",
+      "activeRequestsDesc": "Requisições em andamento"
+    }
   }
 }

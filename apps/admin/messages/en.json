@@ -230,5 +230,56 @@
     "actions": {
       "save": "Save Changes"
     }
+  },
+  "AuditLogs": {
+    "title": "Audit Logs",
+    "description": "Complete history of critical system actions",
+    "sectionTitle": "Audit Records",
+    "sectionDescription": "Tracking of all administrative actions and system changes",
+    "table": {
+      "columns": {
+        "dateTime": "Date/Time",
+        "action": "Action",
+        "actor": "Actor",
+        "entity": "Entity",
+        "details": "Details"
+      },
+      "empty": "No logs found",
+      "detailsModal": {
+        "title": "Log Details",
+        "idLabel": "ID"
+      }
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "pageOf": "Page {page} of {total}"
+    }
+  },
+  "Observability": {
+    "title": "Observability",
+    "description": "Advanced monitoring based on Prometheus/Grafana patterns",
+    "goldenSignals": {
+      "title": "Golden Signals",
+      "description": "Essential system health metrics (Google SRE)",
+      "latency": "Latency (p95)",
+      "traffic": "Traffic",
+      "errors": "Errors",
+      "saturation": "Saturation",
+      "totalRequests": "total requests",
+      "failedRequests": "failed requests"
+    },
+    "nodejsMetrics": {
+      "title": "Node.js Metrics",
+      "description": "Node.js runtime specific metrics",
+      "eventLoopLag": "Event Loop Lag",
+      "eventLoopLagDesc": "Event loop delay",
+      "memoryHeap": "Memory Heap",
+      "memoryHeapDesc": "of {total}MB total",
+      "activeHandles": "Active Handles",
+      "activeHandlesDesc": "File descriptors, sockets, etc",
+      "activeRequests": "Active Requests",
+      "activeRequestsDesc": "Requests in progress"
+    }
   }
 }
