@@ -28,7 +28,8 @@ Kaven é um boilerplate completo para aplicações SaaS multi-tenant com sistema
 ### Frontend
 
 - **Framework:** Next.js 14 (App Router + Turbopack)
-- **UI:** shadcn/ui + Tailwind CSS
+- **UI:** shadcn/ui + Tailwind CSS v4
+- **Design System:** 62 componentes documentados (Nextra 4)
 - **State:** TanStack Query + React Context
 - **Forms:** React Hook Form + Zod
 - **i18n:** next-intl
@@ -58,14 +59,17 @@ kaven-boilerplate/
 │   │   ├── app/        # Pages (App Router)
 │   │   ├── components/ # UI Components
 │   │   └── hooks/      # Custom Hooks
-│   └── api/            # Backend (Fastify)
-│       ├── src/
-│       │   ├── modules/      # Feature modules
-│       │   ├── middleware/   # Middlewares
-│       │   └── lib/          # Utilities
-│       └── prisma/     # Database schema
+│   ├── api/            # Backend (Fastify)
+│   │   ├── src/
+│   │   │   ├── modules/      # Feature modules
+│   │   │   ├── middleware/   # Middlewares
+│   │   │   └── lib/          # Utilities
+│   │   └── prisma/     # Database schema
+│   └── docs/           # Design System Documentation (Nextra 4)
+│       ├── content/    # 62 component docs
+│       └── components/ # Demo components
 ├── packages/           # Shared packages
-└── docs/              # Documentation
+└── docs/              # Technical documentation
 ```
 
 ---
@@ -105,7 +109,7 @@ pnpm dev
 
 - **Admin:** http://localhost:3000
 - **API:** http://localhost:4000
-- **Docs:** http://localhost:3001
+- **Docs (Design System):** http://localhost:3002
 
 **Credenciais de teste:**
 
@@ -359,11 +363,57 @@ PAGUEBIT_WEBHOOK_SECRET=...
 
 ## 📚 Documentação
 
+### Documentação Técnica
+
 - [API Documentation](./docs/API.md)
 - [Database Schema](./docs/DATABASE.md)
 - [Deployment Guide](./docs/DEPLOYMENT.md)
 - [Testing Guide](./docs/TESTING.md)
 - [Contributing](./CONTRIBUTING.md)
+
+### Design System Documentation
+
+**🎨 Documentação Completa do Design System** - 62 componentes documentados com qualidade Bootstrap-level!
+
+Acesse a documentação interativa em: **http://localhost:3002** (modo dev)
+
+**Conteúdo:**
+
+- **🎨 Foundation (5 páginas)**
+  - Colors - Sistema completo de cores com oklch/hex + dark mode
+  - Typography - Hierarquia tipográfica com DM Sans e Barlow
+  - Spacing - Sistema de espaçamento baseado em múltiplos de 4px
+  - Shadows - Níveis de elevação e sombras
+  - Borders - Border radius e estilos
+
+- **🧩 Components (57 componentes em 6 categorias)**
+  - 📝 **Forms (18):** Button, Input, TextField, Textarea, Select, Autocomplete, Checkbox, Radio, Switch, Date Picker, Time Picker, Slider, Rating, Label, Form, Icon Button, Button Group, Toggle Button
+  - 💬 **Feedback (9):** Alert, Alert Dialog, Dialog, Drawer, Snackbar, Skeleton, Progress, Tooltip, Popover
+  - 📊 **Data Display (10):** Stat Card, Data Table, Table, Card, Paper, Badge, Chip, Avatar, List, Divider
+  - 🧭 **Navigation (9):** Navbar, App Bar, Breadcrumbs, Tabs, Pagination, Dropdown Menu, Mega Menu, Bottom Navigation, Link
+  - 🔄 **Interaction (2):** Accordion, Stepper
+  - ⚡ **Specialized (8):** Timeline, Tree View, Transfer List, FAB, Speed Dial, Image List, Masonry, Backdrop
+
+**Cada componente inclui:**
+
+- ✅ Exemplos de código funcionais
+- ✅ Variações e casos de uso
+- ✅ API completa com props
+- ✅ Relacionamentos entre componentes
+- ✅ Acessibilidade e melhores práticas
+
+**Comandos:**
+
+```bash
+# Iniciar documentação em modo dev
+pnpm --filter docs dev
+
+# Build da documentação
+pnpm --filter docs build
+
+# Preview do build
+pnpm --filter docs start
+```
 
 ---
 
