@@ -1,0 +1,66 @@
+import { Callout } from 'nextra/components';
+
+# Cores
+
+Sistema de cores 5-tone inspirado no Minimals.cc.
+
+## Paleta Semântica
+
+### Primary (Blue)
+
+Cor principal usada para ações primárias e destaques.
+
+<div className="flex gap-4 p-4 rounded-xl bg-white dark:bg-neutral-900 border mt-4">
+  <div className="w-20 h-20 rounded-lg bg-[#D0ECFE] flex items-center justify-center text-xs">
+    Lighter
+  </div>
+  <div className="w-20 h-20 rounded-lg bg-[#73BAFB] flex items-center justify-center text-xs">
+    Light
+  </div>
+  <div className="w-20 h-20 rounded-lg bg-[#1877F2] text-white flex items-center justify-center text-xs font-bold">
+    Main
+  </div>
+  <div className="w-20 h-20 rounded-lg bg-[#0C44AE] text-white flex items-center justify-center text-xs">
+    Dark
+  </div>
+  <div className="w-20 h-20 rounded-lg bg-[#042174] text-white flex items-center justify-center text-xs">
+    Darker
+  </div>
+</div>
+
+**Valores:**
+
+- **Main**: `#1877F2`
+- **Lighter**: `#D0ECFE`
+- **Darker**: `#042174`
+
+### Secondary (Purple)
+
+Cor secundária para ações alternativas.
+
+<div className="flex gap-4 p-4 rounded-xl bg-white dark:bg-neutral-900 border mt-4">
+  <div className="w-20 h-20 rounded-lg bg-[#EFD6FF] flex items-center justify-center text-xs">
+    Lighter
+  </div>
+  <div className="w-20 h-20 rounded-lg bg-[#C684FF] flex items-center justify-center text-xs">
+    Light
+  </div>
+  <div className="w-20 h-20 rounded-lg bg-[#8E33FF] text-white flex items-center justify-center text-xs font-bold">
+    Main
+  </div>
+  <div className="w-20 h-20 rounded-lg bg-[#5119B7] text-white flex items-center justify-center text-xs">
+    Dark
+  </div>
+  <div className="w-20 h-20 rounded-lg bg-[#27097A] text-white flex items-center justify-center text-xs">
+    Darker
+  </div>
+</div>
+
+**Valores:**
+
+- **Main**: `#8E33FF`
+
+<Callout type="info">
+  Todas as cores possuem tokens correspondentes no Tailwind: `bg-primary-main`,
+  `text-secondary-dark`, etc.
+</Callout>
