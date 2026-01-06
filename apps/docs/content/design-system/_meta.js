@@ -2,18 +2,9 @@ export default {
   index: 'Introdução',
   principles: 'Design Principles',
   'built-in-examples': 'Built-in Examples',
-  foundation: {
-    title: '🎨 Foundation',
-    type: 'page',
-  },
-  components: {
-    title: '🧩 Components',
-    type: 'page',
-  },
-  patterns: {
-    title: '📐 Patterns',
-    type: 'page',
-  },
+  foundation: '🎨 Foundation',
+  components: '🧩 Components',
+  patterns: '📐 Patterns',
   '---legacy': {
     type: 'separator',
     title: 'Legacy',
