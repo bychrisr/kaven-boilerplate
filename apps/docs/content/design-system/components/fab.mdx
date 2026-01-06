@@ -1,0 +1,51 @@
+---
+title: FAB (Floating Action Button)
+description: Botão de ação flutuante
+---
+
+# FAB (Floating Action Button)
+
+> Botão circular flutuante para ação principal da tela.
+
+## Básico
+
+```tsx
+import { FAB } from '@/components/ui/fab';
+import { Plus } from 'lucide-react';
+
+<FAB>
+  <Plus />
+</FAB>;
+```
+
+## Posições
+
+```tsx
+// Bottom Right (padrão)
+<FAB className="fixed bottom-6 right-6">
+  <Plus />
+</FAB>
+
+// Bottom Left
+<FAB className="fixed bottom-6 left-6">
+  <Plus />
+</FAB>
+```
+
+## Com Label
+
+```tsx
+<FAB className="fixed bottom-6 right-6">
+  <Plus className="mr-2" />
+  Novo
+</FAB>
+```
+
+## API
+
+Usa as mesmas props do [Icon Button](/design-system/components/icon-button).
+
+## Relacionados
+
+- [Icon Button](/design-system/components/icon-button)
+- [Speed Dial](/design-system/components/speed-dial)

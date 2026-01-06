@@ -1,0 +1,50 @@
+---
+title: Image List
+description: Listas de imagens em grid
+---
+
+# Image List
+
+> Componente para exibir coleções de imagens em grid.
+
+## Básico
+
+```tsx
+import { ImageList, ImageListItem } from '@/components/ui/image-list';
+
+<ImageList cols={3} gap={8}>
+  <ImageListItem>
+    <img src="/image1.jpg" alt="Image 1" />
+  </ImageListItem>
+  <ImageListItem>
+    <img src="/image2.jpg" alt="Image 2" />
+  </ImageListItem>
+  <ImageListItem>
+    <img src="/image3.jpg" alt="Image 3" />
+  </ImageListItem>
+</ImageList>;
+```
+
+## Com Overlay
+
+```tsx
+<ImageList cols={2}>
+  <ImageListItem>
+    <img src="/image.jpg" alt="Image" />
+    <div className="absolute inset-0 bg-black/50 flex items-end p-4">
+      <h4 className="text-white">Título</h4>
+    </div>
+  </ImageListItem>
+</ImageList>
+```
+
+## API
+
+| Prop   | Tipo     | Padrão | Descrição         |
+| ------ | -------- | ------ | ----------------- |
+| `cols` | `number` | `3`    | Número de colunas |
+| `gap`  | `number` | `8`    | Espaçamento       |
+
+## Relacionados
+
+- [Masonry](/design-system/components/masonry)

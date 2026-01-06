@@ -1,0 +1,43 @@
+---
+title: Spacing
+description: Sistema de espaçamento consistente
+---
+
+# Spacing
+
+> Sistema de espaçamento baseado em múltiplos de 4px para consistência visual.
+
+## Escala de Espaçamento
+
+| Token        | Valor | Uso                       |
+| ------------ | ----- | ------------------------- |
+| `spacing-0`  | 0px   | Sem espaço                |
+| `spacing-1`  | 4px   | Espaçamento mínimo        |
+| `spacing-2`  | 8px   | Espaçamento pequeno       |
+| `spacing-3`  | 12px  | Espaçamento médio-pequeno |
+| `spacing-4`  | 16px  | Espaçamento médio         |
+| `spacing-5`  | 20px  | Espaçamento médio-grande  |
+| `spacing-6`  | 24px  | Espaçamento grande        |
+| `spacing-8`  | 32px  | Espaçamento extra-grande  |
+| `spacing-10` | 40px  | Espaçamento muito grande  |
+| `spacing-12` | 48px  | Espaçamento enorme        |
+
+## Classes Tailwind
+
+```tsx
+// Padding
+<div className="p-4">Padding 16px</div>
+<div className="px-6 py-4">Padding horizontal 24px, vertical 16px</div>
+
+// Margin
+<div className="m-4">Margin 16px</div>
+<div className="mt-6 mb-4">Margin top 24px, bottom 16px</div>
+
+// Gap (Flexbox/Grid)
+<div className="flex gap-4">Gap 16px</div>
+<div className="grid gap-6">Gap 24px</div>
+```
+
+## Relacionados
+
+- [Typography](/design-system/foundation/typography)

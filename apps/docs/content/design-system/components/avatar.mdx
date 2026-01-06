@@ -1,0 +1,80 @@
+---
+title: Avatar
+description: Imagens de perfil de usuários
+---
+
+# Avatar
+
+> Componente para exibir imagens de perfil ou iniciais de usuários.
+
+## Básico
+
+```tsx
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+
+<Avatar>
+  <AvatarImage src="/avatar.jpg" alt="João Silva" />
+  <AvatarFallback>JS</AvatarFallback>
+</Avatar>;
+```
+
+## Tamanhos
+
+```tsx
+<Avatar className="h-8 w-8">
+  <AvatarImage src="/avatar.jpg" />
+  <AvatarFallback>JS</AvatarFallback>
+</Avatar>
+
+<Avatar className="h-10 w-10">
+  <AvatarImage src="/avatar.jpg" />
+  <AvatarFallback>JS</AvatarFallback>
+</Avatar>
+
+<Avatar className="h-16 w-16">
+  <AvatarImage src="/avatar.jpg" />
+  <AvatarFallback>JS</AvatarFallback>
+</Avatar>
+```
+
+## Com Badge
+
+```tsx
+<div className="relative inline-block">
+  <Avatar>
+    <AvatarImage src="/avatar.jpg" />
+    <AvatarFallback>JS</AvatarFallback>
+  </Avatar>
+  <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-success-main border-2 border-background" />
+</div>
+```
+
+## Grupo de Avatares
+
+```tsx
+<div className="flex -space-x-2">
+  <Avatar className="border-2 border-background">
+    <AvatarImage src="/avatar1.jpg" />
+    <AvatarFallback>JS</AvatarFallback>
+  </Avatar>
+  <Avatar className="border-2 border-background">
+    <AvatarImage src="/avatar2.jpg" />
+    <AvatarFallback>MS</AvatarFallback>
+  </Avatar>
+  <Avatar className="border-2 border-background">
+    <AvatarImage src="/avatar3.jpg" />
+    <AvatarFallback>AS</AvatarFallback>
+  </Avatar>
+</div>
+```
+
+## API
+
+| Prop  | Tipo     | Padrão | Descrição         |
+| ----- | -------- | ------ | ----------------- |
+| `src` | `string` | -      | URL da imagem     |
+| `alt` | `string` | -      | Texto alternativo |
+
+## Relacionados
+
+- [Badge](/design-system/components/badge)

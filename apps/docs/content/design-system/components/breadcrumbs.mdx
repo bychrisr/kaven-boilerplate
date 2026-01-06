@@ -1,0 +1,112 @@
+---
+title: Breadcrumbs
+description: Navegação hierárquica mostrando o caminho atual
+---
+
+# Breadcrumbs
+
+> Componente de navegação que mostra a hierarquia de páginas até a localização atual.
+
+## Básico
+
+```tsx
+import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
+
+<Breadcrumbs>
+  <BreadcrumbItem>
+    <Link href="/dashboard">Dashboard</Link>
+  </BreadcrumbItem>
+  <BreadcrumbItem>
+    <Link href="/users">Usuários</Link>
+  </BreadcrumbItem>
+  <BreadcrumbItem current>Lista</BreadcrumbItem>
+</Breadcrumbs>;
+```
+
+## Uso Real (User Page)
+
+```tsx
+<Breadcrumbs>
+  <BreadcrumbItem>
+    <Link href="/dashboard" className="transition-colors hover:text-foreground">
+      Dashboard
+    </Link>
+  </BreadcrumbItem>
+  <BreadcrumbItem>
+    <Link href="#" className="transition-colors hover:text-foreground">
+      User
+    </Link>
+  </BreadcrumbItem>
+  <BreadcrumbItem current>List</BreadcrumbItem>
+</Breadcrumbs>
+```
+
+## Com Ícones
+
+```tsx
+import { Home, Users, Settings } from 'lucide-react';
+
+<Breadcrumbs>
+  <BreadcrumbItem>
+    <Link href="/" className="flex items-center gap-2">
+      <Home className="h-4 w-4" />
+      Home
+    </Link>
+  </BreadcrumbItem>
+  <BreadcrumbItem>
+    <Link href="/users" className="flex items-center gap-2">
+      <Users className="h-4 w-4" />
+      Usuários
+    </Link>
+  </BreadcrumbItem>
+  <BreadcrumbItem current>Detalhes</BreadcrumbItem>
+</Breadcrumbs>;
+```
+
+## Separadores Customizados
+
+```tsx
+<Breadcrumbs separator="›">
+  <BreadcrumbItem><Link href="/">Home</Link></BreadcrumbItem>
+  <BreadcrumbItem current>Página</BreadcrumbItem>
+</Breadcrumbs>
+
+<Breadcrumbs separator="•">
+  <BreadcrumbItem><Link href="/">Home</Link></BreadcrumbItem>
+  <BreadcrumbItem current>Página</BreadcrumbItem>
+</Breadcrumbs>
+```
+
+## API
+
+| Prop        | Tipo                  | Padrão | Descrição             |
+| ----------- | --------------------- | ------ | --------------------- |
+| `separator` | `string \| ReactNode` | `'/'`  | Separador entre items |
+| `children`  | `ReactNode`           | -      | BreadcrumbItems       |
+
+### BreadcrumbItem Props
+
+| Prop       | Tipo        | Padrão  | Descrição         |
+| ---------- | ----------- | ------- | ----------------- |
+| `current`  | `boolean`   | `false` | Se é o item atual |
+| `children` | `ReactNode` | -       | Conteúdo do item  |
+
+## Acessibilidade
+
+```tsx
+<nav aria-label="Breadcrumb">
+  <Breadcrumbs>
+    <BreadcrumbItem>
+      <Link href="/">Home</Link>
+    </BreadcrumbItem>
+    <BreadcrumbItem current aria-current="page">
+      Página Atual
+    </BreadcrumbItem>
+  </Breadcrumbs>
+</nav>
+```
+
+## Relacionados
+
+- [Navbar](/design-system/components/navbar) - Navegação principal
+- [Tabs](/design-system/components/tabs) - Navegação por abas

@@ -1,0 +1,42 @@
+---
+title: Masonry
+description: Layout em cascata para conteúdo de alturas variadas
+---
+
+# Masonry
+
+> Layout tipo Pinterest para exibir conteúdo com alturas diferentes.
+
+## Básico
+
+```tsx
+import { Masonry } from '@/components/ui/masonry';
+
+<Masonry cols={3} gap={16}>
+  <div className="bg-card p-4 rounded-lg">Item 1</div>
+  <div className="bg-card p-4 rounded-lg h-32">Item 2</div>
+  <div className="bg-card p-4 rounded-lg h-48">Item 3</div>
+  <div className="bg-card p-4 rounded-lg">Item 4</div>
+</Masonry>;
+```
+
+## Responsivo
+
+```tsx
+<Masonry cols={{ xs: 1, sm: 2, md: 3, lg: 4 }} gap={16}>
+  {items.map((item) => (
+    <Card key={item.id}>{item.content}</Card>
+  ))}
+</Masonry>
+```
+
+## API
+
+| Prop   | Tipo               | Padrão | Descrição               |
+| ------ | ------------------ | ------ | ----------------------- |
+| `cols` | `number \| object` | `3`    | Colunas (ou responsivo) |
+| `gap`  | `number`           | `16`   | Espaçamento             |
+
+## Relacionados
+
+- [Image List](/design-system/components/image-list)

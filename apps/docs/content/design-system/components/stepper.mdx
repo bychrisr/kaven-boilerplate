@@ -1,0 +1,68 @@
+---
+title: Stepper
+description: Indicador de progresso em etapas
+---
+
+# Stepper
+
+> Componente para exibir progresso através de etapas numeradas.
+
+## Básico
+
+```tsx
+import { Stepper, Step, StepLabel } from '@/components/ui/stepper';
+
+<Stepper activeStep={1}>
+  <Step>
+    <StepLabel>Informações Básicas</StepLabel>
+  </Step>
+  <Step>
+    <StepLabel>Endereço</StepLabel>
+  </Step>
+  <Step>
+    <StepLabel>Confirmação</StepLabel>
+  </Step>
+</Stepper>;
+```
+
+## Com Descrição
+
+```tsx
+<Stepper activeStep={1}>
+  <Step>
+    <StepLabel>
+      Passo 1
+      <span className="text-sm text-muted-foreground">Dados pessoais</span>
+    </StepLabel>
+  </Step>
+  <Step>
+    <StepLabel>
+      Passo 2<span className="text-sm text-muted-foreground">Endereço</span>
+    </StepLabel>
+  </Step>
+</Stepper>
+```
+
+## Vertical
+
+```tsx
+<Stepper activeStep={1} orientation="vertical">
+  <Step>
+    <StepLabel>Passo 1</StepLabel>
+  </Step>
+  <Step>
+    <StepLabel>Passo 2</StepLabel>
+  </Step>
+</Stepper>
+```
+
+## API
+
+| Prop          | Tipo                         | Padrão         | Descrição               |
+| ------------- | ---------------------------- | -------------- | ----------------------- |
+| `activeStep`  | `number`                     | `0`            | Etapa ativa (0-indexed) |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Orientação              |
+
+## Relacionados
+
+- [Progress](/design-system/components/progress)

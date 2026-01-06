@@ -1,48 +1,13 @@
 ---
 title: Table
-description: Componente para exibir dados tabulares com ordenação e paginação
+description: Tabelas básicas para exibir dados tabulares
 ---
 
 # Table
 
-Componente robusto para exibir dados tabulares com suporte a ordenação, paginação e seleção.
+> Componente de tabela básica para exibir dados em formato tabular.
 
-## Uso Básico
-
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableCell,
-  TableHead,
-} from '../../../components/ui/table';
-
-## Uso Básico
-
-<div className="preview-box">
-  <Table>
-    <TableHeader>
-      <TableRow>
-        <TableHead>Nome</TableHead>
-        <TableHead>Email</TableHead>
-        <TableHead>Status</TableHead>
-      </TableRow>
-    </TableHeader>
-    <TableBody>
-      <TableRow>
-        <TableCell>João Silva</TableCell>
-        <TableCell>joao@example.com</TableCell>
-        <TableCell>Ativo</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell>Maria Santos</TableCell>
-        <TableCell>maria@example.com</TableCell>
-        <TableCell>Inativo</TableCell>
-      </TableRow>
-    </TableBody>
-  </Table>
-</div>
+## Básico
 
 ```tsx
 import {
@@ -50,8 +15,8 @@ import {
   TableHeader,
   TableBody,
   TableRow,
-  TableCell,
   TableHead,
+  TableCell,
 } from '@/components/ui/table';
 
 <Table>
@@ -63,42 +28,57 @@ import {
     </TableRow>
   </TableHeader>
   <TableBody>
-    {data.map((row) => (
-      <TableRow key={row.id}>
-        <TableCell>{row.name}</TableCell>
-        <TableCell>{row.email}</TableCell>
-        <TableCell>{row.status}</TableCell>
-      </TableRow>
-    ))}
+    <TableRow>
+      <TableCell>João Silva</TableCell>
+      <TableCell>joao@example.com</TableCell>
+      <TableCell>Ativo</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Maria Santos</TableCell>
+      <TableCell>maria@example.com</TableCell>
+      <TableCell>Ativo</TableCell>
+    </TableRow>
   </TableBody>
 </Table>;
 ```
 
-## Estilos
-
-- **Border**: 1px solid gray-300
-- **Hover**: Background gray-50
-- **Header**: Background gray-100
-- **Padding**: 16px
-
-## Com Ordenação
+## Com Borda
 
 ```tsx
-<TableHeaderCell sortable sortDirection={sortDirection} onSort={handleSort}>
-  Nome
-</TableHeaderCell>
+<Table className="border">{/* ... */}</Table>
 ```
 
-## Boas Práticas
+## Striped
 
-### ✅ Fazer
+```tsx
+<Table>
+  <TableBody>
+    <TableRow className="even:bg-muted/50">
+      <TableCell>Linha 1</TableCell>
+    </TableRow>
+    <TableRow className="even:bg-muted/50">
+      <TableCell>Linha 2</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+```
 
-- Usar TableHead e TableBody
-- Fornecer key único para TableRow
-- Implementar paginação para muitos dados
+## Hover
 
-### ❌ Não Fazer
+```tsx
+<Table>
+  <TableBody>
+    <TableRow className="hover:bg-muted/50">
+      <TableCell>Linha com hover</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+```
 
-- Tabelas muito largas sem scroll
-- Muitas colunas (considerar card grid)
-- Células sem padding
+## API
+
+Componentes básicos sem props especiais. Use classes CSS para estilização.
+
+## Relacionados
+
+- [Data Table](/design-system/components/data-table) - Tabelas avançadas

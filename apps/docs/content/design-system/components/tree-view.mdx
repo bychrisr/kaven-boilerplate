@@ -1,0 +1,48 @@
+---
+title: Tree View
+description: Visualização hierárquica em árvore
+---
+
+# Tree View
+
+> Componente para exibir dados hierárquicos em estrutura de árvore.
+
+## Básico
+
+```tsx
+import { TreeView, TreeItem } from '@/components/ui/tree-view';
+
+<TreeView>
+  <TreeItem nodeId="1" label="Pasta 1">
+    <TreeItem nodeId="2" label="Arquivo 1.1" />
+    <TreeItem nodeId="3" label="Arquivo 1.2" />
+  </TreeItem>
+  <TreeItem nodeId="4" label="Pasta 2">
+    <TreeItem nodeId="5" label="Arquivo 2.1" />
+  </TreeItem>
+</TreeView>;
+```
+
+## Com Ícones
+
+```tsx
+import { Folder, File } from 'lucide-react';
+
+<TreeView>
+  <TreeItem nodeId="1" label="Documentos" icon={<Folder />}>
+    <TreeItem nodeId="2" label="arquivo.pdf" icon={<File />} />
+  </TreeItem>
+</TreeView>;
+```
+
+## API
+
+| Prop     | Tipo        | Padrão | Descrição      |
+| -------- | ----------- | ------ | -------------- |
+| `nodeId` | `string`    | -      | ID único do nó |
+| `label`  | `string`    | -      | Texto do nó    |
+| `icon`   | `ReactNode` | -      | Ícone do nó    |
+
+## Relacionados
+
+- [List](/design-system/components/list)

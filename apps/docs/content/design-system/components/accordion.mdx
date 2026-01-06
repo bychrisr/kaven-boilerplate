@@ -1,0 +1,61 @@
+---
+title: Accordion
+description: Painéis colapsáveis para organizar conteúdo
+---
+
+# Accordion
+
+> Componente para exibir conteúdo colapsável em painéis expansíveis.
+
+## Básico
+
+```tsx
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/ui/accordion';
+
+<Accordion type="single" collapsible>
+  <AccordionItem value="item-1">
+    <AccordionTrigger>O que é o Kaven?</AccordionTrigger>
+    <AccordionContent>
+      Kaven é um boilerplate SaaS multi-tenant completo.
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="item-2">
+    <AccordionTrigger>Como funciona?</AccordionTrigger>
+    <AccordionContent>
+      Sistema completo com autenticação, pagamentos e multi-tenancy.
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>;
+```
+
+## Múltiplos Abertos
+
+```tsx
+<Accordion type="multiple">
+  <AccordionItem value="item-1">
+    <AccordionTrigger>Seção 1</AccordionTrigger>
+    <AccordionContent>Conteúdo 1</AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="item-2">
+    <AccordionTrigger>Seção 2</AccordionTrigger>
+    <AccordionContent>Conteúdo 2</AccordionContent>
+  </AccordionItem>
+</Accordion>
+```
+
+## API
+
+| Prop           | Tipo                     | Padrão     | Descrição                  |
+| -------------- | ------------------------ | ---------- | -------------------------- |
+| `type`         | `'single' \| 'multiple'` | `'single'` | Modo de expansão           |
+| `collapsible`  | `boolean`                | `false`    | Permite fechar item aberto |
+| `defaultValue` | `string \| string[]`     | -          | Valor inicial              |
+
+## Relacionados
+
+- [Tabs](/design-system/components/tabs)

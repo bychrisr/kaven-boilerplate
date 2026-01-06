@@ -1,0 +1,36 @@
+---
+title: Speed Dial
+description: Menu de ações rápidas flutuante
+---
+
+# Speed Dial
+
+> Menu flutuante que expande para mostrar múltiplas ações.
+
+## Básico
+
+```tsx
+import { SpeedDial, SpeedDialAction } from '@/components/ui/speed-dial';
+import { Plus, Edit, Share, Delete } from 'lucide-react';
+
+<SpeedDial icon={<Plus />}>
+  <SpeedDialAction icon={<Edit />} label="Editar" onClick={handleEdit} />
+  <SpeedDialAction
+    icon={<Share />}
+    label="Compartilhar"
+    onClick={handleShare}
+  />
+  <SpeedDialAction icon={<Delete />} label="Excluir" onClick={handleDelete} />
+</SpeedDial>;
+```
+
+## API
+
+| Prop        | Tipo                                  | Padrão | Descrição           |
+| ----------- | ------------------------------------- | ------ | ------------------- |
+| `icon`      | `ReactNode`                           | -      | Ícone principal     |
+| `direction` | `'up' \| 'down' \| 'left' \| 'right'` | `'up'` | Direção de expansão |
+
+## Relacionados
+
+- [FAB](/design-system/components/fab)

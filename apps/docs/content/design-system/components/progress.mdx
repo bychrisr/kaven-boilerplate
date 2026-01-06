@@ -1,0 +1,53 @@
+---
+title: Progress
+description: Indicadores de progresso e loading
+---
+
+# Progress
+
+> Barras de progresso para indicar carregamento ou conclusão de tarefas.
+
+## Linear
+
+```tsx
+import { Progress } from '@/components/ui/progress';
+
+<Progress value={60} />;
+```
+
+## Com Label
+
+```tsx
+<div className="space-y-2">
+  <div className="flex justify-between text-sm">
+    <span>Progresso</span>
+    <span>60%</span>
+  </div>
+  <Progress value={60} />
+</div>
+```
+
+## Cores
+
+```tsx
+<Progress value={60} className="[&>div]:bg-primary" />
+<Progress value={60} className="[&>div]:bg-success-main" />
+<Progress value={60} className="[&>div]:bg-error-main" />
+```
+
+## Indeterminado
+
+```tsx
+<Progress value={null} className="animate-pulse" />
+```
+
+## API
+
+| Prop    | Tipo             | Padrão | Descrição    |
+| ------- | ---------------- | ------ | ------------ |
+| `value` | `number \| null` | -      | Valor 0-100  |
+| `max`   | `number`         | `100`  | Valor máximo |
+
+## Relacionados
+
+- [Skeleton](/design-system/components/skeleton)

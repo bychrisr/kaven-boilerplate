@@ -1,0 +1,70 @@
+---
+title: List
+description: Listas para exibir coleções de itens
+---
+
+# List
+
+> Componente para exibir listas de itens com suporte a ícones e ações.
+
+## Básico
+
+```tsx
+import { List, ListItem } from '@/components/ui/list';
+
+<List>
+  <ListItem>Item 1</ListItem>
+  <ListItem>Item 2</ListItem>
+  <ListItem>Item 3</ListItem>
+</List>;
+```
+
+## Com Ícones
+
+```tsx
+import { Home, Users, Settings } from 'lucide-react';
+
+<List>
+  <ListItem>
+    <Home className="mr-2 h-4 w-4" />
+    Dashboard
+  </ListItem>
+  <ListItem>
+    <Users className="mr-2 h-4 w-4" />
+    Usuários
+  </ListItem>
+  <ListItem>
+    <Settings className="mr-2 h-4 w-4" />
+    Configurações
+  </ListItem>
+</List>;
+```
+
+## Clicável
+
+```tsx
+<List>
+  <ListItem
+    className="cursor-pointer hover:bg-muted"
+    onClick={() => navigate('/dashboard')}
+  >
+    Dashboard
+  </ListItem>
+  <ListItem
+    className="cursor-pointer hover:bg-muted"
+    onClick={() => navigate('/users')}
+  >
+    Usuários
+  </ListItem>
+</List>
+```
+
+## API
+
+| Prop       | Tipo        | Padrão | Descrição      |
+| ---------- | ----------- | ------ | -------------- |
+| `children` | `ReactNode` | -      | Itens da lista |
+
+## Relacionados
+
+- [Dropdown Menu](/design-system/components/dropdown-menu)

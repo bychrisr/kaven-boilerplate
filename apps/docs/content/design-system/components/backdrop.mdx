@@ -1,0 +1,39 @@
+---
+title: Backdrop
+description: Overlay de fundo para modais
+---
+
+# Backdrop
+
+> Overlay escuro de fundo usado em modais e drawers.
+
+## Básico
+
+```tsx
+import { Backdrop } from '@/components/ui/backdrop';
+
+<Backdrop open={open} onClick={() => setOpen(false)} />;
+```
+
+## Com Conteúdo
+
+```tsx
+<Backdrop open={open}>
+  <div className="bg-card p-6 rounded-lg" onClick={(e) => e.stopPropagation()}>
+    <h2>Modal Content</h2>
+  </div>
+</Backdrop>
+```
+
+## API
+
+| Prop        | Tipo         | Padrão  | Descrição          |
+| ----------- | ------------ | ------- | ------------------ |
+| `open`      | `boolean`    | `false` | Visibilidade       |
+| `onClick`   | `() => void` | -       | Callback ao clicar |
+| `invisible` | `boolean`    | `false` | Backdrop invisível |
+
+## Relacionados
+
+- [Dialog](/design-system/components/dialog)
+- [Drawer](/design-system/components/drawer)

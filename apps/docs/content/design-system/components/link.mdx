@@ -1,0 +1,66 @@
+---
+title: Link
+description: Links estilizados para navegação
+---
+
+# Link
+
+> Componente de link com estilos consistentes e integração Next.js.
+
+## Básico
+
+```tsx
+import Link from 'next/link';
+
+<Link href="/dashboard" className="text-primary hover:underline">
+  Dashboard
+</Link>;
+```
+
+## Variantes
+
+```tsx
+// Primary
+<Link href="/" className="text-primary hover:underline">
+  Link Primary
+</Link>
+
+// Muted
+<Link href="/" className="text-muted-foreground hover:text-foreground">
+  Link Muted
+</Link>
+
+// Underline
+<Link href="/" className="underline underline-offset-4 hover:text-primary">
+  Link Underline
+</Link>
+```
+
+## Externo
+
+```tsx
+<Link
+  href="https://example.com"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="text-primary hover:underline inline-flex items-center gap-1"
+>
+  Link Externo
+  <ExternalLink className="h-3 w-3" />
+</Link>
+```
+
+## API
+
+Usa as props padrão do Next.js Link:
+
+| Prop        | Tipo     | Padrão | Descrição      |
+| ----------- | -------- | ------ | -------------- |
+| `href`      | `string` | -      | URL de destino |
+| `target`    | `string` | -      | Target do link |
+| `className` | `string` | -      | Classes CSS    |
+
+## Relacionados
+
+- [Button](/design-system/components/button)
+- [Breadcrumbs](/design-system/components/breadcrumbs)
