@@ -28,7 +28,7 @@ function NodeMetricCard({
   return (
     <div className="rounded-lg border border-border bg-card p-6">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-muted-foreground">{title}</p>
+        <p className="text-sm font-bold uppercase tracking-wider text-foreground">{title}</p>
         <div className={`rounded-full p-3 ${statusColors[status]}`}>
           <Icon className="h-5 w-5" />
         </div>
@@ -72,8 +72,8 @@ export function NodeJsMetrics() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">Node.js Metrics</h2>
-        <p className="text-sm text-gray-500">Métricas específicas do runtime Node.js</p>
+        <h2 className="text-lg font-semibold text-foreground">Node.js Metrics</h2>
+        <p className="text-sm text-muted-foreground">Métricas específicas do runtime Node.js</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">

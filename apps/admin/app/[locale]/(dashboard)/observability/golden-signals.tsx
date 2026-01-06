@@ -51,7 +51,7 @@ function GoldenSignalCard({
   return (
     <div className="rounded-lg border border-border bg-card p-6 transition-shadow hover:shadow-md">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-muted-foreground">{title}</p>
+        <p className="text-sm font-bold uppercase tracking-wider text-foreground">{title}</p>
         <div className={`rounded-full p-3 ${styles.bg}`}>
           <Icon className={`h-6 w-6 ${styles.text}`} />
         </div>
@@ -92,8 +92,8 @@ export function GoldenSignals() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">Golden Signals</h2>
-        <p className="text-sm text-gray-500">
+        <h2 className="text-lg font-semibold text-foreground">Golden Signals</h2>
+        <p className="text-sm text-muted-foreground">
           Métricas essenciais de saúde do sistema (Google SRE)
         </p>
       </div>

@@ -11,8 +11,8 @@ export default function ObservabilityPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Observabilidade</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-2xl font-bold text-foreground">Observabilidade</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Monitoramento avançado baseado em padrões Prometheus/Grafana
         </p>
       </div>
@@ -43,12 +43,12 @@ export default function ObservabilityPage() {
 
         <TabsContent value="audit">
           <div className="rounded-lg border border-gray-200 bg-white">
-            <div className="border-b border-gray-200 p-6">
+            <div className="border-b border-border p-6">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-gray-600" />
-                <h3 className="text-lg font-semibold text-gray-900">Logs de Auditoria</h3>
+                <ShieldCheck className="h-5 w-5 text-muted-foreground" />
+                <h3 className="text-lg font-semibold text-foreground">Logs de Auditoria</h3>
               </div>
-              <p className="mt-1 text-sm text-gray-500">Histórico de ações críticas do sistema</p>
+              <p className="mt-1 text-sm text-muted-foreground">Histórico de ações críticas do sistema</p>
             </div>
             <div className="p-6">
               <AuditLogTable />
