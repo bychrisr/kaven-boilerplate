@@ -12,7 +12,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label';
 import { useFeatures } from '@/hooks/use-features';
 import { Plus, Trash2, X } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
 import type { Plan } from '@/hooks/use-plans';
 
 const planSchema = z.object({
