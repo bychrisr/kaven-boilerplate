@@ -148,7 +148,7 @@ export function ProductForm({ onSubmit, defaultValues, isLoading }: ProductFormP
           </div>
 
           <div className="flex items-center space-x-2">
-            <Switch id="isPublic" checked={form.watch('isPublic')} onCheckedChange={(checked) => form.setValue('isPublic', checked)} />
+            <Switch id="isPublic" checked={form.watch('isPublic')} onChange={(e) => form.setValue('isPublic', e.target.checked)} />
             <Label htmlFor="isPublic">Público</Label>
           </div>
         </CardContent>
@@ -215,7 +215,7 @@ export function ProductForm({ onSubmit, defaultValues, isLoading }: ProductFormP
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Switch checked={form.watch(`effects.${index}.isPermanent`)} onCheckedChange={(checked) => form.setValue(`effects.${index}.isPermanent`, checked)} />
+                  <Switch checked={form.watch(`effects.${index}.isPermanent`)} onChange={(e) => form.setValue(`effects.${index}.isPermanent`, e.target.checked)} />
                   <Label>Efeito Permanente</Label>
                 </div>
               </div>

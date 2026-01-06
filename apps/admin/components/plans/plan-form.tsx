@@ -187,7 +187,7 @@ export function PlanForm({ onSubmit, defaultValues, isLoading }: PlanFormProps) 
               <Switch
                 id="isPublic"
                 checked={form.watch('isPublic')}
-                onCheckedChange={(checked) => form.setValue('isPublic', checked)}
+                onChange={(e) => form.setValue('isPublic', e.target.checked)}
               />
               <Label htmlFor="isPublic">Público</Label>
             </div>
@@ -196,7 +196,7 @@ export function PlanForm({ onSubmit, defaultValues, isLoading }: PlanFormProps) 
               <Switch
                 id="isDefault"
                 checked={form.watch('isDefault')}
-                onCheckedChange={(checked) => form.setValue('isDefault', checked)}
+                onChange={(e) => form.setValue('isDefault', e.target.checked)}
               />
               <Label htmlFor="isDefault">Plano Padrão</Label>
             </div>
@@ -374,8 +374,8 @@ export function PlanForm({ onSubmit, defaultValues, isLoading }: PlanFormProps) 
                           <div className="flex items-center gap-2">
                             <Switch
                               checked={form.watch(`features.${index}.enabled`) ?? true}
-                              onCheckedChange={(checked) => 
-                                form.setValue(`features.${index}.enabled`, checked)
+                              onChange={(e) => 
+                                form.setValue(`features.${index}.enabled`, e.target.checked)
                               }
                             />
                             <span className="text-sm">Habilitado</span>

@@ -35,7 +35,7 @@ interface UserRow {
 }
 
 interface Props {
-  row: UserRow;
+  row: any; // User from API
   selected: boolean;
   onSelectRow: () => void;
 }
