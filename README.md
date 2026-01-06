@@ -1,226 +1,412 @@
-# Kaven Boilerplate
+# Kaven Boilerplate - Multi-tenant SaaS Platform
 
-> Base SaaS Multi-Tenant Enterprise-Grade
-
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
-[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
-[![Fastify](https://img.shields.io/badge/Fastify-4-green)](https://www.fastify.io/)
-[![Prisma](https://img.shields.io/badge/Prisma-5-2D3748)](https://www.prisma.io/)
+**Versão:** 1.0.0  
+**Data:** Janeiro 2026  
+**Status:** ✅ Produção Ready
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Visão Geral
 
-```bash
-# Instalar dependências
-pnpm install
+Kaven é um boilerplate completo para aplicações SaaS multi-tenant com sistema robusto de planos, produtos, pagamentos PIX e validação de features por plano.
 
-# Iniciar Docker (PostgreSQL + Redis)
-docker-compose up -d
+### Principais Funcionalidades
 
-# Rodar migrações
-npx prisma migrate dev
-
-# Iniciar backend
-cd apps/api && pnpm dev
-
-# Iniciar frontend (em outro terminal)
-cd apps/admin && pnpm dev
-```
-
-✅ **Backend:** http://localhost:8000  
-✅ **Frontend:** http://localhost:3000
+- ✅ **Multi-tenancy** - Isolamento completo de dados por tenant
+- ✅ **Plans & Products** - Sistema flexível de planos e produtos
+- ✅ **PIX Payments** - Integração PagueBit com QR Code dinâmico
+- ✅ **Feature Validation** - Validação de limites em runtime
+- ✅ **Usage Tracking** - Rastreamento de uso de features
+- ✅ **Admin Panel** - CRUD completo de planos, produtos e features
+- ✅ **Tenant Experience** - Pricing page, checkout e payment flow
+- ✅ **Internationalization** - Suporte EN/PT-BR
 
 ---
 
-## 📋 Features Implementadas
-
-### Backend (21 endpoints REST)
-
-- ✅ **Autenticação completa:** Register, Login, 2FA TOTP, Password Reset
-- ✅ **User Management:** CRUD com paginação e filtros
-- ✅ **Avatar System:** Upload, redimensionamento e conversão automática para WebP
-- ✅ **Tenant Management:** CRUD multi-tenant
-- ✅ **Segurança:** JWT + Refresh Tokens, bcrypt, Zod validation
+## 📊 Stack Tecnológica
 
 ### Frontend
 
-- ✅ **Login funcional** com integração API
-- ✅ **Dashboard Analytics** (Real Data) com Gráficos Recharts
-- ✅ **User Creation** com validação avançada de senha (5 requisitos)
-- ✅ **Avatar Management** com preview em tempo real e fallback para iniciais
-- ✅ **User List** com filtros estáveis e contadores em tempo real
-- ✅ **Tenant Management** obrigatório (create own tenant ou selecionar existente)
-- ✅ **UI Minimalista** (Dark/Light Mode) com Persistência
-- ✅ **Design System** refinado (Header Glassmorphism, Collapsible Sidebar)
-- ✅ **Form Validation** em tempo real com feedback visual (bordas verde/vermelha)
-- ✅ **UI responsiva** com Tailwind CSS
+- **Framework:** Next.js 14 (App Router + Turbopack)
+- **UI:** shadcn/ui + Tailwind CSS
+- **State:** TanStack Query + React Context
+- **Forms:** React Hook Form + Zod
+- **i18n:** next-intl
 
-### Database
+### Backend
 
-- ✅ **11 modelos Prisma:** Users, Tenants, Subscriptions, Invoices, Orders, etc.
-- ✅ **6 enums** para status e roles
-- ✅ **Migrações** aplicadas e versionadas
+- **Runtime:** Node.js 20+
+- **Framework:** Fastify
+- **ORM:** Prisma
+- **Database:** PostgreSQL
+- **Cache:** Redis
+- **Auth:** JWT
+
+### Payments
+
+- **Provider:** PagueBit (PIX)
+- **Features:** QR Code dinâmico, Webhook v2, Expiração 10min
 
 ---
 
 ## 🏗️ Arquitetura
 
 ```
-Turborepo Monorepo
-├── Backend: Fastify 4 + TypeScript
-├── Frontend: Next.js 14 (App Router)
-├── Database: PostgreSQL 16 + Prisma 5
-└── Cache: Redis 7
+kaven-boilerplate/
+├── apps/
+│   ├── admin/          # Frontend (Next.js)
+│   │   ├── app/        # Pages (App Router)
+│   │   ├── components/ # UI Components
+│   │   └── hooks/      # Custom Hooks
+│   └── api/            # Backend (Fastify)
+│       ├── src/
+│       │   ├── modules/      # Feature modules
+│       │   ├── middleware/   # Middlewares
+│       │   └── lib/          # Utilities
+│       └── prisma/     # Database schema
+├── packages/           # Shared packages
+└── docs/              # Documentation
 ```
-
-**Multi-Tenant "Camaleão":** Suporta single ou multi-tenant via configuração.
 
 ---
 
-## 📚 Documentação
+## 🚀 Quick Start
 
-### Guias Gerais
+### Pré-requisitos
 
-- [**Guia de Implementação**](docs/IMPLEMENTATION.md) - Arquitetura e detalhes técnicos
-- [**API Specification**](Phase%200%20-%20FOUNDATION/7.%20API%20SPECIFICATION.md) - Todos os endpoints
-- [**Database Specification**](Phase%200%20-%20FOUNDATION/9.%20DATABASE%20SPECIFICATION.md) - Schema completo
+- Node.js 20+
+- PostgreSQL 14+
+- Redis 7+
+- pnpm 8+
 
-### Features Específicas
+### Instalação
 
-- [**Password Validation**](docs/PASSWORD_VALIDATION.md) - Sistema de validação de senha
-- [**Tenant Management**](docs/TENANT_MANAGEMENT.md) - Gestão de tenants em criação de usuário
-- [**Backend Config Fixes**](docs/BACKEND_CONFIG_FIXES.md) - Correções de configuração
-- [**Form Validation Bugs**](docs/FORM_VALIDATION_BUGS.md) - Bugs corrigidos e lições aprendidas
-- [**Avatar Upload Feature**](docs/AVATAR_UPLOAD_FEATURE.md) - Sistema completo de upload de avatares
-- [**User List Filters**](docs/USER_LIST_FILTERS_FIX.md) - Solução de estabilidade para contadores e filtros
+```bash
+# Clone o repositório
+git clone https://github.com/your-org/kaven-boilerplate.git
+cd kaven-boilerplate
+
+# Instalar dependências
+pnpm install
+
+# Configurar variáveis de ambiente
+cp .env.example .env
+# Edite .env com suas credenciais
+
+# Setup do banco de dados
+pnpm db:migrate
+pnpm db:seed
+
+# Iniciar desenvolvimento
+pnpm dev
+```
+
+### Acessos Padrão
+
+- **Admin:** http://localhost:3000
+- **API:** http://localhost:4000
+- **Docs:** http://localhost:3001
+
+**Credenciais de teste:**
+
+- Email: `admin@kaven.dev`
+- Senha: `admin123`
+
+---
+
+## 📦 Módulos Principais
+
+### 1. Plans & Products System
+
+Sistema completo de monetização com planos e produtos.
+
+**Models:**
+
+- `Plan` - Planos de assinatura (FREE, PRO, ENTERPRISE)
+- `Price` - Preços por intervalo (mensal, anual, etc)
+- `PlanFeature` - Features incluídas no plano
+- `Product` - Produtos avulsos (add-ons, consumíveis)
+- `ProductEffect` - Efeitos que produtos aplicam
+
+**Endpoints:**
+
+```
+GET    /api/plans              # Listar planos públicos
+GET    /api/plans/:id          # Detalhes do plano
+POST   /api/plans              # Criar plano (admin)
+PUT    /api/plans/:id          # Atualizar plano (admin)
+DELETE /api/plans/:id          # Deletar plano (admin)
+
+GET    /api/products           # Listar produtos
+POST   /api/products           # Criar produto (admin)
+PUT    /api/products/:id       # Atualizar produto (admin)
+DELETE /api/products/:id       # Deletar produto (admin)
+```
+
+### 2. Payment System (PagueBit)
+
+Integração completa com PagueBit para pagamentos PIX.
+
+**Features:**
+
+- QR Code dinâmico
+- Webhook v2 com HMAC validation
+- Expiração automática (10 minutos)
+- Retry logic para rate limiting
+- Idempotência de eventos
+
+**Endpoints:**
+
+```
+POST   /api/purchases          # Criar purchase + QR Code
+GET    /api/purchases/:id      # Consultar status
+POST   /api/webhooks/paguebit  # Webhook (PagueBit)
+```
+
+**Fluxo:**
+
+1. Cliente cria purchase
+2. Sistema gera QR Code PIX
+3. Cliente paga via PIX
+4. PagueBit envia webhook
+5. Sistema valida HMAC
+6. Sistema atualiza subscription
+7. Features são ativadas
+
+### 3. Feature Validation & Usage Tracking
+
+Sistema de validação de limites por plano em runtime.
+
+**Components:**
+
+- `EntitlementService` - Validação de features
+- `UsageTrackingService` - Rastreamento de uso
+- `requireFeature` middleware - Proteção de rotas
+
+**Exemplo de Uso:**
+
+```typescript
+// Proteger endpoint
+fastify.post('/api/users', {
+  preHandler: [
+    authMiddleware,
+    requireFeature('USERS', 1) // Valida quota de USERS
+  ],
+  handler: userController.create
+});
+
+// Resposta quando limite atingido (403)
+{
+  "error": "Feature not available",
+  "message": "Limite de 25 users atingido",
+  "currentUsage": 25,
+  "limit": 25,
+  "currentPlan": "FREE",
+  "availableUpgrades": [...]
+}
+```
+
+### 4. Admin Panel
+
+Interface completa para gerenciamento de planos, produtos e features.
+
+**Páginas:**
+
+- `/plans` - CRUD de planos
+- `/products` - CRUD de produtos
+- `/features` - CRUD de features
+- `/subscriptions` - Visualização de assinaturas
+
+**Features:**
+
+- Formulários com validação Zod
+- TanStack Query para cache
+- Feedback visual (toasts)
+- Internacionalização
+
+### 5. Tenant Experience
+
+Experiência completa de compra para o tenant.
+
+**Páginas:**
+
+- `/pricing` - Visualização de planos
+- `/checkout` - Checkout com proration
+- Payment Modal - QR Code PIX com timer
+
+**Features:**
+
+- Toggle mensal/anual
+- Cálculo automático de proration
+- Timer de expiração (10 min)
+- Polling de status (5s)
+- Estados: pending, approved, expired, failed
 
 ---
 
 ## 🔐 Segurança
 
-- **JWT** com access tokens (15min) + refresh tokens (7 dias) (Standard `sub` claim)
-- **Password Validation** production-ready com 5 requisitos de segurança:
-  - Mínimo 8 caracteres
-  - Letra minúscula + maiúscula
-  - Número + caractere especial
-  - Indicador visual de força em tempo real
-- **2FA TOTP** com QR codes + backup codes
-- **Zod** para validação de inputs e Environment Variables
-- **Security Middlewares:** Rate Limiting (Redis), CSRF Protection, IDOR Prevention
-- **Secure Logger** com redação de dados sensíveis
-- **Input Sanitization** contra XSS e Injection
-- **CORS** e **Helmet** configurados
-- **Soft deletes** para auditoria
+### Autenticação
+
+- JWT com refresh tokens
+- HttpOnly cookies
+- CSRF protection
+
+### Autorização
+
+- RBAC (Role-Based Access Control)
+- Tenant isolation
+- Resource ownership validation
+
+### Payments
+
+- HMAC v2 validation (webhooks)
+- Idempotência de eventos
+- Retry logic com backoff
+
+### API
+
+- Rate limiting (300 req/min)
+- CORS configurado
+- Input validation (Zod)
+- SQL injection protection (Prisma)
+
+---
+
+## 📈 Performance
+
+### Otimizações
+
+- TanStack Query cache (5 min)
+- Redis cache para sessions
+- Database indexes otimizados
+- Next.js Image optimization
+
+### Métricas Alvo
+
+- API Response: < 200ms (p95)
+- Page Load: < 2s
+- Database Queries: < 100ms
+- Uptime: > 99.9%
 
 ---
 
 ## 🧪 Testes
 
+### Estrutura
+
+```
+tests/
+├── e2e/              # Testes E2E (Playwright)
+├── integration/      # Testes de integração
+└── unit/             # Testes unitários (Jest)
+```
+
+### Comandos
+
 ```bash
-# Unit tests (TODO)
-pnpm test
-
-# E2E tests (TODO)
-pnpm test:e2e
-
-# Coverage (TODO)
-pnpm test:coverage
+pnpm test           # Testes unitários
+pnpm test:e2e       # Testes E2E
+pnpm test:coverage  # Cobertura
 ```
 
-**Target:** 80%+ coverage
+### Cobertura Alvo
+
+- Unit: > 70%
+- Integration: > 50%
+- E2E: Fluxos críticos 100%
 
 ---
 
-## 📊 Stack Tecnológica
+## 🚀 Deploy
 
-### Backend
+### Staging
 
-- Node.js 20 LTS
-- Fastify 4
-- Prisma 5
-- TypeScript 5.3
-- jose (JWT)
-- bcrypt
-- speakeasy (2FA)
-- Zod
+```bash
+# Build
+pnpm build
 
-### Frontend
+# Migrations
+pnpm db:migrate:deploy
 
-- Next.js 14
-- React 18
-- TypeScript 5.3
-- Tailwind CSS
-- shadcn/ui (Components)
-- TanStack Query (Data Fetching)
-- Zustand (State Management)
+# Start
+pnpm start
+```
 
-### DevOps
+### Produção
 
-- Docker + Docker Compose
-- Turborepo
-- (TODO: GitHub Actions CI/CD)
+**Variáveis de Ambiente Obrigatórias:**
+
+```env
+DATABASE_URL=postgresql://...
+REDIS_URL=redis://...
+JWT_SECRET=...
+PAGUEBIT_API_TOKEN=...
+PAGUEBIT_WEBHOOK_SECRET=...
+```
+
+**Checklist:**
+
+- [ ] HTTPS configurado
+- [ ] Environment variables em vault
+- [ ] Migrations aplicadas
+- [ ] Seeds executados (opcional)
+- [ ] Monitoring configurado
+- [ ] Logs centralizados
+- [ ] Backups automáticos
 
 ---
 
-## 🗂️ Estrutura do Projeto
+## 📚 Documentação
 
-```
-kaven-boilerplate/
-├── apps/
-│   ├── api/          # Backend Fastify
-│   └── admin/        # Frontend Next.js
-├── packages/         # Código compartilhado
-├── prisma/           # Database schema
-├── docs/             # Documentação
-├── .agent/           # Scripts de automação
-└── docker-compose.yml
-```
+- [API Documentation](./docs/API.md)
+- [Database Schema](./docs/DATABASE.md)
+- [Deployment Guide](./docs/DEPLOYMENT.md)
+- [Testing Guide](./docs/TESTING.md)
+- [Contributing](./CONTRIBUTING.md)
+
+---
+
+## 🗺️ Roadmap
+
+### Próximas Features
+
+- [ ] Plan Gate component (bloqueio visual)
+- [ ] Analytics dashboard
+- [ ] Email notifications
+- [ ] Invoice generation
+- [ ] Refund flow
+- [ ] Subscription pause/resume
+- [ ] Proration customizável
+- [ ] Multi-currency support
+
+### Integrações Futuras
+
+- [ ] Stripe (cartão de crédito)
+- [ ] Mercado Pago
+- [ ] Email providers (SendGrid, Resend)
+- [ ] SMS notifications (Twilio)
+
+---
+
+## 📄 Licença
+
+MIT License - veja [LICENSE](./LICENSE) para detalhes.
 
 ---
 
 ## 🤝 Contribuindo
 
-1. Fork o projeto
-2. Crie uma branch: `git checkout -b feature/nova-feature`
-3. Commit: `git commit -m 'feat: adiciona nova feature'`
-4. Push: `git push origin feature/nova-feature`
-5. Abra um Pull Request
-
-**Convenção de Commits:** [Conventional Commits](https://www.conventionalcommits.org/)
+Contribuições são bem-vindas! Veja [CONTRIBUTING.md](./CONTRIBUTING.md) para guidelines.
 
 ---
 
-## 📈 Roadmap
+## 📞 Suporte
 
-- [x] Setup inicial + Database
-- [x] Autenticação completa + 2FA
-- [x] User/Tenant Management
-- [x] Frontend básico
-- [x] Payment System (Stripe + Pix) - Parcial (Backend routes exist)
-- [x] Observability (Prometheus + Grafana) - Parcial (Metrics middleware + endpoint)
-- [ ] Frontend completo (36 páginas) - Em progresso
-- [ ] Testes (unit + integration + E2E)
-- [ ] CI/CD pipeline
-- [ ] Módulos Post-MVP (CRM, Files, Chat, etc.)
+- **Email:** support@kaven.dev
+- **Docs:** https://docs.kaven.dev
+- **Issues:** https://github.com/your-org/kaven-boilerplate/issues
 
 ---
 
-## 📝 Licença
-
-MIT © 2025
-
----
-
-## 🔗 Links Úteis
-
-- [Documentação Phase 0](Phase%200%20-%20FOUNDATION/)
-- [Plano de Implementação Futura](docs/FUTURE_IMPLEMENTATION_PLAN.md)
-- [Telemetria e Relatórios](.agent/reports/)
-- [Workflows](.agent/workflows/)
-
----
-
-**Status:** 🟢 MVP Funcional (70% completo)
-**Versão:** 0.5.0
-**Última atualização:** 2025-12-26
+**Desenvolvido com ❤️ pela equipe Kaven**
