@@ -271,6 +271,9 @@ importers:
       stripe:
         specifier: ^20.1.0
         version: 20.1.0(@types/node@20.19.27)
+      systeminformation:
+        specifier: ^5.30.0
+        version: 5.30.0
       validator:
         specifier: ^13.15.26
         version: 13.15.26
