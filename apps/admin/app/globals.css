@@ -21,11 +21,24 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* New Typography Stack */
+  --font-display: var(--font-display);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono);
+
+  /* Kaven UI v2 - Advanced Colors (OKLCH) */
+  --color-primary: oklch(65% 0.18 150); /* Glassmorphism Variables - Light Mode (Frosted Ice) */
+  --glass-gradient-start: rgba(255, 255, 255, 0.8);
+  --glass-gradient-end: rgba(255, 255, 255, 0.6);
+  --color-glass-border: rgba(255, 255, 255, 0.5);
+  --color-glass-highlight: rgba(255, 255, 255, 0.8);
+  --glass-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  --spotlight-color: rgba(255, 255, 255, 0.5);
+  --color-surface: oklch(20% 0.02 260); /* Base Escura v2 */
 
   /* Kaven Theme Colors Mapping */
   --color-primary-main: var(--primary-main);
+  /* ... (rest of existing mappings) ... */
   --color-primary-dark: var(--primary-dark);
   --color-primary-light: var(--primary-light);
   --color-primary-lighter: var(--primary-lighter);
@@ -143,6 +156,11 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Typography Families */
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'Source Code Pro', monospace;
 }
 
 .dark {
@@ -191,6 +209,13 @@
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: rgba(145, 158, 171, 0.12); /* Subtle border */
   --sidebar-ring: rgba(0, 167, 111, 0.3);
+  /* Glassmorphism Variables - Dark Mode (Tech) */
+  --glass-gradient-start: rgba(30, 41, 59, 0.7);
+  --glass-gradient-end: rgba(30, 41, 59, 0.4);
+  --color-glass-border: rgba(255, 255, 255, 0.08);
+  --color-glass-highlight: rgba(255, 255, 255, 0.15);
+  --glass-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.3);
+  --spotlight-color: rgba(255, 255, 255, 0.08);
 }
 
 @layer base {
@@ -240,5 +265,32 @@
 
   .simplebar-track.simplebar-horizontal {
     height: 6px;
+  }
+}
+
+@layer utilities {
+  /* O Painel de Vidro Definitivo (Kaven v2) */
+  .glass-panel {
+    @apply backdrop-blur-2xl relative overflow-hidden;
+
+    /* Fundo gradiente adaptativo */
+    background: linear-gradient(
+      180deg,
+      var(--glass-gradient-start) 0%,
+      var(--glass-gradient-end) 100%
+    );
+
+    /* Borda adaptativa */
+    border: 1px solid var(--color-glass-border);
+
+    /* Sombra adaptativa */
+    box-shadow:
+      var(--glass-shadow),
+      inset 0 1px 0 0 var(--color-glass-highlight);
+  }
+
+  /* Textura de Ruído (Noise) */
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
   }
 }

@@ -41,6 +41,10 @@ interface StatCardProps extends React.HTMLAttributes<HTMLDivElement>, VariantPro
   valueClassName?: string;
 }
 
+import { SpotlightCard } from './spotlight-card';
+
+// ... (previous imports)
+
 export function StatCard({
   className,
   variant,
@@ -48,7 +52,6 @@ export function StatCard({
   value,
   icon: Icon,
   trend,
-  // trendLabel, // unused
   subtitle,
   menuAction,
   chart,
@@ -58,8 +61,8 @@ export function StatCard({
 }: StatCardProps) {
   const isPositiveTrend = trend !== undefined && trend >= 0;
 
-  return (
-    <div className={cn(statCardVariants({ variant }), className)} {...props}>
+  const content = (
+    <>
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -74,7 +77,7 @@ export function StatCard({
               <Icon className="h-5 w-5" />
             </div>
           )}
-          <span className="font-semibold text-base md:text-lg text-foreground/90 tracking-tight">
+          <span className="font-display font-bold text-base md:text-lg text-foreground/90 tracking-tight">
             {title}
           </span>
         </div>
@@ -103,7 +106,7 @@ export function StatCard({
       {/* Content */}
       <div className="flex flex-col gap-2 mt-auto">
         <div className="flex items-center justify-between">
-            <h3 className={cn("text-4xl font-bold font-display tracking-wide text-foreground", valueClassName)}>
+            <h3 className={cn("text-4xl font-extrabold font-mono tracking-tight text-foreground", valueClassName)}>
                 {value}
             </h3>
             
@@ -112,8 +115,8 @@ export function StatCard({
                     <div className={cn(
                         "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold tracking-tight",
                         isPositiveTrend 
-                            ? "text-emerald-700 bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400" 
-                            : "text-rose-700 bg-rose-100 dark:bg-rose-500/10 dark:text-rose-400"
+                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border-transparent dark:border-emerald-500/20" 
+                            : "bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-500 border-transparent dark:border-red-500/20"
                     )}>
                         <span>{Math.abs(trend)}%</span>
                         {isPositiveTrend ? <ArrowUp className="h-3.5 w-3.5 stroke-[3]" /> : <ArrowDown className="h-3.5 w-3.5 stroke-[3]" />}
@@ -128,11 +131,25 @@ export function StatCard({
         </div>
 
         {subtitle && (
-          <p className="text-sm font-medium tracking-wide text-muted-foreground/90">
+          <p className="text-sm font-medium text-muted-foreground/90 font-body">
             {subtitle}
           </p>
         )}
       </div>
+    </>
+  );
+
+  if (variant === 'outline') {
+    return (
+      <SpotlightCard className={cn("p-6 flex flex-col justify-between", className)} {...props}>
+        {content}
+      </SpotlightCard>
+    );
+  }
+
+  return (
+    <div className={cn(statCardVariants({ variant }), className)} {...props}>
+      {content}
     </div>
   );
 }

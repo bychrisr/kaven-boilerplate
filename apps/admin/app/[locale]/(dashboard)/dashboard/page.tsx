@@ -9,7 +9,7 @@ import { useUsers } from '@/hooks/use-users';
 import { useDashboardSummary, useDashboardCharts } from '@/hooks/use-dashboard';
 import { DashboardSkeleton } from '@/components/skeletons/dashboard-skeleton';
 import { StatCard } from '@/components/ui/stat-card';
-import { Users, DollarSign, FileText, ArrowUp, ArrowDown } from 'lucide-react';
+import { Users, DollarSign, FileText, ArrowUp, ArrowDown, Lock } from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -139,64 +139,28 @@ export default function DashboardPage() {
 
         {/* New Signups Card */}
         {showCard('users') && (
-             <div className="relative overflow-hidden rounded-2xl bg-card p-4 md:p-6 shadow-xl border border-border/50">
-                <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-                     <div className="p-2 md:p-3 bg-blue-500/10 rounded-full">
-                        <Users className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
-                     </div>
-                     <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">{t('cards.newSignups')}</span>
-                </div>
-                 <div className="flex items-end justify-between">
-                    <div>
-                         <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">{metrics.newSignups.value}</h3>
-                         <div className="flex items-center gap-2 text-sm">
-                            <span className={`flex items-center font-semibold px-1.5 py-0.5 rounded ${metrics.newSignups.trend >= 0 ? 'text-green-500 bg-green-500/10' : 'text-destructive bg-destructive/10'}`}>
-                                 {metrics.newSignups.trend >= 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
-                                {metrics.newSignups.trend > 0 ? '+' : ''}{metrics.newSignups.trend}%
-                            </span>
-                            <span className="text-muted-foreground">{t('metrics.vsPrevious7Days')}</span>
-                         </div>
-                    </div>
-                     <div className="h-12 w-24" style={{ minWidth: '96px', minHeight: '48px' }}>
-                         <ResponsiveContainer width="100%" height="100%">
-                             <BarChart data={[{v:10},{v:25},{v:15},{v:30},{v:metrics.newSignups.value}]}>
-                                 <Bar dataKey="v" fill="#00B8D9" radius={[2,2,0,0]} />
-                             </BarChart>
-                         </ResponsiveContainer>
-                     </div>
-                </div>
-            </div>
+             <StatCard
+                title={t('cards.newSignups')}
+                value={metrics.newSignups.value}
+                icon={Users}
+                trend={metrics.newSignups.trend}
+                subtitle={t('metrics.vsPrevious7Days')}
+                variant="outline"
+                iconClassName="bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-500"
+             />
         )}
 
         {/* Activation Rate Card */}
         {showCard('users') && (
-             <div className="relative overflow-hidden rounded-2xl bg-card p-4 md:p-6 shadow-xl border border-border/50">
-                <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-                     <div className="p-2 md:p-3 bg-yellow-500/10 rounded-full">
-                        <FileText className="h-5 w-5 md:h-6 md:w-6 text-yellow-500" />
-                     </div>
-                     <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">{t('cards.activationRate')}</span>
-                </div>
-                 <div className="flex items-end justify-between">
-                    <div>
-                         <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">{metrics.activationRate.value}%</h3>
-                         <div className="flex items-center gap-2 text-sm">
-                            <span className={`flex items-center font-semibold px-1.5 py-0.5 rounded ${metrics.activationRate.trend >= 0 ? 'text-green-500 bg-green-500/10' : 'text-destructive bg-destructive/10'}`}>
-                                 {metrics.activationRate.trend >= 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
-                                {metrics.activationRate.trend > 0 ? '+' : ''}{metrics.activationRate.trend}%
-                            </span>
-                            <span className="text-muted-foreground">{t('metrics.vsPrevious7Days')}</span>
-                         </div>
-                    </div>
-                      <div className="h-12 w-24" style={{ minWidth: '96px', minHeight: '48px' }}>
-                         <ResponsiveContainer width="100%" height="100%">
-                             <BarChart data={[{v:30},{v:28},{v:25},{v:24},{v:metrics.activationRate.value}]}>
-                                 <Bar dataKey="v" fill="#FFAB00" radius={[2,2,0,0]} />
-                             </BarChart>
-                         </ResponsiveContainer>
-                     </div>
-                </div>
-            </div>
+             <StatCard
+                title={t('cards.activationRate')}
+                value={`${metrics.activationRate.value}%`}
+                icon={FileText}
+                trend={metrics.activationRate.trend}
+                subtitle={t('metrics.vsPrevious7Days')}
+                variant="outline"
+                iconClassName="bg-yellow-100 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-500"
+             />
         )}
         
         {/* Placeholder for other cards defined in space but not yet implemented */}
@@ -206,13 +170,17 @@ export default function DashboardPage() {
              // But for now keeping logic flexible or hiding them if handled below
             .filter(card => !['revenue', 'invoices'].includes(card)) // Removing them from here
             .map(card => (
-                <div key={card} className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-dashed border-border flex flex-col items-center justify-center text-center">
-                    <div className="p-3 bg-muted rounded-full mb-3">
-                        <FileText className="h-6 w-6 text-muted-foreground" />
-                    </div>
-                    <h3 className="text-lg font-bold text-foreground capitalize">{card.replace('_', ' ')}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{tCommon('comingSoon', { name: spaceConfig.name })}</p>
-                </div>
+                <StatCard
+                    key={card}
+                    title={card.replace('_', ' ')}
+                    value="-"
+                    icon={Lock}
+                    subtitle={tCommon('comingSoon', { name: spaceConfig.name })}
+                    variant="outline"
+                    iconClassName="bg-muted text-muted-foreground"
+                    valueClassName="text-muted-foreground"
+                    className="opacity-80"
+                />
             ))
         }
       </div>
@@ -228,78 +196,42 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 {/* Revenue Card */}
                 {showCard('revenue') && (
-                    <div className="relative overflow-hidden rounded-2xl bg-card p-4 md:p-6 shadow-xl border border-border/50">
-                        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-                            <div className="p-2 md:p-3 bg-blue-500/10 rounded-full">
-                                <DollarSign className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
-                            </div>
-                            <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">{t('cards.totalRevenue')}</span>
-                        </div>
-                        <div className="flex items-end justify-between">
-                            <div>
-                                <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">{metrics.revenue.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</h3>
-                                <div className="flex items-center gap-2 text-sm">
-                                    <span className={`flex items-center font-semibold px-1.5 py-0.5 rounded ${metrics.revenue.trend >= 0 ? 'text-green-500 bg-green-500/10' : 'text-destructive bg-destructive/10'}`}>
-                                        {metrics.revenue.trend >= 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
-                                        {metrics.revenue.trend > 0 ? '+' : ''}{metrics.revenue.trend}%
-                                    </span>
-                                    <span className="text-muted-foreground">{t('metrics.last7Days')}</span>
-                                </div>
-                            </div>
-                            <div className="h-12 w-24" style={{ minWidth: '96px', minHeight: '48px' }}>
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={[{v:40},{v:20},{v:60},{v:40},{v:80}]}>
-                                        <Bar dataKey="v" fill="#00B8D9" radius={[2,2,0,0]} />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </div>
-                        </div>
-                    </div>
+                    <StatCard
+                        title={t('cards.totalRevenue')}
+                        value={metrics.revenue.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                        icon={DollarSign}
+                        trend={metrics.revenue.trend}
+                        subtitle={t('metrics.last7Days')}
+                        variant="outline"
+                        iconClassName="bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-500"
+                    />
                 )}
 
                 {/* Invoices/Downloads Card */}
                 {showCard('invoices') && (
-                    <div className="relative overflow-hidden rounded-2xl bg-card p-4 md:p-6 shadow-xl border border-border/50">
-                        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-                            <div className="p-2 md:p-3 bg-yellow-500/10 rounded-full">
-                                <FileText className="h-5 w-5 md:h-6 md:w-6 text-yellow-500" />
-                            </div>
-                            <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">{t('cards.totalInvoices')}</span>
-                        </div>
-                        <div className="flex items-end justify-between">
-                            <div>
-                                <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">{metrics.invoices.value}</h3>
-                                <div className="flex items-center gap-2 text-sm">
-                                    <span className={`flex items-center font-semibold px-1.5 py-0.5 rounded ${metrics.invoices.trend >= 0 ? 'text-green-500 bg-green-500/10' : 'text-destructive bg-destructive/10'}`}>
-                                        {metrics.invoices.trend >= 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
-                                        {metrics.invoices.trend > 0 ? '+' : ''}{metrics.invoices.trend}%
-                                    </span>
-                                    <span className="text-muted-foreground">{t('metrics.last7Days')}</span>
-                                </div>
-                            </div>
-                            <div className="h-12 w-24" style={{ minWidth: '96px', minHeight: '48px' }}>
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={[{v:30},{v:50},{v:40},{v:30},{v:70}]}>
-                                        <Bar dataKey="v" fill="#FFAB00" radius={[2,2,0,0]} />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </div>
-                        </div>
-                    </div>
+                    <StatCard
+                subtitle={t('metrics.last7Days')}
+                variant="outline"
+                iconClassName="bg-yellow-100 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-500"
+             />
                 )}
                 
                 {/* Placeholders for other cards */}
                 {spaceConfig.dashboardCards
                     .filter(card => !['users', 'revenue', 'invoices', 'activity'].includes(card))
                     .map(card => (
-                        <div key={card} className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-dashed border-border flex flex-col items-center justify-center text-center">
-                            <div className="p-3 bg-muted rounded-full mb-3">
-                                <FileText className="h-6 w-6 text-muted-foreground" />
-                            </div>
-                            <h3 className="text-lg font-bold text-foreground capitalize">{card.replace('_', ' ')}</h3>
-                            <p className="text-sm text-muted-foreground mt-1">{tCommon('comingSoon', { name: spaceConfig.name })}</p>
-                        </div>
-                    ))
+                <StatCard
+                    key={card}
+                    title={card.replace('_', ' ')}
+                    value="-"
+                    icon={Lock}
+                    subtitle={tCommon('comingSoon', { name: spaceConfig.name })}
+                    variant="outline"
+                    iconClassName="bg-muted text-muted-foreground"
+                    valueClassName="text-muted-foreground"
+                    className="opacity-80"
+                />
+            ))
                 }
             </div>
         </div>
