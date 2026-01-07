@@ -7,6 +7,7 @@ import fastifyHelmet from '@fastify/helmet';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import { env } from './config/env';
+import { initSentry, Sentry } from './lib/sentry';
 import { authRoutes } from './modules/auth/routes/auth.routes';
 import { userRoutes } from './modules/users/routes/user.routes';
 import { tenantRoutes } from './modules/tenants/routes/tenant.routes';
@@ -19,12 +20,16 @@ import { metricsMiddleware } from './middleware/metrics.middleware';
 import { tenantMiddleware } from './middleware/tenant.middleware';
 import { auditRoutes } from './modules/audit/routes/audit.routes';
 import { observabilityRoutes } from './modules/observability/routes/observability.routes';
+import { diagnosticsRoutes } from './modules/observability/routes/diagnostics.routes';
 import { dashboardRoutes } from './modules/dashboard/dashboard.routes';
 import { advancedMetricsMiddleware, onResponseMetricsHook } from './middleware/advanced-metrics.middleware';
 import { planRoutes } from './modules/plans/routes/plan.routes';
 import { featureRoutes } from './modules/plans/routes/feature.routes';
 import { productRoutes } from './modules/products/routes/product.routes';
 import { subscriptionRoutes } from './modules/subscriptions/routes/subscription.routes';
+
+// Initialize Sentry for error tracking
+initSentry();
 
 const fastify = Fastify({
   logger: {
@@ -140,10 +145,43 @@ fastify.addHook('onRequest', tenantMiddleware);
 import { csrfMiddleware } from './middleware/csrf.middleware';
 fastify.addHook('onRequest', csrfMiddleware);
 
-// Health checks e Metrics
+// Health check
 fastify.register(healthRoutes);
 
-// Rotas
+// Sentry Error Handler
+fastify.setErrorHandler((error, request, reply) => {
+  // Log error to Sentry
+  Sentry.captureException(error, {
+    contexts: {
+      request: {
+        method: request.method,
+        url: request.url,
+        headers: request.headers,
+      },
+    },
+    user: {
+      id: (request as any).user?.id,
+      email: (request as any).user?.email,
+    },
+    tags: {
+      tenant: (request as any).tenantId,
+    },
+  });
+
+  // Log to console in development
+  if (env.NODE_ENV !== 'production') {
+    fastify.log.error(error);
+  }
+
+  // Return error response
+  const statusCode = (error as any).statusCode || 500;
+  reply.status(statusCode).send({
+    error: env.NODE_ENV === 'production' ? 'Internal Server Error' : error.message,
+    statusCode,
+  });
+});
+
+// Start server
 fastify.register(authRoutes, { prefix: '/api/auth' });
 fastify.register(userRoutes, { prefix: '/api/users' });
 fastify.register(tenantRoutes, { prefix: '/api/tenants' });
@@ -154,6 +192,7 @@ fastify.register(webhookRoutes, { prefix: '/api/webhooks' });
 fastify.register(fileRoutes, { prefix: '/api/files' });
 fastify.register(auditRoutes, { prefix: '/api/audit-logs' });
 fastify.register(observabilityRoutes, { prefix: '/api/observability' });
+fastify.register(diagnosticsRoutes, { prefix: '/api/diagnostics' });
 fastify.register(dashboardRoutes, { prefix: '/api/dashboard' });
 
 // Plans & Products System

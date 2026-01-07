@@ -30,6 +30,9 @@ export const envSchema = z.object({
   SMTP_SECURE: z.string().transform(v => v === 'true').default(false),
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
+  
+  // Sentry
+  SENTRY_DSN: z.string().optional(),
   EMAIL_FROM: z.string().default('Kaven <noreply@kaven.com>'),
   
   // App Config
