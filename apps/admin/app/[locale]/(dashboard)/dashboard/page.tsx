@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import { useUsers } from '@/hooks/use-users';
 import { useDashboardSummary, useDashboardCharts } from '@/hooks/use-dashboard';
 import { DashboardSkeleton } from '@/components/skeletons/dashboard-skeleton';
+import { StatCard } from '@/components/ui/stat-card';
 import { Users, DollarSign, FileText, ArrowUp, ArrowDown } from 'lucide-react';
 import {
   BarChart,
@@ -125,33 +126,15 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {/* Users Card */}
         {showCard('users') && (
-            <div className="relative overflow-hidden rounded-2xl bg-card p-4 md:p-6 shadow-xl border border-border/50">
-                <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-                     <div className="p-2 md:p-3 bg-primary/10 rounded-full">
-                        <Users className="h-5 w-5 md:h-6 md:w-6 text-primary" />
-                     </div>
-                     <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">{t('cards.totalUsers')}</span>
-                </div>
-                <div className="flex items-end justify-between">
-                    <div>
-                         <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">{metrics.totalUsers.value.toLocaleString()}</h3>
-                         <div className="flex items-center gap-2 text-sm">
-                            <span className={`flex items-center font-semibold px-1.5 py-0.5 rounded ${metrics.totalUsers.trend >= 0 ? 'text-green-500 bg-green-500/10' : 'text-destructive bg-destructive/10'}`}>
-                                {metrics.totalUsers.trend >= 0 ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
-                                {metrics.totalUsers.trend > 0 ? '+' : ''}{metrics.totalUsers.trend}%
-                            </span>
-                            <span className="text-muted-foreground">{t('metrics.last7Days')}</span>
-                         </div>
-                    </div>
-                     <div className="h-12 w-24" style={{ minWidth: '96px', minHeight: '48px' }}>
-                         <ResponsiveContainer width="100%" height="100%">
-                             <BarChart data={[{v:20},{v:40},{v:30},{v:70},{v:50}]}>
-                                 <Bar dataKey="v" fill="hsl(var(--primary))" radius={[2,2,0,0]} />
-                             </BarChart>
-                         </ResponsiveContainer>
-                     </div>
-                </div>
-            </div>
+            <StatCard
+                title={t('cards.totalUsers')}
+                value={metrics.totalUsers.value.toLocaleString()}
+                icon={Users}
+                trend={metrics.totalUsers.trend}
+                subtitle="Active Accounts"
+                variant="outline"
+                className="hover:shadow-lg"
+            />
         )}
 
         {/* New Signups Card */}
