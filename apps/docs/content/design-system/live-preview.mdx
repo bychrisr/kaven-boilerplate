@@ -1,0 +1,82 @@
+---
+title: Live Preview
+description: Como usar o componente de Live Preview para documentação interativa
+---
+
+import { ComponentPreview } from '@/components/ComponentPreview';
+import { Button } from '@/components/ui/button';
+
+# Live Preview
+
+> O componente `<ComponentPreview>` é usado para renderizar exemplos visuais interativos na documentação.
+
+## O que é
+
+O `ComponentPreview` é um wrapper que cria um container isolado com fundo estilizado, borda e padding adequado para exibir componentes UI. Ele simula como o componente aparecerá em uma aplicação real.
+
+## Como Usar
+
+Para usar o Live Preview, importe o componente e envolva seu exemplo JSX nele.
+
+```tsx
+import { ComponentPreview } from '@/components/ComponentPreview';
+import { Button } from '@/components/ui/button';
+
+<ComponentPreview>
+  <Button>Meu Botão</Button>
+</ComponentPreview>;
+```
+
+### Resultado
+
+<ComponentPreview>
+  <Button>Meu Botão</Button>
+</ComponentPreview>
+
+## Convenção de Código
+
+Geralmente, acompanhamos o preview visual com o bloco de código correspondente abaixo dele:
+
+<ComponentPreview>
+  <div className="flex gap-2">
+    <Button variant="contained">Salvar</Button>
+    <Button variant="outlined">Cancelar</Button>
+  </div>
+</ComponentPreview>
+
+```tsx
+<div className="flex gap-2">
+  <Button variant="contained">Salvar</Button>
+  <Button variant="outlined">Cancelar</Button>
+</div>
+```
+
+## Render Props (Interatividade)
+
+Para exemplos que precisam de estado (como abrir um modal, trocar tabs, ou inputs controlados), você deve passar uma função como `children`.
+
+**Importante:** Isso requer que o exemplo seja autossuficiente ou use hooks dentro do corpo da função.
+
+<ComponentPreview>
+  <div className="flex justify-center">
+    {() => {
+      const [count, setCount] = React.useState(0);
+      return (
+        <Button onClick={() => setCount((c) => c + 1)}>Clicks: {count}</Button>
+      );
+    }}
+  </div>
+</ComponentPreview>
+
+```tsx
+const [count, setCount] = React.useState(0);
+
+<Button onClick={() => setCount((c) => c + 1)}>Clicks: {count}</Button>;
+```
+
+## Props
+
+| Prop        | Tipo                           | Padrão | Descrição                                        |
+| ----------- | ------------------------------ | ------ | ------------------------------------------------ |
+| `children`  | `ReactNode \| () => ReactNode` | -      | O componente a ser renderizado.                  |
+| `className` | `string`                       | `''`   | Classes CSS adicionais para o container externo. |

@@ -2,6 +2,7 @@ export default {
   index: 'Introdução',
   principles: 'Design Principles',
   'built-in-examples': 'Built-in Examples',
+  'live-preview': 'Live Preview',
   foundation: '🎨 Foundation',
   components: '🧩 Components',
   patterns: '📐 Patterns',
