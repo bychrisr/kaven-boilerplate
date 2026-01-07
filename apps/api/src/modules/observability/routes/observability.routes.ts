@@ -21,6 +21,38 @@ export async function observabilityRoutes(fastify: FastifyInstance) {
   );
 
   fastify.get(
+    '/hardware',
+    {
+      preHandler: [requireAuth, requireRole(['SUPER_ADMIN'])],
+    },
+    observabilityController.getHardwareMetrics
+  );
+
+  fastify.get(
+    '/infrastructure',
+    {
+      preHandler: [requireAuth, requireRole(['SUPER_ADMIN'])],
+    },
+    observabilityController.getInfrastructure
+  );
+
+  fastify.get(
+    '/external-apis',
+    {
+      preHandler: [requireAuth, requireRole(['SUPER_ADMIN'])],
+    },
+    observabilityController.getExternalAPIs
+  );
+
+  fastify.get(
+    '/alerts',
+    {
+      preHandler: [requireAuth, requireRole(['SUPER_ADMIN'])],
+    },
+    observabilityController.getAlerts
+  );
+
+  fastify.get(
     '/metrics',
     observabilityController.getMetrics
   );

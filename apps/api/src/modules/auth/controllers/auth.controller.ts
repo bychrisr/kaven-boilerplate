@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { authService } from '../services/auth.service';
 import { sanitizer } from '../../../utils/sanitizer';
+import { businessMetricsService } from '../../observability/services/business-metrics.service';
 import { 
   registerSchema, 
   loginSchema, 
@@ -24,6 +25,12 @@ export class AuthController {
       if (data.name) data.name = sanitizer.clean(data.name);
       
       const result = await authService.register(data);
+      
+      // 📊 Track user registration
+      if ('user' in result) {
+        businessMetricsService.trackUserRegistration(result.user.id, 'email');
+      }
+      
       reply.status(201).send(result);
     } catch (error: any) {
       if (error.name === 'ZodError') {
@@ -71,12 +78,18 @@ export class AuthController {
 
       const result = await authService.login(data, ip, userAgent);
       
+      // 📊 Track successful login
+      businessMetricsService.trackLogin(true, 'email');
+      
       if ('requires2FA' in result) {
         return reply.status(200).send(result);
       }
 
       reply.send(result);
     } catch (error: any) {
+      // 📊 Track failed login
+      businessMetricsService.trackLogin(false, 'email');
+      
       if (error.name === 'ZodError') {
         return reply.status(400).send({ error: 'Dados inválidos', details: error.errors });
       }
