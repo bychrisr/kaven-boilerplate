@@ -259,6 +259,13 @@
   "Observability": {
     "title": "Observability",
     "description": "Advanced monitoring based on Prometheus/Grafana patterns",
+    "tabs": {
+      "metrics": "Metrics",
+      "hardware": "Hardware",
+      "infrastructure": "Infrastructure",
+      "external": "External APIs",
+      "alerts": "Alerts"
+    },
     "goldenSignals": {
       "title": "Golden Signals",
       "description": "Essential system health metrics (Google SRE)",
@@ -280,6 +287,51 @@
       "activeHandlesDesc": "File descriptors, sockets, etc",
       "activeRequests": "Active Requests",
       "activeRequestsDesc": "Requests in progress"
+    },
+    "hardware": {
+      "title": "Hardware Metrics",
+      "description": "Server CPU, memory, disk and network",
+      "cpu": "CPU",
+      "cores": "cores",
+      "memory": "Memory",
+      "disk": "Disk",
+      "uptime": "Uptime",
+      "temperature": "Temperature",
+      "cpuTemp": "CPU Temperature",
+      "swap": "Swap",
+      "diskIO": "Disk I/O",
+      "read": "Read",
+      "write": "Write"
+    },
+    "infrastructure": {
+      "title": "Infrastructure Services",
+      "description": "Database, Cache and internal services status",
+      "latency": "Latency",
+      "successRate": "Success Rate"
+    },
+    "externalAPIs": {
+      "title": "External APIs",
+      "description": "Third-party integrations status (Stripe, Google Maps, PagBit)",
+      "latency": "Latency",
+      "successRate": "Success Rate",
+      "notConfigured": "API key not configured"
+    },
+    "alerts": {
+      "activeAlerts": "Active Alerts",
+      "activeAlertsDescription": "Alerts requiring immediate attention",
+      "active": "active",
+      "noActiveAlerts": "No active alerts. System is healthy!",
+      "thresholds": "Configured Thresholds",
+      "thresholdsDescription": "Alert thresholds for system metrics",
+      "table": {
+        "name": "Name",
+        "metric": "Metric",
+        "threshold": "Threshold",
+        "severity": "Severity",
+        "status": "Status"
+      },
+      "enabled": "Enabled",
+      "disabled": "Disabled"
     }
   }
 }

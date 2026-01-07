@@ -259,6 +259,13 @@
   "Observability": {
     "title": "Observabilidade",
     "description": "Monitoramento avançado baseado em padrões Prometheus/Grafana",
+    "tabs": {
+      "metrics": "Métricas",
+      "hardware": "Hardware",
+      "infrastructure": "Infraestrutura",
+      "external": "APIs Externas",
+      "alerts": "Alertas"
+    },
     "goldenSignals": {
       "title": "Golden Signals",
       "description": "Métricas essenciais de saúde do sistema (Google SRE)",
@@ -280,6 +287,51 @@
       "activeHandlesDesc": "File descriptors, sockets, etc",
       "activeRequests": "Active Requests",
       "activeRequestsDesc": "Requisições em andamento"
+    },
+    "hardware": {
+      "title": "Métricas de Hardware",
+      "description": "CPU, memória, disco e rede do servidor",
+      "cpu": "CPU",
+      "cores": "cores",
+      "memory": "Memória",
+      "disk": "Disco",
+      "uptime": "Uptime",
+      "temperature": "Temperatura",
+      "cpuTemp": "Temperatura da CPU",
+      "swap": "Swap",
+      "diskIO": "I/O do Disco",
+      "read": "Leitura",
+      "write": "Escrita"
+    },
+    "infrastructure": {
+      "title": "Serviços de Infraestrutura",
+      "description": "Status de Database, Cache e serviços internos",
+      "latency": "Latência",
+      "successRate": "Taxa de Sucesso"
+    },
+    "externalAPIs": {
+      "title": "APIs Externas",
+      "description": "Status de integrações com serviços de terceiros (Stripe, Google Maps, PagBit)",
+      "latency": "Latência",
+      "successRate": "Taxa de Sucesso",
+      "notConfigured": "API key não configurada"
+    },
+    "alerts": {
+      "activeAlerts": "Alertas Ativos",
+      "activeAlertsDescription": "Alertas que requerem atenção imediata",
+      "active": "ativos",
+      "noActiveAlerts": "Nenhum alerta ativo. Sistema saudável!",
+      "thresholds": "Thresholds Configurados",
+      "thresholdsDescription": "Limites de alerta para métricas do sistema",
+      "table": {
+        "name": "Nome",
+        "metric": "Métrica",
+        "threshold": "Limite",
+        "severity": "Severidade",
+        "status": "Status"
+      },
+      "enabled": "Ativo",
+      "disabled": "Desativado"
     }
   }
 }
