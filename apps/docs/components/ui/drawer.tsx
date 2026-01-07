@@ -1,6 +1,8 @@
+'use client';
+
 import * as React from 'react';
 import { X } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 import { Button } from './button';
 
 export interface DrawerProps {
@@ -165,3 +167,4 @@ export const DrawerContent = React.forwardRef<HTMLDivElement, DrawerContentProps
 );
 
 DrawerContent.displayName = 'DrawerContent';
+export { DrawerHeader as DrawerTitle };
