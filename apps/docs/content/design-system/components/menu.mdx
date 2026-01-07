@@ -1,0 +1,155 @@
+---
+title: Menu
+description: Lista de ações ou opções exibida temporariamente.
+---
+
+import { Menu, MenuItem } from '@/components/ui/menu';
+import { Button } from '@/components/ui/button';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
+# Menu
+
+> Menus exibem uma lista de escolhas em uma superfície temporária.
+
+## Básico
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center h-48">
+{() => {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => setAnchorEl(event.currentTarget);
+  const handleClose = () => setAnchorEl(null);
+
+return (
+<>
+<Button onClick={handleClick}>Abrir Menu</Button>
+<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+<MenuItem onClick={handleClose}>Perfil</MenuItem>
+<MenuItem onClick={handleClose}>Minha Conta</MenuItem>
+<MenuItem onClick={handleClose}>Sair</MenuItem>
+</Menu>
+</>
+);
+}}
+
+</div>
+</ComponentPreview>
+
+```tsx
+const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+const open = Boolean(anchorEl);
+
+const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  setAnchorEl(event.currentTarget);
+};
+const handleClose = () => {
+  setAnchorEl(null);
+};
+
+<Button onClick={handleClick}>Abrir Menu</Button>
+<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+  <MenuItem onClick={handleClose}>Perfil</MenuItem>
+  <MenuItem onClick={handleClose}>Minha Conta</MenuItem>
+  <MenuItem onClick={handleClose}>Sair</MenuItem>
+</Menu>
+```
+
+## Com Divisor e Seleção
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center h-64">
+{() => {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const open = Boolean(anchorEl);
+
+const handleClickListItem = (event) => {
+setAnchorEl(event.currentTarget);
+};
+
+const handleMenuItemClick = (event, index) => {
+setSelectedIndex(index);
+setAnchorEl(null);
+};
+
+const handleClose = () => {
+setAnchorEl(null);
+};
+
+return (
+<>
+<Button variant="outlined" onClick={handleClickListItem}>
+Opções {selectedIndex !== null ? `(${['Leitura', 'Escrita', 'Admin'][selectedIndex]})` : ''}
+</Button>
+<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+<MenuItem
+selected={selectedIndex === 0}
+onClick={(event) => handleMenuItemClick(event, 0)} >
+Leitura
+</MenuItem>
+<MenuItem
+selected={selectedIndex === 1}
+onClick={(event) => handleMenuItemClick(event, 1)} >
+Escrita
+</MenuItem>
+<MenuItem divider />
+<MenuItem
+selected={selectedIndex === 2}
+onClick={(event) => handleMenuItemClick(event, 2)} >
+Admin
+</MenuItem>
+</Menu>
+</>
+);
+}}
+
+</div>
+</ComponentPreview>
+
+```tsx
+<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+  <MenuItem
+    selected={selectedIndex === 0}
+    onClick={(event) => handleMenuItemClick(event, 0)}
+  >
+    Leitura
+  </MenuItem>
+  <MenuItem
+    selected={selectedIndex === 1}
+    onClick={(event) => handleMenuItemClick(event, 1)}
+  >
+    Escrita
+  </MenuItem>
+  <MenuItem divider />
+  <MenuItem
+    selected={selectedIndex === 2}
+    onClick={(event) => handleMenuItemClick(event, 2)}
+  >
+    Admin
+  </MenuItem>
+</Menu>
+```
+
+## API
+
+| Prop              | Tipo                       | Padrão                                       | Descrição              |
+| ----------------- | -------------------------- | -------------------------------------------- | ---------------------- |
+| `anchorEl`        | `HTMLElement \| null`      | -                                            | Elemento âncora        |
+| `open`            | `boolean`                  | -                                            | Estado de visibilidade |
+| `onClose`         | `() => void`               | -                                            | Callback de fechamento |
+| `anchorOrigin`    | `{ vertical, horizontal }` | `{ vertical: 'bottom', horizontal: 'left' }` | Origem da âncora       |
+| `transformOrigin` | `{ vertical, horizontal }` | `{ vertical: 'top', horizontal: 'left' }`    | Origem do menu         |
+
+### MenuItem
+
+| Prop       | Tipo      | Padrão  | Descrição                       |
+| ---------- | --------- | ------- | ------------------------------- |
+| `selected` | `boolean` | `false` | Estado selecionado              |
+| `disabled` | `boolean` | `false` | Estado desabilitado             |
+| `divider`  | `boolean` | `false` | Adiciona linha divisória abaixo |
+
+## Relacionados
+
+- [Dropdown Menu](/design-system/components/dropdown-menu)
+- [Popover](/design-system/components/popover)

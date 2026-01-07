@@ -69,12 +69,14 @@ export default {
     title: '🧭 Navigation',
   },
   navbar: 'Navbar',
+  'navigation-bar': 'Navigation Bar',
   'app-bar': 'App Bar',
   breadcrumbs: 'Breadcrumbs',
   tabs: 'Tabs',
   pagination: 'Pagination',
   'dropdown-menu': 'Dropdown Menu',
   'mega-menu': 'Mega Menu',
+  menu: 'Menu',
   'bottom-navigation': 'Bottom Navigation',
   link: 'Link',
 
@@ -104,4 +106,5 @@ export default {
   'image-list': 'Image List',
   masonry: 'Masonry',
   backdrop: 'Backdrop',
+  transitions: 'Transitions',
 };

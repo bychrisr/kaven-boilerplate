@@ -1,0 +1,110 @@
+---
+title: Navigation Bar
+description: Barra de navegação responsiva com suporte a mobile menu.
+---
+
+import { NavigationBar } from '@/components/ui/navigation-bar';
+import { Button } from '@/components/ui/button';
+import { Home, Users, Settings, Bell } from 'lucide-react';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
+# Navigation Bar
+
+> Componente de navegação completo com suporte a logo, itens de menu, badges, ações e menu mobile automático (hamburguer).
+
+## Básico
+
+<ComponentPreview>
+  <div className="flex w-full overflow-hidden border rounded-md h-64 relative bg-gray-50">
+    <NavigationBar
+      position="absolute"
+      className="absolute top-0 w-full"
+      logo={<span className="font-bold text-xl text-primary-main">Logo</span>}
+      items={[
+        { label: 'Home', icon: <Home className="size-4" />, active: true },
+        { label: 'Users', icon: <Users className="size-4" /> },
+        { label: 'Settings', icon: <Settings className="size-4" /> },
+      ]}
+      actions={
+        <Button size="sm" variant="contained">
+          Login
+        </Button>
+      }
+    />
+  </div>
+</ComponentPreview>
+
+```tsx
+import { NavigationBar } from '@/components/ui/navigation-bar';
+import { Home, Users, Settings } from 'lucide-react';
+
+<NavigationBar
+  logo={<span className="font-bold text-xl text-primary-main">Logo</span>}
+  items={[
+    { label: 'Home', icon: <Home className="size-4" />, active: true },
+    { label: 'Users', icon: <Users className="size-4" /> },
+    { label: 'Settings', icon: <Settings className="size-4" /> },
+  ]}
+  actions={
+    <Button size="sm" variant="contained">
+      Login
+    </Button>
+  }
+/>;
+```
+
+## Com Badges e Bottom
+
+<ComponentPreview>
+  <div className="flex w-full overflow-hidden border rounded-md h-64 relative bg-gray-50">
+    <div className="p-4 text-center w-full mt-10 text-gray-400">
+      Conteúdo da Página
+    </div>
+    <NavigationBar
+      position="bottom"
+      className="absolute bottom-0 w-full"
+      items={[
+        { label: 'Alerts', icon: <Bell className="size-4" />, badge: 3 },
+        { label: 'Team', icon: <Users className="size-4" /> },
+      ]}
+    />
+  </div>
+</ComponentPreview>
+
+```tsx
+<NavigationBar
+  position="bottom"
+  items={[
+    { label: 'Alerts', icon: <Bell className="size-4" />, badge: 3 },
+    { label: 'Team', icon: <Users className="size-4" /> },
+  ]}
+/>
+```
+
+## API
+
+| Prop       | Tipo                      | Padrão      | Descrição                                        |
+| ---------- | ------------------------- | ----------- | ------------------------------------------------ |
+| `position` | `'top' \| 'bottom'`       | `'top'`     | Posição fixa ou relativa                         |
+| `variant`  | `'default' \| 'elevated'` | `'default'` | Estilo visual                                    |
+| `logo`     | `ReactNode`               | -           | Elemento de logo                                 |
+| `items`    | `NavigationItem[]`        | `[]`        | Lista de links de navegação                      |
+| `actions`  | `ReactNode`               | -           | Elementos à direita (desktop) ou abaixo (mobile) |
+
+### NavigationItem Object
+
+```typescript
+{
+  label: string;
+  href?: string;
+  icon?: ReactNode;
+  badge?: number;
+  active?: boolean;
+  onClick?: () => void;
+}
+```
+
+## Relacionados
+
+- [Navbar](/design-system/components/navbar) (Wrapper simples)
+- [Bottom Navigation](/design-system/components/bottom-navigation)
