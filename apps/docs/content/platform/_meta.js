@@ -1,11 +1,12 @@
 export default {
-  index: 'Overview',
+  index: 'Platform Overview',
   'getting-started': 'Getting Started',
   architecture: 'Architecture',
   backend: 'Backend',
   frontend: 'Frontend',
-  guides: 'Guides',
   features: 'Features',
-  'plans-and-products': 'Plans & Products System',
-  'implementation-logs': 'Implementation Logs'
-}
+  guides: 'Guides',
+  observability: 'Observability & Monitoring',
+  'plans-and-products': 'Plans & Products',
+  'implementation-logs': 'Implementation Logs',
+};
