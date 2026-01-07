@@ -3,6 +3,7 @@ export default {
   principles: 'Design Principles',
   'built-in-examples': 'Built-in Examples',
   'live-preview': 'Live Preview',
+  'glassmorphism-system': 'Glassmorphism System',
   foundation: '🎨 Foundation',
   components: '🧩 Components',
   patterns: '📐 Patterns',
