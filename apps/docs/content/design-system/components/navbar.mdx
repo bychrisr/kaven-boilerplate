@@ -3,6 +3,9 @@ title: Navbar
 description: Barra de navegação principal da aplicação
 ---
 
+import { Navbar } from '@/components/ui/navbar';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Navbar
 
 > Barra de navegação superior para navegação principal e ações globais.
@@ -29,6 +32,28 @@ import { Navbar } from '@/components/ui/navbar';
 
 ## Com Menu Mobile
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Navbar>
+  <div className="flex items-center justify-between w-full">
+    <Logo />
+
+    {/* Desktop Menu */}
+    <nav className="hidden md:flex gap-4">
+      <Link href="/dashboard">Dashboard</Link>
+      <Link href="/users">Usuários</Link>
+    </nav>
+
+    {/* Mobile Menu Button */}
+    <Button className="md:hidden" variant="text" size="icon">
+      <Menu className="h-5 w-5" />
+    </Button>
+  </div>
+</Navbar>
+</div>
+</ComponentPreview>
+
 ```tsx
 <Navbar>
   <div className="flex items-center justify-between w-full">
@@ -49,6 +74,29 @@ import { Navbar } from '@/components/ui/navbar';
 ```
 
 ## Com Avatar e Dropdown
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Navbar>
+  <Logo />
+  <nav className="flex-1 flex justify-center gap-6">
+    <Link href="/dashboard">Dashboard</Link>
+    <Link href="/users">Usuários</Link>
+  </nav>
+  <DropdownMenu>
+    <DropdownMenuTrigger>
+      <Avatar src={user.avatar} alt={user.name} />
+    </DropdownMenuTrigger>
+    <DropdownMenuContent>
+      <DropdownMenuItem>Perfil</DropdownMenuItem>
+      <DropdownMenuItem>Configurações</DropdownMenuItem>
+      <DropdownMenuItem>Sair</DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+</Navbar>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Navbar>
@@ -71,6 +119,15 @@ import { Navbar } from '@/components/ui/navbar';
 ```
 
 ## Sticky
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Navbar className="sticky top-0 z-50 bg-background/95 backdrop-blur">
+  {/* Conteúdo */}
+</Navbar>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Navbar className="sticky top-0 z-50 bg-background/95 backdrop-blur">

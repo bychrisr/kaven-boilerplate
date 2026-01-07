@@ -3,15 +3,14 @@ title: AppBar
 description: Barra de navegação superior da aplicação
 ---
 
+import { AppBar } from '@/components/ui/app-bar';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # AppBar
 
 Barra de navegação superior com suporte a logo, menu e ações.
 
 ## Uso Básico
-
-import { AppBar, Toolbar } from '../../../components/ui/app-bar';
-import { Button } from '../../../components/ui/button';
-import { Avatar, AvatarFallback } from '../../../components/ui/avatar';
 
 ## Uso Básico
 
@@ -32,6 +31,26 @@ import { Avatar, AvatarFallback } from '../../../components/ui/avatar';
   </AppBar>
 </div>
 
+<ComponentPreview>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <AppBar>
+      <AppBarLogo>
+        <Logo />
+      </AppBarLogo>
+      <AppBarNav>
+        <NavItem href="/dashboard">Dashboard</NavItem>
+        <NavItem href="/users">Usuários</NavItem>
+      </AppBarNav>
+      <AppBarActions>
+        <IconButton>
+          <NotificationIcon />
+        </IconButton>
+        <Avatar />
+      </AppBarActions>
+    </AppBar>
+  </div>
+</ComponentPreview>
+
 ```tsx
 <AppBar>
   <AppBarLogo>
@@ -51,6 +70,14 @@ import { Avatar, AvatarFallback } from '../../../components/ui/avatar';
 ```
 
 ## Posições
+
+<ComponentPreview>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <AppBar position="fixed">Fixo (padrão)</AppBar>
+    <AppBar position="sticky">Sticky</AppBar>
+    <AppBar position="static">Static</AppBar>
+  </div>
+</ComponentPreview>
 
 ```tsx
 <AppBar position="fixed">Fixo (padrão)</AppBar>

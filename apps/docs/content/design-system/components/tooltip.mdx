@@ -3,6 +3,9 @@ title: Tooltip
 description: Dicas contextuais ao passar o mouse
 ---
 
+import { Tooltip } from '@/components/ui/tooltip';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Tooltip
 
 > Pequenas dicas que aparecem ao passar o mouse sobre elementos.
@@ -27,6 +30,31 @@ import {
 ```
 
 ## Posições
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Tooltip>
+  <TooltipTrigger>Hover</TooltipTrigger>
+  <TooltipContent side="top">Top</TooltipContent>
+</Tooltip>
+
+<Tooltip>
+  <TooltipTrigger>Hover</TooltipTrigger>
+  <TooltipContent side="right">Right</TooltipContent>
+</Tooltip>
+
+<Tooltip>
+  <TooltipTrigger>Hover</TooltipTrigger>
+  <TooltipContent side="bottom">Bottom</TooltipContent>
+</Tooltip>
+
+<Tooltip>
+  <TooltipTrigger>Hover</TooltipTrigger>
+  <TooltipContent side="left">Left</TooltipContent>
+</Tooltip>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Tooltip>

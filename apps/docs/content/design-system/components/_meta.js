@@ -34,6 +34,7 @@ export default {
   },
   alert: 'Alert',
   'alert-dialog': 'Alert Dialog',
+  'confirmation-modal': 'Confirmation Modal',
   dialog: 'Dialog',
   drawer: 'Drawer',
   snackbar: 'Snackbar',
@@ -85,6 +86,7 @@ export default {
     title: '🔄 Interaction',
   },
   accordion: 'Accordion',
+  'click-away-listener': 'Click Away Listener',
   stepper: 'Stepper',
 
   // ========================================

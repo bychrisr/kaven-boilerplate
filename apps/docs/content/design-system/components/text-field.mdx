@@ -3,6 +3,9 @@ title: TextField
 description: Input com label integrado para formulários
 ---
 
+import { TextField } from '@/components/ui/text-field';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # TextField
 
 > Componente de input com label, helper text e validação integrados.
@@ -17,11 +20,29 @@ import { TextField } from '@/components/ui/text-field';
 
 ## Com Helper Text
 
+
+<ComponentPreview>
+<TextField label="Senha" type="password" helperText="Mínimo 8 caracteres" />
+</ComponentPreview>
+
 ```tsx
 <TextField label="Senha" type="password" helperText="Mínimo 8 caracteres" />
 ```
 
 ## Com Erro
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<TextField
+  label="Email"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  error={!!errors.email}
+  helperText={errors.email?.message}
+/>
+</div>
+</ComponentPreview>
 
 ```tsx
 <TextField
@@ -35,17 +56,39 @@ import { TextField } from '@/components/ui/text-field';
 
 ## Obrigatório
 
+
+<ComponentPreview>
+<TextField label="Nome Completo" required placeholder="João Silva" />
+</ComponentPreview>
+
 ```tsx
 <TextField label="Nome Completo" required placeholder="João Silva" />
 ```
 
 ## Disabled
 
+
+<ComponentPreview>
+<TextField label="Campo Desabilitado" disabled value="Não editável" />
+</ComponentPreview>
+
 ```tsx
 <TextField label="Campo Desabilitado" disabled value="Não editável" />
 ```
 
 ## Multiline (Textarea)
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<TextField
+  label="Descrição"
+  multiline
+  rows={4}
+  placeholder="Digite uma descrição..."
+/>
+</div>
+</ComponentPreview>
 
 ```tsx
 <TextField

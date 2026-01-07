@@ -1,0 +1,49 @@
+---
+title: Click Away Listener
+description: Detecta cliques fora de um elemento
+---
+
+import { ClickAwayListener } from '@/components/ui/click-away-listener';
+import { ComponentPreview } from '@/components/ComponentPreview';
+import { ClickAwayListenerDemo } from '@/components/examples/ClickAwayListenerDemo';
+
+# Click Away Listener
+
+> Utilitário para detectar eventos de clique fora de um elemento. Essencial para menus, popups e modais customizados.
+
+## Example
+
+<ComponentPreview>
+  <ClickAwayListenerDemo />
+</ComponentPreview>
+
+```tsx
+import { useState } from 'react';
+import { ClickAwayListener } from '@/components/ui/click-away-listener';
+
+export function Example() {
+  const [open, setOpen] = useState(false);
+
+  const handleClickAway = () => {
+    setOpen(false);
+  };
+
+  return (
+    <ClickAwayListener onClickAway={handleClickAway}>
+      <div>
+        <button onClick={() => setOpen(!open)}>Toggle</button>
+        {open && <div>Popup content</div>}
+      </div>
+    </ClickAwayListener>
+  );
+}
+```
+
+## Props
+
+| Prop          | Type                                                 | Default        | Description                       |
+| ------------- | ---------------------------------------------------- | -------------- | --------------------------------- |
+| `onClickAway` | `(event: MouseEvent \| TouchEvent) => void`          | -              | Callback disparado ao clicar fora |
+| `children`    | `ReactElement`                                       | -              | Elemento a ser monitorado         |
+| `mouseEvent`  | `'onClick' \| 'onMouseDown' \| 'onMouseUp' \| false` | `'onClick'`    | Tipo de evento de mouse           |
+| `touchEvent`  | `'onTouchStart' \| 'onTouchEnd' \| false`            | `'onTouchEnd'` | Tipo de evento de touch           |

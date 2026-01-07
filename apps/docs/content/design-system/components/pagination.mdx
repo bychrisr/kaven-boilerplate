@@ -3,6 +3,9 @@ title: Pagination
 description: Navegação entre páginas de dados
 ---
 
+import { Pagination } from '@/components/ui/pagination';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Pagination
 
 > Componente para navegar entre múltiplas páginas de conteúdo.
@@ -45,6 +48,15 @@ const totalPages = Math.ceil((data?.pagination.total ?? 0) / rowsPerPage);
 ```
 
 ## Tamanhos
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Pagination count={10} size="sm" />
+<Pagination count={10} size="md" />
+<Pagination count={10} size="lg" />
+</div>
+</ComponentPreview>
 
 ```tsx
 <Pagination count={10} size="sm" />

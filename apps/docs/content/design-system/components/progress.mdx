@@ -3,6 +3,9 @@ title: Progress
 description: Indicadores de progresso e loading
 ---
 
+import { LinearProgress as Progress } from '@/components/ui/progress';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Progress
 
 > Barras de progresso para indicar carregamento ou conclusão de tarefas.
@@ -17,6 +20,18 @@ import { Progress } from '@/components/ui/progress';
 
 ## Com Label
 
+<ComponentPreview>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <div className="space-y-2">
+      <div className="flex justify-between text-sm">
+        <span>Progresso</span>
+        <span>60%</span>
+      </div>
+      <Progress value={60} />
+    </div>
+  </div>
+</ComponentPreview>
+
 ```tsx
 <div className="space-y-2">
   <div className="flex justify-between text-sm">
@@ -29,6 +44,14 @@ import { Progress } from '@/components/ui/progress';
 
 ## Cores
 
+<ComponentPreview>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <Progress value={60} className="[&>div]:bg-primary" />
+    <Progress value={60} className="[&>div]:bg-success-main" />
+    <Progress value={60} className="[&>div]:bg-error-main" />
+  </div>
+</ComponentPreview>
+
 ```tsx
 <Progress value={60} className="[&>div]:bg-primary" />
 <Progress value={60} className="[&>div]:bg-success-main" />
@@ -36,6 +59,10 @@ import { Progress } from '@/components/ui/progress';
 ```
 
 ## Indeterminado
+
+<ComponentPreview>
+  <Progress value={null} className="animate-pulse" />
+</ComponentPreview>
 
 ```tsx
 <Progress value={null} className="animate-pulse" />

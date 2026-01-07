@@ -3,6 +3,9 @@ title: Switch
 description: Toggle switches para ativar/desativar opções
 ---
 
+import { Switch } from '@/components/ui/switch';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Switch
 
 > Componente de alternância para estados on/off.
@@ -41,6 +44,21 @@ const [enabled, setEnabled] = useState(false);
 ```
 
 ## Com Descrição
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<div className="flex items-center justify-between">
+  <div className="space-y-0.5">
+    <Label htmlFor="marketing">Emails de Marketing</Label>
+    <p className="text-sm text-muted-foreground">
+      Receba emails sobre novos produtos e ofertas
+    </p>
+  </div>
+  <Switch id="marketing" />
+</div>
+</div>
+</ComponentPreview>
 
 ```tsx
 <div className="flex items-center justify-between">

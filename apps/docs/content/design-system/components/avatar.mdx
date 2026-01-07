@@ -3,6 +3,9 @@ title: Avatar
 description: Imagens de perfil de usuários
 ---
 
+import { Avatar } from '@/components/ui/avatar';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Avatar
 
 > Componente para exibir imagens de perfil ou iniciais de usuários.
@@ -19,6 +22,26 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 ```
 
 ## Tamanhos
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Avatar className="h-8 w-8">
+  <AvatarImage src="/avatar.jpg" />
+  <AvatarFallback>JS</AvatarFallback>
+</Avatar>
+
+<Avatar className="h-10 w-10">
+  <AvatarImage src="/avatar.jpg" />
+  <AvatarFallback>JS</AvatarFallback>
+</Avatar>
+
+<Avatar className="h-16 w-16">
+  <AvatarImage src="/avatar.jpg" />
+  <AvatarFallback>JS</AvatarFallback>
+</Avatar>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Avatar className="h-8 w-8">
@@ -39,6 +62,19 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 ## Com Badge
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<div className="relative inline-block">
+  <Avatar>
+    <AvatarImage src="/avatar.jpg" />
+    <AvatarFallback>JS</AvatarFallback>
+  </Avatar>
+  <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-success-main border-2 border-background" />
+</div>
+</div>
+</ComponentPreview>
+
 ```tsx
 <div className="relative inline-block">
   <Avatar>
@@ -50,6 +86,26 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 ```
 
 ## Grupo de Avatares
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<div className="flex -space-x-2">
+  <Avatar className="border-2 border-background">
+    <AvatarImage src="/avatar1.jpg" />
+    <AvatarFallback>JS</AvatarFallback>
+  </Avatar>
+  <Avatar className="border-2 border-background">
+    <AvatarImage src="/avatar2.jpg" />
+    <AvatarFallback>MS</AvatarFallback>
+  </Avatar>
+  <Avatar className="border-2 border-background">
+    <AvatarImage src="/avatar3.jpg" />
+    <AvatarFallback>AS</AvatarFallback>
+  </Avatar>
+</div>
+</div>
+</ComponentPreview>
 
 ```tsx
 <div className="flex -space-x-2">

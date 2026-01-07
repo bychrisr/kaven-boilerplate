@@ -3,6 +3,9 @@ title: Link
 description: Links estilizados para navegação
 ---
 
+import { Link } from '@/components/ui/link';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Link
 
 > Componente de link com estilos consistentes e integração Next.js.
@@ -37,6 +40,21 @@ import Link from 'next/link';
 ```
 
 ## Externo
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Link
+  href="https://example.com"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="text-primary hover:underline inline-flex items-center gap-1"
+>
+  Link Externo
+  <ExternalLink className="h-3 w-3" />
+</Link>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Link

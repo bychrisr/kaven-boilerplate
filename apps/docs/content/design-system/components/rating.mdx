@@ -3,6 +3,9 @@ title: Rating
 description: Avaliação com estrelas
 ---
 
+import { Rating } from '@/components/ui/rating';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Rating
 
 > Componente para exibir e coletar avaliações com estrelas.
@@ -27,6 +30,15 @@ function ProductRating() {
 
 ## Tamanhos
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Rating value={4} size="sm" />
+<Rating value={4} size="md" />
+<Rating value={4} size="lg" />
+</div>
+</ComponentPreview>
+
 ```tsx
 <Rating value={4} size="sm" />
 <Rating value={4} size="md" />
@@ -35,11 +47,21 @@ function ProductRating() {
 
 ## Com Metade
 
+
+<ComponentPreview>
+<Rating value={3.5} precision={0.5} />
+</ComponentPreview>
+
 ```tsx
 <Rating value={3.5} precision={0.5} />
 ```
 
 ## Read Only
+
+
+<ComponentPreview>
+<Rating value={4} readOnly />
+</ComponentPreview>
 
 ```tsx
 <Rating value={4} readOnly />

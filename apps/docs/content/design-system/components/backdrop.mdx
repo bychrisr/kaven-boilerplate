@@ -3,6 +3,9 @@ title: Backdrop
 description: Overlay de fundo para modais
 ---
 
+import { Backdrop } from '@/components/ui/backdrop';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Backdrop
 
 > Overlay escuro de fundo usado em modais e drawers.
@@ -16,6 +19,17 @@ import { Backdrop } from '@/components/ui/backdrop';
 ```
 
 ## Com Conteúdo
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Backdrop open={open}>
+  <div className="bg-card p-6 rounded-lg" onClick={(e) => e.stopPropagation()}>
+    <h2>Modal Content</h2>
+  </div>
+</Backdrop>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Backdrop open={open}>

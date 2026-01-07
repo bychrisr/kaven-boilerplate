@@ -3,6 +3,9 @@ title: Breadcrumbs
 description: Navegação hierárquica mostrando o caminho atual
 ---
 
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Breadcrumbs
 
 > Componente de navegação que mostra a hierarquia de páginas até a localização atual.
@@ -24,6 +27,25 @@ import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
 ```
 
 ## Uso Real (User Page)
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Breadcrumbs>
+  <BreadcrumbItem>
+    <Link href="/dashboard" className="transition-colors hover:text-foreground">
+      Dashboard
+    </Link>
+  </BreadcrumbItem>
+  <BreadcrumbItem>
+    <Link href="#" className="transition-colors hover:text-foreground">
+      User
+    </Link>
+  </BreadcrumbItem>
+  <BreadcrumbItem current>List</BreadcrumbItem>
+</Breadcrumbs>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Breadcrumbs>
@@ -65,6 +87,21 @@ import { Home, Users, Settings } from 'lucide-react';
 
 ## Separadores Customizados
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Breadcrumbs separator="›">
+  <BreadcrumbItem><Link href="/">Home</Link></BreadcrumbItem>
+  <BreadcrumbItem current>Página</BreadcrumbItem>
+</Breadcrumbs>
+
+<Breadcrumbs separator="•">
+  <BreadcrumbItem><Link href="/">Home</Link></BreadcrumbItem>
+  <BreadcrumbItem current>Página</BreadcrumbItem>
+</Breadcrumbs>
+</div>
+</ComponentPreview>
+
 ```tsx
 <Breadcrumbs separator="›">
   <BreadcrumbItem><Link href="/">Home</Link></BreadcrumbItem>
@@ -92,6 +129,22 @@ import { Home, Users, Settings } from 'lucide-react';
 | `children` | `ReactNode` | -       | Conteúdo do item  |
 
 ## Acessibilidade
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<nav aria-label="Breadcrumb">
+  <Breadcrumbs>
+    <BreadcrumbItem>
+      <Link href="/">Home</Link>
+    </BreadcrumbItem>
+    <BreadcrumbItem current aria-current="page">
+      Página Atual
+    </BreadcrumbItem>
+  </Breadcrumbs>
+</nav>
+</div>
+</ComponentPreview>
 
 ```tsx
 <nav aria-label="Breadcrumb">

@@ -3,6 +3,9 @@ title: Stat Card
 description: Cards de estatísticas com indicadores de tendência, mini-gráficos e ícones semânticos
 ---
 
+import { StatCard } from '@/components/ui/stat-card';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Stat Card
 
 > Cards especializados para exibir métricas e KPIs com visualização de tendências e mini-gráficos integrados. Componente signature do Dashboard Kaven.
@@ -145,6 +148,19 @@ import { ResponsiveContainer, BarChart, Bar } from 'recharts';
 
 Para métricas em queda:
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<div className="flex items-center gap-2 text-sm">
+  <span className="flex items-center font-semibold px-1.5 py-0.5 rounded text-destructive bg-destructive/10">
+    <ArrowDown className="h-3 w-3 mr-1" />
+    -8%
+  </span>
+  <span className="text-muted-foreground">vs. período anterior</span>
+</div>
+</div>
+</ComponentPreview>
+
 ```tsx
 <div className="flex items-center gap-2 text-sm">
   <span className="flex items-center font-semibold px-1.5 py-0.5 rounded text-destructive bg-destructive/10">
@@ -169,6 +185,23 @@ Para métricas em queda:
 
 ### Compacto (Mobile)
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<div className="rounded-2xl bg-card p-4 shadow-xl border border-border/50">
+  <div className="flex items-center gap-3 mb-3">
+    <div className="p-2 bg-primary/10 rounded-full">
+      <Users className="h-5 w-5 text-primary" />
+    </div>
+    <span className="text-xs font-bold text-foreground uppercase tracking-wider">
+      Total de Usuários
+    </span>
+  </div>
+  <h3 className="text-2xl font-bold text-foreground mb-1">2,456</h3>
+</div>
+</div>
+</ComponentPreview>
+
 ```tsx
 <div className="rounded-2xl bg-card p-4 shadow-xl border border-border/50">
   <div className="flex items-center gap-3 mb-3">
@@ -185,6 +218,23 @@ Para métricas em queda:
 
 ### Padrão (Desktop)
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<div className="rounded-2xl bg-card p-6 shadow-xl border border-border/50">
+  <div className="flex items-center gap-4 mb-4">
+    <div className="p-3 bg-primary/10 rounded-full">
+      <Users className="h-6 w-6 text-primary" />
+    </div>
+    <span className="text-sm font-bold text-foreground uppercase tracking-wider">
+      Total de Usuários
+    </span>
+  </div>
+  <h3 className="text-3xl font-bold text-foreground mb-2">2,456</h3>
+</div>
+</div>
+</ComponentPreview>
+
 ```tsx
 <div className="rounded-2xl bg-card p-6 shadow-xl border border-border/50">
   <div className="flex items-center gap-4 mb-4">
@@ -200,6 +250,25 @@ Para métricas em queda:
 ```
 
 ### Responsivo (Recomendado)
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<div className="rounded-2xl bg-card p-4 md:p-6 shadow-xl border border-border/50">
+  <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+    <div className="p-2 md:p-3 bg-primary/10 rounded-full">
+      <Users className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+    </div>
+    <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-wider">
+      Total de Usuários
+    </span>
+  </div>
+  <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">
+    2,456
+  </h3>
+</div>
+</div>
+</ComponentPreview>
 
 ```tsx
 <div className="rounded-2xl bg-card p-4 md:p-6 shadow-xl border border-border/50">
@@ -254,6 +323,20 @@ import { Users } from 'lucide-react';
 
 ### ARIA Labels
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<div
+  className="stat-card"
+  role="region"
+  aria-label="Estatística: Total de Usuários"
+>
+  <h3 aria-live="polite">2,456</h3>
+  <span aria-label="Tendência positiva de 12 porcento">+12%</span>
+</div>
+</div>
+</ComponentPreview>
+
 ```tsx
 <div
   className="stat-card"
@@ -273,6 +356,15 @@ import { Users } from 'lucide-react';
 
 ### Leitores de Tela
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<span className="sr-only">
+  Total de usuários: 2.456. Aumento de 12% nos últimos 7 dias.
+</span>
+</div>
+</ComponentPreview>
+
 ```tsx
 <span className="sr-only">
   Total de usuários: 2.456. Aumento de 12% nos últimos 7 dias.
@@ -282,6 +374,139 @@ import { Users } from 'lucide-react';
 ## Exemplos Avançados
 
 ### Grid de Métricas (Dashboard Real)
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+  {/* Total Users */}
+  <div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
+    <div className="flex items-center gap-4 mb-4">
+      <div className="p-3 bg-primary/10 rounded-full">
+        <Users className="h-6 w-6 text-primary" />
+      </div>
+      <span className="text-sm font-bold text-foreground uppercase tracking-wider">
+        Total de Usuários
+      </span>
+    </div>
+    <div className="flex items-end justify-between">
+      <div>
+        <h3 className="text-3xl font-bold text-foreground mb-2">
+          {metrics.totalUsers.value.toLocaleString()}
+        </h3>
+        <div className="flex items-center gap-2 text-sm">
+          <span
+            className={`flex items-center font-semibold px-1.5 py-0.5 rounded ${
+              metrics.totalUsers.trend >= 0
+                ? 'text-green-500 bg-green-500/10'
+                : 'text-destructive bg-destructive/10'
+            }`}
+          >
+            {metrics.totalUsers.trend >= 0 ? (
+              <ArrowUp className="h-3 w-3 mr-1" />
+            ) : (
+              <ArrowDown className="h-3 w-3 mr-1" />
+            )}
+            {metrics.totalUsers.trend > 0 ? '+' : ''}
+            {metrics.totalUsers.trend}%
+          </span>
+          <span className="text-muted-foreground">últimos 7 dias</span>
+        </div>
+      </div>
+      <div className="h-12 w-24">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={[{ v: 20 }, { v: 40 }, { v: 30 }, { v: 70 }, { v: 50 }]}
+          >
+            <Bar dataKey="v" fill="hsl(var(--primary))" radius={[2, 2, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  </div>
+
+  {/* New Signups */}
+  <div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
+    <div className="flex items-center gap-4 mb-4">
+      <div className="p-3 bg-blue-500/10 rounded-full">
+        <Users className="h-6 w-6 text-blue-500" />
+      </div>
+      <span className="text-sm font-bold text-foreground uppercase tracking-wider">
+        Novos Cadastros
+      </span>
+    </div>
+    <div className="flex items-end justify-between">
+      <div>
+        <h3 className="text-3xl font-bold text-foreground mb-2">
+          {metrics.newSignups.value}
+        </h3>
+        <div className="flex items-center gap-2 text-sm">
+          <span className="flex items-center font-semibold px-1.5 py-0.5 rounded text-green-500 bg-green-500/10">
+            <ArrowUp className="h-3 w-3 mr-1" />+{metrics.newSignups.trend}%
+          </span>
+          <span className="text-muted-foreground">vs. período anterior</span>
+        </div>
+      </div>
+      <div className="h-12 w-24">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={[
+              { v: 10 },
+              { v: 25 },
+              { v: 15 },
+              { v: 30 },
+              { v: metrics.newSignups.value },
+            ]}
+          >
+            <Bar dataKey="v" fill="#00B8D9" radius={[2, 2, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  </div>
+
+  {/* Activation Rate */}
+  <div className="relative overflow-hidden rounded-2xl bg-card p-6 shadow-xl border border-border/50">
+    <div className="flex items-center gap-4 mb-4">
+      <div className="p-3 bg-yellow-500/10 rounded-full">
+        <FileText className="h-6 w-6 text-yellow-500" />
+      </div>
+      <span className="text-sm font-bold text-foreground uppercase tracking-wider">
+        Taxa de Ativação
+      </span>
+    </div>
+    <div className="flex items-end justify-between">
+      <div>
+        <h3 className="text-3xl font-bold text-foreground mb-2">
+          {metrics.activationRate.value}%
+        </h3>
+        <div className="flex items-center gap-2 text-sm">
+          <span className="flex items-center font-semibold px-1.5 py-0.5 rounded text-green-500 bg-green-500/10">
+            <ArrowUp className="h-3 w-3 mr-1" />+{metrics.activationRate.trend}%
+          </span>
+          <span className="text-muted-foreground">vs. período anterior</span>
+        </div>
+      </div>
+      <div className="h-12 w-24">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={[
+              { v: 30 },
+              { v: 28 },
+              { v: 25 },
+              { v: 24 },
+              { v: metrics.activationRate.value },
+            ]}
+          >
+            <Bar dataKey="v" fill="#FFAB00" radius={[2, 2, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</ComponentPreview>
 
 ```tsx
 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">

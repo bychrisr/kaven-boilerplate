@@ -3,6 +3,9 @@ title: Drawer
 description: Painéis laterais deslizantes para navegação e conteúdo
 ---
 
+import { Drawer } from '@/components/ui/drawer';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Drawer
 
 > Painel lateral que desliza sobre o conteúdo para exibir navegação ou informações adicionais.
@@ -56,6 +59,30 @@ function BasicDrawer() {
 ```
 
 ### Com Navegação
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Drawer open={open} onOpenChange={setOpen}>
+  <DrawerContent className="w-80">
+    <DrawerHeader>
+      <DrawerTitle>Menu</DrawerTitle>
+    </DrawerHeader>
+    <nav className="p-4 space-y-2">
+      <Link href="/dashboard" className="block p-2 hover:bg-muted rounded">
+        Dashboard
+      </Link>
+      <Link href="/users" className="block p-2 hover:bg-muted rounded">
+        Usuários
+      </Link>
+      <Link href="/settings" className="block p-2 hover:bg-muted rounded">
+        Configurações
+      </Link>
+    </nav>
+  </DrawerContent>
+</Drawer>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Drawer open={open} onOpenChange={setOpen}>

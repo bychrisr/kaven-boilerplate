@@ -3,6 +3,9 @@ title: Timeline
 description: Linha do tempo para exibir eventos cronológicos
 ---
 
+import { Timeline } from '@/components/ui/timeline';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Timeline
 
 > Componente para exibir eventos em ordem cronológica.
@@ -36,6 +39,26 @@ import {
 ```
 
 ## Com Cores
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Timeline>
+  <TimelineItem>
+    <TimelineDot className="bg-success-main" />
+    <TimelineContent>Concluído</TimelineContent>
+  </TimelineItem>
+  <TimelineItem>
+    <TimelineDot className="bg-warning-main" />
+    <TimelineContent>Em progresso</TimelineContent>
+  </TimelineItem>
+  <TimelineItem>
+    <TimelineDot className="bg-muted" />
+    <TimelineContent>Pendente</TimelineContent>
+  </TimelineItem>
+</Timeline>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Timeline>

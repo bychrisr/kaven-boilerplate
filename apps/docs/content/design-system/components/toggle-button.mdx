@@ -3,6 +3,9 @@ title: Toggle Button
 description: Botões de alternância para seleção
 ---
 
+import { ToggleButton } from '@/components/ui/toggle-button';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Toggle Button
 
 > Botões que podem ser alternados entre estados ativo/inativo.
@@ -36,6 +39,23 @@ import { ToggleButtonGroup } from '@/components/ui/toggle-button';
 ```
 
 ## Múltipla Seleção
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<ToggleButtonGroup type="multiple" value={formats} onValueChange={setFormats}>
+  <ToggleButton value="bold">
+    <Bold className="h-4 w-4" />
+  </ToggleButton>
+  <ToggleButton value="italic">
+    <Italic className="h-4 w-4" />
+  </ToggleButton>
+  <ToggleButton value="underline">
+    <Underline className="h-4 w-4" />
+  </ToggleButton>
+</ToggleButtonGroup>
+</div>
+</ComponentPreview>
 
 ```tsx
 <ToggleButtonGroup type="multiple" value={formats} onValueChange={setFormats}>

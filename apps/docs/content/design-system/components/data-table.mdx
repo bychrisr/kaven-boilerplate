@@ -3,6 +3,9 @@ title: Data Table
 description: Tabelas de dados avançadas com seleção, ordenação, paginação e ações em massa
 ---
 
+import { DataTable } from '@/components/ui/data-table';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Data Table
 
 > Componente de tabela completo para exibição e manipulação de grandes conjuntos de dados. Inclui seleção múltipla, badges de status, ações em linha e integração com filtros.
@@ -401,6 +404,22 @@ const getRoleBadgeClasses = (role: string) => {
 
 ### ARIA Labels
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<table
+  role="table"
+  aria-label="Lista de usuários"
+  aria-describedby="table-description"
+>
+  <caption id="table-description" className="sr-only">
+    Tabela de usuários com informações de nome, email, role e data de cadastro
+  </caption>
+  {/* ... */}
+</table>
+</div>
+</ComponentPreview>
+
 ```tsx
 <table
   role="table"
@@ -416,6 +435,22 @@ const getRoleBadgeClasses = (role: string) => {
 
 ### Navegação por Teclado
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<tr
+  tabIndex={0}
+  onKeyDown={(e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      handleSelectRow(user.id);
+    }
+  }}
+>
+  {/* ... */}
+</tr>
+</div>
+</ComponentPreview>
+
 ```tsx
 <tr
   tabIndex={0}
@@ -430,6 +465,17 @@ const getRoleBadgeClasses = (role: string) => {
 ```
 
 ### Screen Readers
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Checkbox
+  aria-label={`Selecionar usuário ${user.name}`}
+  checked={selected.includes(user.id)}
+  onCheckedChange={() => handleSelectRow(user.id)}
+/>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Checkbox

@@ -3,6 +3,9 @@ title: Icon Button
 description: Botões com apenas ícone para ações compactas
 ---
 
+import { IconButton } from '@/components/ui/icon-button';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Icon Button
 
 > Botões circulares ou quadrados contendo apenas um ícone, ideais para barras de ferramentas e ações secundárias.
@@ -63,6 +66,23 @@ import { Plus, Trash2, Edit, Settings } from 'lucide-react';
 
 ## Cores
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Button variant="contained" color="primary" size="icon">
+  <Plus />
+</Button>
+
+<Button variant="contained" color="error" size="icon">
+  <Trash2 />
+</Button>
+
+<Button variant="contained" color="success" size="icon">
+  <Check />
+</Button>
+</div>
+</ComponentPreview>
+
 ```tsx
 <Button variant="contained" color="primary" size="icon">
   <Plus />
@@ -79,6 +99,19 @@ import { Plus, Trash2, Edit, Settings } from 'lucide-react';
 
 ## Em Tabelas (Data Table)
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Button
+  variant="text"
+  size="icon"
+  className="text-muted-foreground hover:text-foreground"
+>
+  <MoreVertical className="h-5 w-5" />
+</Button>
+</div>
+</ComponentPreview>
+
 ```tsx
 <Button
   variant="text"
@@ -90,6 +123,20 @@ import { Plus, Trash2, Edit, Settings } from 'lucide-react';
 ```
 
 ## Floating Action Button (FAB)
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Button
+  variant="contained"
+  color="primary"
+  size="icon-lg"
+  className="fixed bottom-6 right-6 rounded-full shadow-lg"
+>
+  <Plus className="h-6 w-6" />
+</Button>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Button
@@ -122,6 +169,15 @@ import {
 ```
 
 ## Loading State
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Button variant="contained" size="icon" disabled>
+  <Loader2 className="h-4 w-4 animate-spin" />
+</Button>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Button variant="contained" size="icon" disabled>

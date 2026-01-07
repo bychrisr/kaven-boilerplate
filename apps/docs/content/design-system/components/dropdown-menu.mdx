@@ -3,6 +3,9 @@ title: Dropdown Menu
 description: Menus dropdown para ações e navegação
 ---
 
+import { DropdownMenu } from '@/components/ui/dropdown-menu';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Dropdown Menu
 
 > Menu suspenso para exibir lista de ações ou opções.
@@ -60,6 +63,27 @@ import { User, Settings, LogOut } from 'lucide-react';
 
 ## Com Grupos
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button>Menu</Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent>
+    <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
+    <DropdownMenuSeparator />
+    <DropdownMenuGroup>
+      <DropdownMenuItem>Perfil</DropdownMenuItem>
+      <DropdownMenuItem>Configurações</DropdownMenuItem>
+    </DropdownMenuGroup>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem>Sair</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+</div>
+</ComponentPreview>
+
 ```tsx
 <DropdownMenu>
   <DropdownMenuTrigger asChild>
@@ -79,6 +103,25 @@ import { User, Settings, LogOut } from 'lucide-react';
 ```
 
 ## Com Checkbox
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button>Filtros</Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent>
+    <DropdownMenuCheckboxItem checked={showActive}>
+      Mostrar Ativos
+    </DropdownMenuCheckboxItem>
+    <DropdownMenuCheckboxItem checked={showPending}>
+      Mostrar Pendentes
+    </DropdownMenuCheckboxItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+</div>
+</ComponentPreview>
 
 ```tsx
 <DropdownMenu>

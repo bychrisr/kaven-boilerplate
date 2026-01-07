@@ -3,6 +3,9 @@ title: Alert
 description: Alertas e mensagens de feedback para o usuário
 ---
 
+import { Alert } from '@/components/ui/alert';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Alert
 
 > Componente para exibir mensagens importantes com diferentes níveis de severidade.
@@ -53,6 +56,22 @@ import { Info, CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
 ```
 
 ### Com Ação
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Alert severity="warning">
+  <AlertTriangle className="h-4 w-4" />
+  <div className="flex-1">
+    <h4 className="font-bold">Atualização disponível</h4>
+    <p>Uma nova versão está disponível.</p>
+  </div>
+  <Button variant="text" size="sm">
+    Atualizar
+  </Button>
+</Alert>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Alert severity="warning">

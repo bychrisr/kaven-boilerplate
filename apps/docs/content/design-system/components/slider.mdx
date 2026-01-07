@@ -3,6 +3,9 @@ title: Slider
 description: Controles deslizantes para seleção de valores
 ---
 
+import { Slider } from '@/components/ui/slider';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Slider
 
 > Controle deslizante para selecionar valores em um intervalo.
@@ -35,11 +38,21 @@ function VolumeSlider() {
 
 ## Range
 
+
+<ComponentPreview>
+<Slider defaultValue={[25, 75]} max={100} step={1} />
+</ComponentPreview>
+
 ```tsx
 <Slider defaultValue={[25, 75]} max={100} step={1} />
 ```
 
 ## Disabled
+
+
+<ComponentPreview>
+<Slider defaultValue={[50]} max={100} disabled />
+</ComponentPreview>
 
 ```tsx
 <Slider defaultValue={[50]} max={100} disabled />

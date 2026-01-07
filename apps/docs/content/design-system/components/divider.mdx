@@ -3,6 +3,9 @@ title: Divider
 description: Separadores visuais entre conteúdos
 ---
 
+import { Divider } from '@/components/ui/divider';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Divider
 
 > Linhas horizontais ou verticais para separar conteúdo.
@@ -21,6 +24,17 @@ import { Divider } from '@/components/ui/divider';
 
 ## Vertical
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<div className="flex items-center gap-4">
+  <span>Item 1</span>
+  <Divider orientation="vertical" className="h-6" />
+  <span>Item 2</span>
+</div>
+</div>
+</ComponentPreview>
+
 ```tsx
 <div className="flex items-center gap-4">
   <span>Item 1</span>
@@ -30,6 +44,18 @@ import { Divider } from '@/components/ui/divider';
 ```
 
 ## Com Texto
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<div className="relative">
+  <Divider />
+  <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2 text-sm text-muted-foreground">
+    OU
+  </span>
+</div>
+</div>
+</ComponentPreview>
 
 ```tsx
 <div className="relative">

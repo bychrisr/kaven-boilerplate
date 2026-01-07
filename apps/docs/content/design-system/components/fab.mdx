@@ -3,6 +3,9 @@ title: FAB (Floating Action Button)
 description: Botão de ação flutuante
 ---
 
+import { Fab } from '@/components/ui/fab';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # FAB (Floating Action Button)
 
 > Botão circular flutuante para ação principal da tela.
@@ -33,6 +36,16 @@ import { Plus } from 'lucide-react';
 ```
 
 ## Com Label
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<FAB className="fixed bottom-6 right-6">
+  <Plus className="mr-2" />
+  Novo
+</FAB>
+</div>
+</ComponentPreview>
 
 ```tsx
 <FAB className="fixed bottom-6 right-6">

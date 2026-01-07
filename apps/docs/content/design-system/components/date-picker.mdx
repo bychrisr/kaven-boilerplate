@@ -3,6 +3,9 @@ title: Date Picker
 description: Seletor de datas com calendário
 ---
 
+import { DatePicker } from '@/components/ui/date-picker';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Date Picker
 
 > Componente para seleção de datas com interface de calendário.
@@ -27,6 +30,16 @@ function MyForm() {
 
 ## Com Label
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<div className="space-y-2">
+  <Label htmlFor="birthdate">Data de Nascimento</Label>
+  <DatePicker id="birthdate" selected={birthdate} onSelect={setBirthdate} />
+</div>
+</div>
+</ComponentPreview>
+
 ```tsx
 <div className="space-y-2">
   <Label htmlFor="birthdate">Data de Nascimento</Label>
@@ -35,6 +48,18 @@ function MyForm() {
 ```
 
 ## Range de Datas
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<DatePicker
+  mode="range"
+  selected={dateRange}
+  onSelect={setDateRange}
+  placeholder="Selecione período"
+/>
+</div>
+</ComponentPreview>
 
 ```tsx
 <DatePicker

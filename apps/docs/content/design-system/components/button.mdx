@@ -3,6 +3,9 @@ title: Button
 description: Botões para ações e CTAs com 9 cores, 6 tamanhos e 3 estilos
 ---
 
+import { Button } from '@/components/ui/button';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Button
 
 > Componente de botão completo com suporte a loading states, ícones, e todas as variações semânticas do Kaven Design System.
@@ -28,6 +31,14 @@ import { Button } from '@/components/ui/button';
 
 Botões com borda e background transparente.
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Button variant="outlined" color="primary">Primary</Button>
+<Button variant="outlined" color="error">Error</Button>
+</div>
+</ComponentPreview>
+
 ```tsx
 <Button variant="outlined" color="primary">Primary</Button>
 <Button variant="outlined" color="error">Error</Button>
@@ -37,12 +48,31 @@ Botões com borda e background transparente.
 
 Botões sem background ou borda.
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Button variant="text" color="primary">Primary</Button>
+<Button variant="text" color="error">Delete</Button>
+</div>
+</ComponentPreview>
+
 ```tsx
 <Button variant="text" color="primary">Primary</Button>
 <Button variant="text" color="error">Delete</Button>
 ```
 
 ## Tamanhos
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Button size="xs">Extra Small</Button>
+<Button size="sm">Small</Button>
+<Button size="md">Medium</Button>
+<Button size="lg">Large</Button>
+<Button size="xl">Extra Large</Button>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Button size="xs">Extra Small</Button>
@@ -74,6 +104,16 @@ import { Plus, Trash2, Download } from 'lucide-react';
 ```
 
 ## Loading State
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Button loading>Carregando...</Button>
+<Button loading variant="outlined" color="primary">
+  Salvando
+</Button>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Button loading>Carregando...</Button>

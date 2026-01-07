@@ -3,6 +3,9 @@ title: Button Group
 description: Grupos de botões relacionados
 ---
 
+import { ButtonGroup } from '@/components/ui/button-group';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Button Group
 
 > Agrupa botões relacionados em um único componente.
@@ -10,7 +13,8 @@ description: Grupos de botões relacionados
 ## Básico
 
 ```tsx
-import { ButtonGroup, Button } from '@/components/ui/button-group';
+import { ButtonGroup } from '@/components/ui/button-group';
+import { Button } from '@/components/ui/button';
 
 <ButtonGroup>
   <Button>Opção 1</Button>
@@ -20,6 +24,20 @@ import { ButtonGroup, Button } from '@/components/ui/button-group';
 ```
 
 ## Variantes
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<ButtonGroup variant="contained">
+  <Button>Contained</Button>
+  <Button>Buttons</Button>
+</ButtonGroup>
+
+<ButtonGroup variant="outlined">
+  <Button>Outlined</Button>
+  <Button>Buttons</Button>
+</ButtonGroup>
+</div>
+</ComponentPreview>
 
 ```tsx
 <ButtonGroup variant="contained">
@@ -34,6 +52,16 @@ import { ButtonGroup, Button } from '@/components/ui/button-group';
 ```
 
 ## Vertical
+
+<ComponentPreview>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <ButtonGroup orientation="vertical">
+      <Button>Opção 1</Button>
+      <Button>Opção 2</Button>
+      <Button>Opção 3</Button>
+    </ButtonGroup>
+  </div>
+</ComponentPreview>
 
 ```tsx
 <ButtonGroup orientation="vertical">

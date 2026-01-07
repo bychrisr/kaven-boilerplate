@@ -3,6 +3,9 @@ title: Dialog
 description: Modais e diálogos para interações focadas
 ---
 
+import { Dialog } from '@/components/ui/dialog';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Dialog
 
 > Componente de modal para exibir conteúdo sobreposto que requer atenção do usuário.
@@ -53,6 +56,39 @@ function BasicDialog() {
 ```
 
 ### Com Formulário
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Dialog open={open} onOpenChange={setOpen}>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Novo Usuário</DialogTitle>
+    </DialogHeader>
+    <form onSubmit={handleSubmit}>
+      <div className="space-y-4 py-4">
+        <div className="space-y-2">
+          <Label htmlFor="name">Nome</Label>
+          <Input id="name" placeholder="João Silva" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input id="email" type="email" placeholder="joao@example.com" />
+        </div>
+      </div>
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="outlined" onClick={() => setOpen(false)}>
+          Cancelar
+        </Button>
+        <Button type="submit" variant="contained">
+          Salvar
+        </Button>
+      </div>
+    </form>
+  </DialogContent>
+</Dialog>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Dialog open={open} onOpenChange={setOpen}>

@@ -3,6 +3,9 @@ title: Table
 description: Tabelas básicas para exibir dados tabulares
 ---
 
+import { Table } from '@/components/ui/table';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Table
 
 > Componente de tabela básica para exibir dados em formato tabular.
@@ -44,11 +47,32 @@ import {
 
 ## Com Borda
 
+
+<ComponentPreview>
+<Table className="border">{/* ... */}</Table>
+</ComponentPreview>
+
 ```tsx
 <Table className="border">{/* ... */}</Table>
 ```
 
 ## Striped
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Table>
+  <TableBody>
+    <TableRow className="even:bg-muted/50">
+      <TableCell>Linha 1</TableCell>
+    </TableRow>
+    <TableRow className="even:bg-muted/50">
+      <TableCell>Linha 2</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Table>
@@ -64,6 +88,19 @@ import {
 ```
 
 ## Hover
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Table>
+  <TableBody>
+    <TableRow className="hover:bg-muted/50">
+      <TableCell>Linha com hover</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Table>

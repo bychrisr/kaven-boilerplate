@@ -3,6 +3,9 @@ title: Chip
 description: Chips removíveis para tags e filtros
 ---
 
+import { Chip } from '@/components/ui/chip';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Chip
 
 > Pequenos elementos para exibir tags, filtros ou seleções removíveis.
@@ -28,6 +31,15 @@ import { X } from 'lucide-react';
 
 ## Cores
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Chip color="primary">Primary</Chip>
+<Chip color="success">Success</Chip>
+<Chip color="error">Error</Chip>
+</div>
+</ComponentPreview>
+
 ```tsx
 <Chip color="primary">Primary</Chip>
 <Chip color="success">Success</Chip>
@@ -36,12 +48,33 @@ import { X } from 'lucide-react';
 
 ## Variantes
 
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Chip variant="filled">Filled</Chip>
+<Chip variant="outlined">Outlined</Chip>
+</div>
+</ComponentPreview>
+
 ```tsx
 <Chip variant="filled">Filled</Chip>
 <Chip variant="outlined">Outlined</Chip>
 ```
 
 ## Grupo de Chips
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<div className="flex flex-wrap gap-2">
+  {tags.map((tag) => (
+    <Chip key={tag} onDelete={() => removeTag(tag)}>
+      {tag}
+    </Chip>
+  ))}
+</div>
+</div>
+</ComponentPreview>
 
 ```tsx
 <div className="flex flex-wrap gap-2">

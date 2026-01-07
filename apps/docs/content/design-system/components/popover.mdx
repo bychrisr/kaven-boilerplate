@@ -3,6 +3,9 @@ title: Popover
 description: Overlays flutuantes para conteúdo adicional
 ---
 
+import { Popover } from '@/components/ui/popover';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Popover
 
 > Overlay flutuante para exibir conteúdo adicional ao clicar.
@@ -30,6 +33,27 @@ import {
 ```
 
 ## Com Formulário
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Popover>
+  <PopoverTrigger asChild>
+    <Button>Configurações</Button>
+  </PopoverTrigger>
+  <PopoverContent className="w-80">
+    <div className="space-y-4">
+      <h4 className="font-semibold">Configurações</h4>
+      <div className="space-y-2">
+        <Label>Nome</Label>
+        <Input />
+      </div>
+      <Button className="w-full">Salvar</Button>
+    </div>
+  </PopoverContent>
+</Popover>
+</div>
+</ComponentPreview>
 
 ```tsx
 <Popover>

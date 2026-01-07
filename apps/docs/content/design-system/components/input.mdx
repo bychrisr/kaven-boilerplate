@@ -3,6 +3,9 @@ title: Input
 description: Campos de entrada de texto com validação e estados
 ---
 
+import { Input } from '@/components/ui/input';
+import { ComponentPreview } from '@/components/ComponentPreview';
+
 # Input
 
 > Componente base para entrada de texto com suporte a ícones, validação e diferentes estados.
@@ -58,6 +61,15 @@ import { Search, Mail } from 'lucide-react';
 ```
 
 ### Tamanhos
+
+
+<ComponentPreview>
+<div className="flex w-full gap-4 flex-wrap justify-center items-center">
+<Input className="h-8 text-sm" placeholder="Small" />
+<Input className="h-10" placeholder="Medium (default)" />
+<Input className="h-12 text-base" placeholder="Large" />
+</div>
+</ComponentPreview>
 
 ```tsx
 <Input className="h-8 text-sm" placeholder="Small" />
