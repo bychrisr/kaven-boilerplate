@@ -1,7 +1,7 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import {
   httpRequestDuration,
-  httpRequestCounter,
+  httpRequestsTotal,
   activeRequests,
   httpRequestSize,
   httpResponseSize,
@@ -18,7 +18,7 @@ export function metricsMiddleware(request: FastifyRequest, reply: FastifyReply, 
 
   // Coletar tamanho do request
   const requestSize = request.headers['content-length'] 
-    ? parseInt(request.headers['content-length'], 10) 
+    ? Number.parseInt(request.headers['content-length'], 10) 
     : 0;
   
   if (requestSize > 0) {
@@ -33,19 +33,19 @@ export function metricsMiddleware(request: FastifyRequest, reply: FastifyReply, 
   reply.raw.on('finish', () => {
     const duration = (Date.now() - start) / 1000;
     const route = request.routeOptions?.url || request.url;
-    const statusCode = reply.statusCode.toString();
+    const status = reply.statusCode.toString();
 
     // Registrar duração
     httpRequestDuration.observe(
-      { method: request.method, route, status_code: statusCode },
+      { method: request.method, route, status },
       duration
     );
 
     // Incrementar contador
-    httpRequestCounter.inc({
+    httpRequestsTotal.inc({
       method: request.method,
       route,
-      status_code: statusCode,
+      status,
     });
 
     // Decrementar requests ativos
