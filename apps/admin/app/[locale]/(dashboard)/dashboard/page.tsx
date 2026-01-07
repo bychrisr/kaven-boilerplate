@@ -133,6 +133,7 @@ export default function DashboardPage() {
                 trend={metrics.totalUsers.trend}
                 subtitle="Active Accounts"
                 variant="outline"
+                iconClassName="bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-500"
                 className="hover:shadow-lg"
             />
         )}
