@@ -2,11 +2,53 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
   external_labels:
-    monitor: 'kaven-monitor'
+    cluster: 'kaven-production'
+    environment: 'production'
 
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+# Load alert rules
+rule_files:
+  - 'alerts.yml'
+
+# Scrape configurations
 scrape_configs:
+  # Kaven API
   - job_name: 'kaven-api'
     static_configs:
       - targets: ['host.docker.internal:8000']
-    metrics_path: '/metrics'
+    metrics_path: '/api/observability/metrics'
     scrape_interval: 10s
+    scrape_timeout: 5s
+
+  # PostgreSQL
+  - job_name: 'postgresql'
+    static_configs:
+      - targets: ['postgres_exporter:9187']
+    scrape_interval: 15s
+
+  # Redis
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis_exporter:9121']
+    scrape_interval: 15s
+
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Alertmanager
+  - job_name: 'alertmanager'
+    static_configs:
+      - targets: ['alertmanager:9093']
+
+  # Grafana
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3000']

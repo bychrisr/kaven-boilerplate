@@ -1,0 +1,84 @@
+global:
+  resolve_timeout: 5m
+
+# Routing
+route:
+  group_by: ['alertname', 'cluster', 'service']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 12h
+  receiver: 'default'
+
+  routes:
+    # Critical alerts -> Slack + Email
+    - match:
+        severity: critical
+      receiver: 'critical-alerts'
+      continue: true
+
+    # Warning alerts -> Slack only
+    - match:
+        severity: warning
+      receiver: 'warning-alerts'
+
+    # Business metrics -> Email
+    - match:
+        component: business
+      receiver: 'business-alerts'
+
+# Receivers (Notification Channels)
+receivers:
+  - name: 'default'
+    webhook_configs:
+      - url: 'http://host.docker.internal:8000/api/webhooks/alerts'
+        send_resolved: true
+
+  - name: 'critical-alerts'
+    # Slack configuration (uncomment and configure when ready)
+    # slack_configs:
+    #   - api_url: '${SLACK_WEBHOOK_URL}'
+    #     channel: '#kaven-alerts-critical'
+    #     title: '🚨 CRITICAL: {{ .GroupLabels.alertname }}'
+    #     text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+    #     send_resolved: true
+
+    # Email configuration (uncomment and configure when ready)
+    # email_configs:
+    #   - to: '${ALERT_EMAIL_TO}'
+    #     from: '${ALERT_EMAIL_FROM}'
+    #     smarthost: '${SMTP_HOST}:${SMTP_PORT}'
+    #     auth_username: '${SMTP_USERNAME}'
+    #     auth_password: '${SMTP_PASSWORD}'
+    #     headers:
+    #       Subject: '🚨 [CRITICAL] Kaven Alert: {{ .GroupLabels.alertname }}'
+
+    webhook_configs:
+      - url: 'http://host.docker.internal:8000/api/webhooks/alerts/critical'
+        send_resolved: true
+
+  - name: 'warning-alerts'
+    # Slack configuration (uncomment and configure when ready)
+    # slack_configs:
+    #   - api_url: '${SLACK_WEBHOOK_URL}'
+    #     channel: '#kaven-alerts'
+    #     title: '⚠️ WARNING: {{ .GroupLabels.alertname }}'
+    #     text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+    #     send_resolved: true
+
+    webhook_configs:
+      - url: 'http://host.docker.internal:8000/api/webhooks/alerts/warning'
+        send_resolved: true
+
+  - name: 'business-alerts'
+    webhook_configs:
+      - url: 'http://host.docker.internal:8000/api/webhooks/alerts/business'
+        send_resolved: true
+
+# Inhibition rules
+inhibit_rules:
+  # Inhibit warning if critical is firing
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'cluster', 'service']

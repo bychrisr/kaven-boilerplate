@@ -1,0 +1,199 @@
+groups:
+  - name: kaven_infrastructure
+    interval: 30s
+    rules:
+      # API Down
+      - alert: KavenAPIDown
+        expr: up{job="kaven-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: 'Kaven API is down'
+          description: 'Kaven API has been down for more than 1 minute.'
+
+      # High CPU Usage
+      - alert: HighCPUUsage
+        expr: kaven_hardware_cpu_usage_percent > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: hardware
+        annotations:
+          summary: 'High CPU usage detected'
+          description: 'CPU usage is {{ $value }}% (threshold: 80%)'
+
+      # Critical CPU Usage
+      - alert: CriticalCPUUsage
+        expr: kaven_hardware_cpu_usage_percent > 90
+        for: 2m
+        labels:
+          severity: critical
+          component: hardware
+        annotations:
+          summary: 'Critical CPU usage detected'
+          description: 'CPU usage is {{ $value }}% (threshold: 90%)'
+
+      # High Memory Usage
+      - alert: HighMemoryUsage
+        expr: kaven_hardware_memory_usage_percent > 85
+        for: 5m
+        labels:
+          severity: warning
+          component: hardware
+        annotations:
+          summary: 'High memory usage detected'
+          description: 'Memory usage is {{ $value }}% (threshold: 85%)'
+
+      # Critical Memory Usage
+      - alert: CriticalMemoryUsage
+        expr: kaven_hardware_memory_usage_percent > 95
+        for: 2m
+        labels:
+          severity: critical
+          component: hardware
+        annotations:
+          summary: 'Critical memory usage detected'
+          description: 'Memory usage is {{ $value }}% (threshold: 95%)'
+
+      # Disk Space Low
+      - alert: DiskSpaceLow
+        expr: kaven_hardware_disk_usage_percent > 80
+        for: 10m
+        labels:
+          severity: warning
+          component: hardware
+        annotations:
+          summary: 'Disk space running low'
+          description: 'Disk usage is {{ $value }}% (threshold: 80%)'
+
+      # Disk Space Critical
+      - alert: DiskSpaceCritical
+        expr: kaven_hardware_disk_usage_percent > 90
+        for: 5m
+        labels:
+          severity: critical
+          component: hardware
+        annotations:
+          summary: 'Disk space critically low'
+          description: 'Disk usage is {{ $value }}% (threshold: 90%)'
+
+  - name: kaven_application
+    interval: 30s
+    rules:
+      # High Error Rate
+      - alert: HighErrorRate
+        expr: rate(kaven_http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: 'High HTTP error rate detected'
+          description: 'Error rate is {{ $value | humanizePercentage }} (threshold: 5%)'
+
+      # Critical Error Rate
+      - alert: CriticalErrorRate
+        expr: rate(kaven_http_requests_total{status=~"5.."}[5m]) > 0.10
+        for: 1m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: 'Critical HTTP error rate detected'
+          description: 'Error rate is {{ $value | humanizePercentage }} (threshold: 10%)'
+
+      # High Response Time
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(kaven_http_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: 'High API response time'
+          description: 'P95 latency is {{ $value }}s (threshold: 2s)'
+
+      # Event Loop Lag
+      - alert: HighEventLoopLag
+        expr: kaven_nodejs_event_loop_lag_ms > 50
+        for: 3m
+        labels:
+          severity: warning
+          component: nodejs
+        annotations:
+          summary: 'High Node.js event loop lag'
+          description: 'Event loop lag is {{ $value }}ms (threshold: 50ms)'
+
+  - name: kaven_infrastructure_services
+    interval: 30s
+    rules:
+      # PostgreSQL Down
+      - alert: PostgreSQLDown
+        expr: up{job="postgresql"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: 'PostgreSQL is down'
+          description: 'PostgreSQL database has been down for more than 1 minute.'
+
+      # PostgreSQL Slow
+      - alert: PostgreSQLSlow
+        expr: kaven_infrastructure_latency_ms{name="PostgreSQL"} > 1000
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: 'PostgreSQL queries are slow'
+          description: 'PostgreSQL latency is {{ $value }}ms (threshold: 1000ms)'
+
+      # Redis Down
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: cache
+        annotations:
+          summary: 'Redis is down'
+          description: 'Redis cache has been down for more than 1 minute.'
+
+      # Redis Slow
+      - alert: RedisSlow
+        expr: kaven_infrastructure_latency_ms{name="Redis"} > 500
+        for: 5m
+        labels:
+          severity: warning
+          component: cache
+        annotations:
+          summary: 'Redis operations are slow'
+          description: 'Redis latency is {{ $value }}ms (threshold: 500ms)'
+
+  - name: kaven_business_metrics
+    interval: 1m
+    rules:
+      # No User Registrations
+      - alert: NoUserRegistrations
+        expr: rate(kaven_user_registrations_total[1h]) == 0
+        for: 2h
+        labels:
+          severity: warning
+          component: business
+        annotations:
+          summary: 'No user registrations in the last 2 hours'
+          description: 'There have been no new user registrations.'
+
+      # High Login Failure Rate
+      - alert: HighLoginFailureRate
+        expr: rate(kaven_login_failures_total[5m]) / rate(kaven_login_attempts_total[5m]) > 0.3
+        for: 10m
+        labels:
+          severity: warning
+          component: auth
+        annotations:
+          summary: 'High login failure rate'
+          description: 'Login failure rate is {{ $value | humanizePercentage }} (threshold: 30%)'
