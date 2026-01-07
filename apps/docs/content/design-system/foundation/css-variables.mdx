@@ -1,0 +1,516 @@
+---
+title: CSS Variables
+description: Referência completa de todas as variáveis CSS do Kaven UI v2, incluindo glassmorphism, tipografia, cores e temas
+date: 2026-01-07
+author: Chris + Claude Sonnet 4.5
+version: 2.0.0
+tags: [css, variables, theming, glassmorphism, foundation]
+---
+
+# CSS Variables
+
+> Sistema completo de variáveis CSS que alimenta o Kaven UI v2, incluindo glassmorphism adaptativo, tipografia semântica e cores OKLCH.
+
+## Visão Geral
+
+O Kaven UI v2 utiliza um sistema robusto de variáveis CSS que permite:
+
+- ✅ Temas adaptativos (Light/Dark)
+- ✅ Glassmorphism configurável
+- ✅ Tipografia semântica
+- ✅ Cores em OKLCH (alta fidelidade)
+- ✅ Customização centralizada
+
+**Localização:** `apps/admin/app/globals.css`
+
+---
+
+## Glassmorphism Variables
+
+### Light Mode (Frosted Ice)
+
+```css
+:root {
+  /* Gradientes de fundo */
+  --glass-gradient-start: rgba(255, 255, 255, 0.8);
+  --glass-gradient-end: rgba(255, 255, 255, 0.6);
+
+  /* Bordas e highlights */
+  --color-glass-border: rgba(255, 255, 255, 0.5);
+  --color-glass-highlight: rgba(255, 255, 255, 0.8);
+
+  /* Sombras */
+  --glass-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+
+  /* Spotlight effect */
+  --spotlight-color: rgba(255, 255, 255, 0.5);
+}
+```
+
+### Dark Mode (Deep Tech)
+
+```css
+.dark {
+  /* Gradientes de fundo */
+  --glass-gradient-start: rgba(17, 25, 40, 0.75);
+  --glass-gradient-end: rgba(17, 25, 40, 0.5);
+
+  /* Bordas e highlights */
+  --color-glass-border: rgba(255, 255, 255, 0.08);
+  --color-glass-highlight: rgba(255, 255, 255, 0.05);
+
+  /* Sombras */
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  /* Spotlight effect */
+  --spotlight-color: rgba(255, 255, 255, 0.03);
+}
+```
+
+### Uso Prático
+
+```css
+/* Aplicar glassmorphism em um elemento */
+.glass-panel {
+  background: linear-gradient(
+    135deg,
+    var(--glass-gradient-start),
+    var(--glass-gradient-end)
+  );
+  backdrop-filter: blur(10px) saturate(180%);
+  border: 1px solid var(--color-glass-border);
+  box-shadow: var(--glass-shadow);
+}
+```
+
+---
+
+## Typography Variables
+
+### Font Families
+
+```css
+:root {
+  /* Display - Títulos e headers */
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+
+  /* Body - Texto corrido */
+  --font-body: 'Inter', sans-serif;
+
+  /* Mono - Código e números */
+  --font-mono: 'Source Code Pro', monospace;
+}
+```
+
+### Uso em Tailwind
+
+```tsx
+// Display (títulos)
+<h1 className="font-display font-bold">Título Principal</h1>
+
+// Sans (texto)
+<p className="font-sans">Parágrafo de texto corrido</p>
+
+// Mono (código/números)
+<code className="font-mono">const value = 123;</code>
+```
+
+### Mapeamento Tailwind
+
+```css
+@theme inline {
+  --font-display: var(--font-display);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono);
+}
+```
+
+---
+
+## Color System (OKLCH)
+
+### Base Colors (Light Mode)
+
+```css
+:root {
+  /* Backgrounds */
+  --background: oklch(1 0 0); /* Branco puro */
+  --foreground: oklch(0.145 0 0); /* Texto escuro */
+
+  /* Cards */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+
+  /* Primary */
+  --primary: oklch(0.205 0 0); /* Preto */
+  --primary-foreground: oklch(0.985 0 0); /* Branco */
+
+  /* Secondary */
+  --secondary: oklch(0.97 0 0); /* Cinza claro */
+  --secondary-foreground: oklch(0.205 0 0);
+
+  /* Muted */
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+
+  /* Destructive */
+  --destructive: oklch(0.577 0.245 27.325); /* Vermelho */
+
+  /* Borders */
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+}
+```
+
+### Base Colors (Dark Mode)
+
+```css
+.dark {
+  /* Minimals Dark Mode - Cores originais */
+  --background: #161c24;
+  --foreground: #ffffff;
+
+  --card: #212b36;
+  --card-foreground: #ffffff;
+
+  --primary: #00a76f; /* Verde Minimals */
+  --primary-foreground: #ffffff;
+
+  --secondary: #8e33ff; /* Roxo */
+  --secondary-foreground: #ffffff;
+
+  --muted: rgba(145, 158, 171, 0.12);
+  --muted-foreground: #919eab;
+
+  --destructive: #ff5630; /* Vermelho */
+  --destructive-foreground: #ffffff;
+
+  --border: rgba(145, 158, 171, 0.24);
+  --input: rgba(145, 158, 171, 0.24);
+  --ring: rgba(0, 167, 111, 0.3);
+}
+```
+
+### Chart Colors
+
+```css
+:root {
+  --chart-1: oklch(0.646 0.222 41.116); /* Laranja */
+  --chart-2: oklch(0.6 0.118 184.704); /* Azul */
+  --chart-3: oklch(0.398 0.07 227.392); /* Azul escuro */
+  --chart-4: oklch(0.828 0.189 84.429); /* Verde claro */
+  --chart-5: oklch(0.769 0.188 70.08); /* Amarelo */
+}
+
+.dark {
+  --chart-1: #00a76f; /* Verde */
+  --chart-2: #ffab00; /* Amarelo */
+  --chart-3: #ff5630; /* Vermelho */
+  --chart-4: #00b8d9; /* Azul */
+  --chart-5: #8e33ff; /* Roxo */
+}
+```
+
+---
+
+## Kaven Theme Colors
+
+### Semantic Colors
+
+```css
+@theme inline {
+  /* Primary */
+  --color-primary-main: var(--primary-main);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-light: var(--primary-light);
+  --color-primary-lighter: var(--primary-lighter);
+  --color-primary-darker: var(--primary-darker);
+
+  /* Secondary */
+  --color-secondary-main: var(--secondary-main);
+  --color-secondary-dark: var(--secondary-dark);
+  --color-secondary-light: var(--secondary-light);
+
+  /* Success */
+  --color-success-main: var(--success-main);
+  --color-success-dark: var(--success-dark);
+  --color-success-light: var(--success-light);
+
+  /* Warning */
+  --color-warning-main: var(--warning-main);
+  --color-warning-dark: var(--warning-dark);
+  --color-warning-light: var(--warning-light);
+
+  /* Error */
+  --color-error-main: var(--error-main);
+  --color-error-dark: var(--error-dark);
+  --color-error-light: var(--error-light);
+
+  /* Info */
+  --color-info-main: var(--info-main);
+  --color-info-dark: var(--info-dark);
+  --color-info-light: var(--info-light);
+}
+```
+
+### Gray Scale
+
+```css
+@theme inline {
+  --color-gray-900: var(--gray-900);
+  --color-gray-800: var(--gray-800);
+  --color-gray-700: var(--gray-700);
+  --color-gray-600: var(--gray-600);
+  --color-gray-500: var(--gray-500);
+  --color-gray-400: var(--gray-400);
+  --color-gray-300: var(--gray-300);
+  --color-gray-200: var(--gray-200);
+  --color-gray-100: var(--gray-100);
+  --color-gray-50: var(--gray-50);
+}
+```
+
+---
+
+## Sidebar Variables
+
+```css
+:root {
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+```
+
+### Mapeamento Tailwind
+
+```css
+@theme inline {
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+```
+
+---
+
+## Border Radius
+
+```css
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px); /* 6px */
+  --radius-md: calc(var(--radius) - 2px); /* 8px */
+  --radius-lg: var(--radius); /* 10px */
+  --radius-xl: calc(var(--radius) + 4px); /* 14px */
+  --radius-2xl: calc(var(--radius) + 8px); /* 18px */
+  --radius-3xl: calc(var(--radius) + 12px); /* 22px */
+  --radius-4xl: calc(var(--radius) + 16px); /* 26px */
+}
+
+:root {
+  --radius: 0.625rem; /* 10px base */
+}
+```
+
+### Uso em Tailwind
+
+```tsx
+<div className="rounded-sm">   {/* 6px */}
+<div className="rounded-md">   {/* 8px */}
+<div className="rounded-lg">   {/* 10px */}
+<div className="rounded-xl">   {/* 14px */}
+<div className="rounded-2xl">  {/* 18px */}
+<div className="rounded-3xl">  {/* 22px */}
+<div className="rounded-4xl">  {/* 26px */}
+```
+
+---
+
+## Customização
+
+### Sobrescrever Variáveis
+
+```css
+/* Em seu CSS customizado */
+:root {
+  /* Mudar cor primária */
+  --primary: oklch(0.5 0.2 200); /* Azul customizado */
+
+  /* Ajustar glassmorphism */
+  --glass-gradient-start: rgba(255, 255, 255, 0.9);
+  --glass-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+
+  /* Customizar tipografia */
+  --font-display: 'Montserrat', sans-serif;
+}
+```
+
+### Tema Customizado
+
+```css
+/* Criar tema "brand" */
+.theme-brand {
+  --primary: oklch(0.6 0.25 280); /* Roxo brand */
+  --secondary: oklch(0.7 0.15 60); /* Amarelo brand */
+  --glass-gradient-start: rgba(138, 43, 226, 0.1);
+  --spotlight-color: rgba(138, 43, 226, 0.2);
+}
+```
+
+---
+
+## Exemplos Práticos
+
+### Card com Glassmorphism
+
+```tsx
+export function GlassCard() {
+  return (
+    <div className="glass-panel rounded-2xl p-6">
+      <h3 className="font-display font-bold text-foreground">Título do Card</h3>
+      <p className="font-sans text-muted-foreground">
+        Conteúdo com glassmorphism adaptativo
+      </p>
+    </div>
+  );
+}
+```
+
+### Botão com Cores Semânticas
+
+```tsx
+export function SemanticButton() {
+  return (
+    <button className="bg-primary text-primary-foreground hover:bg-primary/90">
+      Ação Principal
+    </button>
+  );
+}
+```
+
+### Tipografia Hierárquica
+
+```tsx
+export function Typography() {
+  return (
+    <div>
+      <h1 className="font-display text-4xl font-bold text-foreground">
+        Display Title
+      </h1>
+      <p className="font-sans text-base text-muted-foreground">
+        Body text usando Inter
+      </p>
+      <code className="font-mono text-sm bg-muted px-2 py-1 rounded">
+        const code = "Source Code Pro";
+      </code>
+    </div>
+  );
+}
+```
+
+---
+
+## Referência Rápida
+
+### Variáveis Mais Usadas
+
+| Variável                 | Light                   | Dark                  | Uso              |
+| ------------------------ | ----------------------- | --------------------- | ---------------- |
+| `--background`           | Branco                  | `#161c24`             | Fundo da página  |
+| `--foreground`           | Preto                   | Branco                | Texto principal  |
+| `--primary`              | Preto                   | `#00a76f`             | Ação primária    |
+| `--muted-foreground`     | Cinza médio             | `#919eab`             | Texto secundário |
+| `--border`               | Cinza claro             | `rgba(...)`           | Bordas           |
+| `--glass-gradient-start` | `rgba(255,255,255,0.8)` | `rgba(17,25,40,0.75)` | Glassmorphism    |
+
+### Classes Tailwind Geradas
+
+```tsx
+// Cores
+bg-background, text-foreground
+bg-primary, text-primary-foreground
+bg-card, text-card-foreground
+bg-muted, text-muted-foreground
+
+// Tipografia
+font-display, font-sans, font-mono
+
+// Border Radius
+rounded-sm, rounded-md, rounded-lg
+rounded-xl, rounded-2xl, rounded-3xl
+```
+
+---
+
+## Troubleshooting
+
+### Variável não funciona
+
+**Problema:** Variável CSS não está sendo aplicada.
+
+**Solução:**
+
+```css
+/* ❌ Errado - sem var() */
+.element {
+  color: --primary;
+}
+
+/* ✅ Correto - com var() */
+.element {
+  color: var(--primary);
+}
+```
+
+### Glassmorphism não aparece
+
+**Problema:** Efeito glassmorphism não visível.
+
+**Solução:**
+
+```css
+/* Certifique-se de incluir backdrop-filter */
+.glass-panel {
+  background: linear-gradient(
+    135deg,
+    var(--glass-gradient-start),
+    var(--glass-gradient-end)
+  );
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%); /* Safari */
+}
+```
+
+### Cores diferentes em Light/Dark
+
+**Problema:** Cores não adaptam entre temas.
+
+**Solução:**
+
+```tsx
+/* ❌ Errado - cor hardcoded */
+<div className="bg-white text-black">
+
+/* ✅ Correto - usa variáveis */
+<div className="bg-background text-foreground">
+```
+
+---
+
+## Related
+
+- [Glassmorphism System](/design-system/glassmorphism-system) - Sistema completo de glassmorphism
+- [Colors](/design-system/foundation/colors) - Paleta de cores detalhada
+- [Typography](/design-system/foundation/typography) - Sistema tipográfico
+- [Theming Guide](/design-system/theming) - Guia de customização de temas

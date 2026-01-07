@@ -51,6 +51,7 @@ export default {
     title: '📊 Data Display',
   },
   'stat-card': 'Stat Card',
+  'spotlight-card': 'Spotlight Card',
   'data-table': 'Data Table',
   table: 'Table',
   card: 'Card',
