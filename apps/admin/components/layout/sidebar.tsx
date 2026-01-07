@@ -220,7 +220,8 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed top-0 left-0 z-[200] h-screen bg-sidebar/60 backdrop-blur-xl border-r border-border transition-all duration-300',
+          'fixed top-0 left-0 z-[200] h-screen backdrop-blur-2xl border-r border-sidebar-border transition-all duration-300',
+          'bg-gradient-to-b from-sidebar/80 to-sidebar/40 shadow-2xl', // Glass Gradient
           'flex flex-col', // Flexbox container
           isCollapsed ? 'w-[88px]' : 'w-[280px]',
           isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'

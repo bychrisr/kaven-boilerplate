@@ -64,10 +64,10 @@
   --common-black: #000000;
   --common-white: #ffffff;
 
-  /* ===== TEXT COLORS ===== */
-  --text-primary: var(--gray-900);
-  --text-secondary: var(--gray-600);
-  --text-disabled: var(--gray-500);
+  /* ===== TEXT COLORS (Otimizado para Glassmorphism no Light Mode) ===== */
+  --text-primary: rgba(22, 28, 36, 0.95); /* gray-900 com opacidade */
+  --text-secondary: rgba(99, 115, 129, 0.75); /* gray-600 com opacidade */
+  --text-disabled: rgba(145, 158, 171, 0.48); /* gray-500 com opacidade */
 
   /* ===== BACKGROUND COLORS ===== */
   --background-default: #ffffff;
@@ -114,14 +114,10 @@
 
   /* ===== SHADOWS ===== */
   --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-sm:
-    0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-  --shadow-md:
-    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  --shadow-lg:
-    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-  --shadow-xl:
-    0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 
   /* ===== Z-INDEX ===== */
@@ -140,9 +136,10 @@
   --background-paper: #212b36;
   --background-neutral: var(--gray-800);
 
-  --text-primary: #ffffff;
-  --text-secondary: var(--gray-400);
-  --text-disabled: var(--gray-600);
+  /* Text (Otimizado para Glassmorphism) */
+  --text-primary: rgba(255, 255, 255, 0.95);
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-disabled: rgba(255, 255, 255, 0.48);
 
   --action-hover: rgba(255, 255, 255, 0.08);
   --action-selected: rgba(255, 255, 255, 0.16);
