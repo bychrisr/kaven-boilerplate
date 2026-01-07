@@ -1,414 +1,195 @@
 ---
-title: Observability
-description: Sistema completo de observabilidade com Golden Signals, métricas Node.js e monitoramento em tempo real
+title: Observability Quick Start Guide
+description: Guia prático para começar a usar o sistema de observabilidade do Kaven - setup rápido, interpretação de métricas e troubleshooting
 date: 2026-01-06
 author: Chris + Claude Sonnet 4.5
-version: 2.0.0
-tags: [observability, monitoring, metrics, golden-signals, prometheus, grafana]
+version: 3.0.0
+tags:
+  [guide, observability, monitoring, quick-start, dashboard, troubleshooting]
 ---
 
-# Observability
+# Observability Quick Start Guide
 
-> Monitoramento avançado baseado em padrões Prometheus/Grafana com Golden Signals e métricas específicas de Node.js
+> Guia prático para configurar e usar o sistema de observabilidade do Kaven em 10 minutos
 
-## Visão Geral
+## 🚀 Setup Rápido (5 minutos)
 
-O Kaven Boilerplate implementa um sistema robusto de observabilidade que combina:
-
-- ✅ **Golden Signals** (Google SRE) - Latency, Traffic, Errors, Saturation
-- ✅ **Métricas Node.js** - Event Loop Lag, Memory Heap, Active Handles/Requests
-- ✅ **Visualização em Tempo Real** - Dashboard com atualização automática
-- ✅ **Cores Semânticas** - Design System integrado para status visual
-- ✅ **Internacionalização** - Suporte a pt-BR e EN
-
-**Acesso:** `/observability`
-
----
-
-## Golden Signals
-
-Implementação dos 4 sinais essenciais de saúde do sistema (Google SRE):
-
-### 1. Latency (Tempo de Resposta)
-
-Mede o tempo que leva para processar requisições.
-
-**Métricas:**
-
-- **p50 (mediana):** 50% das requisições são mais rápidas
-- **p95:** 95% das requisições são mais rápidas (SLA típico)
-- **p99:** 99% das requisições são mais rápidas (tail latency)
-
-**Fonte:** Histograma de latências via `advanced-metrics.middleware.ts`
-
-**Cor:** Info (Cyan) - `bg-info-lighter text-info-main`
-
-```typescript
-// Exemplo de valores
-{
-  latency: {
-    p50: 45,   // 45ms
-    p95: 120,  // 120ms
-    p99: 250   // 250ms
-  }
-}
-```
-
----
-
-### 2. Traffic (Volume de Requisições)
-
-Mede a demanda no sistema.
-
-**Métricas:**
-
-- **Requests/sec:** Taxa atual de requisições por segundo
-- **Total Requests:** Contador acumulado desde o início
-
-**Fonte:** Counter via `prom-client`
-
-**Cor:** Success (Green) - `bg-success-lighter text-success-main`
-
-```typescript
-{
-  traffic: {
-    requestsPerSecond: 12.5,
-    totalRequests: 45678
-  }
-}
-```
-
----
-
-### 3. Errors (Taxa de Falhas)
-
-Mede a confiabilidade do sistema.
-
-**Métricas:**
-
-- **Error Requests:** Contagem de requisições com status 5xx
-- **Error Rate (%):** Percentual de falhas sobre o total
-
-**Fonte:** Counter de status 5xx via middleware
-
-**Cor:** Error (Red) - `bg-error-lighter text-error-main`
-
-```typescript
-{
-  errors: {
-    errorRequests: 23,
-    errorRate: 0.5  // 0.5%
-  }
-}
-```
-
-> [!WARNING]
-> Error Rate > 1% indica problema crítico que requer investigação imediata.
-
----
-
-### 4. Saturation (Utilização de Recursos)
-
-Mede o quanto o sistema está sendo utilizado.
-
-**Métricas:**
-
-- **CPU Usage (%):** Percentual de uso de CPU
-- **Memory Usage (%):** Heap usado / Heap total
-
-**Fonte:** `process.cpuUsage()` e `process.memoryUsage()`
-
-**Cor:** Secondary (Purple) - `bg-secondary-lighter text-secondary-main`
-
-```typescript
-{
-  saturation: {
-    cpuUsagePercent: 45,
-    memoryUsagePercent: 67
-  }
-}
-```
-
----
-
-## Métricas Node.js
-
-Métricas específicas do runtime Node.js para diagnóstico avançado.
-
-### 1. Event Loop Lag ⭐
-
-**Crítico para Node.js!** Mede o atraso entre quando uma tarefa deveria executar vs quando realmente executa.
-
-**Thresholds:**
-
-- **< 10ms:** ✅ Saudável (status: good)
-- **10-50ms:** ⚠️ Atenção (status: warning)
-- **> 50ms:** 🔴 Crítico - Event loop bloqueado (status: critical)
-
-**Fonte:** `perf_hooks` com monitoramento contínuo
-
-```typescript
-{
-  eventLoopLag: 8.5; // ms
-}
-```
-
-> [!IMPORTANT]
-> Event Loop Lag alto indica código bloqueante (operações síncronas pesadas, loops infinitos, etc).
-
----
-
-### 2. Memory Heap
-
-Detalhamento da memória heap do processo.
-
-**Métricas:**
-
-- **Used MB:** Memória heap atualmente em uso
-- **Total MB:** Memória heap total alocada
-- **External:** Memória C++ vinculada a objetos JavaScript
-
-**Thresholds:**
-
-- **< 70%:** ✅ Saudável
-- **70-85%:** ⚠️ Atenção
-- **> 85%:** 🔴 Crítico - Risco de memory leak
-
-```typescript
-{
-  memoryHeap: {
-    used: 245,      // MB
-    total: 512,     // MB
-    external: 12,   // MB
-    usedMB: 245,
-    totalMB: 512
-  }
-}
-```
-
----
-
-### 3. Active Handles
-
-Número de handles ativos (file descriptors, sockets, timers).
-
-**Thresholds:**
-
-- **< 100:** ✅ Saudável
-- **100-200:** ⚠️ Atenção
-- **> 200:** 🔴 Crítico - Possível leak de recursos
-
-```typescript
-{
-  activeHandles: 45;
-}
-```
-
----
-
-### 4. Active Requests
-
-Número de requisições HTTP em andamento.
-
-**Thresholds:**
-
-- **< 10:** ✅ Saudável
-- **10-50:** ⚠️ Atenção
-- **> 50:** 🔴 Crítico - Sistema sobrecarregado
-
-```typescript
-{
-  activeRequests: 3;
-}
-```
-
----
-
-## API Reference
-
-### `GET /api/observability/advanced`
-
-Retorna todas as métricas avançadas (Golden Signals + Node.js).
-
-**Response:**
-
-```typescript
-interface AdvancedMetrics {
-  goldenSignals: {
-    latency: { p50: number; p95: number; p99: number };
-    traffic: { requestsPerSecond: number; totalRequests: number };
-    errors: { errorRequests: number; errorRate: number };
-    saturation: { cpuUsagePercent: number; memoryUsagePercent: number };
-  };
-  nodejs: {
-    eventLoopLag: number;
-    memoryHeap: {
-      used: number;
-      total: number;
-      external: number;
-      usedMB: number;
-      totalMB: number;
-    };
-    activeHandles: number;
-    activeRequests: number;
-  };
-  httpDetails: {
-    statusDistribution: Record<string, number>;
-    uptime: number;
-  };
-}
-```
-
-**Exemplo:**
+### 1. Iniciar Stack de Monitoramento
 
 ```bash
-curl http://localhost:8000/api/observability/advanced
+# Na raiz do projeto
+docker-compose -f docker-compose.monitoring.yml up -d
+
+# Verificar se todos os containers estão rodando
+docker-compose -f docker-compose.monitoring.yml ps
 ```
 
----
+**Containers iniciados:**
 
-## Implementação Frontend
+- ✅ Prometheus (porta 9090)
+- ✅ Grafana (porta 3001)
+- ✅ Alertmanager (porta 9093)
+- ✅ PostgreSQL Exporter (porta 9187)
+- ✅ Redis Exporter (porta 9121)
 
-### Componentes
-
-**`GoldenSignals.tsx`:**
-
-- 4 cards com métricas principais
-- Cores semânticas do Design System
-- Atualização automática a cada 5 segundos
-- Skeleton loading durante carregamento
-
-**`NodeJsMetrics.tsx`:**
-
-- 4 cards com métricas específicas de Node.js
-- Status visual baseado em thresholds
-- Cores dinâmicas (good/warning/critical)
-
-### Uso
-
-```typescript
-import { GoldenSignals } from './golden-signals';
-import { NodeJsMetrics } from './nodejs-metrics';
-
-export default function ObservabilityPage() {
-  return (
-    <div className="space-y-8">
-      <GoldenSignals />
-      <NodeJsMetrics />
-    </div>
-  );
-}
-```
-
----
-
-## Internacionalização
-
-Todas as métricas são traduzidas automaticamente:
-
-**pt-BR:**
-
-```json
-{
-  "Observability": {
-    "goldenSignals": {
-      "latency": "Latency (p95)",
-      "totalRequests": "total requests"
-    },
-    "nodejsMetrics": {
-      "eventLoopLag": "Event Loop Lag",
-      "memoryHeapDesc": "de {total}MB total"
-    }
-  }
-}
-```
-
-**EN:**
-
-```json
-{
-  "Observability": {
-    "goldenSignals": {
-      "latency": "Latency (p95)",
-      "totalRequests": "total requests"
-    },
-    "nodejsMetrics": {
-      "eventLoopLag": "Event Loop Lag",
-      "memoryHeapDesc": "of {total}MB total"
-    }
-  }
-}
-```
-
----
-
-## Integração com Prometheus/Grafana
-
-O sistema expõe métricas no formato Prometheus:
-
-### Endpoint Prometheus
+### 2. Configurar Sentry (Opcional)
 
 ```bash
-# Métricas no formato Prometheus
-GET /metrics
+# Adicionar ao .env
+SENTRY_DSN=https://your-key@sentry.io/project-id
+
+# Reiniciar API
+cd apps/api
+pnpm dev
 ```
 
-### Exemplo de Configuração Grafana
+### 3. Acessar Dashboards
 
-```yaml
-# prometheus.yml
-scrape_configs:
-  - job_name: 'kaven-api'
-    static_configs:
-      - targets: ['localhost:8000']
-    metrics_path: '/metrics'
-    scrape_interval: 15s
-```
+| Interface           | URL                                 | Credenciais      |
+| ------------------- | ----------------------------------- | ---------------- |
+| **Dashboard Kaven** | http://localhost:3000/observability | Login normal     |
+| **Prometheus**      | http://localhost:9090               | Sem autenticação |
+| **Grafana**         | http://localhost:3001               | admin/admin      |
+| **Alertmanager**    | http://localhost:9093               | Sem autenticação |
 
 ---
 
-## Troubleshooting
+## 📊 Usando o Dashboard
 
-### Event Loop Lag Alto
+### Visão Geral
 
-**Sintomas:**
+O dashboard de observabilidade do Kaven mostra **8 cards principais** organizados em 2 seções:
 
-- Lag > 50ms consistentemente
-- Aplicação lenta/travando
+**Golden Signals (4 cards):**
+
+1. 🕐 **Latency** - Tempo de resposta (p50, p95, p99)
+2. 📈 **Traffic** - Volume de requisições
+3. ❌ **Errors** - Taxa de erros
+4. 💻 **Saturation** - Uso de CPU e memória
+
+**Node.js Metrics (4 cards):** 5. ⚡ **Event Loop Lag** - Saúde do event loop 6. 🧠 **Memory Heap** - Uso de memória heap 7. 📌 **Active Handles** - Recursos ativos 8. 🔄 **Active Requests** - Requisições em andamento
+
+### Auto-Refresh
+
+O dashboard atualiza automaticamente a cada **5 segundos**. Você verá:
+
+- ✅ Skeleton loaders durante carregamento
+- ✅ Cores semânticas indicando status
+- ✅ Valores em tempo real
+
+---
+
+## 🎨 Interpretando as Cores
+
+### Status Visual
+
+| Cor                      | Significado | Ação Necessária          |
+| ------------------------ | ----------- | ------------------------ |
+| 🟢 **Verde** (Success)   | Saudável    | Nenhuma                  |
+| 🟡 **Amarelo** (Warning) | Atenção     | Monitorar                |
+| 🔴 **Vermelho** (Error)  | Crítico     | Investigar imediatamente |
+| 🔵 **Azul** (Info)       | Informativo | Nenhuma                  |
+| 🟣 **Roxo** (Secondary)  | Neutro      | Nenhuma                  |
+
+### Thresholds por Métrica
+
+#### Event Loop Lag
+
+- 🟢 **< 10ms** - Saudável
+- 🟡 **10-50ms** - Atenção (possível código bloqueante)
+- 🔴 **> 50ms** - Crítico (event loop bloqueado)
+
+#### Memory Heap
+
+- 🟢 **< 70%** - Saudável
+- 🟡 **70-85%** - Atenção (monitorar crescimento)
+- 🔴 **> 85%** - Crítico (risco de memory leak)
+
+#### Active Handles
+
+- 🟢 **< 100** - Saudável
+- 🟡 **100-200** - Atenção
+- 🔴 **> 200** - Crítico (possível leak de recursos)
+
+#### Active Requests
+
+- 🟢 **< 10** - Saudável
+- 🟡 **10-50** - Atenção (carga moderada)
+- 🔴 **> 50** - Crítico (sistema sobrecarregado)
+
+#### Error Rate
+
+- 🟢 **< 1%** - Saudável
+- 🟡 **1-5%** - Atenção
+- 🔴 **> 5%** - Crítico (problema sistêmico)
+
+---
+
+## 🔍 Cenários Comuns
+
+### Cenário 1: Aplicação Lenta
+
+**Sintomas no Dashboard:**
+
+- 🔴 Latency p95 > 2000ms
+- 🔴 Event Loop Lag > 50ms
+- 🟡 Active Requests > 20
+
+**Diagnóstico:**
+
+```bash
+# Ver performance profiling
+curl http://localhost:8000/api/diagnostics/performance
+
+# Verificar event loop lag
+curl http://localhost:8000/api/observability/advanced | jq '.nodejs.eventLoopLag'
+```
 
 **Causas Comuns:**
 
-- Operações síncronas pesadas (crypto, JSON.parse de arquivos grandes)
-- Loops infinitos ou recursão profunda
-- Blocking I/O
+1. Código bloqueante (operações síncronas)
+2. Queries lentas no banco
+3. APIs externas lentas
+4. Memory leak causando GC frequente
 
 **Solução:**
 
 ```typescript
 // ❌ ERRADO - Bloqueante
 const data = fs.readFileSync('large-file.json');
-const parsed = JSON.parse(data);
+const result = heavyComputation(data);
 
 // ✅ CORRETO - Assíncrono
 const data = await fs.promises.readFile('large-file.json');
-const parsed = JSON.parse(data);
+const result = await heavyComputationAsync(data);
 ```
 
 ---
 
-### Memory Leak
+### Cenário 2: Memory Leak
 
-**Sintomas:**
+**Sintomas no Dashboard:**
 
-- Memory usage crescendo constantemente
-- Heap > 85% por longos períodos
+- 🔴 Memory Heap > 85% e crescendo
+- 🟡 Active Handles crescendo constantemente
+- 🟢 Event Loop Lag normal
+
+**Diagnóstico:**
+
+```bash
+# Ver memory profiling
+curl http://localhost:8000/api/diagnostics/memory
+
+# Monitorar crescimento
+watch -n 5 'curl -s http://localhost:8000/api/diagnostics/memory | jq ".heapUsagePercent"'
+```
 
 **Causas Comuns:**
 
-- Event listeners não removidos
-- Timers/intervals não limpos
-- Cache sem limite de tamanho
-- Closures retendo referências
+1. Event listeners não removidos
+2. Timers/intervals não limpos
+3. Cache sem limite de tamanho
+4. Closures retendo referências
 
 **Solução:**
 
@@ -422,12 +203,344 @@ useEffect(() => {
 
   return () => window.removeEventListener('resize', handler);
 }, []);
+
+// ✅ Limpar timers
+useEffect(() => {
+  const interval = setInterval(() => {
+    /* ... */
+  }, 1000);
+
+  return () => clearInterval(interval);
+}, []);
 ```
 
 ---
 
-## Relacionados
+### Cenário 3: Alta Taxa de Erros
 
-- [Audit Logs](/platform/guides/audit-logs) - Sistema de auditoria
-- [Internationalization](/platform/architecture/INTERNATIONALIZATION) - Sistema de i18n
-- [Design System - Colors](/design-system/foundation/colors) - Cores semânticas
+**Sintomas no Dashboard:**
+
+- 🔴 Error Rate > 5%
+- 🔴 Error Requests crescendo
+- 🟢 Latency normal
+
+**Diagnóstico:**
+
+```bash
+# Ver erros no Sentry (se configurado)
+# Acessar: https://sentry.io/your-project
+
+# Ver logs de erro
+docker-compose logs api | grep ERROR
+
+# Ver distribuição de status HTTP
+curl http://localhost:8000/api/observability/advanced | jq '.httpDetails.statusDistribution'
+```
+
+**Causas Comuns:**
+
+1. API externa fora do ar
+2. Validação de dados falhando
+3. Erro de configuração
+4. Database connection pool esgotado
+
+**Solução:**
+
+```typescript
+// ✅ Usar Circuit Breaker para APIs externas
+import { stripeCircuitBreaker } from '@/lib/circuit-breaker';
+
+const payment = await stripeCircuitBreaker.execute(async () => {
+  return await stripe.paymentIntents.create(data);
+});
+```
+
+---
+
+### Cenário 4: Sistema Sobrecarregado
+
+**Sintomas no Dashboard:**
+
+- 🔴 CPU > 90%
+- 🔴 Active Requests > 50
+- 🔴 Latency p99 > 5000ms
+- 🟡 Memory crescendo
+
+**Diagnóstico:**
+
+```bash
+# Ver health check detalhado
+curl http://localhost:8000/api/diagnostics/health
+
+# Ver métricas de hardware
+curl http://localhost:8000/api/observability/metrics | grep cpu_usage
+```
+
+**Ações Imediatas:**
+
+1. Escalar horizontalmente (mais instâncias)
+2. Ativar rate limiting
+3. Habilitar cache
+4. Investigar queries N+1
+
+---
+
+## 🛠️ Troubleshooting Avançado
+
+### Prometheus Não Está Coletando Métricas
+
+```bash
+# 1. Verificar targets
+curl http://localhost:9090/api/v1/targets | jq
+
+# 2. Ver logs do Prometheus
+docker-compose -f docker-compose.monitoring.yml logs prometheus
+
+# 3. Testar endpoint de métricas
+curl http://localhost:8000/api/observability/metrics
+
+# 4. Verificar configuração
+docker exec kaven-prometheus cat /etc/prometheus/prometheus.yml
+```
+
+**Solução:** Verificar se API está acessível de dentro do container Docker.
+
+---
+
+### Alertmanager Não Envia Notificações
+
+```bash
+# 1. Ver alertas ativos
+curl http://localhost:9093/api/v2/alerts
+
+# 2. Ver configuração
+curl http://localhost:9093/api/v1/status
+
+# 3. Testar webhook manualmente
+curl -X POST http://localhost:8000/api/webhooks/alerts \
+  -H "Content-Type: application/json" \
+  -d '{"alerts": [{"status": "firing", "labels": {"alertname": "Test"}}]}'
+
+# 4. Ver logs
+docker-compose -f docker-compose.monitoring.yml logs alertmanager
+```
+
+**Solução:** Verificar se webhook URL está correta e acessível.
+
+---
+
+### Grafana Não Conecta ao Prometheus
+
+```bash
+# 1. Verificar datasource
+docker exec kaven-grafana cat /etc/grafana/provisioning/datasources/prometheus.yml
+
+# 2. Testar conectividade
+docker exec kaven-grafana ping prometheus
+
+# 3. Ver logs
+docker-compose -f docker-compose.monitoring.yml logs grafana
+```
+
+**Solução:** Verificar se nome do serviço está correto no datasource (deve ser `prometheus`, não `localhost`).
+
+---
+
+## 📈 Queries Prometheus Úteis
+
+### Performance
+
+```promql
+# Request rate (últimos 5 minutos)
+rate(kaven_http_requests_total[5m])
+
+# P95 latency
+histogram_quantile(0.95, rate(kaven_http_request_duration_seconds_bucket[5m]))
+
+# Error rate
+rate(kaven_http_requests_total{status=~"5.."}[5m]) / rate(kaven_http_requests_total[5m])
+```
+
+### Recursos
+
+```promql
+# CPU usage
+kaven_hardware_cpu_usage_percent
+
+# Memory usage
+kaven_hardware_memory_usage_percent
+
+# Disk usage
+kaven_hardware_disk_usage_percent
+```
+
+### Business Metrics
+
+```promql
+# User registrations per hour
+rate(kaven_user_registrations_total[1h])
+
+# Login success rate
+rate(kaven_login_attempts_total{status="success"}[5m]) / rate(kaven_login_attempts_total[5m])
+
+# Payment volume
+rate(kaven_payments_total[1h])
+```
+
+### Circuit Breaker
+
+```promql
+# Circuit breaker state (0=closed, 1=open, 2=half-open)
+kaven_circuit_breaker_state
+
+# Circuit breaker failures
+rate(kaven_circuit_breaker_failures_total[5m])
+```
+
+---
+
+## 🎯 Best Practices
+
+### 1. Monitoramento Proativo
+
+✅ **Faça:**
+
+- Configure alertas para métricas críticas
+- Monitore tendências, não apenas valores absolutos
+- Revise dashboards semanalmente
+- Documente incidentes e resoluções
+
+❌ **Evite:**
+
+- Esperar usuários reportarem problemas
+- Ignorar alertas de warning
+- Desabilitar alertas "chatos"
+
+### 2. Performance
+
+✅ **Faça:**
+
+- Mantenha Event Loop Lag < 10ms
+- Use async/await para I/O
+- Implemente cache para dados frequentes
+- Use Circuit Breaker para APIs externas
+
+❌ **Evite:**
+
+- Operações síncronas pesadas
+- Queries N+1
+- Loops bloqueantes
+- Timers/intervals sem cleanup
+
+### 3. Memória
+
+✅ **Faça:**
+
+- Monitore heap usage regularmente
+- Implemente limites em caches
+- Limpe event listeners
+- Use WeakMap/WeakSet quando apropriado
+
+❌ **Evite:**
+
+- Caches sem limite
+- Closures desnecessárias
+- Listeners globais sem cleanup
+- Objetos grandes em memória
+
+### 4. Alertas
+
+✅ **Faça:**
+
+- Configure múltiplos níveis de severidade
+- Use routing inteligente (Slack para critical, email para warning)
+- Documente runbooks para cada alerta
+- Teste alertas regularmente
+
+❌ **Evite:**
+
+- Alertas muito sensíveis (muito ruído)
+- Alertas muito lentos (problema já crítico)
+- Notificações sem contexto
+- Alertas sem ação clara
+
+---
+
+## 📚 Próximos Passos
+
+### Aprofundar Conhecimento
+
+1. **Referência Técnica Completa**
+   - Leia [Observability & Monitoring](/platform/observability)
+   - Entenda todas as 30+ métricas disponíveis
+   - Configure dashboards Grafana customizados
+
+2. **Configuração Avançada**
+   - Configure Slack/Email notifications
+   - Crie alert rules customizadas
+   - Implemente SLOs (Service Level Objectives)
+
+3. **Integração com CI/CD**
+   - Monitore deploys
+   - Track error rate pós-deploy
+   - Rollback automático em caso de problemas
+
+### Recursos Adicionais
+
+- [Prometheus Documentation](https://prometheus.io/docs/)
+- [Grafana Dashboards](https://grafana.com/grafana/dashboards/)
+- [Sentry Best Practices](https://docs.sentry.io/platforms/javascript/guides/node/)
+- [Google SRE Book - Monitoring](https://sre.google/sre-book/monitoring-distributed-systems/)
+
+---
+
+## 🆘 Precisa de Ajuda?
+
+### Checklist de Troubleshooting
+
+- [ ] Todos os containers Docker estão rodando?
+- [ ] API está respondendo em http://localhost:8000?
+- [ ] Prometheus consegue acessar `/api/observability/metrics`?
+- [ ] Grafana está conectado ao Prometheus?
+- [ ] Alertmanager está recebendo alertas?
+- [ ] Webhooks estão configurados corretamente?
+- [ ] Sentry DSN está configurado (se usando)?
+
+### Comandos de Diagnóstico Rápido
+
+```bash
+# Status geral
+docker-compose -f docker-compose.monitoring.yml ps
+
+# Logs de todos os serviços
+docker-compose -f docker-compose.monitoring.yml logs -f
+
+# Reiniciar stack
+docker-compose -f docker-compose.monitoring.yml restart
+
+# Parar e remover tudo
+docker-compose -f docker-compose.monitoring.yml down -v
+```
+
+---
+
+## 📝 Changelog
+
+### v3.0.0 (2026-01-06)
+
+- ✅ Atualizado para refletir stack completo implementado
+- ✅ Adicionado guia de Circuit Breaker
+- ✅ Adicionado troubleshooting de Sentry
+- ✅ Adicionado queries Prometheus úteis
+- ✅ Reorganizado como guia prático (não referência técnica)
+
+### v2.0.0 (anterior)
+
+- Golden Signals e Node.js metrics
+- Dashboard frontend
+
+---
+
+**Tipo:** Guia Prático  
+**Complementa:** [Observability & Monitoring](/platform/observability) (Referência Técnica)  
+**Tempo de Leitura:** ~15 minutos
