@@ -26,6 +26,7 @@
   },
   "packageManager": "pnpm@8.15.0",
   "dependencies": {
-    "@prisma/client": "5.22.0"
+    "@prisma/client": "5.22.0",
+    "systeminformation": "^5.30.0"
   }
 }
