@@ -62,7 +62,7 @@ export function StatCard({
   const isPositiveTrend = trend !== undefined && trend >= 0;
 
   const content = (
-    <>
+    <div>
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -136,7 +136,7 @@ export function StatCard({
           </p>
         )}
       </div>
-    </>
+    </div>
   );
 
   if (variant === 'outline') {
