@@ -5,6 +5,7 @@ description: Como usar o componente de Live Preview para documentação interati
 
 import { ComponentPreview } from '@/components/ComponentPreview';
 import { Button } from '@/components/ui/button';
+import { LivePreviewInteractiveDemo } from '@/components/examples/LivePreviewInteractiveDemo';
 
 # Live Preview
 
@@ -51,21 +52,38 @@ Geralmente, acompanhamos o preview visual com o bloco de código correspondente 
 </div>
 ```
 
-## Render Props (Interatividade)
+Para exemplos que precisam de estado (como abrir um modal, trocar tabs, ou inputs controlados), **você deve criar um componente separado** e importá-lo. O MDX do Next.js App Router não suporta funções inline como children.
 
-Para exemplos que precisam de estado (como abrir um modal, trocar tabs, ou inputs controlados), você deve passar uma função como `children`.
+1. Crie o componente em `apps/docs/components/examples/MeuExemplo.tsx` com `'use client'`.
+2. Importe e use dentro do `ComponentPreview`.
 
-**Importante:** Isso requer que o exemplo seja autossuficiente ou use hooks dentro do corpo da função.
+```tsx
+// apps/docs/components/examples/LivePreviewInteractiveDemo.tsx
+'use client';
+
+import * as React from 'react';
+import { Button } from '@/components/ui/button';
+
+export function LivePreviewInteractiveDemo() {
+  const [count, setCount] = React.useState(0);
+  return (
+    <Button onClick={() => setCount((c) => c + 1)}>Clicks: {count}</Button>
+  );
+}
+```
+
+```mdx
+import { LivePreviewInteractiveDemo } from '@/components/examples/LivePreviewInteractiveDemo';
 
 <ComponentPreview>
-  <div className="flex justify-center">
-    {() => {
-      const [count, setCount] = React.useState(0);
-      return (
-        <Button onClick={() => setCount((c) => c + 1)}>Clicks: {count}</Button>
-      );
-    }}
-  </div>
+  <LivePreviewInteractiveDemo />
+</ComponentPreview>
+```
+
+### Resultado
+
+<ComponentPreview>
+  <LivePreviewInteractiveDemo />
 </ComponentPreview>
 
 ```tsx
@@ -78,5 +96,5 @@ const [count, setCount] = React.useState(0);
 
 | Prop        | Tipo                           | Padrão | Descrição                                        |
 | ----------- | ------------------------------ | ------ | ------------------------------------------------ |
-| `children`  | `ReactNode \| () => ReactNode` | -      | O componente a ser renderizado.                  |
+| `children`  | `ReactNode`                    | -      | O componente a ser renderizado.                  |
 | `className` | `string`                       | `''`   | Classes CSS adicionais para o container externo. |

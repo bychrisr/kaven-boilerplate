@@ -9,6 +9,10 @@ import { Paper } from '@/components/ui/paper';
 import { FormControlLabel } from '@/components/ui/form';
 import { Switch } from '@/components/ui/switch';
 import { ComponentPreview } from '@/components/ComponentPreview';
+import { TransitionsFadeDemo } from '@/components/examples/TransitionsFadeDemo';
+import { TransitionsZoomGrowDemo } from '@/components/examples/TransitionsZoomGrowDemo';
+import { TransitionsSlideDemo } from '@/components/examples/TransitionsSlideDemo';
+import { TransitionsCollapseDemo } from '@/components/examples/TransitionsCollapseDemo';
 
 # Transitions
 
@@ -17,23 +21,7 @@ import { ComponentPreview } from '@/components/ComponentPreview';
 ## Fade
 
 <ComponentPreview>
-  <div className="flex flex-col items-center gap-4 h-32">
-    {() => {
-      const [checked, setChecked] = React.useState(true);
-      return (
-        <>
-          <div className="flex items-center gap-2">
-            <Switch checked={checked} onCheckedChange={setChecked} /> Show
-          </div>
-          <Fade in={checked}>
-            <Paper className="p-4 bg-primary-main text-white">
-              Fade Transition
-            </Paper>
-          </Fade>
-        </>
-      );
-    }}
-  </div>
+  <TransitionsFadeDemo />
 </ComponentPreview>
 
 ```tsx
@@ -47,50 +35,13 @@ const [checked, setChecked] = React.useState(true);
 ## Zoom vs Grow
 
 <ComponentPreview>
-  <div className="flex gap-8 justify-center h-32">
-    {() => {
-      const [checked, setChecked] = React.useState(true);
-      return (
-        <div className="flex flex-col items-center gap-4 w-full">
-          <div className="flex items-center gap-2">
-            <Switch checked={checked} onCheckedChange={setChecked} /> Show
-          </div>
-          <div className="flex gap-4">
-            <Zoom in={checked}>
-              <Paper className="p-4 w-24 text-center">Zoom</Paper>
-            </Zoom>
-            <Grow in={checked}>
-              <Paper className="p-4 w-24 text-center">Grow</Paper>
-            </Grow>
-          </div>
-        </div>
-      );
-    }}
-  </div>
+  <TransitionsZoomGrowDemo />
 </ComponentPreview>
 
 ## Slide
 
 <ComponentPreview>
-  <div className="flex flex-col items-center gap-4 h-48 overflow-hidden relative border w-full">
-    {() => {
-      const [checked, setChecked] = React.useState(true);
-      return (
-        <>
-          <div className="absolute top-4 z-10 bg-white/80 p-2 rounded">
-            <div className="flex items-center gap-2">
-              <Switch checked={checked} onCheckedChange={setChecked} /> Show
-            </div>
-          </div>
-          <Slide in={checked} direction="up" className="absolute bottom-0">
-            <Paper className="p-4 bg-secondary-main text-white m-4">
-              Slide Up
-            </Paper>
-          </Slide>
-        </>
-      );
-    }}
-  </div>
+  <TransitionsSlideDemo />
 </ComponentPreview>
 
 ```tsx
@@ -104,25 +55,7 @@ const [checked, setChecked] = React.useState(true);
 Útil para expandir/colapsar seções de conteúdo verticalmente.
 
 <ComponentPreview>
-  <div className="flex flex-col items-center gap-4 w-full max-w-sm">
-    {() => {
-      const [checked, setChecked] = React.useState(false);
-      return (
-        <>
-          <Button onClick={() => setChecked(!checked)} fullWidth>
-            {checked ? 'Hide Details' : 'Show Details'}
-          </Button>
-          <Collapse in={checked}>
-            <Paper className="p-4 mt-2 bg-gray-50">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-              eget.
-            </Paper>
-          </Collapse>
-        </>
-      );
-    }}
-  </div>
+  <TransitionsCollapseDemo />
 </ComponentPreview>
 
 ```tsx
