@@ -27,6 +27,7 @@ import { planRoutes } from './modules/plans/routes/plan.routes';
 import { featureRoutes } from './modules/plans/routes/feature.routes';
 import { productRoutes } from './modules/products/routes/product.routes';
 import { subscriptionRoutes } from './modules/subscriptions/routes/subscription.routes';
+import { metricsUpdaterService } from './modules/observability/services/metrics-updater.service';
 
 // Initialize Sentry for error tracking
 initSentry();
@@ -250,7 +251,11 @@ const start = async () => {
     const port = env.PORT;
     await fastify.listen({ port, host: '0.0.0.0' });
     console.log(`🚀 Server running on http://localhost:${port}`);
-    console.log(`📚 API Documentation: http://localhost:${port}/api/auth`);
+    console.log(`📚 API Documentation: http://localhost:${port}/docs`);
+    console.log(`📊 Metrics endpoint: http://localhost:${port}/metrics`);
+    
+    // Start automatic metrics updates
+    metricsUpdaterService.start();
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
