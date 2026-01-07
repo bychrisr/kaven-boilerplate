@@ -210,10 +210,14 @@ export default function DashboardPage() {
                 {/* Invoices/Downloads Card */}
                 {showCard('invoices') && (
                     <StatCard
-                subtitle={t('metrics.last7Days')}
-                variant="outline"
-                iconClassName="bg-yellow-100 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-500"
-             />
+                        title={t('cards.totalInvoices')}
+                        value={metrics.invoices.value}
+                        icon={FileText}
+                        trend={metrics.invoices.trend}
+                        subtitle={t('metrics.last7Days')}
+                        variant="outline"
+                        iconClassName="bg-yellow-100 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-500"
+                    />
                 )}
                 
                 {/* Placeholders for other cards */}
