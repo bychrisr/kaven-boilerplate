@@ -166,6 +166,10 @@ model User {
   securityConfigsUpdated SecurityConfig[]
   Purchase               Purchase[]
 
+  // Notification Relations
+  inAppNotifications        InAppNotification[]
+  notificationPreferences   UserNotificationPreferences?
+
   @@index([email])
   @@index([tenantId])
   @@index([role])
@@ -799,7 +803,7 @@ model Purchase {
   tenantId String @map("tenant_id")
 
   /// Associated product
-  productId String @map("product_id")
+  productId String? @map("product_id")
 
   /// User who made the purchase
   userId String? @map("user_id")
@@ -829,9 +833,9 @@ model Purchase {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // Relations
-  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
-  user    User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: Restrict)
+  user    User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([tenantId])
   @@index([productId])
@@ -946,3 +950,47 @@ model WebhookEvent {
   @@index([event])
   @@map("webhook_events")
 }
+
+// ===========================
+// IN-APP NOTIFICATIONS
+// ===========================
+
+model InAppNotification {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  type       String   // 'system' | 'user' | 'security' | 'automation' | 'payment'
+  priority   String   // 'low' | 'medium' | 'high' | 'critical'
+  title      String
+  message    String
+  metadata   Json?
+  read       Boolean  @default(false)
+  actionUrl  String?  @map("action_url")
+  actionText String?  @map("action_text")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([priority])
+  @@index([read])
+  @@index([createdAt])
+  @@map("in_app_notifications")
+}
+
+model UserNotificationPreferences {
+  id            String   @id @default(uuid())
+  userId        String   @unique @map("user_id")
+  inAppEnabled  Boolean  @default(true) @map("in_app_enabled")
+  emailEnabled  Boolean  @default(false) @map("email_enabled")
+  pushEnabled   Boolean  @default(false) @map("push_enabled")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_notification_preferences")
+}
+

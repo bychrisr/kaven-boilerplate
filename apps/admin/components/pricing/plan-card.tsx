@@ -22,7 +22,7 @@ export function PlanCard({ plan, interval, isCurrent, isPopular, onSelect }: Pla
   const hasDiscount = originalAmount && originalAmount > amount;
   
   return (
-    <Card className={`relative ${isCurrent ? 'border-primary' : ''} ${isPopular ? 'shadow-lg' : ''}`}>
+    <Card className={`relative ${isCurrent ? 'border-primary' : ''} ${isPopular ? 'shadow-lg' : ''}`} data-testid="plan-card">
       {isPopular && (
         <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
           Popular
@@ -63,10 +63,10 @@ export function PlanCard({ plan, interval, isCurrent, isPopular, onSelect }: Pla
             <div key={feature.code} className="flex items-start gap-2">
               <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
               <span className="text-sm">
-                {feature.feature.name}
+                {feature.name}
                 {feature.limitValue !== null && feature.limitValue !== -1 && (
                   <span className="text-muted-foreground">
-                    {' '}({feature.limitValue} {feature.feature.unit})
+                    {' '}({feature.limitValue} {feature.unit})
                   </span>
                 )}
                 {feature.limitValue === -1 && (

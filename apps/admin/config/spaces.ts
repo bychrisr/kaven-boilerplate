@@ -61,7 +61,7 @@ export const SPACES: Record<string, SpaceConfig> = {
         title: 'OVERVIEW',
         items: [
           { icon: Home, label: 'Dashboard', href: '/dashboard' },
-          { icon: BarChart3, label: 'Analytics', href: '/analytics' },
+          { icon: BarChart3, label: 'Analytics', href: '/coming-soon' },
           { icon: Settings, label: 'Platform Settings', href: '/saas-settings' }
         ]
       },
@@ -75,11 +75,11 @@ export const SPACES: Record<string, SpaceConfig> = {
       {
         title: 'FINANCE',
         items: [
-          { icon: DollarSign, label: 'Revenue', href: '/finance/revenue' },
+          { icon: DollarSign, label: 'Revenue', href: '/coming-soon' },
           { icon: ShoppingCart, label: 'Orders', href: '/orders' },
           { icon: FileText, label: 'Invoices', href: '/invoices' },
-          { icon: CreditCard, label: 'Payments', href: '/finance/payments' },
-          { icon: Receipt, label: 'Billing', href: '/finance/billing' }
+          { icon: CreditCard, label: 'Payments', href: '/coming-soon' },
+          { icon: Receipt, label: 'Billing', href: '/coming-soon' }
         ]
       },
       {
@@ -94,17 +94,17 @@ export const SPACES: Record<string, SpaceConfig> = {
       {
         title: 'SUPPORT',
         items: [
-          { icon: Headphones, label: 'Tickets', href: '/support/tickets' },
-          { icon: UserCheck, label: 'Impersonation', href: '/support/impersonation' },
-          { icon: Shield, label: '2FA Reset', href: '/support/2fa-reset' }
+          { icon: Headphones, label: 'Tickets', href: '/coming-soon' },
+          { icon: UserCheck, label: 'Impersonation', href: '/coming-soon' },
+          { icon: Shield, label: '2FA Reset', href: '/coming-soon' }
         ]
       },
       {
         title: 'MARKETING',
         items: [
-          { icon: Users, label: 'CRM', href: '/marketing/crm' },
-          { icon: Mail, label: 'Campaigns', href: '/marketing/campaigns' },
-          { icon: Target, label: 'Goals', href: '/marketing/goals' }
+          { icon: Users, label: 'CRM', href: '/coming-soon' },
+          { icon: Mail, label: 'Campaigns', href: '/coming-soon' },
+          { icon: Target, label: 'Goals', href: '/coming-soon' }
         ]
       },
       {
@@ -121,9 +121,9 @@ export const SPACES: Record<string, SpaceConfig> = {
                { label: 'Prometheus', href: 'http://localhost:9090', external: true }
             ]
           },
-          { icon: Server, label: 'Servers', href: '/devops/servers' },
-          { icon: Database, label: 'Databases', href: '/devops/databases' },
-          { icon: FileText, label: 'Logs', href: '/devops/logs' }
+          { icon: Server, label: 'Servers', href: '/observability' },
+          { icon: Database, label: 'Databases', href: '/observability' },
+          { icon: FileText, label: 'Logs', href: '/audit-logs' }
         ]
       },
       {
@@ -165,10 +165,11 @@ export const SPACES: Record<string, SpaceConfig> = {
       {
         title: 'FINANCE',
         items: [
-          { icon: DollarSign, label: 'Revenue', href: '/finance/revenue' },
+          { icon: DollarSign, label: 'Revenue', href: '/coming-soon' },
+          { icon: ShoppingCart, label: 'Orders', href: '/orders' },
           { icon: FileText, label: 'Invoices', href: '/invoices' },
-          { icon: CreditCard, label: 'Payments', href: '/finance/payments' },
-          { icon: Receipt, label: 'Billing', href: '/finance/billing' }
+          { icon: CreditCard, label: 'Payments', href: '/coming-soon' },
+          { icon: Receipt, label: 'Billing', href: '/coming-soon' }
         ]
       }
     ],
@@ -190,9 +191,9 @@ export const SPACES: Record<string, SpaceConfig> = {
       {
         title: 'SUPPORT',
         items: [
-          { icon: Headphones, label: 'Tickets', href: '/support/tickets' },
-          { icon: UserCheck, label: 'Impersonation', href: '/support/impersonation' },
-          { icon: Shield, label: '2FA Reset', href: '/support/2fa-reset' }
+          { icon: Headphones, label: 'Tickets', href: '/coming-soon' },
+          { icon: UserCheck, label: 'Impersonation', href: '/coming-soon' },
+          { icon: Shield, label: '2FA Reset', href: '/coming-soon' }
         ]
       }
     ],
@@ -214,10 +215,10 @@ export const SPACES: Record<string, SpaceConfig> = {
       {
         title: 'MARKETING',
         items: [
-          { icon: BarChart3, label: 'Analytics', href: '/analytics' },
-          { icon: Users, label: 'CRM', href: '/marketing/crm' },
-          { icon: Mail, label: 'Campaigns', href: '/marketing/campaigns' },
-          { icon: Target, label: 'Goals', href: '/marketing/goals' }
+          { icon: BarChart3, label: 'Analytics', href: '/coming-soon' },
+          { icon: Users, label: 'CRM', href: '/coming-soon' },
+          { icon: Mail, label: 'Campaigns', href: '/coming-soon' },
+          { icon: Target, label: 'Goals', href: '/coming-soon' }
         ]
       }
     ],
@@ -240,10 +241,20 @@ export const SPACES: Record<string, SpaceConfig> = {
       {
         title: 'DEVOPS',
         items: [
-          { icon: Activity, label: 'Monitoring', href: '/monitoring' },
-          { icon: Server, label: 'Servers', href: '/devops/servers' },
-          { icon: Database, label: 'Databases', href: '/devops/databases' },
-          { icon: FileText, label: 'Logs', href: '/devops/logs' }
+          { 
+            icon: Activity, 
+            label: 'Monitoring', 
+            href: '#',
+            children: [
+               { label: 'Dashboard', href: '/observability' },
+               { label: 'Audit Logs', href: '/audit-logs' },
+               { label: 'Grafana', href: 'http://localhost:3001', external: true },
+               { label: 'Prometheus', href: 'http://localhost:9090', external: true }
+            ]
+          },
+          { icon: Server, label: 'Servers', href: '/observability' },
+          { icon: Database, label: 'Databases', href: '/observability' },
+          { icon: FileText, label: 'Logs', href: '/audit-logs' }
         ]
       }
     ],

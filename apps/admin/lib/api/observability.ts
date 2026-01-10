@@ -164,6 +164,7 @@ export interface Alert {
   threshold: number;
   timestamp: number;
   resolved: boolean;
+  resolvedAt?: number;
 }
 
 export interface AlertThreshold {
@@ -203,7 +204,7 @@ export const observabilityApi = {
   },
 
   getAlerts: async () => {
-    const { data } = await api.get<{ success: boolean; data: { active: Alert[]; thresholds: AlertThreshold[] } }>('/api/observability/alerts');
+    const { data } = await api.get<{ success: boolean; data: { alerts: Alert[]; active: Alert[]; thresholds: AlertThreshold[] } }>('/api/observability/alerts');
     return data.data;
   },
 
@@ -211,4 +212,90 @@ export const observabilityApi = {
     const { data } = await api.get<AuditLogsResponse>('/api/audit-logs', { params });
     return data;
   },
+
+  // Alert Management
+  updateThreshold: async (id: string, updates: Partial<AlertThreshold>) => {
+    const { data } = await api.put<{ success: boolean; data: AlertThreshold }>(`/api/observability/alerts/thresholds/${id}`, updates);
+    return data.data;
+  },
+
+  resolveAlert: async (id: string) => {
+    const { data } = await api.post<{ success: boolean; data: Alert }>(`/api/observability/alerts/${id}/resolve`);
+    return data.data;
+  },
+
+  // Protection Systems
+  getCacheMetrics: async () => {
+    const { data } = await api.get<{ success: boolean; data: CacheMetrics }>('/api/diagnostics/protection/cache');
+    return data.data;
+  },
+
+  getRateLimitMetrics: async () => {
+    const { data } = await api.get<{ success: boolean; data: RateLimitMetrics }>('/api/diagnostics/protection/rate-limit');
+    return data.data;
+  },
+
+  // Diagnostic Tools
+  startMonitoring: async (durationMinutes: number, intervalSeconds = 10) => {
+    const { data } = await api.post<{ success: boolean; data: { sessionId: string; startTime: number; endTime: number } }>('/api/diagnostics/monitor/start', { durationMinutes, intervalSeconds });
+    return data.data;
+  },
+
+  stopMonitoring: async (sessionId: string) => {
+    const { data } = await api.post<{ success: boolean; data: MonitoringSession }>(`/api/diagnostics/monitor/stop/${sessionId}`);
+    return data.data;
+  },
+
+  getMonitoringSessions: async () => {
+    const { data } = await api.get<{ success: boolean; data: { total: number; active: number; sessions: MonitoringSession[] } }>('/api/diagnostics/monitor/sessions');
+    return data.data;
+  },
+
+  testConnectivity: async () => {
+    const { data } = await api.get<{ success: boolean; data: ConnectivityTest; timestamp: number }>('/api/diagnostics/connectivity');
+    return data.data;
+  },
+
+  forceRefresh: async () => {
+    const { data } = await api.post<{ success: boolean; data: HardwareMetrics; refreshTime: number }>('/api/diagnostics/refresh');
+    return data.data;
+  },
 };
+
+// Additional types for new features
+export interface CacheMetrics {
+  hitCount: number;
+  missCount: number;
+  total: number;
+  hitRate: number;
+  missRate: number;
+  enabled: boolean;
+  ttl: number;
+  strategy: string;
+}
+
+export interface RateLimitMetrics {
+  totalRequests: number;
+  violations: number;
+  violationRate: number;
+  topViolators: Array<{ ip: string; count: number }>;
+}
+
+export interface MonitoringSession {
+  id: string;
+  status: 'active' | 'completed' | 'stopped';
+  startTime: number;
+  endTime: number;
+  durationMinutes: number;
+  intervalSeconds: number;
+  snapshotCount: number;
+}
+
+export interface ConnectivityTest {
+  database: {
+    status: string;
+    latency: number;
+  };
+  infrastructure: InfrastructureServiceStatus[];
+  externalAPIs: ExternalAPIStatus[];
+}

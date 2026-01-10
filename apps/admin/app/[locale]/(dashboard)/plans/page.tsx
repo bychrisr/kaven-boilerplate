@@ -34,7 +34,7 @@ export default function PlansPage() {
     try {
       await deletePlan.mutateAsync(id);
       toast.success(`Plano "${name}" excluído com sucesso`);
-    } catch (error) {
+    } catch {
       toast.error('Erro ao excluir plano');
     }
   };
@@ -144,7 +144,7 @@ export default function PlansPage() {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Tem certeza que deseja excluir o plano "{plan.name}"?
+                              Tem certeza que deseja excluir o plano &quot;{plan.name}&quot;?
                               Esta ação não pode ser desfeita.
                             </AlertDialogDescription>
                           </AlertDialogHeader>

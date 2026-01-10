@@ -3,7 +3,9 @@
 import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
 import { observabilityApi } from '@/lib/api/observability';
-import { Database, Server, CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
+import { Database, Server } from 'lucide-react';
+import { StatCard } from '@/components/ui/stat-card';
+import { InfoTooltip } from '@/components/ui/info-tooltip';
 
 export function InfrastructureServices() {
   const t = useTranslations('Observability.infrastructure');
@@ -25,42 +27,44 @@ export function InfrastructureServices() {
     );
   }
 
-  const getStatusBorder = (status: string): string => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'healthy':
-        return 'border-success-light bg-success-lighter/50';
+        return 'bg-green-100 dark:bg-green-900/20 text-green-600';
       case 'degraded':
-        return 'border-warning-light bg-warning-lighter/50';
+        return 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600';
       case 'unhealthy':
-        return 'border-error-light bg-error-lighter/50';
+        return 'bg-red-100 dark:bg-red-900/20 text-red-600';
       default:
-        return 'border-border bg-card';
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'healthy':
-        return <CheckCircle className="h-5 w-5 text-success-main" />;
-      case 'degraded':
-        return <AlertTriangle className="h-5 w-5 text-warning-main" />;
-      case 'unhealthy':
-        return <XCircle className="h-5 w-5 text-error-main" />;
-      default:
-        return null;
+        return 'bg-gray-100 dark:bg-gray-900/20 text-gray-600';
     }
   };
 
   const getIcon = (type: string) => {
     switch (type) {
       case 'database':
-        return <Database className="h-6 w-6 text-primary" />;
+        return Database;
       case 'cache':
-        return <Server className="h-6 w-6 text-info-main" />;
+        return Server;
       default:
-        return <Server className="h-6 w-6 text-muted-foreground" />;
+        return Server;
     }
   };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'healthy':
+        return t('healthy');
+      case 'degraded':
+        return t('degraded');
+      case 'unhealthy':
+        return t('unhealthy');
+      default:
+        return status;
+    }
+  };
+
+
 
   return (
     <div className="space-y-4">
@@ -71,32 +75,20 @@ export function InfrastructureServices() {
 
       <div className="grid gap-4 md:grid-cols-2">
         {data.map(service => (
-          <div
+          <StatCard
             key={service.name}
-            className={`rounded-lg border p-4 ${getStatusBorder(service.status)}`}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                {getIcon(service.type)}
-                <div>
-                  <h3 className="font-medium text-foreground">{service.name}</h3>
-                  <p className="text-sm text-muted-foreground capitalize">{service.type}</p>
-                </div>
-              </div>
-              {getStatusIcon(service.status)}
-            </div>
-            
-            <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="text-muted-foreground">{t('latency')}:</span>
-                <span className="ml-2 font-medium text-foreground">{service.latency}ms</span>
-              </div>
-              <div>
-                <span className="text-muted-foreground">{t('successRate')}:</span>
-                <span className="ml-2 font-medium text-foreground">{service.successRate}%</span>
-              </div>
-            </div>
-          </div>
+            variant="outline"
+            title={service.name}
+            value={getStatusLabel(service.status)}
+            subtitle={`${t('latency')}: ${service.latency}ms | ${t('successRate')}: ${service.successRate}%`}
+            icon={getIcon(service.type)}
+            iconClassName={getStatusColor(service.status)}
+            menuAction={
+              <InfoTooltip 
+                content={`${t('latencyTooltip')} | ${t('successRateTooltip')}`} 
+              />
+            }
+          />
         ))}
       </div>
     </div>

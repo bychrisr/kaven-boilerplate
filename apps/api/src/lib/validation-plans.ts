@@ -53,10 +53,16 @@ export const updatePlanSchema = z.object({
   metadata: z.record(z.string(), z.any()).optional(),
 });
 
+// Helper for boolean query params
+const booleanQuery = z.union([
+  z.boolean(),
+  z.string().transform((val) => val === 'true')
+]).optional();
+
 export const listPlansSchema = z.object({
   tenantId: z.string().uuid().optional(),
-  isActive: z.boolean().optional(),
-  isPublic: z.boolean().optional(),
+  isActive: booleanQuery,
+  isPublic: booleanQuery,
   type: z.enum(['SUBSCRIPTION', 'LIFETIME']).optional(),
 });
 

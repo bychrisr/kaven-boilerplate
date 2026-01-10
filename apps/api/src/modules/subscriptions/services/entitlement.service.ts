@@ -1,9 +1,7 @@
-import { Injectable } from '@nestjs/common';
 import { prisma } from '../../../lib/prisma';
 import { UsageTrackingService } from './usage-tracking.service';
 import type { ValidationResult } from '../types/validation.types';
 
-@Injectable()
 export class EntitlementService {
   constructor(private readonly usageTrackingService: UsageTrackingService) {}
 

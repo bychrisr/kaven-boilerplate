@@ -9,7 +9,7 @@ import { useUsers } from '@/hooks/use-users';
 import { useDashboardSummary, useDashboardCharts } from '@/hooks/use-dashboard';
 import { DashboardSkeleton } from '@/components/skeletons/dashboard-skeleton';
 import { StatCard } from '@/components/ui/stat-card';
-import { Users, DollarSign, FileText, ArrowUp, ArrowDown, Lock } from 'lucide-react';
+import { Users, DollarSign, FileText, Lock } from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -252,7 +252,7 @@ export default function DashboardPage() {
                     <p className="text-sm text-muted-foreground">{t('charts.activityByType')}</p>
                 </div>
                 <div className="h-80 w-full flex items-center justify-center relative" style={{ minHeight: '320px' }}>
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                         <PieChart>
                             <Pie
                                 data={donutData}
@@ -281,7 +281,7 @@ export default function DashboardPage() {
                     </div>
                 </div>
                 <div className="h-80 w-full min-w-0" style={{ minHeight: '320px' }}>
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                         <BarChart data={chartData} barSize={12}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#919EAB33" />
                             <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#919EAB'}} dy={10} />

@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
 
 const statusConfig: Record<OrderStatus, { label: string; color: string; icon: LucideIcon }> = {
   COMPLETED: { label: 'Concluído', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
@@ -38,7 +39,17 @@ export default function OrdersPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Pedidos</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Pedidos</h1>
+          <div className="mt-2 mb-4">
+            <Breadcrumbs>
+              <BreadcrumbItem>
+                <Link href="/dashboard" className="transition-colors hover:text-foreground">
+                  Dashboard
+                </Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem current>Pedidos</BreadcrumbItem>
+            </Breadcrumbs>
+          </div>
           <p className="text-sm text-gray-500">Acompanhe os pedidos realizados no sistema</p>
         </div>
       </div>

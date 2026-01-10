@@ -1,50 +1,73 @@
-import { Injectable } from '@nestjs/common';
 import { prisma } from '../../../lib/prisma';
 import type { UsageStats } from '../types/validation.types';
 
-@Injectable()
 export class UsageTrackingService {
   /**
-   * Incrementar uso de feature
+   * Incrementar uso de feature (por featureId)
    */
   async incrementUsage(
     tenantId: string,
-    featureCode: string,
+    featureId: string,
     amount: number = 1
   ): Promise<void> {
+    const now = new Date();
+    const periodEnd = this.getNextPeriodEnd();
+
     await prisma.usageRecord.upsert({
       where: {
-        tenantId_featureCode: {
+        tenantId_featureId_periodStart: {
           tenantId,
-          featureCode,
+          featureId,
+          periodStart: this.getPeriodStart(now),
         },
       },
       update: {
         currentUsage: { increment: amount },
-        updatedAt: new Date(),
+        updatedAt: now,
       },
       create: {
         tenantId,
-        featureCode,
+        featureId,
         currentUsage: amount,
-        periodStart: new Date(),
-        periodEnd: this.getNextPeriodEnd(),
+        periodStart: this.getPeriodStart(now),
+        periodEnd,
       },
     });
   }
 
   /**
-   * Obter uso atual
+   * Incrementar uso de feature (por featureCode - faz lookup)
+   */
+  async incrementUsageByCode(
+    tenantId: string,
+    featureCode: string,
+    amount: number = 1
+  ): Promise<void> {
+    const feature = await prisma.feature.findUnique({
+      where: { code: featureCode },
+    });
+
+    if (!feature) {
+      throw new Error(`Feature com code "${featureCode}" não encontrada`);
+    }
+
+    await this.incrementUsage(tenantId, feature.id, amount);
+  }
+
+  /**
+   * Obter uso atual (por featureId)
    */
   async getCurrentUsage(
     tenantId: string,
-    featureCode: string
+    featureId: string
   ): Promise<number> {
+    const now = new Date();
     const record = await prisma.usageRecord.findUnique({
       where: {
-        tenantId_featureCode: {
+        tenantId_featureId_periodStart: {
           tenantId,
-          featureCode,
+          featureId,
+          periodStart: this.getPeriodStart(now),
         },
       },
     });
@@ -53,19 +76,48 @@ export class UsageTrackingService {
   }
 
   /**
+   * Obter uso atual (por featureCode - faz lookup)
+   */
+  async getCurrentUsageByCode(
+    tenantId: string,
+    featureCode: string
+  ): Promise<number> {
+    const feature = await prisma.feature.findUnique({
+      where: { code: featureCode },
+    });
+
+    if (!feature) {
+      return 0;
+    }
+
+    return this.getCurrentUsage(tenantId, feature.id);
+  }
+
+  /**
    * Resetar uso mensal (cron job)
    */
   async resetMonthlyUsage(): Promise<void> {
+    const now = new Date();
     await prisma.usageRecord.updateMany({
       where: {
-        periodEnd: { lte: new Date() },
+        periodEnd: { lte: now },
       },
       data: {
         currentUsage: 0,
-        periodStart: new Date(),
+        periodStart: now,
         periodEnd: this.getNextPeriodEnd(),
+        lastReset: now,
       },
     });
+  }
+
+  /**
+   * Obter início do período atual (normalizado para início do dia)
+   */
+  private getPeriodStart(date: Date): Date {
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+    return start;
   }
 
   /**
@@ -83,9 +135,10 @@ export class UsageTrackingService {
     const records = await prisma.usageRecord.findMany({
       where: { tenantId },
       include: {
+        feature: true,
         tenant: {
           include: {
-            subscription: {
+            subscriptions: {
               include: {
                 plan: {
                   include: {
@@ -105,7 +158,7 @@ export class UsageTrackingService {
 
     return records.map((record) => ({
       tenantId: record.tenantId,
-      featureCode: record.featureCode,
+      featureCode: record.feature.code,
       currentUsage: record.currentUsage,
       limit: this.getFeatureLimit(record),
       periodStart: record.periodStart,
@@ -114,9 +167,12 @@ export class UsageTrackingService {
   }
 
   private getFeatureLimit(record: any): number {
-    const planFeature = record.tenant.subscription?.plan?.features?.find(
-      (f: any) => f.feature.code === record.featureCode
+    const subscription = record.tenant.subscriptions?.[0];
+    if (!subscription) return -1;
+
+    const planFeature = subscription.plan?.features?.find(
+      (f: any) => f.feature.id === record.featureId
     );
-    return planFeature?.limitValue || -1;
+    return planFeature?.limitValue ?? -1;
   }
 }

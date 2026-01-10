@@ -1,0 +1,118 @@
+# Observability Stack
+
+## Visão Geral
+
+Stack completo de observabilidade enterprise-grade com 100% de paridade com Axisor. O sistema fornece monitoramento em tempo real, alertas inteligentes e ferramentas de diagnóstico para garantir a saúde e performance da aplicação.
+
+## Componentes
+
+### 1. Hardware Metrics
+
+Monitoramento detalhado dos recursos do servidor:
+
+- **CPU**: Uso, temperatura, load average, contagem de cores.
+- **Memory**: Uso total, livre, swap stats.
+- **Disk**: Uso, espaço total/livre, velocidade de leitura/escrita (I/O).
+- **Network**: Tráfego de entrada/saída, pacotes, interfaces.
+
+### 2. External APIs Monitoring
+
+Monitoramento da saúde e latência de serviços dependentes:
+
+- **Infrastructure**: PostgreSQL, Redis.
+- **Payment Providers**: Stripe, PagBit.
+- **Utils**: Google Maps API.
+- **Métricas**: Latência, taxa de sucesso/falha, status (healthy/unhealthy).
+
+### 3. Alerting System
+
+Sistema de alertas configurável com thresholds inteligentes:
+
+- **Thresholds Padrão**:
+  - CPU Warning: > 80%
+  - CPU Critical: > 90%
+  - Memory Warning: > 85%
+  - Disk Warning: > 80%
+- **Funcionalidades**: Histórico de alertas, resolução manual/automática, gerenciamento via API.
+
+> Para detalhes sobre como os alertas são entregues, consulte a [Documentação do Sistema de Notificações](/platform/features/notifications).
+
+### 4. Protection Systems
+
+Monitoramento dos sistemas de proteção da aplicação:
+
+- **Cache Protection**: Hit rate, miss rate, volume total.
+- **Rate Limiting**: Request rate, violation rate, IPs ofensores.
+- **Circuit Breaker**: Status dos circuitos, falhas.
+
+### 5. Diagnostic Tools
+
+Ferramentas para debug e análise em tempo real:
+
+- **Continuous Monitoring**: Sessões de monitoramento ao vivo.
+- **Connection Tests**: Teste de conectividade com serviços.
+- **Force Refresh**: Atualização forçada de estados.
+
+### 6. Grafana Dashboards
+
+Visualizações avançadas prontas para uso:
+
+- **System Overview**: Visão geral de hardware.
+- **API Performance**: Taxa de requisições, latência, erros.
+- **Infrastructure Services**: Saúde do banco de dados e serviços externos.
+- **Business Metrics**: Usuários ativos, receita, tenants.
+
+## Endpoints da API
+
+### Hardware & System
+
+- `GET /api/observability/hardware` - Métricas completas de hardware
+- `GET /api/observability/stats` - Estatísticas rápidas para dashboard
+
+### External APIs
+
+- `GET /api/observability/external-apis` - Status de todas as APIs monitoradas
+- `GET /api/observability/infrastructure` - Status de infraestrutura (DB, Redis)
+
+### Alerts
+
+- `GET /api/observability/alerts` - Alertas ativos e thresholds
+- `PUT /api/observability/alerts/thresholds/:id` - Atualizar threshold
+- `POST /api/observability/alerts/:id/resolve` - Resolver alerta
+
+### Protection Systems
+
+- `GET /api/observability/metrics/cache` - Métricas de cache
+- `GET /api/observability/metrics/rate-limit` - Métricas de rate limit
+- `GET /api/observability/protection-systems` - Visão geral de proteção
+
+### Prometheus Integration
+
+- `GET /api/observability/metrics` - Endpoint compatível com Prometheus scraper
+
+## Como Usar
+
+### Importar Dashboards Grafana
+
+Execute o script para importar automaticamente os dashboards configurados:
+
+```bash
+pnpm run grafana:import
+```
+
+### Acessar Dashboards
+
+- **Grafana**: http://localhost:3001 (User: admin / Pass: admin)
+- **Prometheus**: http://localhost:9090
+
+## Troubleshooting
+
+### Métricas não aparecem no Grafana
+
+1. Verifique se o container `kaven-prometheus` está rodando.
+2. Verifique se o container `kaven-api` está acessível pelo Prometheus (veja `prometheus.yml`).
+3. Verifique os logs da API (`docker logs kaven-api`) para erros na geração de métricas.
+
+### Alertas Falsos Positivos
+
+Ajuste os thresholds via API ou código em `alerting.service.ts` se os alertas estiverem muito sensíveis para seu ambiente.

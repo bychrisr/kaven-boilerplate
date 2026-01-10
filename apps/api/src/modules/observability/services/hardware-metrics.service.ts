@@ -68,6 +68,9 @@ export interface HardwareMetrics {
 
 export class HardwareMetricsService {
   async getMetrics(): Promise<HardwareMetrics> {
+    console.log('[HardwareMetricsService] 🔍 Iniciando coleta de métricas de hardware...');
+    const startTime = Date.now();
+
     const [cpu, memory, disk, network, system] = await Promise.all([
       this.getCPUMetrics(),
       this.getMemoryMetrics(),
@@ -75,6 +78,15 @@ export class HardwareMetricsService {
       this.getNetworkMetrics(),
       this.getSystemMetrics()
     ]);
+
+    console.log('[HardwareMetricsService] ✅ Métricas coletadas com sucesso:', {
+      cpu: `${cpu.usage}% (${cpu.cores} cores)`,
+      memory: `${memory.usagePercent}% (${(memory.used / 1024 / 1024 / 1024).toFixed(2)}GB/${(memory.total / 1024 / 1024 / 1024).toFixed(2)}GB)`,
+      disk: `${disk.usagePercent}% (${(disk.used / 1024 / 1024 / 1024).toFixed(2)}GB/${(disk.total / 1024 / 1024 / 1024).toFixed(2)}GB)`,
+      network: `${network.interfaces.length} interfaces`,
+      system: `${system.platform} ${system.arch}`,
+      collectionTime: `${Date.now() - startTime}ms`
+    });
 
     const metrics = {
       cpu,
@@ -88,11 +100,19 @@ export class HardwareMetricsService {
 
     // Generate alerts based on metrics
     metrics.alerts = this.generateAlerts(metrics);
+    
+    if (metrics.alerts.length > 0) {
+      console.log(`[HardwareMetricsService] ⚠️  ${metrics.alerts.length} alertas gerados:`, 
+        metrics.alerts.map(a => `${a.type}:${a.severity} (${a.value}% > ${a.threshold}%)`));
+    } else {
+      console.log('[HardwareMetricsService] ✅ Nenhum alerta gerado - sistema saudável');
+    }
 
     return metrics;
   }
 
   private async getCPUMetrics() {
+    console.log('[HardwareMetricsService] 📊 Coletando métricas de CPU...');
     const cpus = os.cpus();
     const cpuLoad = await si.currentLoad();
     
@@ -101,12 +121,17 @@ export class HardwareMetricsService {
     try {
       const cpuTemp = await si.cpuTemperature();
       temperature = cpuTemp.main || cpuTemp.max || undefined;
+      if (temperature !== undefined) {
+        console.log(`[HardwareMetricsService] 🌡️  Temperatura CPU: ${temperature}°C`);
+      } else {
+        console.log('[HardwareMetricsService] ℹ️  Temperatura CPU não disponível (sensor retornou undefined)');
+      }
     } catch (error) {
-      // Temperatura não disponível neste sistema
+      console.log('[HardwareMetricsService] ⚠️  Temperatura CPU não disponível neste sistema');
       temperature = undefined;
     }
     
-    return {
+    const metrics = {
       usage: Math.round(cpuLoad.currentLoad),
       cores: cpus.length,
       model: cpus[0].model,
@@ -114,9 +139,19 @@ export class HardwareMetricsService {
       loadAverage: os.loadavg(),
       temperature
     };
+
+    console.log('[HardwareMetricsService] ✅ CPU:', {
+      usage: `${metrics.usage}%`,
+      cores: metrics.cores,
+      model: metrics.model.substring(0, 30) + '...',
+      loadAvg: metrics.loadAverage.map(l => l.toFixed(2)).join(', ')
+    });
+
+    return metrics;
   }
 
   private async getMemoryMetrics() {
+    console.log('[HardwareMetricsService] 💾 Coletando métricas de memória...');
     const mem = await si.mem();
     
     // ⭐ Adicionar swap memory
@@ -129,16 +164,26 @@ export class HardwareMetricsService {
         : 0
     };
     
-    return {
+    const metrics = {
       total: mem.total,
       used: mem.used,
       free: mem.free,
       usagePercent: Math.round((mem.used / mem.total) * 100),
       swap
     };
+
+    console.log('[HardwareMetricsService] ✅ Memória:', {
+      usage: `${metrics.usagePercent}%`,
+      used: `${(metrics.used / 1024 / 1024 / 1024).toFixed(2)}GB`,
+      total: `${(metrics.total / 1024 / 1024 / 1024).toFixed(2)}GB`,
+      swap: swap.total > 0 ? `${swap.usagePercent}% (${(swap.used / 1024 / 1024 / 1024).toFixed(2)}GB)` : 'N/A'
+    });
+
+    return metrics;
   }
 
   private async getDiskMetrics() {
+    console.log('[HardwareMetricsService] 💿 Coletando métricas de disco...');
     const [disks, diskIO] = await Promise.all([
       si.fsSize(),
       si.disksIO()
@@ -146,7 +191,7 @@ export class HardwareMetricsService {
     
     const mainDisk = disks[0] || { size: 0, used: 0, available: 0, use: 0, fs: '', mount: '' };
     
-    return {
+    const metrics = {
       total: mainDisk.size,
       used: mainDisk.used,
       free: mainDisk.available,
@@ -156,15 +201,26 @@ export class HardwareMetricsService {
       filesystem: mainDisk.fs,
       mount: mainDisk.mount
     };
+
+    console.log('[HardwareMetricsService] ✅ Disco:', {
+      usage: `${metrics.usagePercent}%`,
+      used: `${(metrics.used / 1024 / 1024 / 1024).toFixed(2)}GB`,
+      total: `${(metrics.total / 1024 / 1024 / 1024).toFixed(2)}GB`,
+      mount: metrics.mount,
+      io: `R:${metrics.readSpeed}/s W:${metrics.writeSpeed}/s`
+    });
+
+    return metrics;
   }
 
   private async getNetworkMetrics() {
+    console.log('[HardwareMetricsService] 🌐 Coletando métricas de rede...');
     const [networkStats, networkInterfaces] = await Promise.all([
       si.networkStats(),
       si.networkInterfaces()
     ]);
     
-    return {
+    const metrics = {
       interfaces: networkStats.map((net, index) => ({
         name: net.iface,
         ip4: networkInterfaces[index]?.ip4 || undefined,
@@ -176,15 +232,23 @@ export class HardwareMetricsService {
         speed: networkInterfaces[index]?.speed || undefined
       }))
     };
+
+    console.log('[HardwareMetricsService] ✅ Rede:', {
+      interfaces: metrics.interfaces.length,
+      details: metrics.interfaces.map(i => `${i.name} (${i.ip4 || 'no-ip'})`).join(', ')
+    });
+
+    return metrics;
   }
 
   private async getSystemMetrics() {
+    console.log('[HardwareMetricsService] 🖥️  Coletando métricas de sistema...');
     const [osInfo, time] = await Promise.all([
       si.osInfo(),
       si.time()
     ]);
     
-    return {
+    const metrics = {
       uptime: os.uptime(),
       platform: os.platform(),
       arch: os.arch(),
@@ -193,6 +257,16 @@ export class HardwareMetricsService {
       kernel: osInfo.kernel,
       timezone: time.timezone
     };
+
+    const uptimeHours = (metrics.uptime / 3600).toFixed(1);
+    console.log('[HardwareMetricsService] ✅ Sistema:', {
+      hostname: metrics.hostname,
+      os: `${metrics.osVersion} (${metrics.platform})`,
+      uptime: `${uptimeHours}h`,
+      timezone: metrics.timezone
+    });
+
+    return metrics;
   }
 
   private generateAlerts(metrics: Omit<HardwareMetrics, 'alerts'>): HardwareAlert[] {

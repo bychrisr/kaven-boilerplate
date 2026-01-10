@@ -13,13 +13,14 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
   const { data: product, isLoading } = useProduct(params.id);
   const updateProduct = useUpdateProduct();
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: Record<string, unknown>) => {
     try {
       await updateProduct.mutateAsync({ id: params.id, ...data });
       toast.success('Produto atualizado com sucesso!');
       router.push('/products');
-    } catch (error: any) {
-      toast.error(error.message || 'Erro ao atualizar produto');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao atualizar produto';
+      toast.error(message);
     }
   };
 
@@ -32,7 +33,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
         <Link href="/products"><Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button></Link>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Editar Produto</h1>
-          <p className="text-muted-foreground mt-2">Atualize as informações do produto "{product.name}"</p>
+          <p className="text-muted-foreground mt-2">Atualize as informações do produto &quot;{product.name}&quot;</p>
         </div>
       </div>
       <ProductForm onSubmit={handleSubmit} defaultValues={product} isLoading={updateProduct.isPending} />

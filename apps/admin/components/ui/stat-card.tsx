@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 const statCardVariants = cva(
-  "relative overflow-hidden rounded-[1.5rem] p-6 transition-all duration-300 flex flex-col justify-between",
+  "relative rounded-[1.5rem] p-6 transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-default",
   {
     variants: {
       variant: {
@@ -28,6 +28,11 @@ const statCardVariants = cva(
   }
 );
 
+import { InfoTooltip } from './info-tooltip';
+
+// ... (imports anteriores mantidos se não conflitarem, mas o replace_file_content substitui o bloco)
+// Vou manter o contexto necessário
+
 interface StatCardProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof statCardVariants> {
   title: string;
   value: string | number;
@@ -39,11 +44,10 @@ interface StatCardProps extends React.HTMLAttributes<HTMLDivElement>, VariantPro
   chart?: React.ReactNode;
   iconClassName?: string;
   valueClassName?: string;
+  tooltip?: string;
 }
 
 import { SpotlightCard } from './spotlight-card';
-
-// ... (previous imports)
 
 export function StatCard({
   className,
@@ -57,6 +61,7 @@ export function StatCard({
   chart,
   iconClassName,
   valueClassName,
+  tooltip,
   ...props
 }: StatCardProps) {
   const isPositiveTrend = trend !== undefined && trend >= 0;
@@ -82,7 +87,11 @@ export function StatCard({
           </span>
         </div>
         
-        {menuAction ? (
+        {tooltip ? (
+          <div className="-mr-2 p-2">
+            <InfoTooltip content={tooltip} />
+          </div>
+        ) : menuAction ? (
           menuAction
         ) : (
           <DropdownMenu>

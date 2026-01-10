@@ -47,7 +47,7 @@ export const PopoverTrigger = React.forwardRef<HTMLElement, React.HTMLAttributes
     const context = React.useContext(PopoverContext);
     if (!context) throw new Error('PopoverTrigger must be used within Popover');
 
-    const handleClick = (e: React.MouseEvent) => {
+    const handleClick = (e: React.MouseEvent<HTMLElement>) => {
         onClick?.(e);
         context.onOpenChange(!context.open);
     };

@@ -27,13 +27,6 @@ export function usePayment(purchaseId: string | null, options?: { enabled?: bool
       return data;
     },
     enabled: !!purchaseId && (options?.enabled ?? true),
-    refetchInterval: (data) => {
-      // Polling a cada 5s se status for pending
-      if (data?.status === 'pending' && !isExpired) {
-        return 5000;
-      }
-      return false;
-    },
   });
   
   // Timer de expiração

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCreateProduct } from '@/hooks/use-products';
+import { useCreateProduct, type CreateProductInput } from '@/hooks/use-products';
 import { ProductForm } from '@/components/products/product-form';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -12,13 +12,14 @@ export default function NewProductPage() {
   const router = useRouter();
   const createProduct = useCreateProduct();
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: CreateProductInput) => {
     try {
       await createProduct.mutateAsync(data);
       toast.success('Produto criado com sucesso!');
       router.push('/products');
-    } catch (error: any) {
-      toast.error(error.message || 'Erro ao criar produto');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao criar produto';
+      toast.error(message);
     }
   };
 

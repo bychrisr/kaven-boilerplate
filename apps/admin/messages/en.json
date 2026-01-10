@@ -189,6 +189,8 @@
     "title": "Settings",
     "subtitle": "Manage system settings and personalize your experience",
     "language": "Language",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
     "tabs": {
       "general": "General",
       "theme": "Theme",
@@ -264,15 +266,21 @@
       "hardware": "Hardware",
       "infrastructure": "Infrastructure",
       "external": "External APIs",
-      "alerts": "Alerts"
+      "alerts": "Alerts",
+      "protection": "Protection",
+      "diagnostics": "Diagnostics"
     },
     "goldenSignals": {
       "title": "Golden Signals",
       "description": "Essential system health metrics (Google SRE)",
       "latency": "Latency (p95)",
+      "latencyTooltip": "Request response time. 95% of requests are answered in this time or less. Ideal: < 200ms",
       "traffic": "Traffic",
+      "trafficTooltip": "Number of requests per second the system is processing. Indicates current load",
       "errors": "Errors",
+      "errorsTooltip": "Percentage of failed requests. Ideal: < 1%. High values indicate problems",
       "saturation": "Saturation",
+      "saturationTooltip": "Resource usage (CPU/Memory). High values (>80%) indicate system overload",
       "totalRequests": "total requests",
       "failedRequests": "failed requests"
     },
@@ -281,25 +289,36 @@
       "description": "Node.js runtime specific metrics",
       "eventLoopLag": "Event Loop Lag",
       "eventLoopLagDesc": "Event loop delay",
+      "eventLoopLagTooltip": "Delay in event processing. Ideal: < 10ms. High values indicate server slowness",
       "memoryHeap": "Memory Heap",
       "memoryHeapDesc": "of {total}MB total",
+      "memoryHeapTooltip": "Memory used by Node.js application. If close to limit, may cause slowness",
       "activeHandles": "Active Handles",
       "activeHandlesDesc": "File descriptors, sockets, etc",
+      "activeHandlesTooltip": "Open connections (files, sockets). Many handles may indicate resource leak",
       "activeRequests": "Active Requests",
-      "activeRequestsDesc": "Requests in progress"
+      "activeRequestsDesc": "Requests in progress",
+      "activeRequestsTooltip": "Number of requests being processed now. Very high values indicate overload"
     },
     "hardware": {
       "title": "Hardware Metrics",
       "description": "Server CPU, memory, disk and network",
       "cpu": "CPU",
+      "cpuTooltip": "Server processing. Ideal: < 70%. High values (>90%) indicate server overload",
       "cores": "cores",
-      "memory": "Memory",
+      "memory": "RAM Memory",
+      "memoryTooltip": "Server memory. Ideal: < 80%. If full, system may slow down or crash",
       "disk": "Disk",
+      "diskTooltip": "Disk space. Ideal: < 80%. If full, system stops working",
       "uptime": "Uptime",
+      "uptimeTooltip": "How long the server has been running without restart. High values are good (indicates stability)",
       "temperature": "Temperature",
+      "temperatureTooltip": "Processor temperature. Ideal: < 70°C. High temperatures (>85°C) may cause shutdown",
       "cpuTemp": "CPU Temperature",
-      "swap": "Swap",
+      "swap": "Swap Memory",
+      "swapTooltip": "Virtual memory (disk used as RAM). Ideal: 0%. High usage indicates RAM shortage",
       "diskIO": "Disk I/O",
+      "diskIOTooltip": "Disk read/write speed. High values are good",
       "read": "Read",
       "write": "Write"
     },
@@ -307,14 +326,64 @@
       "title": "Infrastructure Services",
       "description": "Database, Cache and internal services status",
       "latency": "Latency",
-      "successRate": "Success Rate"
+      "latencyTooltip": "Service response time. Ideal: < 50ms. High values indicate slowness",
+      "successRate": "Success Rate",
+      "successRateTooltip": "Percentage of successful operations. Ideal: > 99%. Low values indicate problems",
+      "healthy": "Healthy",
+      "degraded": "Degraded",
+      "unhealthy": "Unhealthy"
     },
     "externalAPIs": {
       "title": "External APIs",
       "description": "Third-party integrations status (Stripe, Google Maps, PagBit)",
       "latency": "Latency",
+      "latencyTooltip": "External API response time. Depends on internet and service",
       "successRate": "Success Rate",
-      "notConfigured": "API key not configured"
+      "successRateTooltip": "Percentage of successful calls. Low values may indicate API or internet problems",
+      "notConfigured": "API key not configured",
+      "notConfiguredTooltip": "This API is not configured. Add the API key in environment variables"
+    },
+    "protection": {
+      "title": "Protection Systems",
+      "description": "Cache and Rate Limiting to protect the system",
+      "cacheHitRate": "Cache Hit Rate",
+      "cacheHitRateTooltip": "Percentage of data found in cache (without database query). Ideal: > 80%. High values = faster system",
+      "cacheMissRate": "Cache Miss Rate",
+      "cacheMissRateTooltip": "Percentage of data NOT found in cache. Ideal: < 20%. High values = slower system",
+      "rateLimitViolations": "Rate Limit Violations",
+      "rateLimitViolationsTooltip": "Number of requests blocked for excess. Protects against attacks and overload",
+      "cacheConfig": "Cache Configuration",
+      "status": "Status",
+      "ttl": "TTL (Time to Live)",
+      "ttlTooltip": "Time data stays in cache before expiring. Higher values = fewer database queries",
+      "strategy": "Strategy",
+      "strategyTooltip": "LRU = Removes least recently used items. Optimizes memory usage",
+      "totalRequests": "Total Requests",
+      "topViolators": "Top Violators",
+      "topViolatorsTooltip": "IPs that most violated rate limit. May indicate attack attempts"
+    },
+    "diagnostics": {
+      "title": "Diagnostic Tools",
+      "description": "Continuous monitoring and connectivity tests",
+      "activeSessions": "Active Sessions",
+      "activeSessionsTooltip": "Monitoring sessions in progress. Collect metrics at regular intervals",
+      "completedSessions": "Completed Sessions",
+      "completedSessionsTooltip": "Finished monitoring sessions. Data saved for analysis",
+      "avgDuration": "Average Duration",
+      "avgDurationTooltip": "Standard time for each monitoring session",
+      "continuousMonitoring": "Continuous Monitoring",
+      "continuousMonitoringDesc": "Start a session to collect metrics at regular intervals",
+      "durationLabel": "Duration (minutes)",
+      "durationTooltip": "How long monitoring will collect data. Minimum: 1min, Maximum: 60min",
+      "startMonitoring": "Start Monitoring",
+      "forceRefresh": "Force Refresh",
+      "forceRefreshTooltip": "Updates all metrics immediately, without waiting for automatic interval",
+      "connectivityStatus": "Connectivity Status",
+      "connectivityStatusDesc": "Tests connection to all services (database, cache, external APIs)",
+      "monitoringSessionsList": "Monitoring Sessions",
+      "session": "Session",
+      "snapshots": "snapshots",
+      "minutesShort": "min"
     },
     "alerts": {
       "activeAlerts": "Active Alerts",
@@ -323,6 +392,7 @@
       "noActiveAlerts": "No active alerts. System is healthy!",
       "thresholds": "Configured Thresholds",
       "thresholdsDescription": "Alert thresholds for system metrics",
+      "thresholdsTooltip": "When a metric exceeds these limits, an alert is automatically generated",
       "table": {
         "name": "Name",
         "metric": "Metric",
@@ -331,7 +401,37 @@
         "status": "Status"
       },
       "enabled": "Enabled",
-      "disabled": "Disabled"
+      "disabled": "Disabled",
+      "resolve": "Resolve",
+      "resolveTooltip": "Marks this alert as resolved. It will be removed from active alerts list",
+      "totalAlerts": "Total Alerts",
+      "resolved": "Resolved",
+      "critical": "Critical",
+      "resolveSuccess": "Alert resolved successfully",
+      "resolveError": "Error resolving alert"
+    }
+  },
+  "Maintenance": {
+    "title": "Under Maintenance",
+    "description": "We're currently performing scheduled maintenance to improve our services. We'll be back shortly.",
+    "estimatedTime": "Estimated time",
+    "backOnline": "Back online soon"
+  },
+  "ComingSoon": {
+    "badge": "Work in Progress",
+    "title": "Coming Soon",
+    "subtitle": "We're building something extraordinary. This feature will be available on your dashboard soon.",
+    "notify": {
+      "label": "Notify me at launch",
+      "placeholder": "your@email.com",
+      "button": "Notify",
+      "disclaimer": "* We promise not to spam. Only important product updates."
+    },
+    "countdown": {
+      "days": "Days",
+      "hours": "Hours",
+      "minutes": "Minutes",
+      "seconds": "Seconds"
     }
   }
 }

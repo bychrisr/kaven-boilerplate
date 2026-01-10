@@ -18,14 +18,7 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
 // Helper: Mix two colors (color1 mixed with color2 by weight)
 // Weight: 0 = color1, 1 = color2
 function mix(color1: {r:number, g:number, b:number}, color2: {r:number, g:number, b:number}, weight: number) {
-  const w = 2 * weight - 1;
-  const a = 0; // alpha support ignored for simplicity in mix
-  
-  // const w1 = ((w * a === -1) ? w : (w + a) / (1 + w * a)) + 1; 
-  // Simplified linear interpolation weight:
-  const weight1 = weight;
-  
-  // Real simple linear interpolation for our needs
+  // Simple linear interpolation
   return {
     r: Math.round(color1.r + (color2.r - color1.r) * weight),
     g: Math.round(color1.g + (color2.g - color1.g) * weight),

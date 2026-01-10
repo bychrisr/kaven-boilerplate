@@ -47,14 +47,35 @@ export class ExternalAPIMonitorService {
   ];
 
   async checkAll(): Promise<ExternalAPIStatus[]> {
-    return Promise.all(
+    console.log('[ExternalAPIMonitor] 🔍 Verificando todas as APIs externas...');
+    const startTime = Date.now();
+    
+    const results = await Promise.all(
       this.apis.map(api => this.checkAPI(api))
     );
+
+    const healthyCount = results.filter(r => r.status === 'healthy').length;
+    const notConfiguredCount = results.filter(r => r.status === 'not_configured').length;
+    const totalTime = Date.now() - startTime;
+    
+    console.log(`[ExternalAPIMonitor] ✅ Verificação completa em ${totalTime}ms:`, {
+      total: results.length,
+      healthy: healthyCount,
+      degraded: results.filter(r => r.status === 'degraded').length,
+      unhealthy: results.filter(r => r.status === 'unhealthy').length,
+      notConfigured: notConfiguredCount,
+      apis: results.map(r => `${r.name}:${r.status}`).join(', ')
+    });
+
+    return results;
   }
 
   private async checkAPI(api: ExternalAPI): Promise<ExternalAPIStatus> {
+    console.log(`[ExternalAPIMonitor] 🌐 Verificando ${api.name} (${api.provider})...`);
+    
     // Se não está habilitado (sem API key), retornar not_configured
     if (!api.enabled) {
+      console.log(`[ExternalAPIMonitor] ⚙️  ${api.name}: NÃO CONFIGURADO (API key ausente)`);
       return {
         ...api,
         status: 'not_configured',
@@ -71,20 +92,27 @@ export class ExternalAPIMonitorService {
     try {
       await this.ping(api);
       const latency = Date.now() - start;
+      const status = this.getStatus(latency);
+      
+      const statusEmoji = status === 'healthy' ? '✅' : status === 'degraded' ? '⚠️' : '❌';
+      console.log(`[ExternalAPIMonitor] ${statusEmoji} ${api.name}: ${status} (${latency}ms)`);
       
       return {
         ...api,
-        status: this.getStatus(latency),
+        status,
         latency,
         lastCheck: Date.now(),
         errorCount: 0,
         successRate: 100
       };
     } catch (error: any) {
+      const latency = Date.now() - start;
+      console.error(`[ExternalAPIMonitor] ❌ ${api.name}: FALHOU após ${latency}ms -`, error.message);
+      
       return {
         ...api,
         status: 'unhealthy',
-        latency: Date.now() - start,
+        latency,
         lastCheck: Date.now(),
         errorCount: 1,
         successRate: 0,

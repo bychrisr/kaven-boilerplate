@@ -1,90 +1,163 @@
 ---
 title: Tooltip
-description: Dicas contextuais ao passar o mouse
+description: Componente para exibir dicas contextuais flutuantes ao interagir com elementos.
+date: 2026-01-08
+author: Antigravity + Kaven UI Team
+version: 2.0.0
+tags: [feedback, overlay, radix-ui, glassmorphism]
 ---
 
-import { Tooltip } from '@/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipProvider,
+  TooltipRoot,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/tooltip';
+import { InfoTooltip } from '@/components/ui/info-tooltip';
+import { Button } from '@/components/ui/button';
+import { Info, HelpCircle, AlertCircle } from 'lucide-react';
 import { ComponentPreview } from '@/components/ComponentPreview';
 
 # Tooltip
 
-> Pequenas dicas que aparecem ao passar o mouse sobre elementos.
+> Componente de feedback flutuante utilizado para clarificar o propósito de elementos da interface sem desordenar o visual.
 
-## Básico
+## Visão Geral
+
+O Tooltip do Kaven UI v2 foi completamente reconstruído utilizando **Radix UI Primitives** para máxima acessibilidade e **Portals** para garantir que o conteúdo nunca seja cortado por containers pais (z-index issue solved). Visualmente, adota o padrão **Glassmorphism** com suporte nativo a Dark Mode e animações suaves.
+
+**Principais Melhorias (v2):**
+
+- ✅ **Portal Nativo:** Renderiza diretamente no `body` para evitar problemas de `overflow: hidden`.
+- ✅ **Z-Index Gerenciado:** Configurado como `z-[100000]` para sobrepor Modals e Sheets.
+- ✅ **Wrapper Simplificado:** API de componente único para uso rápido.
+- ✅ **Visual Premium:** Efeito de vidro fosco com bordas sutis e sombras profundas.
+
+---
+
+## Uso Simplificado (Recomendado)
+
+Para a maioria dos casos, utilize o wrapper `<Tooltip>` que encapsula toda a complexidade dos primitivos.
+
+```tsx
+import { Tooltip } from '@/components/ui/tooltip';
+
+<Tooltip content="Visualize os detalhes completos desta transação">
+  <Button variant="outline">Detalhes</Button>
+</Tooltip>;
+```
+
+### Exemplo Visual
+
+<ComponentPreview>
+  <div className="flex gap-4 items-center justify-center p-8">
+    <Tooltip content="Clique para editar as configurações">
+      <Button variant="secondary">Configurações</Button>
+    </Tooltip>
+
+    <Tooltip content="Esta ação não pode ser desfeita" position="bottom">
+      <Button variant="destructive">Deletar</Button>
+    </Tooltip>
+  </div>
+</ComponentPreview>
+
+---
+
+## Uso Avançado (Primitivos)
+
+Para controle total sobre o estado de abertura, delays customizados ou conteúdo complexo, use os componentes primitivos exportados.
 
 ```tsx
 import {
-  Tooltip,
+  TooltipProvider,
+  TooltipRoot,
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip';
 
-<Tooltip>
-  <TooltipTrigger asChild>
-    <Button variant="text" size="icon">
-      <Info />
-    </Button>
-  </TooltipTrigger>
-  <TooltipContent>Informação adicional</TooltipContent>
-</Tooltip>;
+<TooltipProvider>
+  <TooltipRoot delayDuration={300}>
+    <TooltipTrigger asChild>
+      <img src="/avatar.png" className="w-10 h-10 rounded-full" />
+    </TooltipTrigger>
+    <TooltipContent side="right" className="bg-zinc-900 border-zinc-800">
+      <div className="flex flex-col gap-1">
+        <span className="font-bold">Chris R.</span>
+        <span className="text-xs text-muted-foreground">Online agora</span>
+      </div>
+    </TooltipContent>
+  </TooltipRoot>
+</TooltipProvider>;
 ```
 
-## Posições
+---
 
+## InfoTooltip Helper
 
-<ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<Tooltip>
-  <TooltipTrigger>Hover</TooltipTrigger>
-  <TooltipContent side="top">Top</TooltipContent>
-</Tooltip>
-
-<Tooltip>
-  <TooltipTrigger>Hover</TooltipTrigger>
-  <TooltipContent side="right">Right</TooltipContent>
-</Tooltip>
-
-<Tooltip>
-  <TooltipTrigger>Hover</TooltipTrigger>
-  <TooltipContent side="bottom">Bottom</TooltipContent>
-</Tooltip>
-
-<Tooltip>
-  <TooltipTrigger>Hover</TooltipTrigger>
-  <TooltipContent side="left">Left</TooltipContent>
-</Tooltip>
-</div>
-</ComponentPreview>
+Um componente helper pronto para uso que renderiza um ícone de informação típico. Ideal para labels de formulários ou cabeçalhos de cards.
 
 ```tsx
-<Tooltip>
-  <TooltipTrigger>Hover</TooltipTrigger>
-  <TooltipContent side="top">Top</TooltipContent>
-</Tooltip>
+import { InfoTooltip } from '@/components/ui/info-tooltip';
 
-<Tooltip>
-  <TooltipTrigger>Hover</TooltipTrigger>
-  <TooltipContent side="right">Right</TooltipContent>
-</Tooltip>
-
-<Tooltip>
-  <TooltipTrigger>Hover</TooltipTrigger>
-  <TooltipContent side="bottom">Bottom</TooltipContent>
-</Tooltip>
-
-<Tooltip>
-  <TooltipTrigger>Hover</TooltipTrigger>
-  <TooltipContent side="left">Left</TooltipContent>
-</Tooltip>
+// Uso básico
+<div className="flex items-center gap-2">
+  <span>Rate Limit</span>
+  <InfoTooltip content="Número máximo de requisições permitidas por minuto (RPM)." />
+</div>;
 ```
 
-## API
+<ComponentPreview>
+  <div className="flex items-center gap-2 p-4 border rounded-lg bg-card text-card-foreground">
+    <span className="font-medium">Cache Hit Rate</span>
+    <InfoTooltip content="Porcentagem de requisições servidas diretamente do cache Redis, sem atingir o banco de dados." />
+  </div>
+</ComponentPreview>
 
-| Prop            | Tipo                                     | Padrão  | Descrição   |
-| --------------- | ---------------------------------------- | ------- | ----------- |
-| `side`          | `'top' \| 'right' \| 'bottom' \| 'left'` | `'top'` | Posição     |
-| `delayDuration` | `number`                                 | `200`   | Delay em ms |
+---
 
-## Relacionados
+## API Reference
 
-- [Popover](/design-system/components/popover)
+### Wrapper `<Tooltip />`
+
+| Prop       | Tipo                                     | Padrão  | Descrição                                   |
+| ---------- | ---------------------------------------- | ------- | ------------------------------------------- |
+| `content`  | `string`                                 | -       | O texto a ser exibido dentro do tooltip.    |
+| `position` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'top'` | O lado onde o tooltip deve aparecer.        |
+| `delay`    | `number`                                 | `200`   | Tempo em ms antes do tooltip abrir.         |
+| `disabled` | `boolean`                                | `false` | Se verdadeiro, o tooltip não será exibido.  |
+| `children` | `ReactNode`                              | -       | O elemento que dispara o tooltip (Trigger). |
+
+### Helper `<InfoTooltip />`
+
+| Prop        | Tipo     | Padrão | Descrição                            |
+| ----------- | -------- | ------ | ------------------------------------ |
+| `content`   | `string` | -      | O texto informativo.                 |
+| `className` | `string` | -      | Classes CSS adicionais para o ícone. |
+
+### Primitivo `<TooltipContent />`
+
+Aceita todas as props do [Radix UI Tooltip.Content](https://www.radix-ui.com/primitives/docs/components/tooltip#content), mais:
+
+| Prop         | Tipo     | Padrão | Descrição                               |
+| ------------ | -------- | ------ | --------------------------------------- |
+| `sideOffset` | `number` | `4`    | Distância entre o trigger e o conteúdo. |
+| `className`  | `string` | -      | Classes para estilização customizada.   |
+
+---
+
+## Troubleshooting
+
+### Tooltip cortado ou não aparece?
+
+Se você estiver usando o wrapper `<Tooltip>` ou os primitivos padrão, o conteúdo é renderizado via **React Portal** (`createPortal`) diretamente no `body`. Isso significa que propriedades `overflow: hidden` ou `z-index` em elementos pais **NÃO** devem afetar a visibilidade do tooltip.
+
+Se ainda assim houver problemas, verifique se o arquivo `layout-client.tsx` ou similar não possui `z-index` global extremo que possa competir com `z-[100000]`.
+
+### Acessibilidade
+
+Este componente segue as diretrizes WAI-ARIA para tooltips:
+
+- O Trigger recebe foco via teclado.
+- Pressionar `Esc` (quando aberto via teclado) fecha o tooltip.
+- O conteúdo é associado semanticamente ao trigger via `aria-describedby`.

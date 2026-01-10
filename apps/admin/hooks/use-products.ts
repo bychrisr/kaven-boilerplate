@@ -21,7 +21,7 @@ export interface Product {
   stripePriceId?: string;
   imageUrl?: string;
   tenantId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
   effects: ProductEffect[];
@@ -71,7 +71,7 @@ export function useProducts(filters?: { tenantId?: string; isActive?: boolean; t
       if (filters?.isActive !== undefined) params.append('isActive', String(filters.isActive));
       if (filters?.type) params.append('type', filters.type);
       
-      const { data } = await api.get(`/products?${params.toString()}`);
+      const { data } = await api.get(`/api/products?${params.toString()}`);
       return data.products as Product[];
     },
   });
@@ -81,7 +81,7 @@ export function useProduct(id: string) {
   return useQuery({
     queryKey: ['products', id],
     queryFn: async () => {
-      const { data } = await api.get(`/products/${id}`);
+      const { data } = await api.get(`/api/products/${id}`);
       return data as Product;
     },
     enabled: !!id,
@@ -94,7 +94,7 @@ export function useCreateProduct() {
   
   return useMutation({
     mutationFn: async (product: CreateProductInput) => {
-      const { data } = await api.post('/products', product);
+      const { data } = await api.post('/api/products', product);
       return data;
     },
     onSuccess: () => {
@@ -111,7 +111,7 @@ export function useUpdateProduct() {
   
   return useMutation({
     mutationFn: async ({ id, ...product }: Partial<CreateProductInput> & { id: string }) => {
-      const { data } = await api.put(`/products/${id}`, product);
+      const { data } = await api.put(`/api/products/${id}`, product);
       return data;
     },
     onSuccess: (_, variables) => {
@@ -129,7 +129,7 @@ export function useDeleteProduct() {
   
   return useMutation({
     mutationFn: async (id: string) => {
-      await api.delete(`/products/${id}`);
+      await api.delete(`/api/products/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });

@@ -50,7 +50,7 @@ export function SidebarItem({
 
   if (isCollapsed) {
     return (
-      <Tooltip title={label} placement="right">
+      <Tooltip content={label} position="right">
         {content}
       </Tooltip>
     );

@@ -103,7 +103,7 @@ export function TenantTableRow({ row, selected, onSelectRow }: TenantTableRowPro
       <TableCell align="right" className="py-4 px-4 pr-4">
         <div className="flex items-center justify-end gap-1">
             <Link href={`/tenants/${id}`}>
-              <Tooltip title="Quick edit">
+              <Tooltip content="Quick edit" position="top">
                 <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
                   <Pencil className="h-4 w-4" />
                 </Button>

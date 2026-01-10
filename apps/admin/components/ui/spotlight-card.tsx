@@ -37,7 +37,7 @@ export function SpotlightCard({
       onMouseMove={handleMouseMove}
       className={`
         group relative rounded-xl glass-panel transition-all duration-300
-        hover:border-foreground/20
+        hover:border-foreground/20 overflow-hidden cursor-default
         ${className}
       `}
       {...props}

@@ -41,31 +41,55 @@ export class InfrastructureMonitorService {
   ];
 
   async checkAll(): Promise<InfrastructureServiceStatus[]> {
-    return Promise.all(
+    console.log('[InfrastructureMonitor] 🔍 Verificando todos os serviços de infraestrutura...');
+    const startTime = Date.now();
+    
+    const results = await Promise.all(
       this.services.map(service => this.checkService(service))
     );
+
+    const healthyCount = results.filter(r => r.status === 'healthy').length;
+    const totalTime = Date.now() - startTime;
+    
+    console.log(`[InfrastructureMonitor] ✅ Verificação completa em ${totalTime}ms:`, {
+      total: results.length,
+      healthy: healthyCount,
+      degraded: results.filter(r => r.status === 'degraded').length,
+      unhealthy: results.filter(r => r.status === 'unhealthy').length,
+      services: results.map(r => `${r.name}:${r.status}(${r.latency}ms)`).join(', ')
+    });
+
+    return results;
   }
 
   private async checkService(service: InfrastructureService): Promise<InfrastructureServiceStatus> {
+    console.log(`[InfrastructureMonitor] 🔌 Verificando ${service.name} (${service.type})...`);
     const start = Date.now();
     
     try {
       await this.ping(service);
       const latency = Date.now() - start;
+      const status = this.getStatus(latency);
+      
+      const statusEmoji = status === 'healthy' ? '✅' : status === 'degraded' ? '⚠️' : '❌';
+      console.log(`[InfrastructureMonitor] ${statusEmoji} ${service.name}: ${status} (${latency}ms)`);
       
       return {
         ...service,
-        status: this.getStatus(latency),
+        status,
         latency,
         lastCheck: Date.now(),
         errorCount: 0,
         successRate: 100
       };
-    } catch (error) {
+    } catch (error: any) {
+      const latency = Date.now() - start;
+      console.error(`[InfrastructureMonitor] ❌ ${service.name}: FALHOU após ${latency}ms -`, error.message);
+      
       return {
         ...service,
         status: 'unhealthy',
-        latency: Date.now() - start,
+        latency,
         lastCheck: Date.now(),
         errorCount: 1,
         successRate: 0

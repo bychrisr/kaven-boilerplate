@@ -17,7 +17,7 @@ export default function ProductsPage() {
     try {
       await deleteProduct.mutateAsync(id);
       toast.success(`Produto "${name}" excluído com sucesso`);
-    } catch (error) {
+    } catch {
       toast.error('Erro ao excluir produto');
     }
   };
@@ -71,7 +71,7 @@ export default function ProductsPage() {
                         <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
-                            <AlertDialogDescription>Tem certeza que deseja excluir o produto "{product.name}"?</AlertDialogDescription>
+                            <AlertDialogDescription>Tem certeza que deseja excluir o produto &quot;{product.name}&quot;?</AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancelar</AlertDialogCancel>

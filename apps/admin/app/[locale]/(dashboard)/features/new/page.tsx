@@ -1,6 +1,6 @@
 'use client';
 
-import { useCreateFeature } from '@/hooks/use-features';
+import { useCreateFeature, type CreateFeatureInput } from '@/hooks/use-features';
 import { FeatureForm } from '@/components/features/feature-form';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -12,13 +12,14 @@ export default function NewFeaturePage() {
   const router = useRouter();
   const createFeature = useCreateFeature();
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: CreateFeatureInput) => {
     try {
       await createFeature.mutateAsync(data);
       toast.success('Feature criada com sucesso!');
       router.push('/features');
-    } catch (error: any) {
-      toast.error(error.message || 'Erro ao criar feature');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao criar feature';
+      toast.error(message);
     }
   };
 

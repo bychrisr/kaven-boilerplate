@@ -22,6 +22,7 @@ import {
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ConfirmationModal } from '@/components/ui/confirmation-modal';
+import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
 
 // Avatar color generator
 const getAvatarColor = (name: string) => {
@@ -262,10 +263,20 @@ export default function InvoicesPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Faturas</h1>
-          <p className="text-sm text-gray-500 mt-1">Gerencie suas faturas e cobranças</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Faturas</h1>
+          <div className="mt-2 mb-4">
+            <Breadcrumbs>
+              <BreadcrumbItem>
+                <Link href="/dashboard" className="transition-colors hover:text-foreground">
+                  Dashboard
+                </Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem current>Faturas</BreadcrumbItem>
+            </Breadcrumbs>
+          </div>
+          <p className="text-sm text-gray-500">Gerencie suas faturas e cobranças</p>
         </div>
         <Link
           href="/invoices/create"

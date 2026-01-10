@@ -1,9 +1,10 @@
 'use client';
 
-import { Search, Bell, Command } from 'lucide-react';
+import { Search, Command } from 'lucide-react';
 import { useUIStore } from '@/stores/ui.store';
 import { TenantSwitcher } from '@/components/layout/tenant-switcher';
 import { UserMenu } from '@/components/layout/user-menu';
+import { NotificationDropdown } from '@/components/notifications/notification-dropdown';
 import { cn } from '@/lib/utils';
 
 
@@ -45,10 +46,7 @@ export function Header() {
 
 
         {/* Notifications */}
-        <button className="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-accent transition-colors group">
-            <Bell className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-destructive rounded-full ring-2 ring-background" />
-        </button>
+        <NotificationDropdown />
 
 
 

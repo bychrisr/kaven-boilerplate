@@ -48,6 +48,9 @@ export function ProductForm({ onSubmit, defaultValues, isLoading }: ProductFormP
   const { data: features } = useFeatures({ isActive: true });
 
   const form = useForm<ProductFormData>({
+    // WORKAROUND: zodResolver type mismatch com react-hook-form v7+
+    // Ver: apps/docs/content/platform/guides/troubleshooting/known-issues.mdx
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(productSchema) as any,
     defaultValues: {
       code: defaultValues?.code || '',
@@ -107,7 +110,7 @@ export function ProductForm({ onSubmit, defaultValues, isLoading }: ProductFormP
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="type">Tipo *</Label>
-              <Select value={form.watch('type')} onValueChange={(value) => form.setValue('type', value as any)}>
+              <Select value={form.watch('type')} onValueChange={(value) => form.setValue('type', value as 'ONE_TIME' | 'CONSUMABLE' | 'ADD_ON')}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ONE_TIME">Único</SelectItem>
@@ -193,7 +196,7 @@ export function ProductForm({ onSubmit, defaultValues, isLoading }: ProductFormP
                   </div>
                   <div className="space-y-2">
                     <Label>Tipo de Efeito *</Label>
-                    <Select value={form.watch(`effects.${index}.effectType`)} onValueChange={(value) => form.setValue(`effects.${index}.effectType`, value as any)}>
+                    <Select value={form.watch(`effects.${index}.effectType`)} onValueChange={(value) => form.setValue(`effects.${index}.effectType`, value as 'ADD' | 'SET' | 'MULTIPLY' | 'ENABLE')}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="ADD">Adicionar</SelectItem>

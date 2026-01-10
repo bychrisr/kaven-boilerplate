@@ -6,8 +6,14 @@ on:
 
 jobs:
   release:
+    name: Semantic Release
     runs-on: ubuntu-latest
+    timeout-minutes: 15 # Billing Safety: Prevent stuck release jobs
     if: "!contains(github.event.head_commit.message, 'skip ci')"
+    permissions:
+      contents: write # Required for semantic-release to create tags/releases
+      issues: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -23,10 +29,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build Project
         run: npm run build
 
-      - name: Semantic Release
+      - name: Run Semantic Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release

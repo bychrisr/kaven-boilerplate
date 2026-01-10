@@ -10,6 +10,7 @@ import { useSidebar } from '@/hooks/use-sidebar';
 import { ThemeConfigurator } from '@/components/settings/theme-configurator';
 import { SettingsDrawer } from '@/components/settings/settings-drawer';
 import { Scrollbar } from '@/components/scrollbar/scrollbar';
+import { NotificationProvider } from '@/contexts/notification-context';
 import { cn } from '@/lib/utils';
 
 /**
@@ -67,6 +68,7 @@ function DashboardLayoutInner({ children }: { children: ReactNode }) {
  * Providers incluídos:
  * - QueryProvider: TanStack Query para cache e data fetching
  * - AuthGuard: Proteção de rotas e verificação de autenticação
+ * - NotificationProvider: Sistema de notificações in-app
  * - ToastProvider: Notificações toast (Sonner)
  * - ThemeConfigurator: Configurador avançado de tema
  * - SettingsDrawer: Drawer de configurações
@@ -77,11 +79,13 @@ export function DashboardLayoutClient({ children }: { children: ReactNode }) {
   return (
     <QueryProvider>
       <AuthGuard>
-        <DashboardLayoutInner>{children}</DashboardLayoutInner>
-        <ToastProvider />
-        {/* Advanced Customization Engine */}
-        <ThemeConfigurator />
-        <SettingsDrawer />
+        <NotificationProvider>
+          <DashboardLayoutInner>{children}</DashboardLayoutInner>
+          <ToastProvider />
+          {/* Advanced Customization Engine */}
+          <ThemeConfigurator />
+          <SettingsDrawer />
+        </NotificationProvider>
       </AuthGuard>
     </QueryProvider>
   );

@@ -4,7 +4,18 @@ description: Sistema completo de monetização SaaS com planos de assinatura, pr
 date: 2026-01-06
 author: Chris + Claude Sonnet 4.5
 version: 1.0.0
-tags: [monetization, saas, plans, products, subscriptions, payments, pix, features, validation]
+tags:
+  [
+    monetization,
+    saas,
+    plans,
+    products,
+    subscriptions,
+    payments,
+    pix,
+    features,
+    validation,
+  ]
 ---
 
 # Plans & Products System
@@ -24,6 +35,7 @@ O Plans & Products System é uma solução end-to-end para monetização de apli
 - **Tenant Experience** - Pricing page, checkout e payment flow
 
 **Principais Benefícios:**
+
 - ✅ Monetização flexível (subscriptions + one-time purchases)
 - ✅ Validação automática de limites por plano
 - ✅ Pagamentos PIX com confirmação em tempo real
@@ -48,7 +60,7 @@ model Feature {
   type        FeatureType   // BOOLEAN, QUOTA, CUSTOM
   unit        String?       // users, GB, calls, etc
   isActive    Boolean       @default(true)
-  
+
   planFeatures    PlanFeature[]
   productEffects  ProductEffect[]
 }
@@ -64,7 +76,7 @@ model Plan {
   trialDays   Int         @default(0)
   sortOrder   Int         @default(0)
   badge       String?     // "Popular", "Best Value"
-  
+
   prices        Price[]
   features      PlanFeature[]
   subscriptions Subscription[]
@@ -79,7 +91,7 @@ model Price {
   currency       String          @default("BRL")
   originalAmount Decimal?        @db.Decimal(10, 2)
   isActive       Boolean         @default(true)
-  
+
   plan          Plan            @relation(fields: [planId], references: [id])
   subscriptions Subscription[]
 }
@@ -91,10 +103,10 @@ model PlanFeature {
   enabled      Boolean  @default(true)
   limitValue   Int?     // -1 = unlimited, null = N/A
   customValue  String?
-  
+
   plan    Plan    @relation(fields: [planId], references: [id])
   feature Feature @relation(fields: [featureCode], references: [code])
-  
+
   @@unique([planId, featureCode])
 }
 
@@ -109,7 +121,7 @@ model Product {
   isActive       Boolean  @default(true)
   stock          Int?
   limitPerTenant Int?
-  
+
   effects   ProductEffect[]
   purchases Purchase[]
 }
@@ -120,7 +132,7 @@ model ProductEffect {
   featureCode  String
   effectType   EffectType // ADD, SET, MULTIPLY, ENABLE
   value        String
-  
+
   product Product @relation(fields: [productId], references: [id])
   feature Feature @relation(fields: [featureCode], references: [code])
 }
@@ -134,13 +146,13 @@ model Purchase {
   status    PurchaseStatus // pending, approved, expired, failed
   amount    Decimal        @db.Decimal(10, 2)
   currency  String         @default("BRL")
-  
+
   // PIX Payment
   pixQrCode     String?
   pixQrCodeText String?
   expiresAt     DateTime?
   paidAt        DateTime?
-  
+
   tenant  Tenant   @relation(fields: [tenantId], references: [id])
   plan    Plan?    @relation(fields: [planId], references: [id])
   product Product? @relation(fields: [productId], references: [id])
@@ -153,9 +165,9 @@ model UsageRecord {
   currentUsage Int      @default(0)
   periodStart  DateTime @default(now())
   periodEnd    DateTime
-  
+
   tenant Tenant @relation(fields: [tenantId], references: [id])
-  
+
   @@unique([tenantId, featureCode])
 }
 ```
@@ -164,14 +176,14 @@ model UsageRecord {
 
 ```typescript
 enum FeatureType {
-  BOOLEAN = 'BOOLEAN',  // On/Off (ex: EXPORT_CSV)
-  QUOTA = 'QUOTA',      // Limite numérico (ex: USERS: 25)
-  CUSTOM = 'CUSTOM'     // Valor customizado
+  BOOLEAN = 'BOOLEAN', // On/Off (ex: EXPORT_CSV)
+  QUOTA = 'QUOTA', // Limite numérico (ex: USERS: 25)
+  CUSTOM = 'CUSTOM', // Valor customizado
 }
 
 enum PlanType {
-  SUBSCRIPTION = 'SUBSCRIPTION',  // Recorrente
-  LIFETIME = 'LIFETIME'           // Vitalício (pagamento único)
+  SUBSCRIPTION = 'SUBSCRIPTION', // Recorrente
+  LIFETIME = 'LIFETIME', // Vitalício (pagamento único)
 }
 
 enum BillingInterval {
@@ -181,20 +193,20 @@ enum BillingInterval {
   QUARTERLY = 'QUARTERLY',
   YEARLY = 'YEARLY',
   LIFETIME = 'LIFETIME',
-  FOREVER = 'FOREVER'
+  FOREVER = 'FOREVER',
 }
 
 enum ProductType {
-  ONE_TIME = 'ONE_TIME',      // Compra única
-  CONSUMABLE = 'CONSUMABLE',  // Consumível (ex: créditos)
-  ADD_ON = 'ADD_ON'           // Add-on recorrente
+  ONE_TIME = 'ONE_TIME', // Compra única
+  CONSUMABLE = 'CONSUMABLE', // Consumível (ex: créditos)
+  ADD_ON = 'ADD_ON', // Add-on recorrente
 }
 
 enum EffectType {
-  ADD = 'ADD',          // Adiciona ao valor atual
-  SET = 'SET',          // Define valor absoluto
+  ADD = 'ADD', // Adiciona ao valor atual
+  SET = 'SET', // Define valor absoluto
   MULTIPLY = 'MULTIPLY', // Multiplica valor atual
-  ENABLE = 'ENABLE'     // Habilita feature boolean
+  ENABLE = 'ENABLE', // Habilita feature boolean
 }
 
 enum PurchaseStatus {
@@ -202,7 +214,7 @@ enum PurchaseStatus {
   approved = 'approved',
   expired = 'expired',
   failed = 'failed',
-  cancelled = 'cancelled'
+  cancelled = 'cancelled',
 }
 ```
 
@@ -278,14 +290,14 @@ sequenceDiagram
     participant API
     participant PagueBit
     participant Webhook
-    
+
     User->>Frontend: Seleciona Plano PRO
     Frontend->>API: POST /api/purchases
     API->>PagueBit: Cria pagamento PIX
     PagueBit-->>API: QR Code + expiration
     API-->>Frontend: Purchase criada
     Frontend->>User: Exibe QR Code
-    
+
     User->>PagueBit: Paga via PIX
     PagueBit->>Webhook: POST /webhooks/paguebit
     Webhook->>API: Valida HMAC
@@ -328,10 +340,12 @@ await usageTrackingService.resetMonthlyUsage();
 Lista todos os planos (públicos ou todos se admin).
 
 **Query Parameters:**
+
 - `isPublic` (boolean) - Filtrar apenas planos públicos
 - `isActive` (boolean) - Filtrar apenas planos ativos
 
 **Resposta:**
+
 ```json
 {
   "data": [
@@ -358,6 +372,7 @@ Lista todos os planos (públicos ou todos se admin).
 Cria um novo plano (apenas SUPER_ADMIN).
 
 **Body:**
+
 ```json
 {
   "code": "ENTERPRISE",
@@ -369,13 +384,13 @@ Cria um novo plano (apenas SUPER_ADMIN).
   "prices": [
     {
       "interval": "MONTHLY",
-      "amount": 199.90
+      "amount": 199.9
     }
   ],
   "features": [
     {
       "featureCode": "USERS",
-      "limitValue": -1  // Ilimitado
+      "limitValue": -1 // Ilimitado
     }
   ]
 }
@@ -388,6 +403,7 @@ Cria um novo plano (apenas SUPER_ADMIN).
 Lista todos os produtos.
 
 **Query Parameters:**
+
 - `isActive` (boolean)
 - `type` (string) - ONE_TIME, CONSUMABLE, ADD_ON
 
@@ -396,17 +412,18 @@ Lista todos os produtos.
 Cria um novo produto (apenas SUPER_ADMIN).
 
 **Body:**
+
 ```json
 {
   "code": "EXTRA_STORAGE",
   "name": "10GB Extra",
   "type": "ADD_ON",
-  "price": 9.90,
+  "price": 9.9,
   "effects": [
     {
       "featureCode": "STORAGE",
       "effectType": "ADD",
-      "value": "10737418240"  // 10GB em bytes
+      "value": "10737418240" // 10GB em bytes
     }
   ]
 }
@@ -419,6 +436,7 @@ Cria um novo produto (apenas SUPER_ADMIN).
 Busca subscription atual do tenant autenticado.
 
 **Resposta:**
+
 ```json
 {
   "data": {
@@ -440,6 +458,7 @@ Busca subscription atual do tenant autenticado.
 Faz upgrade/downgrade de plano.
 
 **Body:**
+
 ```json
 {
   "planId": "uuid",
@@ -455,6 +474,7 @@ Faz upgrade/downgrade de plano.
 Cria purchase e gera QR Code PIX.
 
 **Body:**
+
 ```json
 {
   "planId": "uuid",
@@ -464,6 +484,7 @@ Cria purchase e gera QR Code PIX.
 ```
 
 **Resposta:**
+
 ```json
 {
   "data": {
@@ -504,41 +525,41 @@ const plan = await api.post('/api/plans', {
     {
       interval: 'MONTHLY',
       intervalCount: 1,
-      amount: 29.90,
+      amount: 29.9,
       currency: 'BRL',
-      isActive: true
+      isActive: true,
     },
     {
       interval: 'YEARLY',
       intervalCount: 1,
-      amount: 299.00,  // ~17% desconto
+      amount: 299.0, // ~17% desconto
       currency: 'BRL',
-      originalAmount: 358.80,
-      isActive: true
-    }
+      originalAmount: 358.8,
+      isActive: true,
+    },
   ],
   features: [
     {
       featureCode: 'USERS',
       enabled: true,
-      limitValue: 50
+      limitValue: 50,
     },
     {
       featureCode: 'STORAGE',
       enabled: true,
-      limitValue: 5368709120  // 5GB
+      limitValue: 5368709120, // 5GB
     },
     {
       featureCode: 'EXPORT_CSV',
       enabled: true,
-      limitValue: null
+      limitValue: null,
     },
     {
       featureCode: 'API_CALLS',
       enabled: true,
-      limitValue: 10000
-    }
-  ]
+      limitValue: 10000,
+    },
+  ],
 });
 ```
 
@@ -550,18 +571,18 @@ const product = await api.post('/api/products', {
   name: '1000 Créditos API',
   description: 'Pacote de 1000 chamadas API adicionais',
   type: 'CONSUMABLE',
-  price: 19.90,
+  price: 19.9,
   currency: 'BRL',
   isActive: true,
-  stock: null,  // Ilimitado
-  limitPerTenant: null,  // Sem limite de compras
+  stock: null, // Ilimitado
+  limitPerTenant: null, // Sem limite de compras
   effects: [
     {
       featureCode: 'API_CALLS',
       effectType: 'ADD',
-      value: '1000'
-    }
-  ]
+      value: '1000',
+    },
+  ],
 });
 ```
 
@@ -573,7 +594,7 @@ import { entitlementService } from '@/services/entitlement.service';
 const validation = await entitlementService.validateAction(
   'tenant-123',
   'USERS',
-  1  // Quer criar 1 usuário
+  1, // Quer criar 1 usuário
 );
 
 if (!validation.isValid) {
@@ -596,14 +617,14 @@ await usageTrackingService.incrementUsage('tenant-123', 'USERS', 1);
 const { data: plans } = await api.get('/api/plans?isPublic=true');
 
 // 2. Selecionar plano PRO
-const proPlan = plans.find(p => p.code === 'PRO');
-const monthlyPrice = proPlan.prices.find(p => p.interval === 'MONTHLY');
+const proPlan = plans.find((p) => p.code === 'PRO');
+const monthlyPrice = proPlan.prices.find((p) => p.interval === 'MONTHLY');
 
 // 3. Criar purchase
 const { data: purchase } = await api.post('/api/purchases', {
   planId: proPlan.id,
   priceId: monthlyPrice.id,
-  prorated: true
+  prorated: true,
 });
 
 // 4. Exibir QR Code PIX
@@ -613,7 +634,7 @@ setExpiresAt(purchase.expiresAt);
 // 5. Polling de status (a cada 5s)
 const interval = setInterval(async () => {
   const { data: status } = await api.get(`/api/purchases/${purchase.id}`);
-  
+
   if (status.status === 'approved') {
     clearInterval(interval);
     toast.success('Pagamento aprovado!');
@@ -670,37 +691,37 @@ const plans = [
     features: [
       { featureCode: 'USERS', limitValue: 25 },
       { featureCode: 'STORAGE', limitValue: 1073741824 },
-      { featureCode: 'EXPORT_CSV', enabled: false }
-    ]
+      { featureCode: 'EXPORT_CSV', enabled: false },
+    ],
   },
   {
     code: 'PRO',
     name: 'Plano Pro',
     badge: 'Popular',
     prices: [
-      { interval: 'MONTHLY', amount: 49.90 },
-      { interval: 'YEARLY', amount: 499.00 }
+      { interval: 'MONTHLY', amount: 49.9 },
+      { interval: 'YEARLY', amount: 499.0 },
     ],
     features: [
       { featureCode: 'USERS', limitValue: 100 },
       { featureCode: 'STORAGE', limitValue: 10737418240 },
-      { featureCode: 'EXPORT_CSV', enabled: true }
-    ]
+      { featureCode: 'EXPORT_CSV', enabled: true },
+    ],
   },
   {
     code: 'ENTERPRISE',
     name: 'Plano Enterprise',
     badge: 'Best Value',
     prices: [
-      { interval: 'MONTHLY', amount: 199.90 },
-      { interval: 'YEARLY', amount: 1999.00 }
+      { interval: 'MONTHLY', amount: 199.9 },
+      { interval: 'YEARLY', amount: 1999.0 },
     ],
     features: [
-      { featureCode: 'USERS', limitValue: -1 },  // Ilimitado
+      { featureCode: 'USERS', limitValue: -1 }, // Ilimitado
       { featureCode: 'STORAGE', limitValue: -1 },
-      { featureCode: 'EXPORT_CSV', enabled: true }
-    ]
-  }
+      { featureCode: 'EXPORT_CSV', enabled: true },
+    ],
+  },
 ];
 ```
 
@@ -719,13 +740,13 @@ import { PlanCard } from '@/components/pricing/plan-card';
 export default function PricingPage() {
   const [interval, setInterval] = useState('MONTHLY');
   const { data: plans } = usePlans({ isPublic: true });
-  
+
   return (
     <div>
       <IntervalToggle value={interval} onChange={setInterval} />
-      
+
       <div className="grid grid-cols-3 gap-6">
-        {plans?.map(plan => (
+        {plans?.map((plan) => (
           <PlanCard
             key={plan.id}
             plan={plan}
@@ -755,28 +776,26 @@ export default function CheckoutPage() {
     selectedPrice,
     prorationAmount,
     totalAmount,
-    checkout
+    checkout,
   } = useCheckout(planId);
-  
+
   return (
     <div>
       <h1>Checkout - {plan.name}</h1>
-      
+
       <IntervalSelector
         value={selectedInterval}
         onChange={setSelectedInterval}
         prices={plan.prices}
       />
-      
+
       <OrderSummary
         subtotal={selectedPrice.amount}
         proration={prorationAmount}
         total={totalAmount}
       />
-      
-      <Button onClick={checkout}>
-        Prosseguir para Pagamento
-      </Button>
+
+      <Button onClick={checkout}>Prosseguir para Pagamento</Button>
     </div>
   );
 }
@@ -790,32 +809,25 @@ Exibe QR Code PIX com timer:
 import { usePayment } from '@/hooks/use-payment';
 
 export function PaymentModal({ purchaseId }) {
-  const {
-    purchase,
-    status,
-    timeRemaining,
-    formattedTime,
-    copyPixCode
-  } = usePayment(purchaseId);
-  
+  const { purchase, status, timeRemaining, formattedTime, copyPixCode } =
+    usePayment(purchaseId);
+
   if (status === 'approved') {
     return <SuccessState />;
   }
-  
+
   if (status === 'expired') {
     return <ExpiredState />;
   }
-  
+
   return (
     <div>
       <p>Expira em {formattedTime}</p>
-      
+
       <QRCode value={purchase.pixQrCode} />
-      
-      <Button onClick={copyPixCode}>
-        Copiar Código PIX
-      </Button>
-      
+
+      <Button onClick={copyPixCode}>Copiar Código PIX</Button>
+
       <p>Aguardando pagamento...</p>
     </div>
   );
@@ -831,18 +843,21 @@ export function PaymentModal({ purchaseId }) {
 **Problema:** Tenant atingiu limite de quota
 
 **Solução:**
+
 ```typescript
 // Verificar uso atual
 const usage = await usageTrackingService.getCurrentUsage(tenantId, 'USERS');
 const subscription = await subscriptionService.getCurrent(tenantId);
-const limit = subscription.plan.features.find(f => f.featureCode === 'USERS').limitValue;
+const limit = subscription.plan.features.find(
+  (f) => f.featureCode === 'USERS',
+).limitValue;
 
 console.log(`Uso: ${usage}/${limit}`);
 
 // Fazer upgrade
 await subscriptionService.upgrade({
   planId: 'pro-plan-id',
-  priceId: 'monthly-price-id'
+  priceId: 'monthly-price-id',
 });
 ```
 
@@ -851,11 +866,12 @@ await subscriptionService.upgrade({
 **Problema:** QR Code PIX expirou (10 minutos)
 
 **Solução:**
+
 ```typescript
 // Criar nova purchase
 const newPurchase = await api.post('/api/purchases', {
   planId: originalPurchase.planId,
-  priceId: originalPurchase.priceId
+  priceId: originalPurchase.priceId,
 });
 
 // Exibir novo QR Code
@@ -867,6 +883,7 @@ setQrCode(newPurchase.pixQrCode);
 **Problema:** HMAC signature inválida
 
 **Solução:**
+
 ```typescript
 // Verificar secret configurado
 console.log(process.env.PAGUEBIT_WEBHOOK_SECRET);
@@ -889,16 +906,19 @@ if (signature !== expectedSignature) {
 **Problema:** Cálculo de proration retornando valor errado
 
 **Solução:**
+
 ```typescript
 // Verificar período atual
 const subscription = await prisma.subscription.findUnique({
   where: { tenantId },
-  include: { price: true }
+  include: { price: true },
 });
 
 const now = new Date();
 const periodEnd = new Date(subscription.currentPeriodEnd);
-const daysRemaining = Math.ceil((periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+const daysRemaining = Math.ceil(
+  (periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+);
 
 // Recalcular
 const currentDailyRate = Number(subscription.price.amount) / 30;
@@ -909,7 +929,7 @@ console.log({
   daysRemaining,
   currentDailyRate,
   newDailyRate,
-  proratedAmount
+  proratedAmount,
 });
 ```
 
@@ -918,23 +938,96 @@ console.log({
 ## Relacionados
 
 ### Documentação Técnica
+
 - [API Documentation](/docs/API.md)
 - [Database Schema](/docs/DATABASE.md)
 - [PagueBit Integration](/platform/paguebit-integration)
 
 ### Componentes Frontend
+
 - [Button](/design-system/components/button)
 - [Card](/design-system/components/card)
 - [Dialog](/design-system/components/dialog)
 
 ### Features Relacionadas
+
 - [Authentication](/platform/authentication)
 - [Multi-tenancy](/platform/multi-tenancy)
 - [Webhooks](/platform/webhooks)
 
 ---
 
-**Última Atualização:** 06/01/2026  
-**Versão:** 1.0.0  
-**Autor:** Chris + Claude Sonnet 4.5  
+## Quality Assurance & Testing
+
+### E2E Testing Strategy (Playwright)
+
+O sistema conta com um suite robusto de testes end-to-end (E2E) para garantir a integridade dos fluxos críticos de monetização.
+
+#### 1. Planos e Pricing (`plans.spec.ts`)
+
+- **Visualização**: Verifica se cards de planos (Free, Pro, Enterprise) são renderizados corretamente.
+- **Toggles**: Testa alternância entre faturamento Mensal e Anual.
+- **Empty States**: Lida com cenários onde o banco está vazio (fallback seguro).
+
+#### 2. Checkout Flow (`checkout.spec.ts`)
+
+- **Autenticação**: Garante que o usuário é redirecionado para login ao tentar comprar sem sessão.
+- **Plan Selection**: Simula clique em "Assinar" e navegação para checkout.
+- **Payment Modal**: Verifica renderização do resumo do pedido e botão de pagamento.
+- **Timeout Handling**: Ajustado para tolerar latência de inicialização de servidores (15s).
+
+#### 3. Authentication (`auth.spec.ts`)
+
+- **Login/Logout**: Fluxo completo de autenticação.
+- **Protected Routes**: Valida redirecionamento de rotas protegidas (`/dashboard`, `/checkout`).
+- **Session Persistence**: Verifica manutenção da sessão entre recargas de página.
+
+### Backend Hardening
+
+Melhorias de segurança e robustez implementadas durante a fase de QA:
+
+#### 1. Subscription Routes Security
+
+Adicionado middleware de autenticação explícito em `subscription.routes.ts` para garantir que apenas tenants autenticados acessem endpoints de assinatura.
+
+```typescript
+// apps/api/src/modules/subscriptions/routes/subscription.routes.ts
+import { authMiddleware } from '../../../middleware/auth.middleware';
+
+export async function subscriptionRoutes(fastify: FastifyInstance) {
+  // Check authentication for all routes
+  fastify.addHook('onRequest', authMiddleware);
+
+  // Tenant routes...
+}
+```
+
+#### 2. API Validation Flexibility
+
+Ajuste nos schemas do Zod (`validation-plans.ts`) para suportar booleanos passados como string em query parameters, comum em chamadas HTTP/Frontend.
+
+```typescript
+const booleanQuery = z
+  .union([z.boolean(), z.string().transform((val) => val === 'true')])
+  .optional();
+```
+
+### Database Seeding
+
+Para testes consistentes, o seed do banco de dados (`prisma/seed.ts`) agora cria automaticamente:
+
+- **Planos Padrão**: Free, Pro, Enterprise
+- **Features**: USERS, STORAGE
+- **Permissões**: Configuração adequada de tenants
+
+```bash
+# Executar seed
+pnpm db:seed
+```
+
+---
+
+**Última Atualização:** 10/01/2026
+**Versão:** 1.1.0 (Added QA Section)
+**Autor:** Chris + Claude Sonnet 4.5
 **Status:** ✅ Production Ready

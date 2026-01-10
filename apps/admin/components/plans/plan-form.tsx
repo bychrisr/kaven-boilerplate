@@ -51,6 +51,9 @@ export function PlanForm({ onSubmit, defaultValues, isLoading }: PlanFormProps) 
   const { data: features } = useFeatures({ isActive: true });
 
   const form = useForm<PlanFormData>({
+    // WORKAROUND: zodResolver type mismatch com react-hook-form v7+
+    // Ver: apps/docs/content/platform/guides/troubleshooting/known-issues.mdx
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(planSchema) as any,
     defaultValues: {
       code: defaultValues?.code || '',
@@ -140,7 +143,7 @@ export function PlanForm({ onSubmit, defaultValues, isLoading }: PlanFormProps) 
               <Label htmlFor="type">Tipo *</Label>
               <Select
                 value={form.watch('type')}
-                onValueChange={(value) => form.setValue('type', value as any)}
+                onValueChange={(value) => form.setValue('type', value as 'SUBSCRIPTION' | 'LIFETIME')}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -251,7 +254,7 @@ export function PlanForm({ onSubmit, defaultValues, isLoading }: PlanFormProps) 
                   <Label>Intervalo *</Label>
                   <Select
                     value={form.watch(`prices.${index}.interval`)}
-                    onValueChange={(value) => form.setValue(`prices.${index}.interval`, value as any)}
+                    onValueChange={(value) => form.setValue(`prices.${index}.interval`, value as 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'QUARTERLY' | 'YEARLY' | 'LIFETIME' | 'FOREVER')}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -343,7 +346,7 @@ export function PlanForm({ onSubmit, defaultValues, isLoading }: PlanFormProps) 
         <CardContent className="space-y-4">
           {featureFields.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">
-              Nenhuma feature adicionada. Clique em "Adicionar Feature" para começar.
+              Nenhuma feature adicionada. Clique em &quot;Adicionar Feature&quot; para começar.
             </p>
           ) : (
             featureFields.map((field, index) => {

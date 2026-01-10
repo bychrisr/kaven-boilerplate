@@ -6,9 +6,16 @@ on:
   pull_request:
     branches: [main, develop]
 
+# Billing Safety: Cancel pending builds if a new commit is pushed to the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-test:
+    name: Build & Test
     runs-on: ubuntu-latest
+    timeout-minutes: 15 # Billing Safety: Prevent stuck jobs from running for 6 hours
 
     strategy:
       matrix:
@@ -17,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
@@ -28,12 +35,10 @@ jobs:
 
       - name: Lint
         run: npm run lint
-        continue-on-error: true # Don't fail regarding lint for now
+        # Strict linting ensures code quality. Fixed billing issue means we can afford to be correct.
 
       - name: Build
         run: npm run build
 
-      - name: Test (API)
-        run: |
-          cd apps/api
-          npm test
+      - name: Test
+        run: npm test

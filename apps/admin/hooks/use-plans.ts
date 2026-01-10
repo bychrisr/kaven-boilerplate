@@ -77,13 +77,14 @@ export interface CreatePlanInput {
 }
 
 // Queries
-export function usePlans(filters?: { tenantId?: string; isActive?: boolean }) {
+export function usePlans(filters?: { tenantId?: string; isActive?: boolean; isPublic?: boolean }) {
   return useQuery({
     queryKey: ['plans', filters],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (filters?.tenantId) params.append('tenantId', filters.tenantId);
       if (filters?.isActive !== undefined) params.append('isActive', String(filters.isActive));
+      if (filters?.isPublic !== undefined) params.append('isPublic', String(filters.isPublic));
       
       const { data } = await api.get(`/plans?${params.toString()}`);
       return data.plans as Plan[];

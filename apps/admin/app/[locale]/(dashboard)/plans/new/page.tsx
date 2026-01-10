@@ -1,6 +1,6 @@
 'use client';
 
-import { useCreatePlan } from '@/hooks/use-plans';
+import { useCreatePlan, type CreatePlanInput } from '@/hooks/use-plans';
 import { PlanForm } from '@/components/plans/plan-form';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -12,13 +12,14 @@ export default function NewPlanPage() {
   const router = useRouter();
   const createPlan = useCreatePlan();
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: CreatePlanInput) => {
     try {
       await createPlan.mutateAsync(data);
       toast.success('Plano criado com sucesso!');
       router.push('/plans');
-    } catch (error: any) {
-      toast.error(error.message || 'Erro ao criar plano');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao criar plano';
+      toast.error(message);
     }
   };
 

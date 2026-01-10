@@ -3,8 +3,10 @@ title: Tabs
 description: Navegação por abas para organizar conteúdo
 ---
 
-import { Tabs } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ComponentPreview } from '@/components/ComponentPreview';
+import { TabsNewPatternDemo } from '@/components/demos/tabs-new-pattern-demo';
+import { TabsDemo } from '@/components/demos/tabs-demo';
 
 # Tabs
 
@@ -12,58 +14,61 @@ import { ComponentPreview } from '@/components/ComponentPreview';
 
 ## Exemplo Básico
 
+<ComponentPreview>
+  <TabsDemo />
+</ComponentPreview>
+
 ```tsx
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
-<Tabs defaultValue="account">
-  <TabsList>
-    <TabsTrigger value="account">Conta</TabsTrigger>
-    <TabsTrigger value="password">Senha</TabsTrigger>
-    <TabsTrigger value="settings">Configurações</TabsTrigger>
+<Tabs defaultValue="account" className="w-[400px]">
+  <TabsList className="grid w-full grid-cols-2">
+    <TabsTrigger value="account">Account</TabsTrigger>
+    <TabsTrigger value="password">Password</TabsTrigger>
   </TabsList>
-
-  <TabsContent value="account">Conteúdo da aba Conta</TabsContent>
-  <TabsContent value="password">Conteúdo da aba Senha</TabsContent>
-  <TabsContent value="settings">Conteúdo da aba Configurações</TabsContent>
+  <TabsContent value="account">
+    <p className="text-sm text-gray-500 py-4">
+      Make changes to your account here.
+    </p>
+  </TabsContent>
+  <TabsContent value="password">
+    <p className="text-sm text-gray-500 py-4">Change your password here.</p>
+  </TabsContent>
 </Tabs>;
 ```
 
-## Com Badges (User Page)
+## Novo Padrão de Dashboard
+
+Este é o padrão visual atualizado utilizado nas páginas de **Users** e **Observability**. Ele apresenta um design mais limpo, com fundo transparente, linha indicadora animada e ícones.
+
+<ComponentPreview>
+  <TabsNewPatternDemo />
+</ComponentPreview>
+
+### Código do Padrão
 
 ```tsx
-const statusCounts = {
-  all: 150,
-  active: 120,
-  pending: 20,
-  banned: 10,
-};
+// Exemplo de estilização customizada (Tailwind classes)
+const tabTriggerClass = cn(
+  'relative h-14 rounded-none bg-transparent px-0 pb-3 pt-3 font-semibold text-muted-foreground shadow-none transition-none cursor-pointer',
+  '!bg-transparent !shadow-none !border-0 hover:text-foreground mx-4 first:ml-0',
+  'data-[state=active]:!bg-transparent data-[state=active]:!shadow-none data-[state=active]:!text-foreground data-[state=active]:!border-none',
+  'dark:data-[state=active]:!bg-transparent dark:data-[state=active]:!border-none',
+  'after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:bg-primary after:transition-transform after:duration-300 data-[state=active]:after:scale-x-100',
+);
 
-<Tabs value={filterStatus} onValueChange={setFilterStatus}>
-  <TabsList>
-    {STATUS_OPTIONS.map((tab) => (
-      <TabsTrigger key={tab.value} value={tab.value}>
-        {tab.label}
-        <Badge className="ml-2">{statusCounts[tab.value]}</Badge>
+<Tabs defaultValue="metrics" className="w-full">
+  <div className="flex flex-col md:flex-row items-center w-full border-b border-border/40 gap-4">
+    <TabsList className="bg-transparent p-0 h-auto gap-0 justify-start px-4 w-full flex-nowrap overflow-x-auto border-b-0 no-scrollbar">
+      <TabsTrigger value="metrics" className={tabTriggerClass}>
+        <Activity className="mr-2 h-4 w-4" />
+        Metrics
       </TabsTrigger>
-    ))}
-  </TabsList>
+      {/* ... outras tabs */}
+    </TabsList>
+  </div>
+  {/* ... TabsContent */}
 </Tabs>;
-```
-
-## Variantes
-
-```tsx
-// Underline style
-<TabsList className="border-b">
-  <TabsTrigger className="border-b-2 border-transparent data-[state=active]:border-primary">
-    Tab 1
-  </TabsTrigger>
-</TabsList>
-
-// Pills style
-<TabsList className="bg-muted p-1 rounded-lg">
-  <TabsTrigger className="rounded-md">Tab 1</TabsTrigger>
-</TabsList>
 ```
 
 ## API

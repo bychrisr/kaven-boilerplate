@@ -3,42 +3,9 @@
 import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
 import { observabilityApi } from '@/lib/api/observability';
-import { Cpu, MemoryStick, HardDrive, Activity } from 'lucide-react';
-
-interface MetricCardProps {
-  title: string;
-  value: string;
-  subtitle: string;
-  icon: React.ElementType;
-  status: 'good' | 'warning' | 'critical';
-}
-
-function MetricCard({ title, value, subtitle, icon: Icon, status }: MetricCardProps) {
-  const statusClasses = {
-    good: 'border-success-light bg-success-lighter/50',
-    warning: 'border-warning-light bg-warning-lighter/50',
-    critical: 'border-error-light bg-error-lighter/50'
-  };
-
-  const iconClasses = {
-    good: 'text-success-main',
-    warning: 'text-warning-main',
-    critical: 'text-error-main'
-  };
-
-  return (
-    <div className={`rounded-lg border p-6 ${statusClasses[status]}`}>
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <p className="mt-2 text-3xl font-bold text-foreground">{value}</p>
-          <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
-        </div>
-        <Icon className={`h-8 w-8 ${iconClasses[status]}`} />
-      </div>
-    </div>
-  );
-}
+import { Cpu, MemoryStick, HardDrive, Activity, Thermometer } from 'lucide-react';
+import { StatCard } from '@/components/ui/stat-card';
+import { InfoTooltip } from '@/components/ui/info-tooltip';
 
 export function HardwareMetrics() {
   const t = useTranslations('Observability.hardware');
@@ -84,6 +51,24 @@ export function HardwareMetrics() {
     return `${mbps.toFixed(2)} MB/s`;
   };
 
+  const getTrendColor = (status: 'good' | 'warning' | 'critical') => {
+    if (status === 'critical') return 'text-red-600';
+    if (status === 'warning') return 'text-yellow-600';
+    return 'text-green-600';
+  };
+
+  const getIconBgColor = (status: 'good' | 'warning' | 'critical') => {
+    if (status === 'critical') return 'bg-red-100 dark:bg-red-900/20';
+    if (status === 'warning') return 'bg-yellow-100 dark:bg-yellow-900/20';
+    return 'bg-green-100 dark:bg-green-900/20';
+  };
+
+
+
+  const cpuStatus = getStatus(cpu.usage, 80, 90);
+  const memoryStatus = getStatus(memory.usagePercent, 85, 95);
+  const diskStatus = getStatus(disk.usagePercent, 80, 90);
+
   return (
     <div className="space-y-4">
       <div>
@@ -93,36 +78,44 @@ export function HardwareMetrics() {
 
       {/* Main Metrics */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <MetricCard
+        <StatCard
+          variant="outline"
           title={t('cpu')}
           value={`${cpu.usage}%`}
           subtitle={`${cpu.cores} ${t('cores')}`}
           icon={Cpu}
-          status={getStatus(cpu.usage, 80, 90)}
+          iconClassName={`${getIconBgColor(cpuStatus)} ${getTrendColor(cpuStatus)}`}
+          menuAction={<InfoTooltip content={t('cpuTooltip')} />}
         />
 
-        <MetricCard
+        <StatCard
+          variant="outline"
           title={t('memory')}
           value={`${memory.usagePercent}%`}
           subtitle={`${formatBytes(memory.used)} / ${formatBytes(memory.total)}`}
           icon={MemoryStick}
-          status={getStatus(memory.usagePercent, 85, 95)}
+          iconClassName={`${getIconBgColor(memoryStatus)} ${getTrendColor(memoryStatus)}`}
+          menuAction={<InfoTooltip content={t('memoryTooltip')} />}
         />
 
-        <MetricCard
+        <StatCard
+          variant="outline"
           title={t('disk')}
           value={`${disk.usagePercent}%`}
           subtitle={`${formatBytes(disk.used)} / ${formatBytes(disk.total)}`}
           icon={HardDrive}
-          status={getStatus(disk.usagePercent, 80, 90)}
+          iconClassName={`${getIconBgColor(diskStatus)} ${getTrendColor(diskStatus)}`}
+          menuAction={<InfoTooltip content={t('diskTooltip')} />}
         />
 
-        <MetricCard
+        <StatCard
+          variant="outline"
           title={t('uptime')}
           value={formatUptime(system.uptime)}
           subtitle={system.platform}
           icon={Activity}
-          status="good"
+          iconClassName="bg-blue-100 dark:bg-blue-900/20 text-blue-600"
+          menuAction={<InfoTooltip content={t('uptimeTooltip')} />}
         />
       </div>
 
@@ -130,44 +123,41 @@ export function HardwareMetrics() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* CPU Temperature */}
         {cpu.temperature !== undefined && (
-          <MetricCard
+          <StatCard
+            variant="outline"
             title={t('temperature')}
             value={`${cpu.temperature}°C`}
             subtitle={t('cpuTemp')}
-            icon={Cpu}
-            status={getStatus(cpu.temperature, 70, 85)}
+            icon={Thermometer}
+            iconClassName={`${getIconBgColor(getStatus(cpu.temperature, 70, 85))} ${getTrendColor(getStatus(cpu.temperature, 70, 85))}`}
+            menuAction={<InfoTooltip content={t('temperatureTooltip')} />}
           />
         )}
 
         {/* Swap Memory */}
         {memory.swap && memory.swap.total > 0 && (
-          <MetricCard
+          <StatCard
+            variant="outline"
             title={t('swap')}
             value={`${memory.swap.usagePercent}%`}
             subtitle={`${formatBytes(memory.swap.used)} / ${formatBytes(memory.swap.total)}`}
             icon={MemoryStick}
-            status={getStatus(memory.swap.usagePercent, 50, 75)}
+            iconClassName={`${getIconBgColor(getStatus(memory.swap.usagePercent, 50, 75))} ${getTrendColor(getStatus(memory.swap.usagePercent, 50, 75))}`}
+            menuAction={<InfoTooltip content={t('swapTooltip')} />}
           />
         )}
 
         {/* Disk I/O */}
         {(disk.readSpeed !== undefined || disk.writeSpeed !== undefined) && (
-          <div className="rounded-lg border border-border bg-card p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-muted-foreground">{t('diskIO')}</p>
-                <div className="mt-2 space-y-1">
-                  <p className="text-sm text-foreground">
-                    <span className="font-medium">↓ {t('read')}:</span> {formatSpeed(disk.readSpeed || 0)}
-                  </p>
-                  <p className="text-sm text-foreground">
-                    <span className="font-medium">↑ {t('write')}:</span> {formatSpeed(disk.writeSpeed || 0)}
-                  </p>
-                </div>
-              </div>
-              <HardDrive className="h-8 w-8 text-info-main" />
-            </div>
-          </div>
+          <StatCard
+            variant="outline"
+            title={t('diskIO')}
+            value={formatSpeed(disk.readSpeed || 0)}
+            subtitle={`↑ ${formatSpeed(disk.writeSpeed || 0)}`}
+            icon={HardDrive}
+            iconClassName="bg-purple-100 dark:bg-purple-900/20 text-purple-600"
+            menuAction={<InfoTooltip content={t('diskIOTooltip')} />}
+          />
         )}
       </div>
     </div>

@@ -1,0 +1,123 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "kaven-infrastructure",
+    "title": "Kaven - Infrastructure Services",
+    "tags": ["kaven", "infrastructure", "services"],
+    "timezone": "browser",
+    "schemaVersion": 27,
+    "version": 1,
+    "refresh": "10s",
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+        "type": "timeseries",
+        "title": "Infrastructure Latency",
+        "targets": [
+          {
+            "expr": "kaven_infrastructure_latency_ms{name=\"PostgreSQL\"}",
+            "refId": "A",
+            "legendFormat": "PostgreSQL"
+          },
+          {
+            "expr": "kaven_infrastructure_latency_ms{name=\"Redis\"}",
+            "refId": "B",
+            "legendFormat": "Redis"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms"
+          }
+        }
+      },
+      {
+        "id": 2,
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+        "type": "stat",
+        "title": "Service Status",
+        "targets": [
+          {
+            "expr": "kaven_infrastructure_status{name=\"PostgreSQL\"}",
+            "refId": "A",
+            "legendFormat": "PostgreSQL"
+          },
+          {
+            "expr": "kaven_infrastructure_status{name=\"Redis\"}",
+            "refId": "B",
+            "legendFormat": "Redis"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {
+                "type": "value",
+                "options": {
+                  "0": { "text": "Unhealthy", "color": "red" },
+                  "1": { "text": "Healthy", "color": "green" }
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": 3,
+        "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+        "type": "timeseries",
+        "title": "Database Query Duration",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(kaven_database_query_duration_seconds_bucket[5m]))",
+            "refId": "A",
+            "legendFormat": "p50"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(kaven_database_query_duration_seconds_bucket[5m]))",
+            "refId": "B",
+            "legendFormat": "p95"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(kaven_database_query_duration_seconds_bucket[5m]))",
+            "refId": "C",
+            "legendFormat": "p99"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        }
+      },
+      {
+        "id": 4,
+        "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
+        "type": "timeseries",
+        "title": "Circuit Breaker State",
+        "targets": [
+          {
+            "expr": "kaven_circuit_breaker_state",
+            "refId": "A",
+            "legendFormat": "{{service}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {
+                "type": "value",
+                "options": {
+                  "0": { "text": "Closed", "color": "green" },
+                  "1": { "text": "Open", "color": "red" },
+                  "2": { "text": "Half-Open", "color": "yellow" }
+                }
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

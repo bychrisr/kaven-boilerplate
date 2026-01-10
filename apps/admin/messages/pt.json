@@ -189,6 +189,8 @@
     "title": "Configurações",
     "subtitle": "Gerencie as configurações do sistema e personalize sua experiência",
     "language": "Idioma",
+    "darkMode": "Modo Escuro",
+    "lightMode": "Modo Claro",
     "tabs": {
       "general": "Geral",
       "theme": "Tema",
@@ -264,42 +266,59 @@
       "hardware": "Hardware",
       "infrastructure": "Infraestrutura",
       "external": "APIs Externas",
-      "alerts": "Alertas"
+      "alerts": "Alertas",
+      "protection": "Proteção",
+      "diagnostics": "Diagnóstico"
     },
     "goldenSignals": {
       "title": "Golden Signals",
       "description": "Métricas essenciais de saúde do sistema (Google SRE)",
-      "latency": "Latency (p95)",
-      "traffic": "Traffic",
-      "errors": "Errors",
-      "saturation": "Saturation",
-      "totalRequests": "total requests",
-      "failedRequests": "failed requests"
+      "latency": "Latência (p95)",
+      "latencyTooltip": "Tempo de resposta das requisições. 95% das requisições são respondidas neste tempo ou menos. Ideal: < 200ms",
+      "traffic": "Tráfego",
+      "trafficTooltip": "Número de requisições por segundo que o sistema está processando. Indica a carga atual",
+      "errors": "Erros",
+      "errorsTooltip": "Porcentagem de requisições que falharam. Ideal: < 1%. Valores altos indicam problemas",
+      "saturation": "Saturação",
+      "saturationTooltip": "Uso de recursos (CPU/Memória). Valores altos (>80%) indicam que o sistema está sobrecarregado",
+      "totalRequests": "requisições totais",
+      "failedRequests": "requisições falhadas"
     },
     "nodejsMetrics": {
-      "title": "Node.js Metrics",
+      "title": "Métricas Node.js",
       "description": "Métricas específicas do runtime Node.js",
       "eventLoopLag": "Event Loop Lag",
       "eventLoopLagDesc": "Atraso do event loop",
-      "memoryHeap": "Memory Heap",
+      "eventLoopLagTooltip": "Tempo de atraso no processamento de eventos. Ideal: < 10ms. Valores altos indicam que o servidor está lento",
+      "memoryHeap": "Heap de Memória",
       "memoryHeapDesc": "de {total}MB total",
-      "activeHandles": "Active Handles",
+      "memoryHeapTooltip": "Memória usada pela aplicação Node.js. Se estiver próximo do limite, pode causar lentidão",
+      "activeHandles": "Handles Ativos",
       "activeHandlesDesc": "File descriptors, sockets, etc",
-      "activeRequests": "Active Requests",
-      "activeRequestsDesc": "Requisições em andamento"
+      "activeHandlesTooltip": "Conexões abertas (arquivos, sockets). Muitos handles podem indicar vazamento de recursos",
+      "activeRequests": "Requisições Ativas",
+      "activeRequestsDesc": "Requisições em andamento",
+      "activeRequestsTooltip": "Número de requisições sendo processadas agora. Valores muito altos indicam sobrecarga"
     },
     "hardware": {
       "title": "Métricas de Hardware",
       "description": "CPU, memória, disco e rede do servidor",
       "cpu": "CPU",
-      "cores": "cores",
-      "memory": "Memória",
+      "cpuTooltip": "Processamento do servidor. Ideal: < 70%. Valores altos (>90%) indicam que o servidor está sobrecarregado",
+      "cores": "núcleos",
+      "memory": "Memória RAM",
+      "memoryTooltip": "Memória do servidor. Ideal: < 80%. Se estiver cheia, o sistema pode ficar lento ou travar",
       "disk": "Disco",
-      "uptime": "Uptime",
+      "diskTooltip": "Espaço em disco. Ideal: < 80%. Se encher, o sistema para de funcionar",
+      "uptime": "Tempo Ativo",
+      "uptimeTooltip": "Há quanto tempo o servidor está ligado sem reiniciar. Valores altos são bons (indica estabilidade)",
       "temperature": "Temperatura",
+      "temperatureTooltip": "Temperatura do processador. Ideal: < 70°C. Temperaturas altas (>85°C) podem causar desligamento",
       "cpuTemp": "Temperatura da CPU",
-      "swap": "Swap",
+      "swap": "Memória Swap",
+      "swapTooltip": "Memória virtual (disco usado como RAM). Ideal: 0%. Uso alto indica falta de RAM",
       "diskIO": "I/O do Disco",
+      "diskIOTooltip": "Velocidade de leitura/escrita no disco. Valores altos são bons",
       "read": "Leitura",
       "write": "Escrita"
     },
@@ -307,14 +326,64 @@
       "title": "Serviços de Infraestrutura",
       "description": "Status de Database, Cache e serviços internos",
       "latency": "Latência",
-      "successRate": "Taxa de Sucesso"
+      "latencyTooltip": "Tempo de resposta do serviço. Ideal: < 50ms. Valores altos indicam lentidão",
+      "successRate": "Taxa de Sucesso",
+      "successRateTooltip": "Porcentagem de operações bem-sucedidas. Ideal: > 99%. Valores baixos indicam problemas",
+      "healthy": "Saudável",
+      "degraded": "Degradado",
+      "unhealthy": "Não Saudável"
     },
     "externalAPIs": {
       "title": "APIs Externas",
       "description": "Status de integrações com serviços de terceiros (Stripe, Google Maps, PagBit)",
       "latency": "Latência",
+      "latencyTooltip": "Tempo de resposta da API externa. Depende da internet e do serviço",
       "successRate": "Taxa de Sucesso",
-      "notConfigured": "API key não configurada"
+      "successRateTooltip": "Porcentagem de chamadas bem-sucedidas. Valores baixos podem indicar problemas na API ou na internet",
+      "notConfigured": "API key não configurada",
+      "notConfiguredTooltip": "Esta API não está configurada. Adicione a chave de API nas variáveis de ambiente"
+    },
+    "protection": {
+      "title": "Sistemas de Proteção",
+      "description": "Cache e Rate Limiting para proteger o sistema",
+      "cacheHitRate": "Taxa de Acertos do Cache",
+      "cacheHitRateTooltip": "Porcentagem de dados encontrados no cache (sem precisar buscar no banco). Ideal: > 80%. Valores altos = sistema mais rápido",
+      "cacheMissRate": "Taxa de Erros do Cache",
+      "cacheMissRateTooltip": "Porcentagem de dados NÃO encontrados no cache. Ideal: < 20%. Valores altos = sistema mais lento",
+      "rateLimitViolations": "Violações de Rate Limit",
+      "rateLimitViolationsTooltip": "Número de requisições bloqueadas por excesso. Protege contra ataques e sobrecarga",
+      "cacheConfig": "Configuração do Cache",
+      "status": "Status",
+      "ttl": "TTL (Tempo de Vida)",
+      "ttlTooltip": "Tempo que os dados ficam no cache antes de expirar. Valores maiores = menos consultas ao banco",
+      "strategy": "Estratégia",
+      "strategyTooltip": "LRU = Remove itens menos usados recentemente. Otimiza o uso de memória",
+      "totalRequests": "Total de Requisições",
+      "topViolators": "Top Violadores",
+      "topViolatorsTooltip": "IPs que mais violaram o rate limit. Pode indicar tentativas de ataque"
+    },
+    "diagnostics": {
+      "title": "Ferramentas de Diagnóstico",
+      "description": "Monitoramento contínuo e testes de conectividade",
+      "activeSessions": "Sessões Ativas",
+      "activeSessionsTooltip": "Sessões de monitoramento em andamento. Coletam métricas em intervalos regulares",
+      "completedSessions": "Sessões Completadas",
+      "completedSessionsTooltip": "Sessões de monitoramento finalizadas. Dados salvos para análise",
+      "avgDuration": "Duração Média",
+      "avgDurationTooltip": "Tempo padrão de cada sessão de monitoramento",
+      "continuousMonitoring": "Monitoramento Contínuo",
+      "continuousMonitoringDesc": "Inicie uma sessão para coletar métricas em intervalos regulares",
+      "durationLabel": "Duração (minutos)",
+      "durationTooltip": "Por quanto tempo o monitoramento vai coletar dados. Mínimo: 1min, Máximo: 60min",
+      "startMonitoring": "Iniciar Monitoramento",
+      "forceRefresh": "Forçar Atualização",
+      "forceRefreshTooltip": "Atualiza todas as métricas imediatamente, sem esperar o intervalo automático",
+      "connectivityStatus": "Status de Conectividade",
+      "connectivityStatusDesc": "Testa a conexão com todos os serviços (banco de dados, cache, APIs externas)",
+      "monitoringSessionsList": "Sessões de Monitoramento",
+      "session": "Sessão",
+      "snapshots": "snapshots",
+      "minutesShort": "min"
     },
     "alerts": {
       "activeAlerts": "Alertas Ativos",
@@ -323,6 +392,7 @@
       "noActiveAlerts": "Nenhum alerta ativo. Sistema saudável!",
       "thresholds": "Thresholds Configurados",
       "thresholdsDescription": "Limites de alerta para métricas do sistema",
+      "thresholdsTooltip": "Quando uma métrica ultrapassa estes limites, um alerta é gerado automaticamente",
       "table": {
         "name": "Nome",
         "metric": "Métrica",
@@ -331,7 +401,37 @@
         "status": "Status"
       },
       "enabled": "Ativo",
-      "disabled": "Desativado"
+      "disabled": "Desativado",
+      "resolve": "Resolver",
+      "resolveTooltip": "Marca este alerta como resolvido. Ele será removido da lista de alertas ativos",
+      "totalAlerts": "Total de Alertas",
+      "resolved": "Resolvidos",
+      "critical": "Críticos",
+      "resolveSuccess": "Alerta resolvido com sucesso",
+      "resolveError": "Erro ao resolver alerta"
+    }
+  },
+  "Maintenance": {
+    "title": "Em Manutenção",
+    "description": "Estamos realizando uma manutenção programada para melhorar nossos serviços. Voltaremos em breve.",
+    "estimatedTime": "Tempo estimado",
+    "backOnline": "De volta em breve"
+  },
+  "ComingSoon": {
+    "badge": "Em Construção",
+    "title": "Em Breve",
+    "subtitle": "Estamos construindo algo extraordinário. Esta funcionalidade estará disponível em breve no seu dashboard.",
+    "notify": {
+      "label": "Notifique-me no lançamento",
+      "placeholder": "seu@email.com",
+      "button": "Notificar",
+      "disclaimer": "* Prometemos não enviar spam. Apenas atualizações importantes de produto."
+    },
+    "countdown": {
+      "days": "Dias",
+      "hours": "Horas",
+      "minutes": "Minutos",
+      "seconds": "Segundos"
     }
   }
 }

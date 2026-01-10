@@ -1,4 +1,7 @@
 import { hardwareMetricsService } from './hardware-metrics.service';
+import { alertingService } from './alerting.service';
+import { advancedMetricsService } from './advanced-metrics.service';
+import { infrastructureMonitorService } from './infrastructure-monitor.service';
 import * as metrics from '../../../lib/metrics';
 
 /**
@@ -42,10 +45,27 @@ export class MetricsUpdaterService {
   /**
    * Atualiza todas as métricas de hardware
    */
+  /**
+   * Atualiza todas as métricas de hardware e verifica alertas
+   */
   private async updateMetrics() {
     try {
-      const hardware = await hardwareMetricsService.getMetrics();
+      // 1. Coletar todas as métricas necessárias para alertas
+      const [hardware, advanced, infrastructure] = await Promise.all([
+        hardwareMetricsService.getMetrics(),
+        advancedMetricsService.getAdvancedMetrics(),
+        infrastructureMonitorService.checkAll()
+      ]);
       
+      console.log('[MetricsUpdater] Updating metrics:', {
+        cpu: `${hardware.cpu.usage}%`,
+        memory: `${hardware.memory.usagePercent}%`,
+        disk: `${hardware.disk.usagePercent}%`,
+        infra: infrastructure.length,
+        alerts: hardware.alerts.length
+      });
+
+      // 2. Atualizar Gauges do Prometheus (Hardware)
       // CPU Metrics
       metrics.cpuUsageGauge.set(hardware.cpu.usage);
       metrics.cpuCoresGauge.set(hardware.cpu.cores);
@@ -76,6 +96,18 @@ export class MetricsUpdaterService {
       
       // System Metrics
       metrics.systemUptimeGauge.set(hardware.system.uptime);
+
+      // 3. Verificar Alertas (Automated Notification Trigger)
+      const combinedMetrics = {
+        cpu: hardware.cpu,
+        memory: hardware.memory,
+        disk: hardware.disk,
+        goldenSignals: advanced.goldenSignals,
+        nodejs: advanced.nodejs,
+        infrastructure
+      };
+
+      await alertingService.checkMetrics(combinedMetrics); // This triggers notifications via DB
       
     } catch (error) {
       console.error('[MetricsUpdater] Error updating metrics:', error);

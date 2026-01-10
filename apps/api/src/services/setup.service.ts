@@ -63,6 +63,11 @@ export class SetupService {
         users.push(devops);
       }
       
+      // 4. Create Plans & Features
+      console.log('\n💳 Creating Plans & Features...');
+      await this.createPlans(adminTenant.id);
+      console.log('✅ Plans created successfully');
+      
       console.log('\n✅ Seed completed successfully!');
       console.log('📊 Summary:');
       console.log(`   - Admin Tenant: ${adminTenant.name}`);
@@ -270,5 +275,126 @@ export class SetupService {
    */
   static async disconnect() {
     await prisma.$disconnect();
+  }
+
+
+  /**
+   * Cria os Planos e Features iniciais
+   */
+  private static async createPlans(tenantId: string) {
+    // 1. Create Features
+    const usersFeature = await prisma.feature.upsert({
+      where: { code: 'USERS' },
+      update: {},
+      create: {
+        code: 'USERS',
+        name: 'Usuários',
+        description: 'Limite de usuários ativos',
+        type: 'QUOTA',
+        unit: 'users',
+        category: 'general',
+        sortOrder: 1
+      }
+    });
+
+    const storageFeature = await prisma.feature.upsert({
+      where: { code: 'STORAGE' },
+      update: {},
+      create: {
+        code: 'STORAGE',
+        name: 'Armazenamento',
+        description: 'Espaço em disco',
+        type: 'QUOTA',
+        unit: 'GB',
+        category: 'general',
+        sortOrder: 2
+      }
+    });
+
+    // 2. Create Plans
+    
+    // Helper for Global Plans
+    const upsertGlobalPlan = async (data: any) => {
+      const existing = await prisma.plan.findFirst({
+        where: { code: data.code, tenantId: null }
+      });
+      
+      if (existing) {
+        console.log(`   - Plan ${data.name} already exists.`);
+        return existing;
+      }
+      
+      console.log(`   - Creating Plan ${data.name}...`);
+      return await prisma.plan.create({
+        data: {
+          ...data,
+          tenantId: null
+        }
+      });
+    };
+
+    // FREE
+    const freePlan = await upsertGlobalPlan({
+      code: 'free',
+      name: 'Free',
+      description: 'Para começar',
+      isDefault: true,
+      sortOrder: 1,
+      features: {
+        create: [
+          { featureId: usersFeature.id, limitValue: 3 },
+          { featureId: storageFeature.id, limitValue: 1 }
+        ]
+      },
+      prices: {
+        create: [
+          { interval: 'MONTHLY', amount: 0, currency: 'BRL' },
+          { interval: 'YEARLY', amount: 0, currency: 'BRL' }
+        ]
+      }
+    });
+
+    // PRO
+    const proPlan = await upsertGlobalPlan({
+      code: 'pro',
+      name: 'Pro',
+      description: 'Para times em crescimento',
+      badge: 'Popular',
+      sortOrder: 2,
+      features: {
+        create: [
+          { featureId: usersFeature.id, limitValue: 10 },
+          { featureId: storageFeature.id, limitValue: 10 }
+        ]
+      },
+      prices: {
+        create: [
+          { interval: 'MONTHLY', amount: 49.90, currency: 'BRL' },
+          { interval: 'YEARLY', amount: 499.00, currency: 'BRL', originalAmount: 598.80 }
+        ]
+      }
+    });
+
+    // ENTERPRISE
+    const enterprisePlan = await upsertGlobalPlan({
+      code: 'enterprise',
+      name: 'Enterprise',
+      description: 'Para grandes empresas',
+      sortOrder: 3,
+      features: {
+        create: [
+          { featureId: usersFeature.id, limitValue: -1 }, // Unlimited
+          { featureId: storageFeature.id, limitValue: 100 }
+        ]
+      },
+      prices: {
+        create: [
+          { interval: 'MONTHLY', amount: 199.90, currency: 'BRL' },
+          { interval: 'YEARLY', amount: 1999.00, currency: 'BRL', originalAmount: 2398.80 }
+        ]
+      }
+    });
+
+    return { freePlan, proPlan, enterprisePlan };
   }
 }

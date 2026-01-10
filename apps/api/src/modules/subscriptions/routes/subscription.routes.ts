@@ -1,7 +1,11 @@
 import { FastifyInstance } from 'fastify';
 import { subscriptionController } from '../controllers/subscription.controller';
+import { authMiddleware } from '../../../middleware/auth.middleware';
 
 export async function subscriptionRoutes(fastify: FastifyInstance) {
+  // Check authentication for all routes
+  fastify.addHook('onRequest', authMiddleware);
+
   // Tenant routes (require authentication)
   fastify.get('/subscriptions/current', subscriptionController.getCurrent.bind(subscriptionController));
   fastify.post('/subscriptions/upgrade', subscriptionController.upgrade.bind(subscriptionController));

@@ -71,6 +71,9 @@ export class AdvancedMetricsService {
    * Retorna métricas avançadas completas
    */
   async getAdvancedMetrics() {
+    console.log('[AdvancedMetrics] 🔍 Coletando métricas avançadas (Golden Signals + Node.js)...');
+    const startTime = Date.now();
+    
     const memory = process.memoryUsage();
     const cpuUsage = process.cpuUsage();
     
@@ -95,7 +98,7 @@ export class AdvancedMetricsService {
     const uptime = process.uptime();
     const requestsPerSecond = uptime > 0 ? (totalRequests / uptime) : 0;
 
-    return {
+    const result = {
       // Golden Signals
       goldenSignals: {
         latency: {
@@ -137,6 +140,17 @@ export class AdvancedMetricsService {
         uptime,
       },
     };
+
+    console.log('[AdvancedMetrics] ✅ Métricas avançadas coletadas:', {
+      latency: `p50:${result.goldenSignals.latency.p50}ms p95:${result.goldenSignals.latency.p95}ms p99:${result.goldenSignals.latency.p99}ms`,
+      traffic: `${result.goldenSignals.traffic.requestsPerSecond} req/s (${result.goldenSignals.traffic.totalRequests} total)`,
+      errors: `${result.goldenSignals.errors.errorRate}% (${result.goldenSignals.errors.errorRequests}/${totalRequests})`,
+      eventLoopLag: `${result.nodejs.eventLoopLag}ms`,
+      memory: `${result.nodejs.memoryHeap.usedMB}MB/${result.nodejs.memoryHeap.totalMB}MB`,
+      collectionTime: `${Date.now() - startTime}ms`
+    });
+
+    return result;
   }
 
   /**

@@ -30,6 +30,9 @@ interface FeatureFormProps {
 
 export function FeatureForm({ onSubmit, isLoading }: FeatureFormProps) {
   const form = useForm<FeatureFormData>({
+    // WORKAROUND: zodResolver type mismatch com react-hook-form v7+
+    // Ver: apps/docs/content/platform/guides/troubleshooting/known-issues.mdx
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(featureSchema) as any,
     defaultValues: {
       code: '',
@@ -72,7 +75,7 @@ export function FeatureForm({ onSubmit, isLoading }: FeatureFormProps) {
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="type">Tipo *</Label>
-              <Select value={form.watch('type')} onValueChange={(value) => form.setValue('type', value as any)}>
+              <Select value={form.watch('type')} onValueChange={(value) => form.setValue('type', value as 'BOOLEAN' | 'QUOTA' | 'CUSTOM')}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="BOOLEAN">Boolean (On/Off)</SelectItem>

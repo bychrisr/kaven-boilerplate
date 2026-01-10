@@ -3,7 +3,12 @@ title: Accordion
 description: Painéis colapsáveis para organizar conteúdo
 ---
 
-import { Accordion } from '@/components/ui/accordion';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/ui/accordion';
 import { ComponentPreview } from '@/components/ComponentPreview';
 
 # Accordion
@@ -38,20 +43,19 @@ import {
 
 ## Múltiplos Abertos
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<Accordion type="multiple">
-  <AccordionItem value="item-1">
-    <AccordionTrigger>Seção 1</AccordionTrigger>
-    <AccordionContent>Conteúdo 1</AccordionContent>
-  </AccordionItem>
-  <AccordionItem value="item-2">
-    <AccordionTrigger>Seção 2</AccordionTrigger>
-    <AccordionContent>Conteúdo 2</AccordionContent>
-  </AccordionItem>
-</Accordion>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <Accordion type="multiple">
+      <AccordionItem value="item-1">
+        <AccordionTrigger>Seção 1</AccordionTrigger>
+        <AccordionContent>Conteúdo 1</AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-2">
+        <AccordionTrigger>Seção 2</AccordionTrigger>
+        <AccordionContent>Conteúdo 2</AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  </div>
 </ComponentPreview>
 
 ```tsx

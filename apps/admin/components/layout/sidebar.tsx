@@ -21,15 +21,18 @@ import { useUIStore } from '@/stores/ui.store';
 
 interface NavigationChild {
   name: string;
+  label: string;
   href: string;
   external?: boolean;
 }
 
 interface NavigationItem {
   name: string;
+  label: string;
   href: string;
   icon: LucideIcon;
   children?: NavigationChild[];
+  external?: boolean;
 }
 
 
@@ -122,9 +125,9 @@ export function Sidebar() {
   };
 
 
-  const renderNavItem = (item: any) => { // Type loose here for the mapped struct
+  const renderNavItem = (item: NavigationItem) => {
     const isActive =
-      pathname === item.href || item.children?.some((child: any) => pathname === child.href);
+      pathname === item.href || item.children?.some((child: NavigationChild) => pathname === child.href);
     const isExpanded = expandedItems.includes(item.name);
     const Icon = item.icon;
 
@@ -155,7 +158,7 @@ export function Sidebar() {
           </button>
           {isExpanded && !isCollapsed && (
             <div className="mt-1 space-y-1">
-              {item.children.map((child: any) => {
+              {item.children.map((child: NavigationChild) => {
                 const isChildActive = pathname === child.href;
                 return (
                     <Link

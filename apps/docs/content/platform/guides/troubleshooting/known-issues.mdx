@@ -1,0 +1,205 @@
+---
+title: Problemas Conhecidos
+description: Lista de problemas conhecidos no projeto Kaven e seus workarounds
+date: 2026-01-10
+author: Kaven Team
+version: 1.0.0
+tags: [troubleshooting, known-issues, workarounds]
+---
+
+# Problemas Conhecidos
+
+> Lista de problemas conhecidos no projeto Kaven com workarounds documentados
+
+## React Hook Form + Zod Resolver
+
+### Problema
+
+Incompatibilidade de tipos entre `@hookform/resolvers/zod` e `react-hook-form` v7+, causando erro TypeScript:
+
+```
+Type 'Resolver<...>' is not assignable to type 'Resolver<...>'
+```
+
+### Causa
+
+O `zodResolver` retorna um tipo genérico que não corresponde exatamente ao tipo esperado pelo `useForm` devido a diferenças na inferência de tipos entre as versões.
+
+### Workaround
+
+Usar `as any` no `zodResolver`:
+
+```tsx
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+const schema = z.object({
+  name: z.string(),
+  type: z.enum(['OPTION_A', 'OPTION_B']),
+});
+
+type FormData = z.infer<typeof schema>;
+
+const form = useForm<FormData>({
+  // WORKAROUND: zodResolver type mismatch com react-hook-form v7+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  resolver: zodResolver(schema) as any,
+  defaultValues: {
+    name: '',
+    type: 'OPTION_A',
+  },
+});
+```
+
+### Arquivos Afetados
+
+- `apps/admin/components/features/feature-form.tsx`
+- `apps/admin/components/plans/plan-form.tsx`
+- `apps/admin/components/products/product-form.tsx`
+
+### Status
+
+**Permanente** - Este é um workaround conhecido e aceito pela comunidade. Não afeta a funcionalidade em runtime.
+
+### Referências
+
+- [React Hook Form Issue #8980](https://github.com/react-hook-form/react-hook-form/issues/8980)
+- [Zod Resolver Discussion](https://github.com/react-hook-form/resolvers/issues/271)
+
+---
+
+## React Compiler - form.watch()
+
+### Problema
+
+Warning do React Compiler sobre uso de `form.watch()`:
+
+```
+Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI.
+```
+
+### Causa
+
+O React Compiler não consegue memoizar componentes que usam `form.watch()` do React Hook Form, pois a função retorna valores que podem mudar entre renders.
+
+### Workaround
+
+**Nenhum workaround necessário** - Este é um warning informativo, não um erro. O React Compiler automaticamente pula a memoização desses componentes.
+
+### Impacto
+
+- ⚠️ **Performance**: Componentes com `form.watch()` não serão otimizados pelo React Compiler
+- ✅ **Funcionalidade**: Não há impacto na funcionalidade
+
+### Arquivos Afetados
+
+- `apps/admin/components/features/feature-form.tsx`
+- `apps/admin/components/plans/plan-form.tsx`
+- `apps/admin/components/products/product-form.tsx`
+- `apps/admin/sections/user/view/user-create-view.tsx`
+- `apps/admin/sections/user/view/user-edit-view.tsx`
+
+### Status
+
+**Esperado** - Comportamento normal do React Compiler com React Hook Form.
+
+---
+
+## Prisma $queryRaw - Type Safety
+
+### Problema
+
+`prisma.$queryRaw` retorna `any[]` por padrão, perdendo type safety:
+
+```tsx
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const result: any[] = await prisma.$queryRaw`SELECT "primaryColor" FROM "PlatformConfig"`;
+```
+
+### Causa
+
+Prisma não consegue inferir tipos de queries SQL raw em tempo de compilação.
+
+### Workaround
+
+Usar type assertion com interface específica:
+
+```tsx
+interface PlatformConfigRow {
+  primaryColor: string;
+  faviconUrl: string;
+}
+
+const result = await prisma.$queryRaw<PlatformConfigRow[]>`
+  SELECT "primaryColor", "faviconUrl" 
+  FROM "PlatformConfig" 
+  LIMIT 1
+`;
+
+if (result && result.length > 0) {
+  const { primaryColor, faviconUrl } = result[0];
+  // Agora temos type safety
+}
+```
+
+### Arquivos Afetados
+
+- `apps/admin/app/[locale]/layout.tsx`
+
+### Status
+
+**Melhorável** - Pode ser refatorado para usar type assertion ao invés de `any[]`.
+
+### Recomendação
+
+Sempre que possível, use o Prisma Client gerado ao invés de raw queries para manter type safety completo.
+
+---
+
+## Database Connection - Development
+
+### Problema
+
+Erro ao iniciar aplicação frontend:
+
+```
+PrismaClientInitializationError: Can't reach database server at `localhost:5432`
+```
+
+### Causa
+
+Containers Docker não estão rodando.
+
+### Solução
+
+Iniciar containers Docker:
+
+```bash
+docker compose up -d
+```
+
+Verificar status:
+
+```bash
+docker compose ps
+```
+
+### Arquivos Afetados
+
+- `apps/admin/app/[locale]/layout.tsx` (usa Prisma no Server Component)
+
+### Status
+
+**Resolvido** - Documentado para novos desenvolvedores.
+
+---
+
+## Relacionados
+
+- [TypeScript Type Errors](/platform/guides/troubleshooting/typescript-type-errors)
+- [Common Issues](/platform/guides/troubleshooting/COMMON_ISSUES)
+- [React Hook Form Documentation](https://react-hook-form.com/)
+- [Prisma Documentation](https://www.prisma.io/docs)

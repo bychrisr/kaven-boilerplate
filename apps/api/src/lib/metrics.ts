@@ -89,6 +89,18 @@ export const diskWriteSpeedGauge = new client.Gauge({
   registers: [register]
 });
 
+export const networkReceiveSpeedGauge = new client.Gauge({
+  name: 'kaven_hardware_network_receive_bytes_per_sec',
+  help: 'Network receive speed in bytes per second',
+  registers: [register]
+});
+
+export const networkTransmitSpeedGauge = new client.Gauge({
+  name: 'kaven_hardware_network_transmit_bytes_per_sec',
+  help: 'Network transmit speed in bytes per second',
+  registers: [register]
+});
+
 export const systemUptimeGauge = new client.Gauge({
   name: 'kaven_hardware_uptime_seconds',
   help: 'System uptime in seconds',
@@ -237,6 +249,47 @@ export const circuitBreakerFailures = new client.Counter({
   name: 'kaven_circuit_breaker_failures_total',
   help: 'Total circuit breaker failures',
   labelNames: ['service'],
+  registers: [register]
+});
+
+// ============================================
+// PROTECTION SYSTEMS METRICS
+// ============================================
+
+export const cacheHitsTotal = new client.Counter({
+  name: 'kaven_cache_hits_total',
+  help: 'Total cache hits',
+  registers: [register]
+});
+
+export const cacheMissesTotal = new client.Counter({
+  name: 'kaven_cache_misses_total',
+  help: 'Total cache misses',
+  registers: [register]
+});
+
+export const cacheHitRate = new client.Gauge({
+  name: 'kaven_cache_hit_rate',
+  help: 'Cache hit rate percentage',
+  registers: [register]
+});
+
+export const rateLimitViolationsTotal = new client.Counter({
+  name: 'kaven_rate_limit_violations_total',
+  help: 'Total rate limit violations',
+  labelNames: ['ip'],
+  registers: [register]
+});
+
+export const rateLimitRequestsTotal = new client.Counter({
+  name: 'kaven_rate_limit_requests_total',
+  help: 'Total requests monitored by rate limiter',
+  registers: [register]
+});
+
+export const rateLimitViolationRate = new client.Gauge({
+  name: 'kaven_rate_limit_violation_rate',
+  help: 'Rate limit violation rate percentage',
   registers: [register]
 });
 

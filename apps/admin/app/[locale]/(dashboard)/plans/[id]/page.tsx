@@ -13,13 +13,14 @@ export default function EditPlanPage({ params }: { params: { id: string } }) {
   const { data: plan, isLoading } = usePlan(params.id);
   const updatePlan = useUpdatePlan();
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: Record<string, unknown>) => {
     try {
       await updatePlan.mutateAsync({ id: params.id, ...data });
       toast.success('Plano atualizado com sucesso!');
       router.push('/plans');
-    } catch (error: any) {
-      toast.error(error.message || 'Erro ao atualizar plano');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao atualizar plano';
+      toast.error(message);
     }
   };
 
@@ -54,7 +55,7 @@ export default function EditPlanPage({ params }: { params: { id: string } }) {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Editar Plano</h1>
           <p className="text-muted-foreground mt-2">
-            Atualize as informações do plano "{plan.name}"
+            Atualize as informações do plano &quot;{plan.name}&quot;
           </p>
         </div>
       </div>

@@ -9,6 +9,8 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Settings as SettingsIcon, Palette, Bell, User, Shield } from 'lucide-react';
+import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
+import Link from 'next/link';
 import { SettingsGeneral } from '../settings-general';
 import { SettingsTheme } from '../settings-theme';
 import { SettingsNotifications } from '../settings-notifications';
@@ -22,10 +24,20 @@ export function SettingsView() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
           <SettingsIcon className="h-8 w-8" />
           {t('title')}
         </h1>
+        <div className="mt-2 mb-4">
+          <Breadcrumbs>
+            <BreadcrumbItem>
+              <Link href="/dashboard" className="transition-colors hover:text-foreground">
+                Dashboard
+              </Link>
+            </BreadcrumbItem>
+            <BreadcrumbItem current>{t('title')}</BreadcrumbItem>
+          </Breadcrumbs>
+        </div>
         <p className="mt-2 text-sm text-gray-600">
           {t('subtitle')}
         </p>
