@@ -28,6 +28,11 @@ import { planRoutes } from './modules/plans/routes/plan.routes';
 import { featureRoutes } from './modules/plans/routes/feature.routes';
 import { productRoutes } from './modules/products/routes/product.routes';
 import { subscriptionRoutes } from './modules/subscriptions/routes/subscription.routes';
+import { notificationRoutes } from './modules/notifications/routes/notification.routes';
+import { invoiceRoutes } from './modules/invoices/routes/invoice.routes';
+import { orderRoutes } from './modules/orders/routes/order.routes';
+import { platformRoutes } from './modules/platform/routes/platform.routes';
+import { observabilityRoutes } from './modules/observability/routes/observability.routes';
 
 // [KAVEN_MODULE_IMPORTS]
 // [KAVEN_MODULE_IMPORTS_END]
@@ -195,6 +200,11 @@ app.register(planRoutes, { prefix: '/api' });
 app.register(productRoutes, { prefix: '/api' });
 app.register(featureRoutes, { prefix: '/api' });
 app.register(subscriptionRoutes, { prefix: '/api' });
+app.register(invoiceRoutes, { prefix: '/api/invoices' });
+app.register(orderRoutes, { prefix: '/api/orders' });
+app.register(notificationRoutes, { prefix: '/api/notifications' });
+app.register(platformRoutes, { prefix: '/api/settings/platform' });
+app.register(observabilityRoutes, { prefix: '/api/observability' });
 
 // [KAVEN_MODULE_REGISTRATION]
 // [KAVEN_MODULE_REGISTRATION_END]
