@@ -5,6 +5,7 @@ description: Seletor de datas com calendário
 
 import { DatePicker } from '@/components/ui/date-picker';
 import { ComponentPreview } from '@/components/ComponentPreview';
+import { Label } from '@/components/ui/label';
 
 # Date Picker
 
@@ -30,14 +31,13 @@ function MyForm() {
 
 ## Com Label
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<div className="space-y-2">
-  <Label htmlFor="birthdate">Data de Nascimento</Label>
-  <DatePicker id="birthdate" selected={birthdate} onSelect={setBirthdate} />
-</div>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <div className="space-y-2">
+      <Label htmlFor="birthdate">Data de Nascimento</Label>
+      <DatePicker id="birthdate" selected={new Date()} />
+    </div>
+  </div>
 </ComponentPreview>
 
 ```tsx
@@ -49,16 +49,14 @@ function MyForm() {
 
 ## Range de Datas
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<DatePicker
-  mode="range"
-  selected={dateRange}
-  onSelect={setDateRange}
-  placeholder="Selecione período"
-/>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <DatePicker
+      mode="range"
+      selected={{ from: new Date(), to: new Date() }}
+      placeholder="Selecione período"
+    />
+  </div>
 </ComponentPreview>
 
 ```tsx

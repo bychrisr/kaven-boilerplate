@@ -21,8 +21,12 @@ O componente `StatCard` evoluiu para suportar múltiplos casos de uso, incluindo
 
 ## Live Demo
 
+import { TooltipProvider } from '@/components/ui/tooltip';
+
 <ComponentPreview>
-  <StatCardDemo />
+  <TooltipProvider>
+    <StatCardDemo />
+  </TooltipProvider>
 </ComponentPreview>
 
 ```tsx

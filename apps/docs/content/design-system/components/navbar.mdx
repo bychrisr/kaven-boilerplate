@@ -4,7 +4,23 @@ description: Barra de navegação principal da aplicação
 ---
 
 import { Navbar } from '@/components/ui/navbar';
+import { Button } from '@/components/ui/button';
+import { Avatar } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu';
+import { Menu } from 'lucide-react';
+import Link from 'next/link';
 import { ComponentPreview } from '@/components/ComponentPreview';
+
+export const Logo = () => <span className="font-bold text-xl">Kaven</span>;
+export const user = {
+  name: 'João Silva',
+  avatar: 'https://github.com/shadcn.png',
+};
 
 # Navbar
 
@@ -32,7 +48,6 @@ import { Navbar } from '@/components/ui/navbar';
 
 ## Com Menu Mobile
 
-
 <ComponentPreview>
 <div className="flex w-full gap-4 flex-wrap justify-center items-center">
 <Navbar>
@@ -49,6 +64,7 @@ import { Navbar } from '@/components/ui/navbar';
     <Button className="md:hidden" variant="text" size="icon">
       <Menu className="h-5 w-5" />
     </Button>
+
   </div>
 </Navbar>
 </div>
@@ -75,27 +91,26 @@ import { Navbar } from '@/components/ui/navbar';
 
 ## Com Avatar e Dropdown
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<Navbar>
-  <Logo />
-  <nav className="flex-1 flex justify-center gap-6">
-    <Link href="/dashboard">Dashboard</Link>
-    <Link href="/users">Usuários</Link>
-  </nav>
-  <DropdownMenu>
-    <DropdownMenuTrigger>
-      <Avatar src={user.avatar} alt={user.name} />
-    </DropdownMenuTrigger>
-    <DropdownMenuContent>
-      <DropdownMenuItem>Perfil</DropdownMenuItem>
-      <DropdownMenuItem>Configurações</DropdownMenuItem>
-      <DropdownMenuItem>Sair</DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>
-</Navbar>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <Navbar>
+      <Logo />
+      <nav className="flex-1 flex justify-center gap-6">
+        <Link href="/dashboard">Dashboard</Link>
+        <Link href="/users">Usuários</Link>
+      </nav>
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Avatar src={user.avatar} alt={user.name} />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>Perfil</DropdownMenuItem>
+          <DropdownMenuItem>Configurações</DropdownMenuItem>
+          <DropdownMenuItem>Sair</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </Navbar>
+  </div>
 </ComponentPreview>
 
 ```tsx
@@ -120,13 +135,12 @@ import { Navbar } from '@/components/ui/navbar';
 
 ## Sticky
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<Navbar className="sticky top-0 z-50 bg-background/95 backdrop-blur">
-  {/* Conteúdo */}
-</Navbar>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <Navbar className="sticky top-0 z-50 bg-background/95 backdrop-blur">
+      {/* Conteúdo */}
+    </Navbar>
+  </div>
 </ComponentPreview>
 
 ```tsx

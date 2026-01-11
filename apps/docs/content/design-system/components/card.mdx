@@ -3,8 +3,16 @@ title: Card
 description: Containers para agrupar conteúdo relacionado
 ---
 
-import { Card } from '@/components/ui/card';
+import {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from '@/components/ui/card';
 import { ComponentPreview } from '@/components/ComponentPreview';
+import { Button } from '@/components/ui/button';
 
 # Card
 
@@ -25,23 +33,22 @@ import { Card } from '@/components/ui/card';
 
 ## Com Seções
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<Card>
-  <div className="p-6 border-b border-border/50">
-    <h3 className="text-lg font-bold">Header</h3>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <Card>
+      <div className="p-6 border-b border-border/50">
+        <h3 className="text-lg font-bold">Header</h3>
+      </div>
+      <div className="p-6">
+        <p>Conteúdo principal</p>
+      </div>
+      <div className="p-6 border-t border-border/50 bg-muted/50">
+        <Button variant="contained" fullWidth>
+          Ação
+        </Button>
+      </div>
+    </Card>
   </div>
-  <div className="p-6">
-    <p>Conteúdo principal</p>
-  </div>
-  <div className="p-6 border-t border-border/50 bg-muted/50">
-    <Button variant="contained" fullWidth>
-      Ação
-    </Button>
-  </div>
-</Card>
-</div>
 </ComponentPreview>
 
 ```tsx
@@ -75,15 +82,14 @@ import { Card } from '@/components/ui/card';
 
 ## Interativo
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<Card className="cursor-pointer hover:shadow-lg transition-shadow">
-  <div className="p-6">
-    <h3>Card Clicável</h3>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+      <div className="p-6">
+        <h3>Card Clicável</h3>
+      </div>
+    </Card>
   </div>
-</Card>
-</div>
 </ComponentPreview>
 
 ```tsx

@@ -51,15 +51,18 @@ import { Tooltip } from '@/components/ui/tooltip';
 ### Exemplo Visual
 
 <ComponentPreview>
-  <div className="flex gap-4 items-center justify-center p-8">
-    <Tooltip content="Clique para editar as configurações">
-      <Button variant="secondary">Configurações</Button>
-    </Tooltip>
+  <TooltipProvider>
+    <div className="flex gap-4 items-center justify-center p-8">
+      <Tooltip content="Clique para editar as configurações">
+        <Button variant="secondary">Configurações</Button>
+      </Tooltip>
 
-    <Tooltip content="Esta ação não pode ser desfeita" position="bottom">
-      <Button variant="destructive">Deletar</Button>
-    </Tooltip>
-  </div>
+      <Tooltip content="Esta ação não pode ser desfeita" position="bottom">
+        <Button variant="destructive">Deletar</Button>
+      </Tooltip>
+    </div>
+
+  </TooltipProvider>
 </ComponentPreview>
 
 ---
@@ -108,10 +111,12 @@ import { InfoTooltip } from '@/components/ui/info-tooltip';
 ```
 
 <ComponentPreview>
-  <div className="flex items-center gap-2 p-4 border rounded-lg bg-card text-card-foreground">
-    <span className="font-medium">Cache Hit Rate</span>
-    <InfoTooltip content="Porcentagem de requisições servidas diretamente do cache Redis, sem atingir o banco de dados." />
-  </div>
+  <TooltipProvider>
+    <div className="flex items-center gap-2 p-4 border rounded-lg bg-card text-card-foreground">
+      <span className="font-medium">Cache Hit Rate</span>
+      <InfoTooltip content="Porcentagem de requisições servidas diretamente do cache Redis, sem atingir o banco de dados." />
+    </div>
+  </TooltipProvider>
 </ComponentPreview>
 
 ---

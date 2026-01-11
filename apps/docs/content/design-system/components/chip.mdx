@@ -31,13 +31,12 @@ import { X } from 'lucide-react';
 
 ## Cores
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<Chip color="primary">Primary</Chip>
-<Chip color="success">Success</Chip>
-<Chip color="error">Error</Chip>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <Chip color="primary">Primary</Chip>
+    <Chip color="success">Success</Chip>
+    <Chip color="error">Error</Chip>
+  </div>
 </ComponentPreview>
 
 ```tsx
@@ -48,12 +47,11 @@ import { X } from 'lucide-react';
 
 ## Variantes
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<Chip variant="filled">Filled</Chip>
-<Chip variant="outlined">Outlined</Chip>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <Chip variant="filled">Filled</Chip>
+    <Chip variant="outlined">Outlined</Chip>
+  </div>
 </ComponentPreview>
 
 ```tsx
@@ -63,17 +61,14 @@ import { X } from 'lucide-react';
 
 ## Grupo de Chips
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<div className="flex flex-wrap gap-2">
-  {tags.map((tag) => (
-    <Chip key={tag} onDelete={() => removeTag(tag)}>
-      {tag}
-    </Chip>
-  ))}
-</div>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <div className="flex flex-wrap gap-2">
+      <Chip>React</Chip>
+      <Chip>Next.js</Chip>
+      <Chip>Tailwind</Chip>
+    </div>
+  </div>
 </ComponentPreview>
 
 ```tsx

@@ -3,7 +3,7 @@ title: Stepper
 description: Indicador de progresso em etapas
 ---
 
-import { Stepper } from '@/components/ui/stepper';
+import { Stepper, Step, StepLabel } from '@/components/ui/stepper';
 import { ComponentPreview } from '@/components/ComponentPreview';
 
 # Stepper
@@ -30,23 +30,22 @@ import { Stepper, Step, StepLabel } from '@/components/ui/stepper';
 
 ## Com Descrição
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<Stepper activeStep={1}>
-  <Step>
-    <StepLabel>
-      Passo 1
-      <span className="text-sm text-muted-foreground">Dados pessoais</span>
-    </StepLabel>
-  </Step>
-  <Step>
-    <StepLabel>
-      Passo 2<span className="text-sm text-muted-foreground">Endereço</span>
-    </StepLabel>
-  </Step>
-</Stepper>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <Stepper activeStep={1}>
+      <Step>
+        <StepLabel>
+          Passo 1
+          <span className="text-sm text-muted-foreground">Dados pessoais</span>
+        </StepLabel>
+      </Step>
+      <Step>
+        <StepLabel>
+          Passo 2<span className="text-sm text-muted-foreground">Endereço</span>
+        </StepLabel>
+      </Step>
+    </Stepper>
+  </div>
 </ComponentPreview>
 
 ```tsx
@@ -67,18 +66,17 @@ import { Stepper, Step, StepLabel } from '@/components/ui/stepper';
 
 ## Vertical
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<Stepper activeStep={1} orientation="vertical">
-  <Step>
-    <StepLabel>Passo 1</StepLabel>
-  </Step>
-  <Step>
-    <StepLabel>Passo 2</StepLabel>
-  </Step>
-</Stepper>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <Stepper activeStep={1} orientation="vertical">
+      <Step>
+        <StepLabel>Passo 1</StepLabel>
+      </Step>
+      <Step>
+        <StepLabel>Passo 2</StepLabel>
+      </Step>
+    </Stepper>
+  </div>
 </ComponentPreview>
 
 ```tsx

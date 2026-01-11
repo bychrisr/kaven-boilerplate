@@ -5,6 +5,8 @@ description: Botões de opção para seleção única
 
 import { Radio } from '@/components/ui/radio';
 import { ComponentPreview } from '@/components/ComponentPreview';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 # Radio
 
@@ -51,28 +53,27 @@ const [value, setValue] = useState('option1');
 
 ## Com Descrição
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<RadioGroup defaultValue="card">
-  <div className="flex items-center space-x-2">
-    <RadioGroupItem value="card" id="card" />
-    <div className="flex-1">
-      <Label htmlFor="card">Cartão de Crédito</Label>
-      <p className="text-sm text-muted-foreground">
-        Pague com cartão de crédito
-      </p>
-    </div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <RadioGroup defaultValue="card">
+      <div className="flex items-center space-x-2">
+        <RadioGroupItem value="card" id="card" />
+        <div className="flex-1">
+          <Label htmlFor="card">Cartão de Crédito</Label>
+          <p className="text-sm text-muted-foreground">
+            Pague com cartão de crédito
+          </p>
+        </div>
+      </div>
+      <div className="flex items-center space-x-2">
+        <RadioGroupItem value="pix" id="pix" />
+        <div className="flex-1">
+          <Label htmlFor="pix">PIX</Label>
+          <p className="text-sm text-muted-foreground">Pagamento instantâneo</p>
+        </div>
+      </div>
+    </RadioGroup>
   </div>
-  <div className="flex items-center space-x-2">
-    <RadioGroupItem value="pix" id="pix" />
-    <div className="flex-1">
-      <Label htmlFor="pix">PIX</Label>
-      <p className="text-sm text-muted-foreground">Pagamento instantâneo</p>
-    </div>
-  </div>
-</RadioGroup>
-</div>
 </ComponentPreview>
 
 ```tsx
@@ -98,20 +99,19 @@ const [value, setValue] = useState('option1');
 
 ## Disabled
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<RadioGroup defaultValue="option1">
-  <div className="flex items-center space-x-2">
-    <RadioGroupItem value="option1" id="o1" />
-    <Label htmlFor="o1">Habilitado</Label>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <RadioGroup defaultValue="option1">
+      <div className="flex items-center space-x-2">
+        <RadioGroupItem value="option1" id="o1" />
+        <Label htmlFor="o1">Habilitado</Label>
+      </div>
+      <div className="flex items-center space-x-2 opacity-50">
+        <RadioGroupItem value="option2" id="o2" disabled />
+        <Label htmlFor="o2">Desabilitado</Label>
+      </div>
+    </RadioGroup>
   </div>
-  <div className="flex items-center space-x-2 opacity-50">
-    <RadioGroupItem value="option2" id="o2" disabled />
-    <Label htmlFor="o2">Desabilitado</Label>
-  </div>
-</RadioGroup>
-</div>
 </ComponentPreview>
 
 ```tsx

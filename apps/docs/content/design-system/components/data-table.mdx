@@ -5,6 +5,7 @@ description: Tabelas de dados avançadas com seleção, ordenação, paginação
 
 import { DataTable } from '@/components/ui/data-table';
 import { ComponentPreview } from '@/components/ComponentPreview';
+import { Checkbox } from '@/components/ui/checkbox';
 
 # Data Table
 
@@ -404,20 +405,20 @@ const getRoleBadgeClasses = (role: string) => {
 
 ### ARIA Labels
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<table
-  role="table"
-  aria-label="Lista de usuários"
-  aria-describedby="table-description"
->
-  <caption id="table-description" className="sr-only">
-    Tabela de usuários com informações de nome, email, role e data de cadastro
-  </caption>
-  {/* ... */}
-</table>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <table
+      role="table"
+      aria-label="Lista de usuários"
+      aria-describedby="table-description"
+    >
+      <caption id="table-description" className="sr-only">
+        Tabela de usuários com informações de nome, email, role e data de
+        cadastro
+      </caption>
+      {/* ... */}
+    </table>
+  </div>
 </ComponentPreview>
 
 ```tsx
@@ -435,20 +436,16 @@ const getRoleBadgeClasses = (role: string) => {
 
 ### Navegação por Teclado
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<tr
-  tabIndex={0}
-  onKeyDown={(e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      handleSelectRow(user.id);
-    }
-  }}
->
-  {/* ... */}
-</tr>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <table>
+      <tbody>
+        <tr tabIndex={0} className="p-4 bg-muted border rounded">
+          <td className="p-4">Linha Tabela (Focável)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </ComponentPreview>
 
 ```tsx
@@ -466,15 +463,10 @@ const getRoleBadgeClasses = (role: string) => {
 
 ### Screen Readers
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<Checkbox
-  aria-label={`Selecionar usuário ${user.name}`}
-  checked={selected.includes(user.id)}
-  onCheckedChange={() => handleSelectRow(user.id)}
-/>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <Checkbox aria-label="Selecionar usuário João Silva" checked={true} />
+  </div>
 </ComponentPreview>
 
 ```tsx

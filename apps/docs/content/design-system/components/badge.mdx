@@ -5,6 +5,7 @@ description: Badges e labels para status e categorização
 
 import { Badge } from '@/components/ui/badge';
 import { ComponentPreview } from '@/components/ComponentPreview';
+import { Button } from '@/components/ui/button';
 
 # Badge
 
@@ -80,16 +81,15 @@ import { Check, X, Clock } from 'lucide-react';
 
 ### Contador
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<div className="relative inline-block">
-  <Button variant="text">Notificações</Button>
-  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 rounded-full bg-error-main text-white text-xs">
-    3
-  </Badge>
-</div>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <div className="relative inline-block">
+      <Button variant="text">Notificações</Button>
+      <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 rounded-full bg-error-main text-white text-xs">
+        3
+      </Badge>
+    </div>
+  </div>
 </ComponentPreview>
 
 ```tsx

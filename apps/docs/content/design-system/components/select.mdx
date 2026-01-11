@@ -3,8 +3,17 @@ title: Select
 description: Dropdowns para seleção de opções
 ---
 
-import { Select } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+  SelectLabel,
+} from '@/components/ui/select';
 import { ComponentPreview } from '@/components/ComponentPreview';
+import { Label } from '@/components/ui/label';
 
 # Select
 
@@ -35,24 +44,23 @@ import {
 
 ## Com Label
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<div className="space-y-2">
-  <Label htmlFor="status">Status</Label>
-  <Select value={filterStatus} onValueChange={setFilterStatus}>
-    <SelectTrigger id="status">
-      <SelectValue placeholder="Todos" />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem value="all">Todos</SelectItem>
-      <SelectItem value="active">Ativos</SelectItem>
-      <SelectItem value="pending">Pendentes</SelectItem>
-      <SelectItem value="banned">Banidos</SelectItem>
-    </SelectContent>
-  </Select>
-</div>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <div className="space-y-2">
+      <Label htmlFor="status">Status</Label>
+      <Select defaultValue="all">
+        <SelectTrigger id="status">
+          <SelectValue placeholder="Todos" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">Todos</SelectItem>
+          <SelectItem value="active">Ativos</SelectItem>
+          <SelectItem value="pending">Pendentes</SelectItem>
+          <SelectItem value="banned">Banidos</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  </div>
 </ComponentPreview>
 
 ```tsx
@@ -74,27 +82,26 @@ import {
 
 ## Com Grupos
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<Select>
-  <SelectTrigger>
-    <SelectValue placeholder="Selecione uma fruta" />
-  </SelectTrigger>
-  <SelectContent>
-    <SelectGroup>
-      <SelectLabel>Frutas</SelectLabel>
-      <SelectItem value="apple">Maçã</SelectItem>
-      <SelectItem value="banana">Banana</SelectItem>
-    </SelectGroup>
-    <SelectGroup>
-      <SelectLabel>Vegetais</SelectLabel>
-      <SelectItem value="carrot">Cenoura</SelectItem>
-      <SelectItem value="potato">Batata</SelectItem>
-    </SelectGroup>
-  </SelectContent>
-</Select>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <Select>
+      <SelectTrigger>
+        <SelectValue placeholder="Selecione uma fruta" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Frutas</SelectLabel>
+          <SelectItem value="apple">Maçã</SelectItem>
+          <SelectItem value="banana">Banana</SelectItem>
+        </SelectGroup>
+        <SelectGroup>
+          <SelectLabel>Vegetais</SelectLabel>
+          <SelectItem value="carrot">Cenoura</SelectItem>
+          <SelectItem value="potato">Batata</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  </div>
 </ComponentPreview>
 
 ```tsx

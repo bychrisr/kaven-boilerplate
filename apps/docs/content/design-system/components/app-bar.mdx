@@ -5,6 +5,9 @@ description: Barra de navegação superior da aplicação
 
 import { AppBar } from '@/components/ui/app-bar';
 import { ComponentPreview } from '@/components/ComponentPreview';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Bell } from 'lucide-react';
 
 # AppBar
 
@@ -33,39 +36,51 @@ Barra de navegação superior com suporte a logo, menu e ações.
 
 <ComponentPreview>
   <div className="flex w-full gap-4 flex-wrap justify-center items-center">
-    <AppBar>
-      <AppBarLogo>
-        <Logo />
-      </AppBarLogo>
-      <AppBarNav>
-        <NavItem href="/dashboard">Dashboard</NavItem>
-        <NavItem href="/users">Usuários</NavItem>
-      </AppBarNav>
-      <AppBarActions>
-        <IconButton>
-          <NotificationIcon />
-        </IconButton>
-        <Avatar />
-      </AppBarActions>
+    <AppBar position="static">
+      <div className="flex w-full items-center justify-between px-4 min-h-[64px]">
+        <div className="font-bold text-lg">Logo</div>
+        <nav className="flex gap-4">
+          <Button variant="ghost" size="sm">
+            Dashboard
+          </Button>
+          <Button variant="ghost" size="sm">
+            Usuários
+          </Button>
+        </nav>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon">
+            <Bell className="h-5 w-5" />
+          </Button>
+          <Avatar>
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+        </div>
+      </div>
     </AppBar>
   </div>
 </ComponentPreview>
 
 ```tsx
-<AppBar>
-  <AppBarLogo>
-    <Logo />
-  </AppBarLogo>
-  <AppBarNav>
-    <NavItem href="/dashboard">Dashboard</NavItem>
-    <NavItem href="/users">Usuários</NavItem>
-  </AppBarNav>
-  <AppBarActions>
-    <IconButton>
-      <NotificationIcon />
-    </IconButton>
-    <Avatar />
-  </AppBarActions>
+<AppBar position="static">
+  <div className="flex w-full items-center justify-between px-4 min-h-[64px]">
+    <div className="font-bold text-lg">Logo</div>
+    <nav className="flex gap-4">
+      <Button variant="ghost" size="sm">
+        Dashboard
+      </Button>
+      <Button variant="ghost" size="sm">
+        Usuários
+      </Button>
+    </nav>
+    <div className="flex items-center gap-2">
+      <Button variant="ghost" size="icon">
+        <Bell className="h-5 w-5" />
+      </Button>
+      <Avatar>
+        <AvatarFallback>CN</AvatarFallback>
+      </Avatar>
+    </div>
+  </div>
 </AppBar>
 ```
 

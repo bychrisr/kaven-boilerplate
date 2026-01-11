@@ -3,8 +3,20 @@ title: Dialog
 description: Modais e diálogos para interações focadas
 ---
 
-import { Dialog } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Select } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Radio } from '@/components/ui/radio';
 import { ComponentPreview } from '@/components/ComponentPreview';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 # Dialog
 
@@ -57,37 +69,37 @@ function BasicDialog() {
 
 ### Com Formulário
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<Dialog open={open} onOpenChange={setOpen}>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>Novo Usuário</DialogTitle>
-    </DialogHeader>
-    <form onSubmit={handleSubmit}>
-      <div className="space-y-4 py-4">
-        <div className="space-y-2">
-          <Label htmlFor="name">Nome</Label>
-          <Input id="name" placeholder="João Silva" />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="joao@example.com" />
-        </div>
-      </div>
-      <div className="flex justify-end gap-2">
-        <Button type="button" variant="outlined" onClick={() => setOpen(false)}>
-          Cancelar
-        </Button>
-        <Button type="submit" variant="contained">
-          Salvar
-        </Button>
-      </div>
-    </form>
-  </DialogContent>
-</Dialog>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">Abrir Dialog</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Novo Usuário</DialogTitle>
+        </DialogHeader>
+        <form>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Nome</Label>
+              <Input id="name" placeholder="João Silva" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" placeholder="joao@example.com" />
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline">
+              Cancelar
+            </Button>
+            <Button type="submit">Salvar</Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  </div>
 </ComponentPreview>
 
 ```tsx

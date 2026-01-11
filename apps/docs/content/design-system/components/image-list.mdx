@@ -3,7 +3,7 @@ title: Image List
 description: Listas de imagens em grid
 ---
 
-import { ImageList } from '@/components/ui/image-list';
+import { ImageList, ImageListItem } from '@/components/ui/image-list';
 import { ComponentPreview } from '@/components/ComponentPreview';
 
 # Image List
@@ -30,18 +30,17 @@ import { ImageList, ImageListItem } from '@/components/ui/image-list';
 
 ## Com Overlay
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<ImageList cols={2}>
-  <ImageListItem>
-    <img src="/image.jpg" alt="Image" />
-    <div className="absolute inset-0 bg-black/50 flex items-end p-4">
-      <h4 className="text-white">Título</h4>
-    </div>
-  </ImageListItem>
-</ImageList>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <ImageList cols={2}>
+      <ImageListItem>
+        <img src="/image.jpg" alt="Image" />
+        <div className="absolute inset-0 bg-black/50 flex items-end p-4">
+          <h4 className="text-white">Título</h4>
+        </div>
+      </ImageListItem>
+    </ImageList>
+  </div>
 </ComponentPreview>
 
 ```tsx

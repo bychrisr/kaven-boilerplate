@@ -20,9 +20,8 @@ import { TextField } from '@/components/ui/text-field';
 
 ## Com Helper Text
 
-
 <ComponentPreview>
-<TextField label="Senha" type="password" helperText="Mínimo 8 caracteres" />
+  <TextField label="Senha" type="password" helperText="Mínimo 8 caracteres" />
 </ComponentPreview>
 
 ```tsx
@@ -31,17 +30,15 @@ import { TextField } from '@/components/ui/text-field';
 
 ## Com Erro
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<TextField
-  label="Email"
-  value={email}
-  onChange={(e) => setEmail(e.target.value)}
-  error={!!errors.email}
-  helperText={errors.email?.message}
-/>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <TextField
+      label="Email"
+      defaultValue="invalid-email"
+      error={true}
+      helperText="Endereço de email inválido"
+    />
+  </div>
 </ComponentPreview>
 
 ```tsx
@@ -56,9 +53,8 @@ import { TextField } from '@/components/ui/text-field';
 
 ## Obrigatório
 
-
 <ComponentPreview>
-<TextField label="Nome Completo" required placeholder="João Silva" />
+  <TextField label="Nome Completo" required placeholder="João Silva" />
 </ComponentPreview>
 
 ```tsx
@@ -67,9 +63,8 @@ import { TextField } from '@/components/ui/text-field';
 
 ## Disabled
 
-
 <ComponentPreview>
-<TextField label="Campo Desabilitado" disabled value="Não editável" />
+  <TextField label="Campo Desabilitado" disabled value="Não editável" />
 </ComponentPreview>
 
 ```tsx
@@ -78,16 +73,15 @@ import { TextField } from '@/components/ui/text-field';
 
 ## Multiline (Textarea)
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<TextField
-  label="Descrição"
-  multiline
-  rows={4}
-  placeholder="Digite uma descrição..."
-/>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <TextField
+      label="Descrição"
+      multiline
+      rows={4}
+      placeholder="Digite uma descrição..."
+    />
+  </div>
 </ComponentPreview>
 
 ```tsx

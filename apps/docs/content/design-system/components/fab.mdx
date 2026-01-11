@@ -4,6 +4,7 @@ description: Botão de ação flutuante
 ---
 
 import { Fab } from '@/components/ui/fab';
+import { Plus } from 'lucide-react';
 import { ComponentPreview } from '@/components/ComponentPreview';
 
 # FAB (Floating Action Button)
@@ -37,18 +38,17 @@ import { Plus } from 'lucide-react';
 
 ## Com Label
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<FAB className="fixed bottom-6 right-6">
-  <Plus className="mr-2" />
-  Novo
-</FAB>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <Fab className="fixed bottom-6 right-6">
+      <Plus className="mr-2" />
+      Novo
+    </Fab>
+  </div>
 </ComponentPreview>
 
 ```tsx
-<FAB className="fixed bottom-6 right-6">
+<Fab className="fixed bottom-6 right-6">
   <Plus className="mr-2" />
   Novo
 </FAB>

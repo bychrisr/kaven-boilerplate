@@ -3,7 +3,8 @@ title: List
 description: Listas para exibir coleções de itens
 ---
 
-import { List } from '@/components/ui/list';
+import { List, ListItem } from '@/components/ui/list';
+import { Home, Users, Settings } from 'lucide-react';
 import { ComponentPreview } from '@/components/ComponentPreview';
 
 # List
@@ -45,38 +46,21 @@ import { Home, Users, Settings } from 'lucide-react';
 
 ## Clicável
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<List>
-  <ListItem
-    className="cursor-pointer hover:bg-muted"
-    onClick={() => navigate('/dashboard')}
-  >
-    Dashboard
-  </ListItem>
-  <ListItem
-    className="cursor-pointer hover:bg-muted"
-    onClick={() => navigate('/users')}
-  >
-    Usuários
-  </ListItem>
-</List>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <List>
+      <ListItem className="cursor-pointer hover:bg-muted">Dashboard</ListItem>
+      <ListItem className="cursor-pointer hover:bg-muted">Usuários</ListItem>
+    </List>
+  </div>
 </ComponentPreview>
 
 ```tsx
 <List>
-  <ListItem
-    className="cursor-pointer hover:bg-muted"
-    onClick={() => navigate('/dashboard')}
-  >
+  <ListItem className="cursor-pointer hover:bg-muted" onClick={() => {}}>
     Dashboard
   </ListItem>
-  <ListItem
-    className="cursor-pointer hover:bg-muted"
-    onClick={() => navigate('/users')}
-  >
+  <ListItem className="cursor-pointer hover:bg-muted" onClick={() => {}}>
     Usuários
   </ListItem>
 </List>

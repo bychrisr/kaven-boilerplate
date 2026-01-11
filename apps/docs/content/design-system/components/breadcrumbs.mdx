@@ -3,8 +3,9 @@ title: Breadcrumbs
 description: Navegação hierárquica mostrando o caminho atual
 ---
 
-import { Breadcrumbs } from '@/components/ui/breadcrumbs';
+import { Breadcrumbs, BreadcrumbItem } from '@/components/ui/breadcrumbs';
 import { ComponentPreview } from '@/components/ComponentPreview';
+import Link from 'next/link';
 
 # Breadcrumbs
 
@@ -28,23 +29,25 @@ import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
 
 ## Uso Real (User Page)
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<Breadcrumbs>
-  <BreadcrumbItem>
-    <Link href="/dashboard" className="transition-colors hover:text-foreground">
-      Dashboard
-    </Link>
-  </BreadcrumbItem>
-  <BreadcrumbItem>
-    <Link href="#" className="transition-colors hover:text-foreground">
-      User
-    </Link>
-  </BreadcrumbItem>
-  <BreadcrumbItem current>List</BreadcrumbItem>
-</Breadcrumbs>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <Breadcrumbs>
+      <BreadcrumbItem>
+        <Link
+          href="/dashboard"
+          className="transition-colors hover:text-foreground"
+        >
+          Dashboard
+        </Link>
+      </BreadcrumbItem>
+      <BreadcrumbItem>
+        <Link href="#" className="transition-colors hover:text-foreground">
+          User
+        </Link>
+      </BreadcrumbItem>
+      <BreadcrumbItem current>List</BreadcrumbItem>
+    </Breadcrumbs>
+  </div>
 </ComponentPreview>
 
 ```tsx
@@ -86,7 +89,6 @@ import { Home, Users, Settings } from 'lucide-react';
 ```
 
 ## Separadores Customizados
-
 
 <ComponentPreview>
 <div className="flex w-full gap-4 flex-wrap justify-center items-center">
@@ -130,20 +132,19 @@ import { Home, Users, Settings } from 'lucide-react';
 
 ## Acessibilidade
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<nav aria-label="Breadcrumb">
-  <Breadcrumbs>
-    <BreadcrumbItem>
-      <Link href="/">Home</Link>
-    </BreadcrumbItem>
-    <BreadcrumbItem current aria-current="page">
-      Página Atual
-    </BreadcrumbItem>
-  </Breadcrumbs>
-</nav>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <nav aria-label="Breadcrumb">
+      <Breadcrumbs>
+        <BreadcrumbItem>
+          <Link href="/">Home</Link>
+        </BreadcrumbItem>
+        <BreadcrumbItem current aria-current="page">
+          Página Atual
+        </BreadcrumbItem>
+      </Breadcrumbs>
+    </nav>
+  </div>
 </ComponentPreview>
 
 ```tsx

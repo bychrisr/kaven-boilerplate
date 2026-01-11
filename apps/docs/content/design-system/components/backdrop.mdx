@@ -20,15 +20,17 @@ import { Backdrop } from '@/components/ui/backdrop';
 
 ## Com Conteúdo
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<Backdrop open={open}>
-  <div className="bg-card p-6 rounded-lg" onClick={(e) => e.stopPropagation()}>
-    <h2>Modal Content</h2>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <div className="text-center p-4 border border-dashed rounded">
+      Backdrop Preview (Set open=true to see)
+      <Backdrop open={false}>
+        <div className="bg-card p-6 rounded-lg">
+          <h2>Modal Content</h2>
+        </div>
+      </Backdrop>
+    </div>
   </div>
-</Backdrop>
-</div>
 </ComponentPreview>
 
 ```tsx

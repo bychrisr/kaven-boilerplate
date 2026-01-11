@@ -4,7 +4,13 @@ description: Layout em cascata para conteúdo de alturas variadas
 ---
 
 import { Masonry } from '@/components/ui/masonry';
+import { Card } from '@/components/ui/card';
 import { ComponentPreview } from '@/components/ComponentPreview';
+
+export const items = Array.from({ length: 6 }, (_, i) => ({
+  id: i,
+  content: `Item ${i + 1}`,
+}));
 
 # Masonry
 
@@ -25,15 +31,14 @@ import { Masonry } from '@/components/ui/masonry';
 
 ## Responsivo
 
-
 <ComponentPreview>
-<div className="flex w-full gap-4 flex-wrap justify-center items-center">
-<Masonry cols={{ xs: 1, sm: 2, md: 3, lg: 4 }} gap={16}>
-  {items.map((item) => (
-    <Card key={item.id}>{item.content}</Card>
-  ))}
-</Masonry>
-</div>
+  <div className="flex w-full gap-4 flex-wrap justify-center items-center">
+    <Masonry cols={{ xs: 1, sm: 2, md: 3, lg: 4 }} gap={16}>
+      {items.map((item) => (
+        <Card key={item.id}>{item.content}</Card>
+      ))}
+    </Masonry>
+  </div>
 </ComponentPreview>
 
 ```tsx
