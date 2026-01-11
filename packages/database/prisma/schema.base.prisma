@@ -84,6 +84,10 @@ model PlatformConfig {
   language     String @default("pt-BR")
   currency     String @default("BRL")
   numberFormat String @default("1.000,00") // 1.000,00 or 1,000.00
+  
+  // SEO & Social
+  twitterHandle String?
+  ogImageUrl    String?
 
   updatedAt DateTime @updatedAt
 }
