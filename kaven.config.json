@@ -1,0 +1,28 @@
+{
+  "name": "kaven-boilerplate",
+  "version": "1.0.0",
+  "kaven": {
+    "version": "2.0.0",
+    "installedAt": "2026-01-10T21:12:49.000Z",
+    "repository": "https://github.com/bychrisr/kaven-boilerplate",
+    "features": {
+      "multiTenant": true,
+      "database": "postgresql",
+      "payment": "pix"
+    },
+    "modules": {
+      "core": {
+        "auth": true,
+        "users": true,
+        "tenants": true
+      },
+      "optional": {
+        "payments": true,
+        "observability": true,
+        "analytics": false,
+        "ai-assistant": false,
+        "notifications": false
+      }
+    }
+  }
+}

@@ -31,6 +31,11 @@ coverage/
 # Database
 prisma/*.db
 prisma/*.db-journal
+packages/database/prisma/schema.prisma
+
+# Kaven CLI
+kaven-cli/bin/
+kaven-cli/dist/
 
 # Agent System
 .agent/telemetry/*.json
