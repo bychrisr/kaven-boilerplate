@@ -1,8 +1,141 @@
-# Documentação Kaven Platform
+---
+title: Kaven Platform Home
+description: Documentação oficial da plataforma Kaven v2.0 - Multi-tenant SaaS Boilerplate
+date: 2026-01-11
+author: Kaven Team
+version: 2.0.0
+tags: [home, getting-started, overview, v2]
+---
 
-Bem-vindo à documentação oficial da plataforma Kaven.
+import { Callout } from 'nextra/components';
 
-## Guias Disponíveis
+# Kaven Boilerplate - Multi-tenant SaaS Platform
 
-- **[Design System](/design-system)**: Guia completo de componentes, tokens e estilo visual.
-- **[Plataforma](/platform)**: Arquitetura, guias de setup, backend e frontend.
+> **Versão:** 2.0.0  
+> **Status:** ✅ Produção Ready
+
+## 🚀 Visão Geral
+
+**Kaven v2.0** é um boilerplate modular projetado para escala. Com uma CLI dedicada e arquitetura de banco de dados flexível, permite criar SaaS multi-tenant robustos com sistema de planos, produtos, pagamentos PIX e observabilidade integrada.
+
+<Callout type="info" emoji="✨">
+  A v2.0 introduz o **Sistema Modular** e a **Kaven CLI**, permitindo injeção e
+  remoção de features complexas como Pagamentos e Observabilidade sob demanda.
+</Callout>
+
+### Principais Funcionalidades (v2.0)
+
+- ✅ **Kaven CLI** - Gestão total do projeto via linha de comando
+- ✅ **Split-Schema** - Evolução segura do banco de dados (Prisma)
+- ✅ **Sistema Modular** - Adicione ou remova funcionalidades sob demanda
+- ✅ **Multi-tenancy** - Isolamento completo de dados por tenant
+- ✅ **Plans & Products** - Gestão flexível de monetização
+- ✅ **PIX Payments** - Integração nativa com PagueBit
+- ✅ **Observability** - Monitoramento completo com Prometheus/Grafana
+
+---
+
+## 📊 Stack Tecnológica
+
+### Ferramentas v2.0
+
+- **CLI:** TypeScript + Inquirer + Commander
+- **Database Engine:** Prisma Split-Schema Manager
+- **Module Engine:** Automatic Feature Injection
+
+### Frontend
+
+- **Framework:** Next.js 16 (App Router + Turbopack)
+- **UI:** shadcn/ui + Tailwind CSS v4
+- **Design System:** [62 componentes documentados](/design-system)
+- **Estado:** TanStack Query + Zustand
+- **i18n:** next-intl
+
+### Backend
+
+- **Framework:** Express.js / Fastify
+- **ORM:** Prisma
+- **Banco de Dados:** PostgreSQL
+- **Integrações:** PagueBit (PIX), BullMQ (Filas), Redis (Cache)
+
+---
+
+## 🏗️ Arquitetura e Módulos
+
+O Kaven v2.0 separa o que é **infraestrutura essencial** do que são **features de negócio**.
+
+### 🏛️ Core Platform (Incluso por padrão)
+
+- **Auth & Security:** JWT, RBAC, Anti-IDOR.
+- **Multi-tenancy:** Isolamento completo de dados.
+- **Design System:** [Componentes UI Base](/design-system).
+- **Billing Engine:** Lógica de planos e entitlements.
+
+### 📦 Módulos Opcionais
+
+<Callout type="warning">
+  Estes módulos podem ser instalados ou removidos a qualquer momento via CLI.
+</Callout>
+
+- **Payments:** Gateway PagueBit/Stripe.
+- **Observability:** Prometheus Metrics & Dashboard.
+- **AI Assistant:** Integração com LLMs (Em breve).
+- **Analytics:** Tracking avançado de eventos (Em breve).
+
+---
+
+## 🚀 Início Rápido
+
+### Instalação
+
+```bash
+# Clone e entre no projeto
+git clone https://github.com/your-org/kaven-boilerplate.git
+cd kaven-boilerplate
+
+# Instale as dependências
+pnpm install
+
+# Build da CLI (necessário na primeira execução)
+cd kaven-cli && pnpm run build && cd ..
+
+# Configure o projeto
+node kaven-cli/bin/kaven.js init
+```
+
+### Comandos Essenciais
+
+```bash
+# Gerar schema do banco (Merge Base + Extended)
+node kaven-cli/bin/kaven.js db generate
+
+# Listar módulos disponíveis
+node kaven-cli/bin/kaven.js module list
+
+# Iniciar ambiente de desenvolvimento
+pnpm dev
+```
+
+### Acessos Padrão
+
+| Aplicação           | URL                   |
+| :------------------ | :-------------------- |
+| **Admin Dashboard** | http://localhost:3000 |
+| **API Server**      | http://localhost:8000 |
+| **Docs**            | http://localhost:3002 |
+
+---
+
+## 📦 Documentação Detalhada
+
+Explore os guias detalhados para cada parte do sistema:
+
+- **[Design System](/design-system)**: Guia visual de componentes.
+- **[Plataforma](/platform)**: Guias de arquitetura, banco de dados e CLI.
+  - [Kaven CLI](/platform/cli)
+  - [Split-Schema Database](/platform/database)
+  - [Sistema Modular](/platform/modules)
+
+---
+
+**Desenvolvido com ❤️ pela equipe Kaven**

@@ -1,5 +1,6 @@
 export default {
-  overview: 'Overview',
-  complete: 'Complete Architecture',
+  overview: 'Visão Geral',
+  'v2-framework': 'Framework v2.0 (Internals)',
+  'complete': 'Referência Completa',
   'INTERNATIONALIZATION': 'Internationalization'
 }

@@ -1,0 +1,128 @@
+---
+title: Kaven Framework v2.0
+description: Arquitetura interna do framework, incluindo CLI, Split-Schema e Sistema de Injeção de Módulos
+date: 2026-01-11
+author: Antigravity Agent
+version: 2.0.0
+tags: [architecture, framework, cli, modules, internals]
+---
+
+# Kaven Framework v2.0
+
+> A arquitetura de desenvolvimento que transforma o Kaven de um "Boilerplate estático" para um "Framework modular vivo".
+
+## Visão Geral
+
+O Kaven v2.0 resolve o problema fundamental de boilerplates: a **divergência**. Em projetos tradicionais, assim que você clona o repositório, você perde a capacidade de receber atualizações do core sem conflitos massivos.
+
+A v2.0 introduz uma arquitetura baseada em **3 Pilares** para permitir atualizações contínuas e extensibilidade segura:
+
+1.  **CLI-First Workflow**: Automação como cidadão de primeira classe.
+2.  **Split-Schema Database**: Separação clara entre tabelas do framework e do produto.
+3.  **Dynamic Module System**: Injeção e ejeção de código via AST/Regex.
+
+## 1. CLI Architecture (`@kaven/cli`)
+
+A CLI não é apenas um script de setup. É o gerenciador de estado do projeto.
+
+### Estrutura Interna
+
+```typescript
+kaven-cli/
+├── src/
+│   ├── commands/     # init, db, module, update
+│   ├── core/         # Lógica pesada (ModuleManager, SchemaManager)
+│   ├── lib/          # Utils (Logger, FS, Git)
+│   └── index.ts      # Entrypoint (Commander.js)
+├── modules/          # "App Store" local (código fonte dos módulos)
+└── templates/        # Arquivos base para init
+```
+
+### Configuração (`kaven.config.json`)
+
+O estado do projeto é persistido na raiz:
+
+```json
+{
+  "name": "my-saas",
+  "version": "1.0.0",
+  "modules": {
+    "optional": {
+      "payments": true,
+      "observability": true
+    }
+  },
+  "customizations": {
+    "addedModules": ["payments"],
+    "removedModules": []
+  }
+}
+```
+
+## 2. Split-Schema Database
+
+Para permitir que o Kaven atualize tabelas de autenticação sem quebrar suas tabelas de produtos, utilizamos uma arquitetura de merge em tempo de compilação.
+
+### O Fluxo de Geração
+
+```mermaid
+graph LR
+    Base[schema.base.prisma<br/>(Core/ReadOnly)] -->|Merge| Final[schema.prisma<br/>(Generated)]
+    Extended[schema.extended.prisma<br/>(User/Writable)] -->|Merge| Final
+
+    Final -->|Prisma CLI| Client[Prisma Client]
+    Final -->|Prisma CLI| DB[(Database)]
+```
+
+### Implementação Técnica
+
+O `SchemaManager` (`src/core/schema-manager.ts`) executa:
+
+1.  Lê `packages/database/prisma/schema.base.prisma`.
+2.  Lê `packages/database/prisma/schema.extended.prisma`.
+3.  Remove blocos conflitantes (`datasource`, `generator`) do arquivo extended.
+4.  Concatena os arquivos com headers de aviso.
+5.  Escreve em `packages/database/prisma/schema.prisma`.
+
+> [!IMPORTANT]
+> O comando `pnpm db:generate` foi modificado no `package.json` para sempre executar este fluxo via CLI antes de chamar o binário do Prisma.
+
+## 3. Dynamic Module Injection
+
+O sistema de módulos permite que features inteiras (Frontend + Backend + Banco) sejam tratadas como plugins.
+
+### Mecanismo de Injeção
+
+Ao contrário de plugins tradicionais que usam hooks em runtime, o Kaven usa **Injeção de Código Fonte**.
+
+1.  **File Copying**: O `ModuleManager` copia recursivamente:
+    - Backend: `kaven-cli/modules/<mod>/api` -> `apps/api/src/modules/<mod>`
+    - Frontend: `kaven-cli/modules/<mod>/admin` -> `apps/admin/app/.../<mod>`
+
+2.  **App Wiring (`app.ts`)**:
+    O arquivo `apps/api/src/app.ts` possui "Slot Markers" onde a CLI injeta código:
+
+    ```typescript
+    // Antes
+    // [KAVEN_MODULE_IMPORTS]
+    // [KAVEN_MODULE_REGISTRATION]
+
+    // Depois (Injetado)
+    // [KAVEN_MODULE_IMPORTS]
+    import { paymentRoutes } from './modules/payments...';
+    // [KAVEN_MODULE_REGISTRATION]
+    app.register(paymentRoutes, { prefix: '/api/payments' });
+    ```
+
+3.  **Cross-Module Logic**:
+    Para casos complexos (ex: Observabilidade trackeando Login), a CLI injeta código dentro de controllers existentes (ex: `auth.controller.ts`) usando Regex de precisão cirúrgica.
+
+### Ejeção (Remove)
+
+O processo reverso identifica os blocos injetados e os remove, além de deletar os arquivos físicos, retornando o projeto ao estado "Lean".
+
+## Relacionados
+
+- [Guia da CLI](/platform/cli)
+- [Database Guide](/platform/database)
+- [Módulos Disponíveis](/platform/modules)
