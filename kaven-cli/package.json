@@ -1,0 +1,57 @@
+{
+  "name": "@kaven/cli",
+  "version": "2.0.0",
+  "description": "Official CLI for Kaven Boilerplate - Installation, Updates, and Module Management",
+  "author": "Chris (@bychrisr)",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "create-kaven-app": "./bin/create-kaven-app.js",
+    "kaven": "./bin/kaven.js"
+  },
+  "files": [
+    "bin/",
+    "dist/",
+    "templates/"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "degit": "^2.8.4",
+    "execa": "^8.0.1",
+    "fs-extra": "^11.2.0",
+    "inquirer": "^9.2.12",
+    "ora": "^7.0.1",
+    "semver": "^7.5.4"
+  },
+  "devDependencies": {
+    "@types/degit": "^2.8.6",
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.9",
+    "@types/node": "^20.19.27",
+    "@types/semver": "^7.5.6",
+    "typescript": "^5.3.3",
+    "vitest": "^1.0.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bychrisr/kaven-cli"
+  },
+  "keywords": [
+    "kaven",
+    "boilerplate",
+    "saas",
+    "cli",
+    "generator",
+    "scaffold"
+  ]
+}
