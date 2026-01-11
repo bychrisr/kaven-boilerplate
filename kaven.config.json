@@ -17,12 +17,18 @@
         "tenants": true
       },
       "optional": {
-        "payments": true,
-        "observability": true,
+        "payments": false,
+        "observability": false,
         "analytics": false,
         "ai-assistant": false,
         "notifications": false
       }
+    },
+    "customizations": {
+      "addedModules": [],
+      "removedModules": [
+        "payments"
+      ]
     }
   }
 }

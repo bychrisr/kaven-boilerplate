@@ -10,29 +10,28 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { env } from './config/env';
 import { initSentry, Sentry } from './lib/sentry';
-import { authRoutes } from './modules/auth/routes/auth.routes';
-import { userRoutes } from './modules/users/routes/user.routes';
-import { tenantRoutes } from './modules/tenants/routes/tenant.routes';
-import { paymentRoutes, webhookRoutes } from './modules/payments/routes/payment.routes';
-import { invoiceRoutes } from './modules/invoices/routes/invoice.routes';
-import { orderRoutes } from './modules/orders/routes/order.routes';
-import { fileRoutes } from './modules/files/routes/file.routes';
 import { healthRoutes } from './routes/health.routes';
 import { metricsMiddleware } from './middleware/metrics.middleware';
 import { tenantMiddleware } from './middleware/tenant.middleware';
-import { auditRoutes } from './modules/audit/routes/audit.routes';
-import { observabilityRoutes } from './modules/observability/routes/observability.routes';
-import { diagnosticsRoutes } from './modules/observability/routes/diagnostics.routes';
-import { dashboardRoutes } from './modules/dashboard/dashboard.routes';
 import { advancedMetricsMiddleware, onResponseMetricsHook } from './middleware/advanced-metrics.middleware';
+import { rateLimitConfig } from './middleware/rate-limit.middleware';
+import { csrfMiddleware } from './middleware/csrf.middleware';
+import { secureLog } from './utils/secure-logger';
+
+// [KAVEN_MODULE_IMPORTS_START]
+import { authRoutes } from './modules/auth/routes/auth.routes';
+import { userRoutes } from './modules/users/routes/user.routes';
+import { tenantRoutes } from './modules/tenants/routes/tenant.routes';
+import { fileRoutes } from './modules/files/routes/file.routes';
+import { auditRoutes } from './modules/audit/routes/audit.routes';
+import { dashboardRoutes } from './modules/dashboard/dashboard.routes';
 import { planRoutes } from './modules/plans/routes/plan.routes';
 import { featureRoutes } from './modules/plans/routes/feature.routes';
 import { productRoutes } from './modules/products/routes/product.routes';
 import { subscriptionRoutes } from './modules/subscriptions/routes/subscription.routes';
-import { notificationRoutes } from './modules/notifications/routes/notification.routes';
-import { rateLimitConfig } from './middleware/rate-limit.middleware';
-import { csrfMiddleware } from './middleware/csrf.middleware';
-import { secureLog } from './utils/secure-logger';
+
+// [KAVEN_MODULE_IMPORTS]
+// [KAVEN_MODULE_IMPORTS_END]
 
 // Initialize Sentry for error tracking
 initSentry();
@@ -184,18 +183,13 @@ app.setErrorHandler((error, request, reply) => {
   });
 });
 
-// Start server
+// Core and Module Registration
+// [KAVEN_MODULE_REGISTRATION_START]
 app.register(authRoutes, { prefix: '/api/auth' });
 app.register(userRoutes, { prefix: '/api/users' });
 app.register(tenantRoutes, { prefix: '/api/tenants' });
-app.register(paymentRoutes, { prefix: '/api/payments' });
-app.register(invoiceRoutes, { prefix: '/api/invoices' });
-app.register(orderRoutes, { prefix: '/api/orders' });
-app.register(webhookRoutes, { prefix: '/api/webhooks' });
 app.register(fileRoutes, { prefix: '/api/files' });
 app.register(auditRoutes, { prefix: '/api/audit-logs' });
-app.register(observabilityRoutes, { prefix: '/api/observability' });
-app.register(diagnosticsRoutes, { prefix: '/api/diagnostics' });
 app.register(dashboardRoutes, { prefix: '/api/dashboard' });
 
 // Plans & Products System
@@ -204,8 +198,8 @@ app.register(productRoutes, { prefix: '/api' });
 app.register(featureRoutes, { prefix: '/api' });
 app.register(subscriptionRoutes, { prefix: '/api' });
 
-// Notifications System
-app.register(notificationRoutes, { prefix: '/api/notifications' });
+// [KAVEN_MODULE_REGISTRATION]
+// [KAVEN_MODULE_REGISTRATION_END]
 
 // 🕵️ FORENSIC AUDIT: Global Request Tracer
 app.addHook('onRequest', async (request, reply) => {
