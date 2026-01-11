@@ -13,7 +13,16 @@ O Kaven v2.0 foi desenhado para ser "Lean". Isso significa que você não precis
 
 ## 🧩 O Conceito
 
-Módulos são fatias verticais de funcionalidade (Payments, Observability, Advanced Analytics) que podem ser injetadas ou removidas do core do projeto sob demanda.
+Módulos são fatias verticais de funcionalidade que representam diferenciais para o usuário final (como IA ou Analytics) e que podem ser injetadas ou removidas sob demanda.
+
+### 🏛️ Base vs 📦 Módulos
+
+É fundamental entender o que faz parte do "Coração" do Kaven e o que é opcional:
+
+| Camada          | Exemplos                                   | Natureza             |
+| :-------------- | :----------------------------------------- | :------------------- |
+| **Base (Core)** | Auth, Tenancy, **Design System**, Base UI. | Não removível.       |
+| **Módulos**     | Payments, AI, Analytics, Notifications.    | Instaláveis via CLI. |
 
 ### Pilares do Sistema:
 

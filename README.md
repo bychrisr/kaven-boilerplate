@@ -48,7 +48,26 @@ Kaven v2.0 é um boilerplate modular projetado para escala. Com uma CLI dedicada
 
 ---
 
-## 🏗️ Arquitetura
+## 🏗️ Arquitetura e Módulos
+
+O Kaven v2.0 separa o que é **infraestrutura essencial** do que são **features de negócio**.
+
+### 🏛️ Core Platform (Incluso por padrão)
+
+- **Auth & Security:** JWT, RBAC, Anti-IDOR.
+- **Multi-tenancy:** Isolamento completo de dados.
+- **Design System:** 62 componentes UI base (não removível).
+- **Billing Engine:** Lógica de planos e entitlements.
+
+### 📦 Módulos Opcionais (Diferenciais)
+
+- **Payments:** Gateway PagueBit/Stripe.
+- **AI Assistant:** Integração com LLMs.
+- **Analytics:** Tracking avançado de eventos.
+
+---
+
+## 🏗️ Estrutura de Pastas
 
 ```
 kaven-boilerplate/
