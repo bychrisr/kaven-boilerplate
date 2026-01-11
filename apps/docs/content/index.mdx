@@ -138,4 +138,90 @@ Explore os guias detalhados para cada parte do sistema:
 
 ---
 
+### Deploy em Produção (VM Limpa)
+
+Se você acabou de criar uma VM (Google Cloud, AWS, Digital Ocean) rodando Ubuntu/Debian, aqui está o checklist essencial de pacotes para rodar o Kaven.
+
+#### 1. Dependências do Sistema
+
+```bash
+# Atualize os pacotes
+sudo apt update && sudo apt upgrade -y
+
+# Instale ferramentas essenciais
+sudo apt install -y curl wget git unzip build-essential
+```
+
+#### 2. Node.js (v20 LTS via nvm)
+
+Recomendamos usar o NVM (Node Version Manager) para gerenciar a versão do Node.
+
+```bash
+# Instalar NVM
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+# Recarregar shell
+source ~/.bashrc
+
+# Instalar Node v20
+nvm install 20
+nvm use 20
+nvm alias default 20
+```
+
+#### 3. Gerenciador de Pacotes (PNPM)
+
+O Kaven utiliza `pnpm` para gestão eficiente do monorepo.
+
+```bash
+# Instalar pnpm globalmente
+npm install -g pnpm@8.15.0
+
+# Verificar instalação
+pnpm -v
+```
+
+#### 4. Docker & Infrastructure (Recomendado)
+
+Para rodar o banco de dados e serviços auxiliares (Redis, etc) de forma isolada.
+
+```bash
+# Script oficial de instalação do Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+
+# Adicionar usuário ao grupo docker (evitar sudo)
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+#### 5. Configuração Final do Projeto
+
+```bash
+# Clone seu fork (substitua URL)
+git clone https://github.com/your-org/kaven-boilerplate.git
+cd kaven-boilerplate
+
+# Instalar deps
+pnpm install
+
+# Copiar variáveis de ambiente
+cp .env.example .env
+
+# Subir infraestrutura (DB + Redis)
+pnpm docker:up
+
+# Gerar e migrar banco
+node kaven-cli/bin/kaven.js db generate
+pnpm db:migrate
+
+# Build da aplicação
+pnpm build
+
+# Start (Production Mode)
+pnpm start
+```
+
+---
+
 **Desenvolvido com ❤️ pela equipe Kaven**
