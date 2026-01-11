@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { ShieldCheck } from 'lucide-react';
-import { AuditLogTable } from '../observability/audit-log-table';
+import { AuditLogTable } from '@/components/audit-log-table';
 
 export default function AuditLogsPage() {
   const t = useTranslations('AuditLogs');
