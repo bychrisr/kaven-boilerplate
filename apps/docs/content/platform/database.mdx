@@ -1,0 +1,71 @@
+---
+title: Database (Split-Schema)
+description: Arquitetura de banco de dados escalável e modular do Kaven
+date: 2026-01-10
+author: Chris + Claude Sonnet 4.5
+version: 2.0.0
+tags: [database, prisma, architecture, scalability]
+---
+
+# Database (Split-Schema)
+
+O Kaven v2.0 introduz o conceito de **Split-Schema** para o Prisma. Esta arquitetura resolve o maior problema de boilerplates: como atualizar o "core" do banco de dados sem perder as alterações customizadas do desenvolvedor.
+
+## 🏗️ Como funciona
+
+O banco de dados não é definido por um único arquivo `.prisma`, mas sim por uma composição dinâmica:
+
+1.  **`schema.base.prisma`**: Localizado em `packages/database/prisma/`. Contém as tabelas fundamentais (User, Token, Tenant, Setting, etc). **Não deve ser editado manualmente pelo desenvolvedor.**
+2.  **`schema.extended.prisma`**: O seu playground. Aqui você adiciona os modelos específicos do seu negócio (ex: `Product`, `Order`, `Invoice`).
+3.  **`kaven db generate`**: O comando que une esses dois mundos.
+
+## 🔄 Fluxo de Trabalho
+
+### 1. Adicionando uma nova tabela
+
+Abra o arquivo `packages/database/prisma/schema.extended.prisma` e adicione seu modelo:
+
+```prisma
+model MyAwesomeProduct {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+}
+```
+
+### 2. Gerando o Schema final
+
+Execute o comando da CLI:
+
+```bash
+node kaven-cli/bin/kaven.js db generate
+```
+
+Isso gerará o arquivo `packages/database/prisma/schema.prisma`, que é o arquivo que o Prisma realmente utiliza.
+
+### 3. Executando a Migration
+
+Agora você pode usar os comandos padrão do Prisma:
+
+```bash
+pnpm --filter database migrate:dev
+```
+
+## 💡 Vantagens
+
+- **Atualizações Seguras**: Quando lançarmos uma nova versão do Kaven com melhorias no `schema.base.prisma`, você só precisa atualizar esse arquivo e rodar o `generate`. Suas tabelas no `extended` estarão intactas.
+- **Isolamento de Responsabilidade**: Fica claro o que pertence ao framework e o que pertence ao seu produto.
+- **Automação**: O CLI cuida de toda a concatenação e validação sintática básica.
+
+> [!TIP]
+> Use relações entre os modelos do `base` e do `extended` normalmente. O Prisma reconhecerá as relações após o merge dos arquivos.
+
+## ⚠️ Limitações e Cuidados
+
+- **Nomes Duplicados**: Não defina modelos com o mesmo nome em ambos os arquivos, pois o merge falhará.
+- **Enums**: Assim como os modelos, enums também podem ser estendidos no arquivo `extended`.
+
+## Relacionados
+
+- [Kaven CLI](/platform/cli)
+- [Backend Architecture](/platform/architecture/backend)

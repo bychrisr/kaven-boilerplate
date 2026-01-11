@@ -1,38 +1,30 @@
 ---
-title: Kaven Platform
-description: Documentação completa da plataforma Kaven - Arquitetura, Backend, Frontend e Guias
+title: Plataforma Kaven
+description: Documentação completa da plataforma Kaven - CLI, Banco de Dados, Módulos e Arquitetura
 ---
 
 import { Cards, Callout } from 'nextra/components';
 
-# Kaven Platform
+# Plataforma Kaven
 
-Plataforma SaaS multi-tenant completa com autenticação, RBAC, pagamentos e observabilidade.
+Plataforma SaaS multi-tenant completa com autenticação, RBAC, pagamentos e observabilidade, agora potencializada pela **Kaven CLI**.
 
 <Callout type="info">
-  Baseado em Next.js 16, React 19, Prisma e PostgreSQL com arquitetura
+  Baseado em Next.js 16, React 19, Prisma e PostgreSQL com arquitetura modular e
   escalável.
 </Callout>
 
-## 🚀 Quick Start
+## 🚀 Início Rápido
 
 <Cards>
-  <Cards.Card
-    title="Getting Started"
-    href="/platform/getting-started/installation"
-    arrow
-  />
+  <Cards.Card title="Kaven CLI" href="/platform/cli" arrow />
+  <Cards.Card title="Sistema Modular" href="/platform/modules" arrow />
+  <Cards.Card title="Banco de Dados" href="/platform/database" arrow />
   <Cards.Card
     title="Arquitetura"
     href="/platform/architecture/overview"
     arrow
   />
-  <Cards.Card
-    title="Backend API"
-    href="/platform/backend/api-reference"
-    arrow
-  />
-  <Cards.Card title="Frontend" href="/platform/frontend/routing" arrow />
 </Cards>
 
 ## 📦 Stack Tecnológica
@@ -41,8 +33,8 @@ Plataforma SaaS multi-tenant completa com autenticação, RBAC, pagamentos e obs
 
 - **Framework**: Next.js 16 (App Router)
 - **UI**: React 19 + Tailwind CSS 4
-- **State**: TanStack Query + Zustand
-- **Forms**: React Hook Form + Zod
+- **Estado**: TanStack Query + Zustand
+- **Formulários**: React Hook Form + Zod
 - **i18n**: next-intl
 
 ### Backend
@@ -50,15 +42,15 @@ Plataforma SaaS multi-tenant completa com autenticação, RBAC, pagamentos e obs
 - **Runtime**: Node.js 20+
 - **Framework**: Express.js
 - **ORM**: Prisma
-- **Database**: PostgreSQL
+- **Banco de Dados**: PostgreSQL
 - **Cache**: Redis
-- **Queue**: BullMQ
+- **Filas**: BullMQ
 
 ### DevOps
 
-- **Containerization**: Docker + Docker Compose
-- **Monitoring**: Prometheus + Grafana
-- **Logging**: Winston
+- **Containerização**: Docker + Docker Compose
+- **Monitoramento**: Prometheus + Grafana
+- **Logs**: Winston
 - **CI/CD**: GitHub Actions
 
 ## 🏗️ Arquitetura
@@ -84,19 +76,19 @@ Plataforma SaaS multi-tenant completa com autenticação, RBAC, pagamentos e obs
 └────────┘ └────────┘
 ```
 
-## 🎯 Features Principais
+## 🎯 Features Principais (v2.0)
 
+- ✅ **Kaven CLI** - Gestão completa via linha de comando
+- ✅ **Modularidade** - Adicione ou remova features sob demanda
+- ✅ **Split-Schema** - Evolução segura do banco de dados
 - ✅ **Multi-tenancy** - Isolamento completo de dados
 - ✅ **Authentication** - JWT + Refresh Tokens
 - ✅ **RBAC** - Controle de acesso baseado em roles
-- ✅ **Payments** - Integração com Stripe/PagueBit
-- ✅ **Observability** - Métricas, logs e traces
-- ✅ **i18n** - Suporte a múltiplos idiomas
-- ✅ **Dark Mode** - Tema claro/escuro
+- ✅ **Observability** - Métricas, logs e traces integrados
 
 ## 📚 Explore
 
-- [Installation](/platform/getting-started/installation) - Setup inicial
-- [Architecture](/platform/architecture/overview) - Visão arquitetural
-- [API Reference](/platform/backend/api-reference) - Documentação da API
-- [Deployment](/platform/guides/deployment) - Deploy em produção
+- [Instalação](/platform/getting-started/installation) - Setup inicial
+- [Guia da CLI](/platform/cli) - Comandos e uso
+- [Banco de Dados](/platform/database) - Estrutura Split-Schema
+- [Sistema Modular](/platform/modules) - Features opcionais

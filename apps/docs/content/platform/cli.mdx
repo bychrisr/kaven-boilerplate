@@ -1,0 +1,106 @@
+---
+title: Kaven CLI
+description: Guia completo da interface de linha de comando do Kaven v2.0
+date: 2026-01-10
+author: Chris + Claude Sonnet 4.5
+version: 2.0.0
+tags: [cli, automation, productivity, devtools]
+---
+
+# Kaven CLI
+
+A **Kaven CLI** é o coração da v2.0, permitindo gerenciar o ciclo de vida do seu projeto, desde a inicialização até a adição de módulos complexos e manutenção do banco de dados.
+
+## 📦 Instalação
+
+A CLI já vem pré-instalada no boilerplate. Para compilar a versão mais recente após alterações:
+
+```bash
+cd kaven-cli
+pnpm run build
+```
+
+Você pode executar os comandos usando `node kaven-cli/bin/kaven.js` ou criar um link simbólico global.
+
+## 🚀 Comandos Principais
+
+### `kaven init`
+
+Inicia o wizard interativo para configurar um novo projeto Kaven.
+
+**O que ele faz:**
+
+- Valida o diretório atual.
+- Coleta informações do projeto (Nome, Versão, Descrição).
+- Cria o arquivo de configuração `kaven.config.json`.
+- Prepara a estrutura base de pastas.
+
+### `kaven db generate`
+
+A ferramenta essencial para quem trabalha com a arquitetura **Split-Schema**.
+
+**O que ele faz:**
+
+- Mescla o `schema.base.prisma` (core do Kaven) com o seu `schema.extended.prisma` (específico do projeto).
+- Gera o arquivo `packages/database/prisma/schema.prisma` final.
+- Garante que as atualizações do boilerplate não sobrescrevam suas alterações no banco.
+
+> [!IMPORTANT]
+> Sempre use este comando ao adicionar novas models no seu projeto.
+
+### `kaven module list`
+
+Lista todos os módulos disponíveis no ecossistema Kaven e seu status atual no projeto (instalado ou não).
+
+### `kaven module add <name>`
+
+Instala um novo módulo no seu projeto.
+
+**Exemplo:**
+
+```bash
+node kaven-cli/bin/kaven.js module add payments
+```
+
+### `kaven module remove <name>`
+
+Remove um módulo instalado, limpando as dependências e arquivos injetados.
+
+---
+
+## ⚙️ Configuração (`kaven.config.json`)
+
+Toda a inteligência da CLI reside no arquivo `kaven.config.json` localizado na raiz do projeto.
+
+```json
+{
+  "name": "meu-projeto",
+  "version": "1.0.0",
+  "description": "Meu App SaaS",
+  "modules": {
+    "payments": {
+      "enabled": true,
+      "installedAt": "2026-01-10T..."
+    }
+  }
+}
+```
+
+## 🛠️ Troubleshooting
+
+### Erro: "Command not found"
+
+Certifique-se de que está passando o caminho correto para o executável ou rodando via `node`.
+
+### Permissões
+
+Em sistemas Linux/macOS, pode ser necessário dar permissão de execução ao binário:
+
+```bash
+chmod +x kaven-cli/bin/kaven.js
+```
+
+## Relacionados
+
+- [Database (Split-Schema)](/platform/database)
+- [Sistema Modular](/platform/modules)
