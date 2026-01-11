@@ -1,5 +1,5 @@
 import type { FastifyRequest, FastifyReply, HookHandlerDoneFunction } from 'fastify';
-import { advancedMetricsService } from '../modules/observability/services/advanced-metrics.service';
+import { advancedMetricsService } from '../services/advanced-metrics.service';
 
 /**
  * Middleware para coletar métricas avançadas automaticamente

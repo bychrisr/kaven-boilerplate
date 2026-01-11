@@ -13,7 +13,6 @@ import { initSentry, Sentry } from './lib/sentry';
 import { healthRoutes } from './routes/health.routes';
 import { metricsMiddleware } from './middleware/metrics.middleware';
 import { tenantMiddleware } from './middleware/tenant.middleware';
-import { advancedMetricsMiddleware, onResponseMetricsHook } from './middleware/advanced-metrics.middleware';
 import { rateLimitConfig } from './middleware/rate-limit.middleware';
 import { csrfMiddleware } from './middleware/csrf.middleware';
 import { secureLog } from './utils/secure-logger';
@@ -137,9 +136,8 @@ app.register(rateLimit, rateLimitConfig);
 // Metrics middleware (aplicado globalmente)
 app.addHook('onRequest', metricsMiddleware);
 
-// Advanced metrics middleware (coleta latência e status codes)
-app.addHook('onRequest', advancedMetricsMiddleware);
-app.addHook('onResponse', onResponseMetricsHook);
+// [KAVEN_MODULE_HOOKS]
+// [KAVEN_MODULE_HOOKS_END]
 
 // Tenant detection middleware (Camaleão)
 app.addHook('onRequest', tenantMiddleware);

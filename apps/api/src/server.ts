@@ -1,6 +1,8 @@
 import { app } from './app';
 import { env } from './config/env';
-import { metricsUpdaterService } from './modules/observability/services/metrics-updater.service';
+
+// [KAVEN_SERVER_IMPORTS]
+// [KAVEN_SERVER_IMPORTS_END]
 
 // Start server
 const start = async () => {
@@ -10,9 +12,9 @@ const start = async () => {
     console.log(`🚀 Server running on http://localhost:${port}`);
     console.log(`📚 API Documentation: http://localhost:${port}/docs`);
     console.log(`📊 Metrics endpoint: http://localhost:${port}/metrics`);
-    
-    // Start automatic metrics updates
-    metricsUpdaterService.start();
+
+// [KAVEN_SERVER_STARTUP]
+    // [KAVEN_SERVER_STARTUP_END]
   } catch (err) {
     app.log.error(err);
     process.exit(1);

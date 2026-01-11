@@ -27,7 +27,8 @@
     "customizations": {
       "addedModules": [],
       "removedModules": [
-        "payments"
+        "payments",
+        "observability"
       ]
     }
   }
