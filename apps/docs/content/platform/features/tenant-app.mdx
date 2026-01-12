@@ -1,0 +1,101 @@
+---
+title: Tenant App & Spaces
+description: Aplicação dedicada para Tenants com sistema de Spaces e isolamento de dados
+date: 2026-01-12
+author: Antigravity Agent
+version: 1.0.0
+tags: [tenant, spaces, core, architecture]
+---
+
+# Tenant App & Spaces System
+
+O **Tenant App** (`apps/tenant`) é o coração da experiência SaaS do cliente. Diferente do Admin Panel (focado em gestão da plataforma), o Tenant App é onde os clientes operam seu negócio.
+
+A feature mais importante introduzida nesta versão é o sistema de **Spaces**, que permite segregar dados e funcionalidades dentro do mesmo Tenant (ex: Financeiro vs Marketing).
+
+## Visão Geral
+
+- **Porta**: `3001` (vs `3000` do Admin)
+- **Tema Visual**: Roxo (Purple) para distinção clara
+- **Isolamento**: Rotas administrativas removidas
+- **Contexto**: `TenantContext` + `SpaceContext`
+
+## Spaces System
+
+O sistema de Spaces permite que um Tenant tenha múltiplos workspaces funcionais.
+
+### Tipos de Space (Atuais)
+
+- `ADMIN`: Gestão geral do Tenant
+- `FINANCE`: Módulo financeiro
+- `SUPPORT`: Atendimento ao cliente
+- `MARKETING`: Campanhas e CRM
+- `DEVOPS`: Monitoramento e Logs
+
+### Arquitetura de Contexto
+
+O gerenciamento de estado é feito via Zustand com persistência local:
+
+```typescript
+// Hook de consumo (useSpace)
+const { activeSpace, spaces, setActiveSpace } = useSpace();
+
+console.log(activeSpace.code); // 'FINANCE'
+```
+
+### Componentes Chave
+
+#### `SpaceSelector`
+
+Dropdown localizado no Header que permite troca rápida entre Spaces permitidos para o usuário logado.
+
+#### `TenantSidebar`
+
+Menu de navegação dinâmico que filtra rotas baseado no Space ativo. Exemplo: A rota `/invoices` só aparece se `activeSpace === 'FINANCE'`.
+
+## Core Pages
+
+### Dashboard (`/dashboard`)
+
+Página inicial contextual. Exibe estatísticas e atividades relevantes apenas para o Space selecionado.
+
+### Team Management (`/team`)
+
+Gestão de membros da equipe (Role-Based Access Control).
+
+- Permite convidar novos membros
+- Mostra quais Spaces cada membro tem acesso
+
+### Settings (`/settings`)
+
+Configuração do Tenant. Inclui aba "Spaces" para visualizar os módulos ativos.
+
+---
+
+## API Reference (Internal)
+
+### `GET /api/spaces`
+
+Retorna lista de Spaces disponíveis para o usuário atual no Tenant.
+
+**Response:**
+
+```json
+[
+  {
+    "id": "uuid",
+    "code": "FINANCE",
+    "name": "Finance",
+    "icon": "DollarSign",
+    "color": "green"
+  }
+]
+```
+
+---
+
+## Próximos Passos
+
+- Implementação dos módulos funcionais (Projects, Tasks)
+- Permissões granulares por Space customizadas
+- Criação dinâmica de Spaces pelos clientes

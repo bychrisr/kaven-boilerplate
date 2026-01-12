@@ -1,16 +1,9 @@
 export default {
-  payments: 'Payments Module',
-  'PLATFORM_SETTINGS': 'Platform Settings',
-  'TENANT_MANAGEMENT': 'Tenant Management',
-  'PLANS_PRODUCTS': 'Plans & Products',
-  'RBAC_MIDDLEWARE': 'RBAC Middleware',
-  'spaces-and-permissions': 'Spaces & Permission System',
-  'EMAIL_SERVICE': 'Email Service',
-  'ENVIRONMENT_VARIABLES': 'Environment Variables',
-  'TENANT_MIDDLEWARE': 'Tenant Middleware',
-  'AVATAR_UPLOAD_FEATURE': 'Avatar Upload',
-  'SETUP_WIZARD': 'Setup Wizard',
-  'user-invites': 'User Invites',
-  'password-recovery': 'Password Recovery',
-  'email-system': 'Robust Email System',
-}
+  authentication: 'Authentication',
+  authorization: 'Authorization (CASL)',
+  'mail-system': 'Mail System',
+  'api-keys': 'API Keys Management',
+  'rate-limiting': 'Rate Limiting',
+  'tenant-app': 'Tenant App & Spaces', // New Entry
+  'spaces-and-permissions': 'Spaces & Permissions',
+};
