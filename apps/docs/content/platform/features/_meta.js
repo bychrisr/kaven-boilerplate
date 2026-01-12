@@ -8,5 +8,7 @@ export default {
   'ENVIRONMENT_VARIABLES': 'Environment Variables',
   'TENANT_MIDDLEWARE': 'Tenant Middleware',
   'AVATAR_UPLOAD_FEATURE': 'Avatar Upload',
-  'SETUP_WIZARD': 'Setup Wizard'
+  'SETUP_WIZARD': 'Setup Wizard',
+  'user-invites': 'User Invites',
+  'password-recovery': 'Password Recovery'
 }
