@@ -69,6 +69,7 @@ export const SPACES: Record<string, SpaceConfig> = {
         title: 'MANAGEMENT',
         items: [
           { icon: Users, label: 'Users', href: '/users' },
+          { icon: Mail, label: 'Invites', href: '/invites' },
           { icon: Building2, label: 'Tenant', href: '/tenants' }
         ]
       },
@@ -117,8 +118,8 @@ export const SPACES: Record<string, SpaceConfig> = {
             children: [
                { label: 'Dashboard', href: '/observability' },
                { label: 'Audit Logs', href: '/audit-logs' },
-               { label: 'Grafana', href: 'http://localhost:3001', external: true },
-               { label: 'Prometheus', href: 'http://localhost:9090', external: true }
+               { label: 'Grafana', href: process.env.NEXT_PUBLIC_GRAFANA_URL || 'http://localhost:3001', external: true },
+               { label: 'Prometheus', href: process.env.NEXT_PUBLIC_PROMETHEUS_URL || 'http://localhost:9090', external: true }
             ]
           },
           { icon: Server, label: 'Servers', href: '/observability' },
@@ -132,10 +133,10 @@ export const SPACES: Record<string, SpaceConfig> = {
           { 
             icon: Book, 
             label: 'Documentation', 
-            href: 'http://localhost:3002',
+            href: process.env.NEXT_PUBLIC_DOCS_URL || 'http://localhost:3002',
             children: [
-              { label: 'Platform Wiki', href: 'http://localhost:3002/platform', external: true },
-              { label: 'Design System', href: 'http://localhost:3002/design-system', external: true }
+              { label: 'Platform Wiki', href: `${process.env.NEXT_PUBLIC_DOCS_URL || 'http://localhost:3002'}/platform`, external: true },
+              { label: 'Design System', href: `${process.env.NEXT_PUBLIC_DOCS_URL || 'http://localhost:3002'}/design-system`, external: true }
             ]
           }
         ]

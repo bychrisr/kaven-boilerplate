@@ -27,6 +27,7 @@ import { cn } from '@/lib/utils';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDeleteUser } from '@/hooks/use-users';
 import { toast } from 'sonner';
+import { CONFIG } from '@/lib/config';
 
 // User type from API
 interface User {
@@ -87,7 +88,7 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
           <Avatar>
             {row.avatar ? (
               <AvatarImage 
-                src={row.avatar.startsWith('http') ? row.avatar : `http://localhost:8000${row.avatar}`} 
+                src={row.avatar.startsWith('http') ? row.avatar : `${CONFIG.serverUrl}${row.avatar}`} 
                 alt={name} 
               />
             ) : null}

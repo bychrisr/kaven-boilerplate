@@ -30,6 +30,8 @@ interface AuthState {
   set: (state: Partial<AuthState>) => void;
 }
 
+import { CONFIG } from '@/lib/config';
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
@@ -144,7 +146,7 @@ export const useAuthStore = create<AuthState>()(
             setTimeout(() => {
               console.group('🔄 AuthStore: Rehydration & Validation');
               console.log('1. Starting background token validation...');
-              const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+              const apiUrl = CONFIG.serverUrl;
               console.log('2. API URL:', apiUrl);
               console.log('3. Token starts with:', token.substring(0, 10) + '...');
               

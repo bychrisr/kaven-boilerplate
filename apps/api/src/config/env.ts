@@ -17,7 +17,7 @@ export const envSchema = z.object({
   REFRESH_TOKEN_SECRET: z.string().min(32, 'REFRESH_TOKEN_SECRET must be at least 32 characters'),
   ENCRYPTION_KEY: z.string().min(32, 'ENCRYPTION_KEY must be at least 32 characters').optional(),
   RATE_LIMIT_MAX: z.union([z.string().transform(Number), z.number()]).default(100),
-  CORS_ORIGIN: z.string().default('http://localhost:3000'),
+  CORS_ORIGIN: z.string().default('http://localhost:3000,http://localhost:3001,http://localhost:3002').transform(s => s.split(',').map(o => o.trim())),
   FRONTEND_URL: z.string().default('http://localhost:3000'),
 
   // Stripe

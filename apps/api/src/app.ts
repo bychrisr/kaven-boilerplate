@@ -56,7 +56,7 @@ app.register(swagger, {
       version: '0.6.0',
     },
     servers: [
-      { url: 'http://localhost:8000', description: 'Development' },
+      { url: `http://localhost:${env.PORT}`, description: 'Development' },
     ],
     components: {
       securitySchemes: {
@@ -107,11 +107,7 @@ app.register(fastifyHelmet, {
 });
 
 app.register(cors, {
-  origin: [
-    'http://localhost:3000', // Admin App
-    'http://localhost:3002', // Docs
-    env.FRONTEND_URL,        // Custom URL from env
-  ],
+  origin: env.CORS_ORIGIN,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID'],
