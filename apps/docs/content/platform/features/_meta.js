@@ -10,5 +10,6 @@ export default {
   'AVATAR_UPLOAD_FEATURE': 'Avatar Upload',
   'SETUP_WIZARD': 'Setup Wizard',
   'user-invites': 'User Invites',
-  'password-recovery': 'Password Recovery'
+  'password-recovery': 'Password Recovery',
+  'email-system': 'Robust Email System',
 }

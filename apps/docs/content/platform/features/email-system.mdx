@@ -1,0 +1,145 @@
+---
+title: Email System
+description: Sistema robusto de envio de emails transacionais com suporte a templates Handlebars e MailHog para desenvolvimento.
+date: 2026-01-11
+author: Antigravity
+version: 1.0.0
+tags: [email, smtp, mailhog, handlebars, infra]
+---
+
+# Email System
+
+> Sistema robusto de envio de emails transacionais integrado com MailHog para desenvolvimento local e Handlebars para templates.
+
+## Visão Geral
+
+O Email System do Kaven é projetado para ser resiliente e flexível. Ele permite o envio de notificações críticas (boas-vindas, redefinição de senha, convites) utilizando templates dinâmicos.
+
+**Principais Features:**
+
+- ✅ **Templates Dinâmicos:** Uso de Handlebars (`.hbs`) para separação clara entre lógica e apresentação.
+- ✅ **Ambiente de Desenvolvimento:** Integração automática com **MailHog** para capturar emails localmente sem disparos reais.
+- ✅ **Configuração Automática:** Detecção inteligente de ambiente (Dev vs Prod) para fallback seguro.
+- ✅ **Tipagem Forte:** Integração com interfaces TypeScript para dados dos templates.
+
+## Como Funciona
+
+1. **Seleção de Transporter:** Ao iniciar, o `EmailService` verifica as variáveis de ambiente. Em `development`, se as credenciais SMTP não estiverem presentes, ele se conecta automaticamente ao MailHog (`localhost:1025`).
+2. **Renderização:** O método `renderTemplate` carrega o arquivo `.hbs` correspondente e injeta os dados do contexto.
+3. **Envio:** O email processado é enviado via SMTP.
+
+## Fluxo Técnico
+
+```mermaid
+sequenceDiagram
+    participant App as Aplicação
+    participant Service as EmailService
+    participant HBS as Handlebars
+    participant SMTP as SMTP (SendGrid/MailHog)
+
+    App->>Service: sendWelcomeEmail(user)
+    Service->>HBS: render("welcome", { name: user.name })
+    HBS-->>Service: HTML String
+    Service->>SMTP: sendMail(to, subject, html)
+
+    rect rgb(240, 248, 255)
+        Note over SMTP: Em Dev: MailHog (Port 1025)<br/>Em Prod: SendGrid/AWS (Port 587)
+    end
+```
+
+## Configuração
+
+### Variáveis de Ambiente
+
+Para produção, configure as credenciais do seu provedor SMTP. Para desenvolvimento local, basta deixar o `SMTP_HOST` como `localhost` (ou vazio, que o sistema assume defaults).
+
+```env
+# Produção (Exemplo SendGrid)
+SMTP_HOST=smtp.sendgrid.net
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=apikey
+SMTP_PASS=sua_api_key_aqui
+
+# Desenvolvimento (MailHog - Automático)
+SMTP_HOST=localhost
+SMTP_PORT=1025
+SMTP_SECURE=false
+```
+
+### Docker (MailHog)
+
+O serviço `mailhog` está definido no `docker-compose.yml`:
+
+- **SMTP:** Porta 1025 (Envio)
+- **Web UI:** Porta 8025 (Visualização)
+
+Acesse [http://localhost:8025](http://localhost:8025) para ver os emails capturados.
+
+## API Reference
+
+### `emailService`
+
+Instância singleton exportada de `apps/api/src/lib/email.service.ts`.
+
+#### `sendWelcomeEmail(user)`
+
+Envia email de boas-vindas após cadastro.
+
+- **Params:** `{ email: string, name: string }`
+
+#### `sendVerificationEmail(user, token)`
+
+Envia link para verificação de email.
+
+- **Params:** `user`, `token` (string)
+
+#### `sendPasswordResetEmail(user, token)`
+
+Envia link para redefinição de senha.
+
+- **Params:** `user`, `token` (string)
+
+#### `sendInviteEmail(email, inviteUrl, tenantName, inviterName)`
+
+Convida um usuário para um Tenant.
+
+- **Params:** strings
+
+#### `sendInvoiceEmail(user, invoice)`
+
+Notifica sobre uma nova fatura.
+
+- **Params:** `user`, `invoice` (Pick<Invoice, ...>)
+
+## Templates
+
+Os templates ficam localizados em `apps/api/src/templates/emails/`.
+
+| Arquivo              | Propósito        | Contexto Necessário                          |
+| -------------------- | ---------------- | -------------------------------------------- |
+| `welcome.hbs`        | Boas-vindas      | `name`, `frontendUrl`                        |
+| `verification.hbs`   | Verificar Email  | `name`, `verificationUrl`                    |
+| `reset-password.hbs` | Resetar Senha    | `name`, `resetUrl`                           |
+| `invite.hbs`         | Convite para Org | `inviteUrl`, `tenantName`, `inviterName`     |
+| `invoice.hbs`        | Fatura           | `name`, `invoiceNumber`, `amount`, `dueDate` |
+
+## Adicionando Novos Emails
+
+1. Crie um novo arquivo `.hbs` em `apps/api/src/templates/emails/`.
+2. Adicione um método no `EmailService`.
+3. Defina a interface dos dados do template.
+4. Chame `this.renderTemplate('nome-arquivo', dados)`.
+5. Chame `this.sendEmail(...)`.
+
+## Troubleshooting
+
+### `ECONNREFUSED 127.0.0.1:1025`
+
+**Causa:** Container do MailHog não está rodando.
+**Solução:** Execute `docker-compose up -d mailhog`.
+
+### Emails não aparecem no MailHog
+
+**Causa:** Aplicação pode estar tentando enviar para porta 587 ou host externo.
+**Solução:** Verifique se `SMTP_PORT` está 1025 no `.env` local.
