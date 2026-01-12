@@ -1,0 +1,24 @@
+{
+  "name": "@kaven/database",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "db:push": "prisma db push",
+    "db:pull": "prisma db pull",
+    "db:studio": "prisma studio",
+    "db:seed": "tsx prisma/seed.ts",
+    "generate": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0",
+    "tsx": "^4.7.0",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  }
+}

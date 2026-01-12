@@ -1,7 +1,13 @@
 import { FastifyInstance } from 'fastify';
 import { authController } from '../controllers/auth.controller';
+import { PasswordResetController } from '../controllers/password-reset.controller';
+import { PasswordResetService } from '../services/password-reset.service';
+import { prisma } from '../../../lib/prisma';
 
 export async function authRoutes(fastify: FastifyInstance) {
+  const passwordResetService = new PasswordResetService(prisma);
+  const passwordResetController = new PasswordResetController(passwordResetService);
+
   // Registrar (3 req/min)
   fastify.post('/register', {
     config: {
@@ -52,10 +58,10 @@ export async function authRoutes(fastify: FastifyInstance) {
         timeWindow: 60000, // 1 minuto em ms
       },
     },
-    handler: authController.forgotPassword.bind(authController),
+    handler: passwordResetController.requestReset.bind(passwordResetController),
   });
   
-  fastify.post('/reset-password', authController.resetPassword.bind(authController));
+  fastify.post('/reset-password', passwordResetController.resetPassword.bind(passwordResetController));
   
   // 2FA
   fastify.post('/2fa/setup', authController.setup2FA.bind(authController));

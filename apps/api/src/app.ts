@@ -20,6 +20,7 @@ import { secureLog } from './utils/secure-logger';
 // [KAVEN_MODULE_IMPORTS_START]
 import { authRoutes } from './modules/auth/routes/auth.routes';
 import { userRoutes } from './modules/users/routes/user.routes';
+import { inviteRoutes } from './modules/users/routes/invite.routes';
 import { tenantRoutes } from './modules/tenants/routes/tenant.routes';
 import { fileRoutes } from './modules/files/routes/file.routes';
 import { auditRoutes } from './modules/audit/routes/audit.routes';
@@ -190,6 +191,7 @@ app.setErrorHandler((error, request, reply) => {
 // [KAVEN_MODULE_REGISTRATION_START]
 app.register(authRoutes, { prefix: '/api/auth' });
 app.register(userRoutes, { prefix: '/api/users' });
+app.register(inviteRoutes, { prefix: '/api/users' });
 app.register(tenantRoutes, { prefix: '/api/tenants' });
 app.register(fileRoutes, { prefix: '/api/files' });
 app.register(auditRoutes, { prefix: '/api/audit-logs' });

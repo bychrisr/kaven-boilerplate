@@ -39,7 +39,10 @@ const STATUS_OPTIONS = [
   { value: 'rejected', label: 'Rejected' },
 ];
 
+import { InviteUserDialog } from '@/components/users/invite-dialog';
+
 export function UserView() {
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
   // Filters
   const [filterName, setFilterName] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -155,17 +158,16 @@ export function UserView() {
             </Breadcrumbs>
           </div>
         </div>
-        <Link href="/users/new">
-          <Button 
-            variant="contained"
-            color="primary"
-            size="lg"
-            className="h-12 text-md font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            New User
-          </Button>
-        </Link>
+        <Button 
+          variant="contained"
+          color="primary"
+          size="lg"
+          className="h-12 text-md font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all"
+          onClick={() => setIsInviteOpen(true)}
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Invite User
+        </Button>
       </div>
 
       <Card className="!p-0 !gap-0 block overflow-hidden border-none shadow-md bg-card dark:bg-[#212B36]">
@@ -390,6 +392,11 @@ export function UserView() {
             </div>
         </div>
       </Card>
+      
+      <InviteUserDialog 
+        open={isInviteOpen} 
+        onClose={() => setIsInviteOpen(false)} 
+      />
     </div>
   );
 }
