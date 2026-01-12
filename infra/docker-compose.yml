@@ -90,7 +90,22 @@ services:
     networks:
       - default
 
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: kaven-mailhog
+    ports:
+      - '1025:1025' # SMTP
+      - '8025:8025' # Web UI
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'http://localhost:8025']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - default
+
 volumes:
   postgres_data:
   prometheus_data:
   grafana_data:
+
