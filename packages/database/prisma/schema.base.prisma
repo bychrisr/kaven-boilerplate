@@ -117,6 +117,8 @@ model Tenant {
   Product       Product[]
   Purchase      Purchase[]
   UsageRecord   UsageRecord[]
+  invites       TenantInvite[] @relation("TenantInvites")
+  spaces        Space[]        @relation("TenantSpaces")
 
   @@index([slug])
   @@index([domain])
@@ -173,6 +175,9 @@ model User {
   // Notification Relations
   inAppNotifications        InAppNotification[]
   notificationPreferences   UserNotificationPreferences?
+  
+  sentInvites               TenantInvite[] @relation("SentInvites")
+  userSpaces                UserSpace[]    @relation("UserSpaces")
 
   @@index([email])
   @@index([tenantId])

@@ -4,6 +4,7 @@ export default {
   'TENANT_MANAGEMENT': 'Tenant Management',
   'PLANS_PRODUCTS': 'Plans & Products',
   'RBAC_MIDDLEWARE': 'RBAC Middleware',
+  'spaces-and-permissions': 'Spaces & Permission System',
   'EMAIL_SERVICE': 'Email Service',
   'ENVIRONMENT_VARIABLES': 'Environment Variables',
   'TENANT_MIDDLEWARE': 'Tenant Middleware',

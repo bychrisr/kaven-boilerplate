@@ -1,0 +1,124 @@
+// ===========================
+// TENANT INVITES
+// ===========================
+
+model TenantInvite {
+  id        String   @id @default(uuid())
+  email     String
+  role      Role     @default(USER)
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  
+  // OPTIONAL: tenantId is null for SUPER_ADMIN, required for ADMIN/MEMBER
+  tenant      Tenant?   @relation("TenantInvites", fields: [tenantId], references: [id])
+  tenantId    String?   @map("tenant_id")
+  
+  invitedBy   User      @relation("SentInvites", fields: [invitedById], references: [id])
+  invitedById String    @map("invited_by_id")
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  inviteSpaces InviteSpace[]
+  
+  @@index([email])
+  @@index([token])
+  @@index([tenantId])
+  @@map("tenant_invites")
+}
+
+// ===========================
+// SPACES SYSTEM
+// ===========================
+
+
+/// Spaces configuráveis para organização de permissões
+/// Exemplos: Finance, Marketing, Support, DevOps
+model Space {
+  id          String   @id @default(uuid())
+  tenantId    String?  @map("tenant_id") // null = global space (platform-wide)
+  
+  /// Código único do space (ex: 'FINANCE', 'MARKETING')
+  code        String
+  
+  /// Nome para exibição
+  name        String
+  
+  /// Descrição do space
+  description String?
+  
+  /// Ícone Lucide (ex: 'DollarSign', 'TrendingUp')
+  icon        String   @default("Folder")
+  
+  /// Cor em hexadecimal (ex: '#10B981')
+  color       String   @default("#6B7280")
+  
+  /// Permissões padrão deste space
+  /// Exemplo: ["view:invoices", "manage:refunds"]
+  defaultPermissions String[] @map("default_permissions")
+  
+  /// Se o space está ativo
+  isActive    Boolean  @default(true) @map("is_active")
+  
+  /// Ordem de exibição
+  sortOrder   Int      @default(0) @map("sort_order")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  tenant       Tenant?       @relation("TenantSpaces", fields: [tenantId], references: [id], onDelete: Cascade)
+  userSpaces   UserSpace[]
+  inviteSpaces InviteSpace[]
+  
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([isActive])
+  @@map("spaces")
+}
+
+/// Relação entre User e Space (many-to-many)
+/// Define quais spaces um usuário pode acessar
+model UserSpace {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  spaceId   String   @map("space_id")
+  
+  /// Permissões customizadas para este usuário neste space
+  /// Sobrescreve defaultPermissions do Space se definido
+  /// Array vazio [] significa usar defaultPermissions do Space
+  customPermissions String[] @map("custom_permissions") @default([])
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  user  User  @relation("UserSpaces", fields: [userId], references: [id], onDelete: Cascade)
+  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, spaceId])
+  @@index([userId])
+  @@index([spaceId])
+  @@map("user_spaces")
+}
+
+/// Relação entre TenantInvite e Space (many-to-many)
+/// Define quais spaces serão atribuídos ao usuário quando aceitar o convite
+model InviteSpace {
+  id        String   @id @default(uuid())
+  inviteId  String   @map("invite_id")
+  spaceId   String   @map("space_id")
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  invite TenantInvite @relation(fields: [inviteId], references: [id], onDelete: Cascade)
+  space  Space        @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  
+  @@unique([inviteId, spaceId])
+  @@index([inviteId])
+  @@index([spaceId])
+  @@map("invite_spaces")
+}
