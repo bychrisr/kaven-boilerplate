@@ -1,3 +1,4 @@
+import { emailTheme } from './email-theme';
 import nodemailer, { Transporter } from 'nodemailer';
 import type { User, Invoice } from '@prisma/client';
 import { env } from '../config/env';
@@ -30,7 +31,7 @@ interface EmailConfig {
   } | undefined;
 }
 
-class EmailService {
+export class EmailService {
   private transporter: Transporter;
   private from: string;
   private isConfigured: boolean;
@@ -40,17 +41,29 @@ class EmailService {
     this.from = env.EMAIL_FROM;
     this.templatesDir = path.join(__dirname, '../templates/emails');
     this.isConfigured = this.checkConfiguration();
+    
+    // Register partials (layout)
+    this.registerPartials();
 
     if (this.isConfigured) {
       this.transporter = this.createTransporter();
     } else {
       secureLog.warn('Email service não configurado corretamente. Tentando usar MailHog como fallback...');
-      // Fallback para MailHog se não configurado
       this.transporter = nodemailer.createTransport({
         host: 'localhost',
         port: 1025,
         secure: false,
       });
+    }
+  }
+
+  private async registerPartials() {
+    try {
+      const layoutPath = path.join(this.templatesDir, 'layouts/main.hbs');
+      const layoutSource = await fs.readFile(layoutPath, 'utf-8');
+      handlebars.registerPartial('main', layoutSource);
+    } catch (error) {
+      secureLog.error('Erro ao registrar layouts:', error);
     }
   }
 
@@ -61,11 +74,11 @@ class EmailService {
     try {
       const templatePath = path.join(this.templatesDir, `${templateName}.hbs`);
       
-      // Cache de template poderia ser implementado aqui em produção
       const templateSource = await fs.readFile(templatePath, 'utf-8');
       const template = handlebars.compile(templateSource);
       
-      return template(context);
+      // Inject theme into context
+      return template({ ...context, theme: emailTheme });
     } catch (error) {
       secureLog.error(`Erro ao renderizar template ${templateName}:`, error);
       throw new Error(`Falha ao renderizar template de email: ${templateName}`);

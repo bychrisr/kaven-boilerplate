@@ -12,6 +12,7 @@
     "grafana:import": "bash ../../scripts/import-grafana-dashboards.sh"
   },
   "dependencies": {
+    "@kaven/shared": "workspace:*",
     "@fastify/cors": "^11.2.0",
     "@fastify/helmet": "^13.0.2",
     "@fastify/multipart": "^9.3.0",
