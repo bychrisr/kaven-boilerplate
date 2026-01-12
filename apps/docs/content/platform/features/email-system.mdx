@@ -1,182 +1,146 @@
 ---
 title: Email System
-description: Sistema robusto de envio de emails transacionais com suporte a templates Handlebars e MailHog para desenvolvimento.
+description: Sistema robusto de emails transacionais com i18n, templates Handlebars e Design System compartilhado.
 date: 2026-01-11
 author: Antigravity
-version: 1.0.0
-tags: [email, smtp, mailhog, handlebars, infra]
+version: 2.0.0
+tags: [email, smtp, i18n, handlebars, design-system]
 ---
 
 # Email System
 
-> Sistema robusto de envio de emails transacionais integrado com MailHog para desenvolvimento local e Handlebars para templates.
+> Sistema avançado de emails transacionais com suporte nativo a internacionalização (i18n), temas via Design System e templates dinâmicos.
 
 ## Visão Geral
 
-O Email System do Kaven é projetado para ser resiliente e flexível. Ele permite o envio de notificações críticas (boas-vindas, redefinição de senha, convites) utilizando templates dinâmicos.
+O Email System do Kaven foi refatorado para oferecer uma experiência "Premium SaaS". Ele suporta múltiplos idiomas (`pt`, `en`), utiliza tokens de design compartilhados para consistência visual e inclui templates para cenários críticos de segurança e cobrança.
 
 **Principais Features:**
 
-- ✅ **Templates Dinâmicos:** Uso de Handlebars (`.hbs`) para separação clara entre lógica e apresentação.
-- ✅ **Ambiente de Desenvolvimento:** Integração automática com **MailHog** para capturar emails localmente sem disparos reais.
-- ✅ **Configuração Automática:** Detecção inteligente de ambiente (Dev vs Prod) para fallback seguro.
-- ✅ **Tipagem Forte:** Integração com interfaces TypeScript para dados dos templates.
+- ✅ **Internacionalização (i18n):** Suporte nativo a `pt` (Português) e `en` (Inglês) em todos os emails.
+- ✅ **Design System Compartilhado:** Cores e tipografia importados de `@kaven/shared` (SSOT), garantindo consistência com a plataforma.
+- ✅ **Partials Reutilizáveis:** Componentes modulares (`header`, `footer`, `button`, `alert`) para manutenção fácil.
+- ✅ **Ambiente de Desenvolvimento:** Integração automática com **MailHog** na porta 1025.
+- ✅ **Tipagem Forte:** Interfaces TypeScript para garantir integridade dos dados injetados.
+
+## Estrutura do Projeto
+
+```
+apps/api/src/templates/emails/
+├── layouts/
+│   └── main.hbs         # Esqueleto mestre (HTML, Head, Styles)
+├── partials/
+│   ├── header.hbs       # Logo com gradiente semântico
+│   ├── footer.hbs       # Copyright dinâmico
+│   ├── button.hbs       # CTA estilizado
+│   └── alert.hbs        # Box de alertas (warning, error, info)
+├── welcome.hbs
+├── verification.hbs
+├── reset-password.hbs
+├── otp.hbs              # [Novo] Autenticação 2FA
+├── security-alert.hbs   # [Novo] Login suspeito
+├── payment-failed.hbs   # [Novo] Falha no pagamento
+├── invite.hbs
+└── invoice.hbs
+```
 
 ## Como Funciona
 
-1. **Seleção de Transporter:** Ao iniciar, o `EmailService` verifica as variáveis de ambiente. Em `development`, se as credenciais SMTP não estiverem presentes, ele se conecta automaticamente ao MailHog (`localhost:1025`).
-2. **Renderização:** O método `renderTemplate` carrega o arquivo `.hbs` correspondente e injeta os dados do contexto.
-3. **Envio:** O email processado é enviado via SMTP.
+1. **EmailService:** O serviço detecta o `locale` do usuário (padrão `pt`).
+2. **Tradução:** Carrega as chaves do pacote `@kaven/shared/i18n`.
+3. **Renderização:**
+   - Compila o template `.hbs`.
+   - Injta helpers (`t` para tradução, `formatCurrency` implícito via serviço).
+   - Injta o tema (`emailTheme`) derivado de `theme.css`.
+4. **Envio:** Dispara via SMTP (Nodemailer).
 
-## Fluxo Técnico
+## Fluxo Técnico (i18n)
 
 ```mermaid
 sequenceDiagram
-    participant App as Aplicação
+    participant App
     participant Service as EmailService
+    participant I18n as @kaven/shared
     participant HBS as Handlebars
-    participant SMTP as SMTP (SendGrid/MailHog)
 
-    App->>Service: sendWelcomeEmail(user)
-    Service->>HBS: render("welcome", { name: user.name })
-    HBS-->>Service: HTML String
-    Service->>SMTP: sendMail(to, subject, html)
-
-    rect rgb(240, 248, 255)
-        Note over SMTP: Em Dev: MailHog (Port 1025)<br/>Em Prod: SendGrid/AWS (Port 587)
-    end
+    App->>Service: sendWelcomeEmail(user, 'en')
+    Service->>I18n: getTranslations('en')
+    I18n-->>Service: JSON (Keys)
+    Service->>HBS: render("welcome", { t: helper, theme: ... })
+    HBS-->>Service: HTML (Translated & Styled)
+    Service->>App: Email Sent
 ```
-
-## Configuração
-
-### Variáveis de Ambiente
-
-Para produção, configure as credenciais do seu provedor SMTP. Para desenvolvimento local, basta deixar o `SMTP_HOST` como `localhost` (ou vazio, que o sistema assume defaults).
-
-```env
-# Produção (Exemplo SendGrid)
-SMTP_HOST=smtp.sendgrid.net
-SMTP_PORT=587
-SMTP_SECURE=false
-SMTP_USER=apikey
-SMTP_PASS=sua_api_key_aqui
-
-# Desenvolvimento (MailHog - Automático)
-SMTP_HOST=localhost
-SMTP_PORT=1025
-SMTP_SECURE=false
-```
-
-### Docker (MailHog)
-
-O serviço `mailhog` está definido no `docker-compose.yml`:
-
-- **SMTP:** Porta 1025 (Envio)
-- **Web UI:** Porta 8025 (Visualização)
-
-Acesse [http://localhost:8025](http://localhost:8025) para ver os emails capturados.
 
 ## API Reference
 
-### `emailService`
+### `EmailService`
 
-Instância singleton exportada de `apps/api/src/lib/email.service.ts`.
+Instância singleton em `apps/api/src/lib/email.service.ts`. Todos os métodos aceitam um parâmetro opcional `locale`.
 
-#### `sendWelcomeEmail(user)`
+#### `sendWelcomeEmail(user, locale?)`
 
-Envia email de boas-vindas após cadastro.
+Envia email de boas-vindas.
 
-- **Params:** `{ email: string, name: string }`
+#### `sendVerificationEmail(user, token, locale?)`
 
-#### `sendVerificationEmail(user, token)`
+Link para verificação de conta.
 
-Envia link para verificação de email.
+#### `sendPasswordResetEmail(user, token, locale?)`
 
-- **Params:** `user`, `token` (string)
+Link para redefinição de senha com alerta de segurança.
 
-#### `sendPasswordResetEmail(user, token)`
+#### `sendOtpEmail(user, code, locale?)`
 
-Envia link para redefinição de senha.
+Envia código 2FA.
 
-- **Params:** `user`, `token` (string)
+- **Template:** `otp.hbs`
+- **Destaque:** Código em fonte monoespaçada e alerta de segurança.
 
-#### `sendInviteEmail(email, inviteUrl, tenantName, inviterName)`
+#### `sendSecurityAlertEmail(user, details, locale?)`
 
-Convida um usuário para um Tenant.
+Alerta sobre novo login.
 
-- **Params:** strings
+- **Params:** `details: { device, location, ip }`
+- **Template:** `security-alert.hbs`
 
-#### `sendInvoiceEmail(user, invoice)`
+#### `sendPaymentFailedEmail(user, locale?)`
 
-Notifica sobre uma nova fatura.
+Notificação de falha em renovação de assinatura.
 
-- **Params:** `user`, `invoice` (Pick<Invoice, ...>)
+- **Template:** `payment-failed.hbs`
+- **Tom:** Urgente / Ação Necessária.
 
-## Templates & Design System
+#### `sendInvoiceEmail(user, invoice, locale?)`
 
-The email system is fully integrated with the Kaven Design System.
+Notificação de Fatura.
 
-### Single Source of Truth (SSOT)
+- **Formatação:** Formata moeda (BRL/USD) e data automaticamente com base no locale.
 
-All colors and typography are sourced directly from the shared package:
+## Customização
 
-- **Package:** `@kaven/shared`
-- **Location:** `packages/shared/src/theme/tokens.ts`
-- **Usage:** Injected into templates via `EmailService`.
+### Tema (Cores)
 
-This ensures that if you update the primary brand color in `@kaven/shared`, all email templates update automatically without any code changes in the API.
+As cores são lidas de `packages/shared/src/theme/tokens.ts`.
 
-### Layout System
+- **Primary:** `#00AB55` (Kaven Green)
+- **Secondary:** `#3366FF` (Kaven Blue)
+- **Error/Sales:** `#FF5630`
 
-A master layout (`layouts/main.hbs`) handles the common skeleton:
+Para alterar as cores dos emails, altere o arquivo de tokens compartilhado. Isso atualizará automaticamente o frontend e os emails.
 
-- **Header:** Brand Logo/Name
-- **Footer:** Copyright and links
-- **Container:** Accessible width and responsive padding
+### Traduções
 
-### Handlebars Integration
+Edite os arquivos JSON em `packages/shared/src/i18n/locales/`:
 
-Templates use the `{{theme}}` context variable to access semantic tokens:
-
-```hbs
-<!-- Example: Using the primary color -->
-<a href='...' style='background: {{theme.colors.brand.primary}}'>
-  Confirmar Email
-</a>
-```
-
-### Available Templates
-
-Templates are located in `src/templates/emails` and use **Handlebars** (.hbs).
-
-| Arquivo              | Propósito        | Contexto Necessário                          |
-| -------------------- | ---------------- | -------------------------------------------- |
-| `welcome.hbs`        | Boas-vindas      | `name`, `frontendUrl`                        |
-| `verification.hbs`   | Verificar Email  | `name`, `verificationUrl`                    |
-| `reset-password.hbs` | Resetar Senha    | `name`, `resetUrl`                           |
-| `invite.hbs`         | Convite para Org | `inviteUrl`, `tenantName`, `inviterName`     |
-| `invoice.hbs`        | Fatura           | `name`, `invoiceNumber`, `amount`, `dueDate` |
-
-### Customization
-
-To modify a template, edit the `.hbs` file. To modify colors, edit `packages/shared/src/theme/tokens.ts`.
-
-## Adicionando Novos Emails
-
-1. Crie um novo arquivo `.hbs` em `apps/api/src/templates/emails/`.
-2. Adicione um método no `EmailService`.
-3. Defina a interface dos dados do template.
-4. Chame `this.renderTemplate('nome-arquivo', dados)`.
-5. Chame `this.sendEmail(...)`.
+- `pt.json` (Português)
+- `en.json` (Inglês)
 
 ## Troubleshooting
 
-### `ECONNREFUSED 127.0.0.1:1025`
+### Placeholder `{{year}}` não renderiza
 
-**Causa:** Container do MailHog não está rodando.
-**Solução:** Execute `docker-compose up -d mailhog`.
+O ano corrente é injetado automaticamente pelo `EmailService` no contexto global. Se não aparecer, verifique se o método `renderTemplate` está passando `year: new Date().getFullYear()`.
 
-### Emails não aparecem no MailHog
+### Estilos quebrados no Gmail
 
-**Causa:** Aplicação pode estar tentando enviar para porta 587 ou host externo.
-**Solução:** Verifique se `SMTP_PORT` está 1025 no `.env` local.
+O Gmail remove tags `<style>` do `<head>`. Todos os estilos críticos no Kaven Email System são aplicados **inline** nos elementos HTML para garantir compatibilidade máxima.
