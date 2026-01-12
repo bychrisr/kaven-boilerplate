@@ -1,0 +1,64 @@
+{
+  "common": {
+    "greeting": "Hello {{name}},",
+    "footer": {
+      "copyright": "© {{year}} Kaven. All rights reserved.",
+      "rightsReserved": "All rights reserved.",
+      "platformName": "Kaven - Multi-Tenant SaaS Platform"
+    }
+  },
+  "emails": {
+    "welcome": {
+      "subject": "Welcome to Kaven! 🚀",
+      "title": "Start your journey",
+      "content": "We are thrilled to have you on board. Your account has been successfully set up, and you now have access to our platform's premium tools.",
+      "cta": "Go to Dashboard"
+    },
+    "verification": {
+      "subject": "Verify your email",
+      "title": "Security Confirmation",
+      "content": "To ensure your account integrity and access all features, we need to confirm this email address belongs to you.",
+      "cta": "Confirm Email",
+      "securityNote": "If you didn't request this verification, please disregard this email.",
+      "orLink": "Or use the link below:"
+    },
+    "resetPassword": {
+      "subject": "Password Reset",
+      "title": "Access Recovery",
+      "content": "We received a request to reset your account password. If this was you, click the button to create a new secure credential.",
+      "cta": "Create New Password",
+      "securityNote": "This link expires in 1 hour for security. If this wasn't you, we recommend contacting support."
+    },
+    "invite": {
+      "subject": "Invite: Join {{tenantName}}",
+      "title": "You've been invited",
+      "content": "{{inviterName}} has invited you to collaborate in the {{tenantName}} organization. Accept the invite to start working together.",
+      "cta": "Accept and Join"
+    },
+    "invoice": {
+      "subject": "Invoice #{{invoiceNumber}} is available",
+      "title": "New Invoice Generated",
+      "content": "Your invoice for the last period is now ready, totaling {{amount}}. The due date is scheduled for {{dueDate}}.",
+      "cta": "View and Pay"
+    },
+    "otp": {
+      "subject": "Your verification code: {{code}}",
+      "title": "Two-Factor Authentication",
+      "content": "Use the code below to complete your login. Never share this code with anyone.",
+      "validity": "This code expires in 5 minutes."
+    },
+    "security": {
+      "subject": "Security Alert: New Login Detected",
+      "title": "New Account Access",
+      "content": "We detected a new login to your Kaven account. If this was you, no action is needed.",
+      "alertDetails": "Device: {{device}} • Location: {{location}} • IP: {{ip}}",
+      "cta": "It wasn't me (Block Access)"
+    },
+    "paymentFailed": {
+      "subject": "Action Required: Payment Failed",
+      "title": "Payment Pending",
+      "content": "We were unable to process your subscription payment. To avoid service interruption, please update your payment method.",
+      "cta": "Update Payment"
+    }
+  }
+}

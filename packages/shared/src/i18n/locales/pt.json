@@ -1,0 +1,64 @@
+{
+  "common": {
+    "greeting": "Olá {{name}},",
+    "footer": {
+      "copyright": "© {{year}} Kaven. Todos os direitos reservados.",
+      "rightsReserved": "Todos os direitos reservados.",
+      "platformName": "Kaven - Plataforma SaaS Multi-Tenant"
+    }
+  },
+  "emails": {
+    "welcome": {
+      "subject": "Boas-vindas ao Kaven! 🚀",
+      "title": "Comece sua jornada",
+      "content": "Estamos entusiasmados em tê-lo a bordo. Sua conta foi configurada com sucesso e você agora tem acesso a todas as ferramentas premium da nossa plataforma.",
+      "cta": "Ir para o Dashboard"
+    },
+    "verification": {
+      "subject": "Verifique seu email",
+      "title": "Confirmação de Segurança",
+      "content": "Para garantir a integridade da sua conta e acessar todos os recursos, precisamos confirmar que este endereço de email pertence a você.",
+      "cta": "Confirmar Email",
+      "securityNote": "Se você não solicitou esta verificação, por favor desconsidere este email.",
+      "orLink": "Ou utilize o link abaixo:"
+    },
+    "resetPassword": {
+      "subject": "Redefinição de Senha",
+      "title": "Recuperação de Acesso",
+      "content": "Recebemos uma solicitação para redefinir a senha da sua conta. Se foi você, clique no botão para criar uma nova credencial segura.",
+      "cta": "Criar Nova Senha",
+      "securityNote": "Este link expira em 1 hora por segurança. Se não foi você, recomendamos contatar o suporte."
+    },
+    "invite": {
+      "subject": "Convite: Junte-se à {{tenantName}}",
+      "title": "Você foi convidado",
+      "content": "{{inviterName}} convidou você para colaborar na organização {{tenantName}}. Aceite o convite para começar a trabalhar em equipe.",
+      "cta": "Aceitar e Entrar"
+    },
+    "invoice": {
+      "subject": "Fatura #{{invoiceNumber}} disponível",
+      "title": "Nova Fatura Gerada",
+      "content": "Sua fatura referente ao último período já está fechada no valor de {{amount}}. O vencimento está programado para {{dueDate}}.",
+      "cta": "Visualizar e Pagar"
+    },
+    "otp": {
+      "subject": "Seu código de verificação: {{code}}",
+      "title": "Autenticação de Dois Fatores",
+      "content": "Use o código abaixo para completar seu login. Nunca compartilhe este código com ninguém.",
+      "validity": "Este código expira em 5 minutos."
+    },
+    "security": {
+      "subject": "Alerta de Segurança: Novo Login Detectado",
+      "title": "Novo Acesso à Conta",
+      "content": "Detectamos um novo login na sua conta Kaven. Se foi você, não é necessário nenhuma ação.",
+      "alertDetails": "Dispositivo: {{device}} • Localização: {{location}} • IP: {{ip}}",
+      "cta": "Não fui eu (Bloquear Acesso)"
+    },
+    "paymentFailed": {
+      "subject": "Ação Necessária: Falha no Pagamento",
+      "title": "Pagamento Pendente",
+      "content": "Não conseguimos processar o pagamento da sua assinatura. Para evitar interrupção no serviço, por favor atualize seu método de pagamento.",
+      "cta": "Atualizar Pagamento"
+    }
+  }
+}
