@@ -1,5 +1,5 @@
-
 import { emailService } from '../src/lib/email.service';
+import { Decimal } from '@prisma/client/runtime/library';
 
 async function main() {
   console.log('🧪 Testing Email Service...');
@@ -49,7 +49,7 @@ async function main() {
     console.log('📧 Sending Invoice (PT)...');
     await emailService.sendInvoiceEmail({ email: 'test-invoice-pt@kaven.com', name: 'João Silva' }, {
       invoiceNumber: 'INV-001',
-      amountDue: 150.00,
+      amountDue: new Decimal(150.00),
       dueDate: new Date(),
     }, 'pt');
 
@@ -57,7 +57,7 @@ async function main() {
     console.log('📧 Sending Invoice (EN)...');
     await emailService.sendInvoiceEmail({ email: 'test-invoice-en@kaven.com', name: 'John Doe' }, {
       invoiceNumber: 'INV-002',
-      amountDue: 50.00,
+      amountDue: new Decimal(50.00),
       dueDate: new Date(),
     }, 'en');
 
