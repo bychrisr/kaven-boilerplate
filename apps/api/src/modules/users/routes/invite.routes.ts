@@ -1,19 +1,31 @@
 
-import { FastifyInstance } from 'fastify';
-import { InviteController } from '../controllers/invite.controller';
+import type { FastifyInstance } from 'fastify';
 import { InviteService } from '../services/invite.service';
+import { InviteController } from '../controllers/invite.controller';
+import prisma from '../../../lib/prisma';
 import { authMiddleware } from '../../../middleware/auth.middleware';
-import { requireTenantAdmin } from '../../../middleware/rbac.middleware';
-import { prisma } from '../../../lib/prisma';
 
 export async function inviteRoutes(app: FastifyInstance) {
   const inviteService = new InviteService(prisma);
   const inviteController = new InviteController(inviteService);
 
-  // Create invite (authenticated, admin only)
+  // Create invite (Authenticated)
+  // Logic inside controller governs permissions (SUPER_ADMIN vs ADMIN)
   app.post('/invites', {
-    preHandler: [authMiddleware, requireTenantAdmin],
+    preHandler: [authMiddleware],
     handler: inviteController.create.bind(inviteController),
+  });
+
+  // List pending invites (Authenticated)
+  app.get('/invites', {
+    preHandler: [authMiddleware],
+    handler: inviteController.list.bind(inviteController),
+  });
+
+  // Cancel invite (Authenticated)
+  app.delete('/invites/:inviteId', {
+    preHandler: [authMiddleware],
+    handler: inviteController.cancel.bind(inviteController),
   });
 
   // Validate invite (public)

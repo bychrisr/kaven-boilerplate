@@ -108,54 +108,50 @@ O React Compiler não consegue memoizar componentes que usam `form.watch()` do R
 
 ---
 
-## Prisma $queryRaw - Type Safety
+## Prisma $queryRaw vs ORM (Case Sensitivity)
 
 ### Problema
 
-`prisma.$queryRaw` retorna `any[]` por padrão, perdendo type safety:
+O uso de `prisma.$queryRaw` com identificadores sem aspas duplas falha no PostgreSQL, e mesmo com aspas duplas, é extremamente frágil e perde type safety:
 
 ```tsx
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const result: any[] = await prisma.$queryRaw`SELECT "primaryColor" FROM "PlatformConfig"`;
+// ❌ FALHA: PG converte para "platformconfig" (lowercase) e não encontra a tabela
+const result = await prisma.$queryRaw`SELECT * FROM PlatformConfig`;
+
+// ⚠️ FRÁGIL: Funciona, mas perde type safety e mapeamento de campos do Prisma
+const result: any[] = await prisma.$queryRaw`SELECT * FROM "PlatformConfig"`;
 ```
 
 ### Causa
 
-Prisma não consegue inferir tipos de queries SQL raw em tempo de compilação.
+O PostgreSQL trata identificadores sem aspas como lowercase. Como o Prisma gera modelos em PascalCase (ex: `PlatformConfig`), a query raw falha a menos que aspas duplas sejam usadas manualmente. Além disso, queries SQL raw ignoram o mapeamento de campos definido no `schema.prisma`.
 
-### Workaround
+### Recomendação (Best Practice)
 
-Usar type assertion com interface específica:
+**Sempre use o Prisma Client (ORM)** ao invés de raw queries. O Prisma lida automaticamente com o quoting correto e garante type safety total:
 
 ```tsx
-interface PlatformConfigRow {
-  primaryColor: string;
-  faviconUrl: string;
-}
-
-const result = await prisma.$queryRaw<PlatformConfigRow[]>`
-  SELECT "primaryColor", "faviconUrl" 
-  FROM "PlatformConfig" 
-  LIMIT 1
-`;
-
-if (result && result.length > 0) {
-  const { primaryColor, faviconUrl } = result[0];
-  // Agora temos type safety
-}
+// ✅ RECOMENDADO: Seguro, tipado e resiliente
+const config = await prisma.platformConfig.findFirst({
+  select: {
+    primaryColor: true,
+    faviconUrl: true,
+  },
+});
 ```
 
-### Arquivos Afetados
+### Quando usar raw SQL?
+
+Apenas em casos extremos onde o Prisma não suporta uma funcionalidade específica do banco (ex: extensões complexas, analytics pesados). Para queries simples de busca, **nunca use SQL raw**.
+
+### Arquivos Corrigidos
 
 - `apps/admin/app/[locale]/layout.tsx`
+- `apps/admin/app/api/settings/platform/route.ts`
 
 ### Status
 
-**Melhorável** - Pode ser refatorado para usar type assertion ao invés de `any[]`.
-
-### Recomendação
-
-Sempre que possível, use o Prisma Client gerado ao invés de raw queries para manter type safety completo.
+**Padronizado** - O projeto agora segue o padrão ORM para todas as consultas de configuração.
 
 ---
 

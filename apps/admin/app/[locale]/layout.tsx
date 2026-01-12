@@ -46,12 +46,18 @@ export default async function RootLayout({
   let faviconUrl = '/favicon.ico'; // Default fallback
 
   try {
-     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-     const result: any[] = await prisma.$queryRaw`SELECT "primaryColor", "faviconUrl" FROM "PlatformConfig" LIMIT 1`;
-     if (result && result.length > 0) {
-        if (result[0].primaryColor) primaryColor = result[0].primaryColor;
-        if (result[0].faviconUrl) faviconUrl = result[0].faviconUrl;
-     }
+    // ✅ AXISOR/KAVEN STYLE: Use Prisma ORM instead of raw query to handle case-sensitivity and schema mapping
+    const config = await prisma.platformConfig.findFirst({
+      select: {
+        primaryColor: true,
+        faviconUrl: true,
+      }
+    });
+
+    if (config) {
+      if (config.primaryColor) primaryColor = config.primaryColor;
+      if (config.faviconUrl) faviconUrl = config.faviconUrl;
+    }
   } catch (error) {
      console.error('[RootLayout] Failed to fetch PlatformConfig:', error);
   }

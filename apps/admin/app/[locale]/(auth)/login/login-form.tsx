@@ -15,6 +15,7 @@ import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/auth.store';
 import { useTranslations } from 'next-intl';
+import { api } from '@/lib/api';
 
 export default function LoginForm() {
   const t = useTranslations('Auth.login');
@@ -52,42 +53,30 @@ export default function LoginForm() {
     console.log('🔄 LOGIN FORM - Starting login...');
 
     try {
-      // Endpoint de login
-      const response = await fetch('http://localhost:8000/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-        }),
+      // Endpoint de login (Usando instância api configurada)
+      const response = await api.post('/api/auth/login', {
+        email: data.email,
+        password: data.password,
       });
 
-      if (response.ok) {
-        const responseData = await response.json();
-        
-        console.log('✅ LOGIN FORM - Login successful, calling store.login()');
-        
-        // ✅ AXISOR STYLE: Login armazena no localStorage
-        login(responseData.user, responseData.accessToken, responseData.refreshToken);
-        
-        toast.success(t('success'));
-        
-        console.log('✅ LOGIN FORM - Store updated, navigating...');
-        
-        // Navegar para destino
-        const targetUrl = returnUrl ? decodeURIComponent(returnUrl) : '/dashboard';
-        router.push(targetUrl);
-        
-        console.log('✅ LOGIN FORM - Navigation triggered to:', targetUrl);
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        const message = errorData.message || 'Invalid credentials';
-        setGeneralError(message);
-        toast.error(message);
-      }
+      console.log('✅ LOGIN FORM - Login successful, calling store.login()');
+      
+      // ✅ AXISOR STYLE: Login armazena no localStorage
+      login(response.data.user, response.data.accessToken, response.data.refreshToken);
+      
+      toast.success(t('success'));
+      
+      console.log('✅ LOGIN FORM - Store updated, navigating...');
+      
+      // Navegar para destino
+      const targetUrl = returnUrl ? decodeURIComponent(returnUrl) : '/dashboard';
+      router.push(targetUrl);
+      
+      console.log('✅ LOGIN FORM - Navigation triggered to:', targetUrl);
     } catch (error) {
       console.error('❌ LOGIN FORM - Error:', error);
-      const message = 'Erro ao fazer login. Tente novamente.';
+      const axiosError = error as { response?: { data?: { message?: string } } };
+      const message = axiosError.response?.data?.message || 'Erro ao fazer login. Tente novamente.';
       setGeneralError(message);
       toast.error(message);
     }
