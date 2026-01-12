@@ -139,6 +139,19 @@
       }
     }
   },
+  "Users": {
+    "inviteSuccess": "Invite sent successfully!",
+    "inviteError": "Failed to send invite",
+    "inviteUser": "Invite User",
+    "inviteDescription": "Send an invitation to a new team member.",
+    "emailLabel": "Email",
+    "roleLabel": "Role",
+    "roleMember": "Member",
+    "roleAdmin": "Admin",
+    "cancel": "Cancel",
+    "sending": "Sending...",
+    "sendInvite": "Send Invite"
+  },
   "User": {
     "table": {
       "deleteSuccess": "User deleted successfully",

@@ -139,6 +139,19 @@
       }
     }
   },
+  "Users": {
+    "inviteSuccess": "Convite enviado com sucesso!",
+    "inviteError": "Falha ao enviar convite",
+    "inviteUser": "Convidar Usuário",
+    "inviteDescription": "Envie um convite para um novo membro da equipe.",
+    "emailLabel": "Email",
+    "roleLabel": "Função",
+    "roleMember": "Membro",
+    "roleAdmin": "Admin",
+    "cancel": "Cancelar",
+    "sending": "Enviando...",
+    "sendInvite": "Enviar Convite"
+  },
   "User": {
     "table": {
       "deleteSuccess": "Usuário excluído com sucesso",
