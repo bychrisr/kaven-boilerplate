@@ -1,10 +1,11 @@
 import { emailTheme } from './email-theme';
+import { getTranslations, interpolate, type Locale } from '@kaven/shared';
 import nodemailer, { Transporter } from 'nodemailer';
 import type { User, Invoice } from '@prisma/client';
 import { env } from '../config/env';
 import { secureLog } from '../utils/secure-logger';
 import * as handlebars from 'handlebars';
-import * as fs from 'fs/promises';
+import * as fs from 'fs';
 import * as path from 'path';
 
 /**
@@ -57,28 +58,71 @@ export class EmailService {
     }
   }
 
-  private async registerPartials() {
+  private registerPartials() {
     try {
+      // Register Layout
       const layoutPath = path.join(this.templatesDir, 'layouts/main.hbs');
-      const layoutSource = await fs.readFile(layoutPath, 'utf-8');
+      const layoutSource = fs.readFileSync(layoutPath, 'utf-8');
       handlebars.registerPartial('main', layoutSource);
+
+      // Register UI Partials
+      const partials = ['header', 'footer', 'button', 'alert'];
+      for (const partial of partials) {
+        const partialPath = path.join(this.templatesDir, `partials/${partial}.hbs`);
+        const partialSource = fs.readFileSync(partialPath, 'utf-8');
+        handlebars.registerPartial(partial, partialSource);
+      }
     } catch (error) {
-      secureLog.error('Erro ao registrar layouts:', error);
+      secureLog.error('Erro ao registrar layouts/partials:', error);
     }
   }
 
   /**
    * Renderiza template Handlebars
    */
-  private async renderTemplate(templateName: string, context: Record<string, any>): Promise<string> {
+  private async renderTemplate(
+    templateName: string, 
+    context: Record<string, any>, 
+    locale: Locale = 'pt'
+  ): Promise<string> {
     try {
       const templatePath = path.join(this.templatesDir, `${templateName}.hbs`);
       
-      const templateSource = await fs.readFile(templatePath, 'utf-8');
+      // Keep renderTemplate async as it's per-request
+      const templateSource = fs.readFileSync(templatePath, 'utf-8'); 
       const template = handlebars.compile(templateSource);
       
-      // Inject theme into context
-      return template({ ...context, theme: emailTheme });
+      // Get translations for locale
+      const translations = getTranslations(locale);
+
+      // Create translation helper
+      // Cannot pass functions to handlebars context directly in some setups, but here it works if compiled locally.
+      // Alternatively, we can pass the whole translation object and a helper 't'.
+      const t = (key: string, params: Record<string, any> = {}) => {
+         // Deep access to key, e.g. "emails.welcome.title"
+         const keys = key.split('.');
+         let value: any = translations;
+         for (const k of keys) {
+           value = value?.[k];
+         }
+         if (typeof value === 'string') {
+           return interpolate(value, params);
+         }
+         return key; // Fallback to key if not found
+      };
+
+      // Register local helper for this render
+      handlebars.registerHelper('t', t);
+      handlebars.registerHelper('eq', (a, b) => a === b);
+      handlebars.registerHelper('concat', (...args) => args.slice(0, -1).join(''));
+
+      // Inject theme and translations into context
+      return template({ 
+        ...context, 
+        theme: emailTheme,
+        locale,
+        year: new Date().getFullYear(),
+      });
     } catch (error) {
       secureLog.error(`Erro ao renderizar template ${templateName}:`, error);
       throw new Error(`Falha ao renderizar template de email: ${templateName}`);
@@ -153,38 +197,42 @@ export class EmailService {
   /**
    * Envia email de boas-vindas
    */
-  async sendWelcomeEmail(user: Pick<User, 'email' | 'name'>): Promise<void> {
-    const subject = 'Bem-vindo ao Kaven!';
+  async sendWelcomeEmail(user: Pick<User, 'email' | 'name'>, locale: Locale = 'pt'): Promise<void> {
+    const translations = getTranslations(locale);
+    const subject = translations.emails.welcome.subject;
+    
     const html = await this.renderTemplate('welcome', {
       name: user.name,
       frontendUrl: env.FRONTEND_URL,
-    });
+    }, locale);
     await this.sendEmail(user.email, subject, html);
   }
 
   /**
    * Envia email de verificação
    */
-  async sendVerificationEmail(user: Pick<User, 'email' | 'name'>, token: string): Promise<void> {
-    const subject = 'Verifique seu email';
+  async sendVerificationEmail(user: Pick<User, 'email' | 'name'>, token: string, locale: Locale = 'pt'): Promise<void> {
+    const translations = getTranslations(locale);
+    const subject = translations.emails.verification.subject;
     const verificationUrl = `${env.FRONTEND_URL}/verify-email?token=${token}`;
     const html = await this.renderTemplate('verification', {
       name: user.name,
       verificationUrl,
-    });
+    }, locale);
     await this.sendEmail(user.email, subject, html);
   }
 
   /**
    * Envia email de reset de senha
    */
-  async sendPasswordResetEmail(user: Pick<User, 'email' | 'name'>, token: string): Promise<void> {
-    const subject = 'Redefinir sua senha';
+  async sendPasswordResetEmail(user: Pick<User, 'email' | 'name'>, token: string, locale: Locale = 'pt'): Promise<void> {
+    const translations = getTranslations(locale);
+    const subject = translations.emails.resetPassword.subject;
     const resetUrl = `${env.FRONTEND_URL}/reset-password?token=${token}`;
     const html = await this.renderTemplate('reset-password', {
       name: user.name,
       resetUrl,
-    });
+    }, locale);
     await this.sendEmail(user.email, subject, html);
   }
 
@@ -193,24 +241,30 @@ export class EmailService {
    */
   async sendInvoiceEmail(
     user: Pick<User, 'email' | 'name'>,
-    invoice: Pick<Invoice, 'invoiceNumber' | 'amountDue' | 'dueDate'>
+    invoice: Pick<Invoice, 'invoiceNumber' | 'amountDue' | 'dueDate'>,
+    locale: Locale = 'pt'
   ): Promise<void> {
-    const subject = `Invoice ${invoice.invoiceNumber} - Kaven`;
+    const translations = getTranslations(locale);
+    const subject = interpolate(translations.emails.invoice.subject, { invoiceNumber: invoice.invoiceNumber });
     
-    const formattedAmount = new Intl.NumberFormat('pt-BR', {
+    // Formatting currency and date based on locale
+    const currencyLocale = locale === 'pt' ? 'pt-BR' : 'en-US';
+    const currency = locale === 'pt' ? 'BRL' : 'USD';
+
+    const formattedAmount = new Intl.NumberFormat(currencyLocale, {
       style: 'currency',
-      currency: 'BRL',
+      currency: currency,
     }).format(Number(invoice.amountDue));
 
-    const formattedDate = new Intl.DateTimeFormat('pt-BR').format(new Date(invoice.dueDate));
+    const formattedDate = new Intl.DateTimeFormat(currencyLocale).format(new Date(invoice.dueDate));
 
     const html = await this.renderTemplate('invoice', {
       name: user.name,
       invoiceNumber: invoice.invoiceNumber,
-      formattedAmount,
-      formattedDate,
+      amount: formattedAmount, // Using 'amount' simplified key for template
+      dueDate: formattedDate, // Using 'dueDate' simplified key for template
       frontendUrl: env.FRONTEND_URL,
-    });
+    }, locale);
     
     await this.sendEmail(user.email, subject, html);
   }
@@ -222,15 +276,71 @@ export class EmailService {
     email: string,
     inviteUrl: string,
     tenantName: string,
-    inviterName: string
+    inviterName: string,
+    locale: Locale = 'pt'
   ): Promise<void> {
-    const subject = `Convite para participar de ${tenantName}`;
+    const translations = getTranslations(locale);
+    const subject = interpolate(translations.emails.invite.subject, { tenantName });
     const html = await this.renderTemplate('invite', {
       inviteUrl,
       tenantName,
       inviterName,
-    });
+    }, locale);
     await this.sendEmail(email, subject, html);
+  }
+
+  /**
+   * Envia email de OTP
+   */
+  async sendOtpEmail(user: Pick<User, 'email' | 'name'>, code: string, locale: Locale = 'pt'): Promise<void> {
+    const translations = getTranslations(locale);
+    const subject = interpolate(translations.emails.otp.subject, { code });
+    
+    const html = await this.renderTemplate('otp', {
+      name: user.name,
+      code,
+    }, locale);
+    
+    await this.sendEmail(user.email, subject, html);
+  }
+
+  /**
+   * Envia alerta de segurança
+   */
+  async sendSecurityAlertEmail(
+    user: Pick<User, 'email' | 'name'>,
+    details: { device: string; location: string; ip: string },
+    locale: Locale = 'pt'
+  ): Promise<void> {
+    const translations = getTranslations(locale);
+    const subject = translations.emails.security.subject;
+    const blockUrl = `${env.FRONTEND_URL}/settings/security`;
+
+    const html = await this.renderTemplate('security-alert', {
+      name: user.name,
+      device: details.device,
+      location: details.location,
+      ip: details.ip,
+      blockUrl
+    }, locale);
+    
+    await this.sendEmail(user.email, subject, html);
+  }
+
+  /**
+   * Envia aviso de falha no pagamento
+   */
+  async sendPaymentFailedEmail(user: Pick<User, 'email' | 'name'>, locale: Locale = 'pt'): Promise<void> {
+    const translations = getTranslations(locale);
+    const subject = translations.emails.paymentFailed.subject;
+    const billingUrl = `${env.FRONTEND_URL}/settings/billing`;
+
+    const html = await this.renderTemplate('payment-failed', {
+      name: user.name,
+      billingUrl
+    }, locale);
+    
+    await this.sendEmail(user.email, subject, html);
   }
 }
 
