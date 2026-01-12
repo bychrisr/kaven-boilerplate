@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice {{invoiceNumber}}</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden;">
+          <tr>
+            <td style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 40px 20px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Nova Invoice</h1>
+            </td>
+          </tr>
+          
+          <tr>
+            <td style="padding: 40px 30px;">
+              <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                Olá <strong>{{name}}</strong>,
+              </p>
+              <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
+                Uma nova invoice foi gerada para sua conta:
+              </p>
+              
+              <table width="100%" cellpadding="15" cellspacing="0" style="background-color: #f8f9fa; border-radius: 6px; margin-bottom: 30px;">
+                <tr>
+                  <td style="color: #6c757d; font-size: 14px;">Número:</td>
+                  <td style="color: #333333; font-size: 14px; font-weight: bold; text-align: right;">{{invoiceNumber}}</td>
+                </tr>
+                <tr>
+                  <td style="color: #6c757d; font-size: 14px;">Valor:</td>
+                  <td style="color: #333333; font-size: 18px; font-weight: bold; text-align: right;">{{formattedAmount}}</td>
+                </tr>
+                <tr>
+                  <td style="color: #6c757d; font-size: 14px;">Vencimento:</td>
+                  <td style="color: #333333; font-size: 14px; font-weight: bold; text-align: right;">{{formattedDate}}</td>
+                </tr>
+              </table>
+              
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center">
+                    <a href="{{frontendUrl}}/invoices/{{invoiceNumber}}" 
+                       style="display: inline-block; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: #ffffff; text-decoration: none; padding: 14px 40px; border-radius: 6px; font-size: 16px; font-weight: bold;">
+                      Ver Invoice
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <tr>
+            <td style="background-color: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e9ecef;">
+              <p style="color: #6c757d; font-size: 12px; margin: 0;">
+                © 2025 Kaven. Todos os direitos reservados.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
