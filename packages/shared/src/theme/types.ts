@@ -97,6 +97,41 @@ export interface SemanticGreyScale {
   900: string;
 }
 
+export interface SemanticAlertColors {
+  success: {
+    background: string;
+    border: string;
+    text: string;
+    title: string;
+  };
+  warning: {
+    background: string;
+    border: string;
+    text: string;
+    title: string;
+  };
+  error: {
+    background: string;
+    border: string;
+    text: string;
+    title: string;
+  };
+  info: {
+    background: string;
+    border: string;
+    text: string;
+    title: string;
+  };
+}
+
+export interface SemanticGradients {
+  main: string;
+  success: string;
+  warning: string;
+  error: string;
+  info: string;
+}
+
 // ============================================
 // SEMANTIC TYPOGRAPHY TOKENS
 // ============================================
@@ -232,8 +267,10 @@ export interface SemanticDesignTokens {
     text: SemanticTextColors;
     background: SemanticBackgroundColors;
     border: SemanticBorderColors;
-    grey: SemanticGreyScale; // Added for Minimals
+    grey: SemanticGreyScale;
+    alerts: SemanticAlertColors; // Added for Email System
   };
+  gradients: SemanticGradients; // Added for Email System
   typography: SemanticTypography;
   spacing: SemanticSpacing;
   radius: SemanticRadius;

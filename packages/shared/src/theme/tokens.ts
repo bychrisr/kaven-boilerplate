@@ -12,19 +12,19 @@ import type { SemanticDesignTokens } from './types';
 export const defaultLightTokens: SemanticDesignTokens = {
   colors: {
     brand: {
-      // Primary - Kaven Green (Brand)
-      primary: '#00A76F',
-      primaryLight: '#5BE49B',
-      primaryLighter: '#C8FAD6',
-      primaryDark: '#007867',
-      primaryDarker: '#006C4F',
+      // Primary - Minimals Green (theme.css)
+      primary: '#00AB55',
+      primaryLight: '#5BE584',
+      primaryLighter: '#C8FACD',
+      primaryDark: '#007B55',
+      primaryDarker: '#005249',
 
-      // Secondary - Purple
-      secondary: '#8E33FF',
-      secondaryLight: '#C684FF',
-      secondaryLighter: '#EFD6FF',
-      secondaryDark: '#5119B7',
-      secondaryDarker: '#27097A',
+      // Secondary - Blue (theme.css)
+      secondary: '#3366FF',
+      secondaryLight: '#84A9FF',
+      secondaryLighter: '#D6E4FF',
+      secondaryDark: '#1939B7',
+      secondaryDarker: '#091A7A',
 
       // Success - Green
       success: '#22C55E',
@@ -73,7 +73,7 @@ export const defaultLightTokens: SemanticDesignTokens = {
       strong: 'rgba(145, 158, 171, 0.48)', // grey.500 alpha 0.48
     },
     grey: {
-      50: '#FCFDFD',
+      50: '#FCFCFD',
       100: '#F9FAFB',
       200: '#F4F6F8',
       300: '#DFE3E8',
@@ -81,9 +81,42 @@ export const defaultLightTokens: SemanticDesignTokens = {
       500: '#919EAB',
       600: '#637381',
       700: '#454F5B',
-      800: '#1C252E',
-      900: '#141A21',
+      800: '#212B36',
+      900: '#161C24',
     },
+    alerts: {
+      success: {
+        background: '#D3FCD2', // successLighter
+        border: '#77ED8B', // successLight
+        text: '#118D57', // successDark
+        title: '#065E49', // successDarker
+      },
+      warning: {
+        background: '#FFF5CC', // warningLighter
+        border: '#FFD666', // warningLight
+        text: '#B76E00', // warningDark
+        title: '#7A4100', // warningDarker
+      },
+      error: {
+        background: '#FFE9D5', // errorLighter
+        border: '#FFAC82', // errorLight
+        text: '#B71D18', // errorDark
+        title: '#7A0916', // errorDarker
+      },
+      info: {
+        background: '#CAFDF5', // infoLighter
+        border: '#61F3F3', // infoLight
+        text: '#006C9C', // infoDark
+        title: '#003768', // infoDarker
+      },
+    },
+  },
+  gradients: {
+    main: 'linear-gradient(135deg, #007B55 0%, #00AB55 100%)', // primaryDark -> primary
+    success: 'linear-gradient(135deg, #118D57 0%, #22C55E 100%)',
+    warning: 'linear-gradient(135deg, #B76E00 0%, #FFAB00 100%)',
+    error: 'linear-gradient(135deg, #B71D18 0%, #FF5630 100%)',
+    info: 'linear-gradient(135deg, #006C9C 0%, #00B8D9 100%)',
   },
   typography: {
     fontFamily: "'DM Sans Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -216,6 +249,32 @@ export const defaultDarkTokens: SemanticDesignTokens = {
       default: 'rgba(255, 255, 255, 0.12)',
       subtle: 'rgba(255, 255, 255, 0.06)',
       strong: 'rgba(255, 255, 255, 0.24)',
+    },
+    alerts: {
+      success: {
+        background: '#065E49', // successDarker
+        border: '#118D57', // successDark
+        text: '#D3FCD2', // successLighter
+        title: '#77ED8B', // successLight
+      },
+      warning: {
+        background: '#7A4100', // warningDarker
+        border: '#B76E00', // warningDark
+        text: '#FFF5CC', // warningLighter
+        title: '#FFD666', // warningLight
+      },
+      error: {
+        background: '#7A0916', // errorDarker
+        border: '#B71D18', // errorDark
+        text: '#FFE9D5', // errorLighter
+        title: '#FFAC82', // errorLight
+      },
+      info: {
+        background: '#003768', // infoDarker
+        border: '#006C9C', // infoDark
+        text: '#CAFDF5', // infoLighter
+        title: '#61F3F3', // infoLight
+      },
     },
   },
 };
