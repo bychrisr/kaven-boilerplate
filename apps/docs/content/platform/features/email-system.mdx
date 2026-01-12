@@ -112,9 +112,42 @@ Notifica sobre uma nova fatura.
 
 - **Params:** `user`, `invoice` (Pick<Invoice, ...>)
 
-## Templates
+## Templates & Design System
 
-Os templates ficam localizados em `apps/api/src/templates/emails/`.
+The email system is fully integrated with the Kaven Design System.
+
+### Single Source of Truth (SSOT)
+
+All colors and typography are sourced directly from the shared package:
+
+- **Package:** `@kaven/shared`
+- **Location:** `packages/shared/src/theme/tokens.ts`
+- **Usage:** Injected into templates via `EmailService`.
+
+This ensures that if you update the primary brand color in `@kaven/shared`, all email templates update automatically without any code changes in the API.
+
+### Layout System
+
+A master layout (`layouts/main.hbs`) handles the common skeleton:
+
+- **Header:** Brand Logo/Name
+- **Footer:** Copyright and links
+- **Container:** Accessible width and responsive padding
+
+### Handlebars Integration
+
+Templates use the `{{theme}}` context variable to access semantic tokens:
+
+```hbs
+<!-- Example: Using the primary color -->
+<a href='...' style='background: {{theme.colors.brand.primary}}'>
+  Confirmar Email
+</a>
+```
+
+### Available Templates
+
+Templates are located in `src/templates/emails` and use **Handlebars** (.hbs).
 
 | Arquivo              | Propósito        | Contexto Necessário                          |
 | -------------------- | ---------------- | -------------------------------------------- |
@@ -123,6 +156,10 @@ Os templates ficam localizados em `apps/api/src/templates/emails/`.
 | `reset-password.hbs` | Resetar Senha    | `name`, `resetUrl`                           |
 | `invite.hbs`         | Convite para Org | `inviteUrl`, `tenantName`, `inviterName`     |
 | `invoice.hbs`        | Fatura           | `name`, `invoiceNumber`, `amount`, `dueDate` |
+
+### Customization
+
+To modify a template, edit the `.hbs` file. To modify colors, edit `packages/shared/src/theme/tokens.ts`.
 
 ## Adicionando Novos Emails
 
