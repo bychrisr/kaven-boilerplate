@@ -1,0 +1,450 @@
+{
+
+  "Common": {
+    "dashboard": "Dashboard",
+    "actions": "Actions",
+    "users": "Users",
+    "business": "Business",
+    "comingSoon": "Coming soon for {name}",
+    "menu": {
+      "profile": "Profile",
+      "settings": "Settings",
+      "logout": "Logout"
+    },
+    "errors": {
+      "notFoundTitle": "Page Not Found (404)",
+      "notFoundDescription": "Oops! The page you are looking for does not exist or has been moved. Check the URL or go back home.",
+      "notFoundBack": "Back to Dashboard",
+      "errorTitle": "Something went wrong! (500)",
+      "errorDescription": "We encountered an unexpected error while processing your request. Our engineers have been notified.",
+      "errorRetry": "Try again"
+    }
+  },
+  "Dashboard": {
+    "title": "{name} Dashboard",
+    "cards": {
+      "totalUsers": "Total Active Users",
+      "newSignups": "New Signups",
+      "activationRate": "Activation Rate",
+      "totalRevenue": "Total Revenue",
+      "totalInvoices": "Total Invoices"
+    },
+    "metrics": {
+      "last7Days": "last 7 days",
+      "vsPrevious7Days": "vs previous 7 days"
+    },
+    "charts": {
+      "currentActivity": "Current Activity",
+      "activityByType": "Activity by type",
+      "activityTrends": "Activity Trends",
+      "trendComparison": "(+43%) than last year"
+    },
+    "table": {
+      "title": "Active Users",
+      "columns": {
+        "user": "User",
+        "role": "Role",
+        "joined": "Joined",
+        "action": "Action"
+      }
+    }
+  },
+  "Sidebar": {
+    "groups": {
+      "overview": "Overview",
+      "management": "Management",
+      "finance": "Finance",
+      "monetization": "Monetization",
+      "support": "Support",
+      "marketing": "Marketing",
+      "devops": "DevOps",
+      "configuration": "Configuration"
+    },
+    "items": {
+      "home": "Home",
+      "dashboard": "Dashboard",
+      "analytics": "Analytics",
+      "platform settings": "Platform Settings",
+      "users": "Users",
+      "tenant": "Tenant",
+      "revenue": "Revenue",
+      "orders": "Orders",
+      "invoices": "Invoices",
+      "payments": "Payments",
+      "billing": "Billing",
+      "plans": "Plans",
+      "products": "Products",
+      "features": "Features",
+      "subscriptions": "Subscriptions",
+      "tickets": "Tickets",
+      "impersonation": "Impersonation",
+      "2fa reset": "2FA Reset",
+      "crm": "CRM",
+      "campaigns": "Campaigns",
+      "goals": "Goals",
+      "monitoring": "Monitoring",
+      "servers": "Servers",
+      "databases": "Databases",
+      "logs": "Logs",
+      "system health": "System Health",
+      "audit logs": "Audit Logs"
+    }
+  },
+  "Auth": {
+    "login": {
+      "title": "Sign in to your account",
+      "subtitle": "Don't have an account?",
+      "getStarted": "Get started",
+      "emailLabel": "Email address",
+      "passwordLabel": "Password",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign In",
+      "or": "OR",
+      "success": "Login successful!"
+    },
+    "register": {
+      "title": "Get started absolutely free",
+      "subtitle": "Already have an account?",
+      "signIn": "Sign in",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "emailLabel": "Email address",
+      "passwordLabel": "Password",
+      "terms": "I agree to Terms of Service and Privacy Policy",
+      "submit": "Create account",
+      "or": "OR",
+      "success": "Account created! Please check your email to verify.",
+      "passwordStrength": ["Weak", "Fair", "Good", "Strong"]
+    },
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "description": "Please enter the email address associated with your account and we'll email you a link to reset your password.",
+      "emailLabel": "Email address",
+      "submit": "Send Request",
+      "backToSignIn": "Return to sign in",
+      "successTitle": "Request sent successfully!",
+      "successDescription": "We've sent a confirmation email to {email}. Please check your email.",
+      "returnToLogin": "Return to sign in",
+      "resetPassword": {
+        "title": "Reset your password",
+        "subtitle": "Enter your new password below",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm Password",
+        "passwordPlaceholder": "6+ characters",
+        "submit": "Reset Password",
+        "matchError": "Passwords do not match",
+        "tokenError": "Invalid reset token",
+        "success": "Password reset successfully!",
+        "failed": "Password reset failed"
+      }
+    }
+  },
+  "Users": {
+    "inviteSuccess": "Invite sent successfully!",
+    "inviteError": "Failed to send invite",
+    "inviteUser": "Invite User",
+    "inviteDescription": "Send an invitation to a new team member.",
+    "emailLabel": "Email",
+    "roleLabel": "Role",
+    "roleMember": "Member",
+    "roleAdmin": "Admin",
+    "cancel": "Cancel",
+    "sending": "Sending...",
+    "sendInvite": "Send Invite"
+  },
+  "User": {
+    "table": {
+      "deleteSuccess": "User deleted successfully",
+      "deleteError": "Error deleting user",
+      "confirmDeleteTitle": "Confirm deletion?",
+      "confirmDeleteDesc": "Are you sure you want to delete user <bold>{name}</bold>? This action cannot be undone.",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "deleting": "Deleting..."
+    }
+  },
+  "PlatformSettings": {
+    "title": "Platform Settings",
+    "general": {
+      "title": "General Settings",
+      "description": "Configure the general information for your platform.",
+      "companyName": "Company Name",
+      "seoDescription": "Description (SEO)",
+      "language": "Default Language",
+      "currency": "Default Currency",
+      "numberFormat": "Number Format"
+    },
+    "branding": {
+      "title": "Branding",
+      "description": "Customize the look and feel of your SaaS.",
+      "presets": "Color Presets",
+      "customColor": "Custom Color",
+      "faviconAndLogo": "Favicon & Logo",
+      "activeFavicon": "Active Favicon",
+      "faviconUrl": "Favicon URL",
+      "upload": "Upload",
+      "recommended": "Recommended: 32x32px or 64x64px. Formats: .ico, .png, .svg."
+    },
+    "seo": {
+      "title": "Public SEO Configuration",
+      "description": "Configure Global SEO settings for your public pages (OG Image, Twitter).",
+      "twitterHandle": "Twitter Handle",
+      "ogImage": "OpenGraph Image (Social Share)",
+      "preview": "Preview"
+    },
+    "actions": {
+      "discard": "Discard",
+      "save": "Save Changes",
+      "saving": "Saving..."
+    }
+  },
+  "Settings": {
+    "title": "Settings",
+    "subtitle": "Manage system settings and personalize your experience",
+    "language": "Language",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "tabs": {
+      "general": "General",
+      "theme": "Theme",
+      "security": "Security",
+      "notifications": "Notifications"
+    },
+    "general": {
+      "title": "General Settings",
+      "appName": "Application Name",
+      "language": "Language",
+      "timezone": "Timezone"
+    },
+    "security": {
+      "title": "Security",
+      "changePassword": "Change Password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "2fa": "Two-Factor Authentication",
+      "2faDescription": "Add an extra layer of security to your account",
+      "enable2fa": "Enable 2FA"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Manage how and when you receive notifications",
+      "email": "Email Notifications",
+      "newUsers": "New users",
+      "newUsersDesc": "Receive an email when a new user signs up",
+      "newOrders": "New orders",
+      "newOrdersDesc": "Receive an email when a new order is placed",
+      "systemUpdates": "System updates",
+      "systemUpdatesDesc": "Receive emails about updates and maintenance",
+      "push": "Push Notifications",
+      "realTime": "Real-time activity",
+      "realTimeDesc": "Receive notifications about important activity",
+      "reminders": "Reminders",
+      "remindersDesc": "Receive reminders about pending tasks"
+    },
+    "actions": {
+      "save": "Save Changes"
+    }
+  },
+  "AuditLogs": {
+    "title": "Audit Logs",
+    "description": "Complete history of critical system actions",
+    "sectionTitle": "Audit Records",
+    "sectionDescription": "Tracking of all administrative actions and system changes",
+    "table": {
+      "columns": {
+        "dateTime": "Date/Time",
+        "action": "Action",
+        "actor": "Actor",
+        "entity": "Entity",
+        "details": "Details"
+      },
+      "empty": "No logs found",
+      "detailsModal": {
+        "title": "Log Details",
+        "idLabel": "ID"
+      }
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "pageOf": "Page {page} of {total}"
+    }
+  },
+  "Observability": {
+    "title": "Observability",
+    "description": "Advanced monitoring based on Prometheus/Grafana patterns",
+    "tabs": {
+      "metrics": "Metrics",
+      "hardware": "Hardware",
+      "infrastructure": "Infrastructure",
+      "external": "External APIs",
+      "alerts": "Alerts",
+      "protection": "Protection",
+      "diagnostics": "Diagnostics"
+    },
+    "goldenSignals": {
+      "title": "Golden Signals",
+      "description": "Essential system health metrics (Google SRE)",
+      "latency": "Latency (p95)",
+      "latencyTooltip": "Request response time. 95% of requests are answered in this time or less. Ideal: < 200ms",
+      "traffic": "Traffic",
+      "trafficTooltip": "Number of requests per second the system is processing. Indicates current load",
+      "errors": "Errors",
+      "errorsTooltip": "Percentage of failed requests. Ideal: < 1%. High values indicate problems",
+      "saturation": "Saturation",
+      "saturationTooltip": "Resource usage (CPU/Memory). High values (>80%) indicate system overload",
+      "totalRequests": "total requests",
+      "failedRequests": "failed requests"
+    },
+    "nodejsMetrics": {
+      "title": "Node.js Metrics",
+      "description": "Node.js runtime specific metrics",
+      "eventLoopLag": "Event Loop Lag",
+      "eventLoopLagDesc": "Event loop delay",
+      "eventLoopLagTooltip": "Delay in event processing. Ideal: < 10ms. High values indicate server slowness",
+      "memoryHeap": "Memory Heap",
+      "memoryHeapDesc": "of {total}MB total",
+      "memoryHeapTooltip": "Memory used by Node.js application. If close to limit, may cause slowness",
+      "activeHandles": "Active Handles",
+      "activeHandlesDesc": "File descriptors, sockets, etc",
+      "activeHandlesTooltip": "Open connections (files, sockets). Many handles may indicate resource leak",
+      "activeRequests": "Active Requests",
+      "activeRequestsDesc": "Requests in progress",
+      "activeRequestsTooltip": "Number of requests being processed now. Very high values indicate overload"
+    },
+    "hardware": {
+      "title": "Hardware Metrics",
+      "description": "Server CPU, memory, disk and network",
+      "cpu": "CPU",
+      "cpuTooltip": "Server processing. Ideal: < 70%. High values (>90%) indicate server overload",
+      "cores": "cores",
+      "memory": "RAM Memory",
+      "memoryTooltip": "Server memory. Ideal: < 80%. If full, system may slow down or crash",
+      "disk": "Disk",
+      "diskTooltip": "Disk space. Ideal: < 80%. If full, system stops working",
+      "uptime": "Uptime",
+      "uptimeTooltip": "How long the server has been running without restart. High values are good (indicates stability)",
+      "temperature": "Temperature",
+      "temperatureTooltip": "Processor temperature. Ideal: < 70°C. High temperatures (>85°C) may cause shutdown",
+      "cpuTemp": "CPU Temperature",
+      "swap": "Swap Memory",
+      "swapTooltip": "Virtual memory (disk used as RAM). Ideal: 0%. High usage indicates RAM shortage",
+      "diskIO": "Disk I/O",
+      "diskIOTooltip": "Disk read/write speed. High values are good",
+      "read": "Read",
+      "write": "Write"
+    },
+    "infrastructure": {
+      "title": "Infrastructure Services",
+      "description": "Database, Cache and internal services status",
+      "latency": "Latency",
+      "latencyTooltip": "Service response time. Ideal: < 50ms. High values indicate slowness",
+      "successRate": "Success Rate",
+      "successRateTooltip": "Percentage of successful operations. Ideal: > 99%. Low values indicate problems",
+      "healthy": "Healthy",
+      "degraded": "Degraded",
+      "unhealthy": "Unhealthy"
+    },
+    "externalAPIs": {
+      "title": "External APIs",
+      "description": "Third-party integrations status (Stripe, Google Maps, PagBit)",
+      "latency": "Latency",
+      "latencyTooltip": "External API response time. Depends on internet and service",
+      "successRate": "Success Rate",
+      "successRateTooltip": "Percentage of successful calls. Low values may indicate API or internet problems",
+      "notConfigured": "API key not configured",
+      "notConfiguredTooltip": "This API is not configured. Add the API key in environment variables"
+    },
+    "protection": {
+      "title": "Protection Systems",
+      "description": "Cache and Rate Limiting to protect the system",
+      "cacheHitRate": "Cache Hit Rate",
+      "cacheHitRateTooltip": "Percentage of data found in cache (without database query). Ideal: > 80%. High values = faster system",
+      "cacheMissRate": "Cache Miss Rate",
+      "cacheMissRateTooltip": "Percentage of data NOT found in cache. Ideal: < 20%. High values = slower system",
+      "rateLimitViolations": "Rate Limit Violations",
+      "rateLimitViolationsTooltip": "Number of requests blocked for excess. Protects against attacks and overload",
+      "cacheConfig": "Cache Configuration",
+      "status": "Status",
+      "ttl": "TTL (Time to Live)",
+      "ttlTooltip": "Time data stays in cache before expiring. Higher values = fewer database queries",
+      "strategy": "Strategy",
+      "strategyTooltip": "LRU = Removes least recently used items. Optimizes memory usage",
+      "totalRequests": "Total Requests",
+      "topViolators": "Top Violators",
+      "topViolatorsTooltip": "IPs that most violated rate limit. May indicate attack attempts"
+    },
+    "diagnostics": {
+      "title": "Diagnostic Tools",
+      "description": "Continuous monitoring and connectivity tests",
+      "activeSessions": "Active Sessions",
+      "activeSessionsTooltip": "Monitoring sessions in progress. Collect metrics at regular intervals",
+      "completedSessions": "Completed Sessions",
+      "completedSessionsTooltip": "Finished monitoring sessions. Data saved for analysis",
+      "avgDuration": "Average Duration",
+      "avgDurationTooltip": "Standard time for each monitoring session",
+      "continuousMonitoring": "Continuous Monitoring",
+      "continuousMonitoringDesc": "Start a session to collect metrics at regular intervals",
+      "durationLabel": "Duration (minutes)",
+      "durationTooltip": "How long monitoring will collect data. Minimum: 1min, Maximum: 60min",
+      "startMonitoring": "Start Monitoring",
+      "forceRefresh": "Force Refresh",
+      "forceRefreshTooltip": "Updates all metrics immediately, without waiting for automatic interval",
+      "connectivityStatus": "Connectivity Status",
+      "connectivityStatusDesc": "Tests connection to all services (database, cache, external APIs)",
+      "monitoringSessionsList": "Monitoring Sessions",
+      "session": "Session",
+      "snapshots": "snapshots",
+      "minutesShort": "min"
+    },
+    "alerts": {
+      "activeAlerts": "Active Alerts",
+      "activeAlertsDescription": "Alerts requiring immediate attention",
+      "active": "active",
+      "noActiveAlerts": "No active alerts. System is healthy!",
+      "thresholds": "Configured Thresholds",
+      "thresholdsDescription": "Alert thresholds for system metrics",
+      "thresholdsTooltip": "When a metric exceeds these limits, an alert is automatically generated",
+      "table": {
+        "name": "Name",
+        "metric": "Metric",
+        "threshold": "Threshold",
+        "severity": "Severity",
+        "status": "Status"
+      },
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "resolve": "Resolve",
+      "resolveTooltip": "Marks this alert as resolved. It will be removed from active alerts list",
+      "totalAlerts": "Total Alerts",
+      "resolved": "Resolved",
+      "critical": "Critical",
+      "resolveSuccess": "Alert resolved successfully",
+      "resolveError": "Error resolving alert"
+    }
+  },
+  "Maintenance": {
+    "title": "Under Maintenance",
+    "description": "We're currently performing scheduled maintenance to improve our services. We'll be back shortly.",
+    "estimatedTime": "Estimated time",
+    "backOnline": "Back online soon"
+  },
+  "ComingSoon": {
+    "badge": "Work in Progress",
+    "title": "Coming Soon",
+    "subtitle": "We're building something extraordinary. This feature will be available on your dashboard soon.",
+    "notify": {
+      "label": "Notify me at launch",
+      "placeholder": "your@email.com",
+      "button": "Notify",
+      "disclaimer": "* We promise not to spam. Only important product updates."
+    },
+    "countdown": {
+      "days": "Days",
+      "hours": "Hours",
+      "minutes": "Minutes",
+      "seconds": "Seconds"
+    }
+  }
+}

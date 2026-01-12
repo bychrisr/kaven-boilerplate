@@ -247,6 +247,60 @@ async function main() {
     }
   }
 
+  // 5. Spaces & Assignments (Tenant App Features)
+  const SPACES = [
+      { code: 'ADMIN', name: 'Admin', icon: 'Crown', color: 'purple' },
+      { code: 'FINANCE', name: 'Finance', icon: 'DollarSign', color: 'green' },
+      { code: 'SUPPORT', name: 'Support', icon: 'Headphones', color: 'blue' },
+      { code: 'MARKETING', name: 'Marketing', icon: 'TrendingUp', color: 'orange' },
+      { code: 'DEVOPS', name: 'DevOps', icon: 'Server', color: 'red' }
+  ];
+
+  for (const s of SPACES) {
+      const space = await prisma.space.upsert({
+          where: { tenantId_code: { tenantId: adminTenant.id, code: s.code } },
+          update: {},
+          create: {
+              tenantId: adminTenant.id,
+              code: s.code,
+              name: s.name,
+              icon: s.icon,
+              color: s.color,
+              defaultPermissions: []
+          }
+      });
+      console.log(`✅ Space ensured: ${s.name} (${space.id})`);
+
+      // Assign users based on Role-to-Space mapping
+      // ARCHITECT -> ALL
+      // FINANCE User -> FINANCE Space
+      
+      // 5.1 Assign Architect to ALL spaces
+      await prisma.userSpace.upsert({
+          where: { userId_spaceId: { userId: architect.id, spaceId: space.id } },
+          update: {},
+          create: { userId: architect.id, spaceId: space.id, customPermissions: ['*'] }
+      });
+
+      // 5.2 Assign Persona Users
+      const targetRole = s.code as InternalRole;
+      if (['FINANCE', 'SUPPORT', 'MARKETING', 'DEVOPS'].includes(targetRole)) {
+          // Find the user for this role
+          const personaUser = await prisma.user.findFirst({
+             where: { email: `${targetRole.toLowerCase()}@admin.com` }
+          });
+
+          if (personaUser) {
+              await prisma.userSpace.upsert({
+                  where: { userId_spaceId: { userId: personaUser.id, spaceId: space.id } },
+                  update: {},
+                  create: { userId: personaUser.id, spaceId: space.id, customPermissions: [] }
+              });
+              console.log(`   Linked ${personaUser.email} to ${s.name}`);
+          }
+      }
+  }
+
   console.log('\n=============================================');
   console.log('✅ Seed Finished Successfully');
   await prisma.$disconnect();

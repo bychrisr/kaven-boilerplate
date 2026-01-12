@@ -1,0 +1,6 @@
+/* Phone Input Styles - Minimal customization needed */
+
+/* Flag images */
+.react-international-phone-flag-emoji {
+  @apply inline-block;
+}

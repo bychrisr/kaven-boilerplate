@@ -1,0 +1,296 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@import '../styles/theme.css';
+
+/* SimpleBar Scrollbar Customization (Minimals Style) */
+@import 'simplebar-react/dist/simplebar.min.css';
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  /* New Typography Stack */
+  --font-display: var(--font-display);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono);
+
+  /* Kaven UI v2 - Advanced Colors (OKLCH) */
+  --color-primary: oklch(60% 0.2 290); /* Glassmorphism Variables - Light Mode (Purple) */
+  --glass-gradient-start: rgba(255, 255, 255, 0.8);
+  --glass-gradient-end: rgba(255, 255, 255, 0.6);
+  --color-glass-border: rgba(255, 255, 255, 0.5);
+  --color-glass-highlight: rgba(255, 255, 255, 0.8);
+  --glass-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  --spotlight-color: rgba(255, 255, 255, 0.5);
+  --color-surface: oklch(20% 0.02 260); /* Base Escura v2 */
+
+  /* Kaven Theme Colors Mapping */
+  --color-primary-main: var(--primary-main);
+  /* ... (rest of existing mappings) ... */
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-light: var(--primary-light);
+  --color-primary-lighter: var(--primary-lighter);
+  --color-primary-darker: var(--primary-darker);
+
+  --color-secondary-main: var(--secondary-main);
+  --color-secondary-dark: var(--secondary-dark);
+  --color-secondary-light: var(--secondary-light);
+  --color-secondary-lighter: var(--secondary-lighter);
+  --color-secondary-darker: var(--secondary-darker);
+
+  --color-success-main: var(--success-main);
+  --color-success-dark: var(--success-dark);
+  --color-success-light: var(--success-light);
+  --color-success-lighter: var(--success-lighter);
+  --color-success-darker: var(--success-darker);
+
+  --color-warning-main: var(--warning-main);
+  --color-warning-dark: var(--warning-dark);
+  --color-warning-light: var(--warning-light);
+  --color-warning-lighter: var(--warning-lighter);
+  --color-warning-darker: var(--warning-darker);
+
+  --color-error-main: var(--error-main);
+  --color-error-dark: var(--error-dark);
+  --color-error-light: var(--error-light);
+  --color-error-lighter: var(--error-lighter);
+  --color-error-darker: var(--error-darker);
+
+  --color-info-main: var(--info-main);
+  --color-info-dark: var(--info-dark);
+  --color-info-light: var(--info-light);
+  --color-info-lighter: var(--info-lighter);
+  --color-info-darker: var(--info-darker);
+
+  --color-gray-900: var(--gray-900);
+  --color-gray-800: var(--gray-800);
+  --color-gray-700: var(--gray-700);
+  --color-gray-600: var(--gray-600);
+  --color-gray-500: var(--gray-500);
+  --color-gray-400: var(--gray-400);
+  --color-gray-300: var(--gray-300);
+  --color-gray-200: var(--gray-200);
+  --color-gray-100: var(--gray-100);
+  --color-gray-50: var(--gray-50);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Typography Families */
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'Source Code Pro', monospace;
+}
+
+.dark {
+  /* Minimals Dark Mode - Original Colors Restored */
+  --background: #161c24;
+  --foreground: #ffffff;
+
+  --card: #212b36;
+  --card-foreground: #ffffff;
+
+  --popover: #212b36;
+  --popover-foreground: #ffffff;
+
+  --primary: #8e33ff; /* Purple Minimals */
+  --primary-foreground: #ffffff;
+
+  --secondary: #8e33ff;
+  --secondary-foreground: #ffffff;
+
+  --muted: rgba(145, 158, 171, 0.12);
+  --muted-foreground: #919eab;
+
+  --accent: rgba(145, 158, 171, 0.12);
+  --accent-foreground: #ffffff;
+
+  --destructive: #ff5630;
+  --destructive-foreground: #ffffff;
+
+  --border: rgba(145, 158, 171, 0.24);
+  --input: rgba(145, 158, 171, 0.24);
+  --ring: rgba(0, 167, 111, 0.3);
+
+  /* Charts - Mantendo oklch ou hex compatível */
+  --chart-1: #00a76f;
+  --chart-2: #ffab00;
+  --chart-3: #ff5630;
+  --chart-4: #00b8d9;
+  --chart-5: #8e33ff;
+
+  /* Sidebar Specifics - Match Background depth for "floating cards" effect */
+  --sidebar: #161c24;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #00a76f;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(145, 158, 171, 0.08);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(145, 158, 171, 0.12); /* Subtle border */
+  --sidebar-ring: rgba(0, 167, 111, 0.3);
+  /* Glassmorphism Variables - Dark Mode (Tech) */
+  --glass-gradient-start: rgba(30, 41, 59, 0.7);
+  --glass-gradient-end: rgba(30, 41, 59, 0.4);
+  --color-glass-border: rgba(255, 255, 255, 0.08);
+  --color-glass-highlight: rgba(255, 255, 255, 0.15);
+  --glass-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.3);
+  --spotlight-color: rgba(255, 255, 255, 0.08);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Custom Scrollbar - Invisível por padrão, aparece no hover */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+  }
+
+  /* Scrollbar aparece no hover do container */
+  *:hover::-webkit-scrollbar-thumb {
+    background: rgba(145, 158, 171, 0.2);
+  }
+  *:hover::-webkit-scrollbar-thumb:hover {
+    background: rgba(145, 158, 171, 0.4);
+  }
+
+  /* SimpleBar Scrollbar - Invisível por padrão, aparece no hover */
+  .simplebar-scrollbar:before {
+    background-color: rgba(145, 158, 171, 0.48);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .simplebar-scrollbar.simplebar-visible:before {
+    opacity: 0.48;
+  }
+
+  .simplebar-track.simplebar-vertical {
+    width: 6px;
+  }
+
+  .simplebar-track.simplebar-horizontal {
+    height: 6px;
+  }
+}
+
+@layer utilities {
+  /* O Painel de Vidro Definitivo (Kaven v2) */
+  .glass-panel {
+    @apply backdrop-blur-2xl relative overflow-hidden;
+
+    /* Fundo gradiente adaptativo */
+    background: linear-gradient(
+      180deg,
+      var(--glass-gradient-start) 0%,
+      var(--glass-gradient-end) 100%
+    );
+
+    /* Borda adaptativa */
+    border: 1px solid var(--color-glass-border);
+
+    /* Sombra adaptativa */
+    box-shadow:
+      var(--glass-shadow),
+      inset 0 1px 0 0 var(--color-glass-highlight);
+  }
+
+  /* Textura de Ruído (Noise) */
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+}

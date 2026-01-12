@@ -1,0 +1,127 @@
+import { useState } from 'react';
+import { ChevronDown, Plus } from 'lucide-react';
+import { useSpace } from '@/lib/hooks/use-space';
+import { useTenant } from '@/lib/hooks/use-tenant';
+import { useAuthStore } from '@/stores/auth.store';
+import { useClickOutside } from '@/hooks/use-click-outside';
+import { cn } from '@/lib/utils';
+
+export function SpaceSelector() {
+  const { tenant } = useTenant();
+  const { user } = useAuthStore();
+  const { activeSpace, spaces, setActiveSpace } = useSpace();
+//   const { currentSpace, availableSpaces, setCurrentSpace } = useSpaces();
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const dropdownRef = useClickOutside<HTMLDivElement>(() => setIsOpen(false));
+
+  if (!tenant || !activeSpace) {
+    return (
+      <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary-main to-primary-dark animate-pulse" />
+        <div className="hidden md:flex flex-col gap-1">
+          <div className="h-3 w-16 bg-white/10 rounded animate-pulse" />
+          <div className="h-2 w-12 bg-white/10 rounded animate-pulse" />
+        </div>
+      </div>
+    );
+  }
+
+  const role = user?.role || 'USER';
+
+  return (
+    <div className="relative block" ref={dropdownRef}>
+      {/* Trigger Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 px-1.5 py-1.5 md:px-3 rounded-lg hover:bg-accent transition-colors"
+      >
+        {/* Tenant Avatar */}
+        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary-main to-primary-dark flex items-center justify-center text-white text-xs font-bold">
+          {tenant.name[0]}
+        </div>
+        
+        {/* Tenant Info - Hidden on mobile */}
+        <div className="hidden md:flex flex-col items-start">
+          <span className="text-sm font-semibold leading-tight text-foreground">
+            {activeSpace.name}
+          </span>
+          <span className="text-[10px] text-muted-foreground font-medium uppercase">
+            {role}
+          </span>
+        </div>
+        
+        {/* Chevron */}
+        <ChevronDown className={cn(
+          "w-4 h-4 text-muted-foreground ml-1 transition-transform",
+          isOpen && "rotate-180"
+        )} />
+      </button>
+
+      {/* Dropdown */}
+      {isOpen && (
+        <div className="absolute top-full left-0 mt-2 w-80 bg-card text-card-foreground border border-border rounded-lg shadow-2xl z-50 overflow-hidden">
+          {/* Spaces List */}
+          <div className="p-2">
+            {spaces.map((space) => {
+              const isActive = activeSpace.id === space.id;
+              
+              return (
+                <button
+                  key={space.id}
+                  onClick={() => {
+                    setActiveSpace(space.id);
+                    setIsOpen(false);
+                  }}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-left",
+                    isActive 
+                      ? "bg-primary-main/10 text-primary-main" 
+                      : "hover:bg-accent text-foreground/80 hover:text-foreground"
+                  )}
+                >
+                  {/* Space Avatar */}
+                  <div className={cn(
+                    "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0",
+                    isActive 
+                      ? "bg-gradient-to-tr from-primary-main to-primary-dark text-white"
+                      : "bg-muted text-foreground/60"
+                  )}>
+                    {space.name[0]}
+                  </div>
+                  
+                    {/* Space Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold truncate leading-none">
+                      {space.name.toUpperCase()}
+                    </div>
+                  </div>
+                  
+                  {/* Role Badge - Show ONLY for active space to avoid confusion about global role */}
+                  {isActive && (
+                     <span className="text-[10px] font-bold text-primary-main bg-primary-main/10 px-2 py-0.5 rounded-full border border-primary-main/20 uppercase">
+                      {role}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-border" />
+
+          {/* Create Workspace */}
+          <div className="p-2">
+            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent text-muted-foreground hover:text-accent-foreground transition-colors text-left">
+              <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
+                <Plus className="w-4 h-4" />
+              </div>
+              <span className="text-sm font-medium">Create workspace</span>
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
