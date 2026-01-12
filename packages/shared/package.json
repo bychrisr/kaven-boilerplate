@@ -1,0 +1,11 @@
+{
+  "name": "@kaven/shared",
+  "version": "1.0.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
