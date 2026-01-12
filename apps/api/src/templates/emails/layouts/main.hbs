@@ -24,29 +24,24 @@
         <!-- Card Container -->
         <table width="600" cellpadding="0" cellspacing="0" style="background-color: {{theme.colors.surface}}; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
           
-          <!-- Header (Logo or Brand Stripe) -->
+          <!-- Header Partial -->
           <tr>
-            <td align="center" style="padding: 30px 40px; background-color: {{theme.colors.surface}};">
-              <h2 style="margin: 0; color: {{theme.colors.primary}}; font-family: {{theme.typography.headingFont}}; letter-spacing: -0.5px;">Kaven</h2>
+            <td style="padding: 0;">
+              {{> header }}
             </td>
           </tr>
 
           <!-- Content Injection -->
           <tr>
-            <td style="padding: 0 40px 40px 40px;">
+            <td style="padding: 40px;">
               {{> @partial-block }}
             </td>
           </tr>
           
-          <!-- Footer -->
+          <!-- Footer Partial -->
           <tr>
-            <td style="background-color: #FAFAFA; padding: 30px; text-align: center; border-top: 1px solid {{theme.colors.border}};">
-              <p style="color: {{theme.colors.textMuted}}; font-size: 14px; margin: 0 0 10px 0;">
-                Kaven - Multi-Tenant SaaS Platform
-              </p>
-              <p style="color: {{theme.colors.textMuted}}; font-size: 12px; margin: 0;">
-                © 2026 Kaven. Todos os direitos reservados.
-              </p>
+            <td style="padding: 0;">
+              {{> footer }}
             </td>
           </tr>
         </table>
@@ -55,3 +50,4 @@
   </table>
 </body>
 </html>
+

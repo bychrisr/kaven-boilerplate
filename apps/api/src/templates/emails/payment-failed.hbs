@@ -1,16 +1,16 @@
 {{#> main}}
   <h1 style="color: {{theme.colors.text}}; margin: 0 0 24px 0; font-size: 24px; font-weight: 700;">
-    {{t "emails.welcome.title"}}
+    {{t "emails.paymentFailed.title"}}
   </h1>
   
   <p style="color: {{theme.colors.text}}; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
     {{t "common.greeting" name=name}}
   </p>
   
-  <p style="color: {{theme.colors.text}}; font-size: 16px; line-height: 1.6; margin: 0 0 32px 0;">
-    {{t "emails.welcome.content"}}
-  </p>
+  <div style="margin-bottom: 32px;">
+    {{> alert type="error" title="Falha no Pagamento" message=(t "emails.paymentFailed.content") }}
+  </div>
   
-  {{> button url=(concat frontendUrl "/dashboard") label=(t "emails.welcome.cta") }}
+  {{> button url=billingUrl label=(t "emails.paymentFailed.cta") }}
   
 {{/main}}

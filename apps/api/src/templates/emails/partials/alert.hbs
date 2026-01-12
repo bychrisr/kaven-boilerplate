@@ -1,0 +1,21 @@
+{{!-- 
+  Usage: 
+  {{> alert type="success" title="Success!" message="Operation completed." }}
+  Types: success, warning, error, info
+--}}
+<div style="
+  background: {{lookup (lookup theme.colors.alerts type) 'background'}}; 
+  border-left: 4px solid {{lookup (lookup theme.colors.alerts type) 'text'}}; 
+  padding: 15px 20px; 
+  margin: 20px 0; 
+  border-radius: 4px;
+">
+  {{#if title}}
+  <p style="margin: 0 0 5px 0; font-weight: bold; color: {{lookup (lookup theme.colors.alerts type) 'title'}};">
+    {{title}}
+  </p>
+  {{/if}}
+  <p style="margin: 0; font-size: 14px; color: {{lookup (lookup theme.colors.alerts type) 'text'}};">
+    {{message}}
+  </p>
+</div>

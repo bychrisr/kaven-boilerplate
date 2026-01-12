@@ -1,6 +1,6 @@
 {{#> main}}
   <h1 style="color: {{theme.colors.text}}; margin: 0 0 24px 0; font-size: 24px; font-weight: 700;">
-    {{t "emails.welcome.title"}}
+    {{t "emails.security.title"}}
   </h1>
   
   <p style="color: {{theme.colors.text}}; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
@@ -8,9 +8,12 @@
   </p>
   
   <p style="color: {{theme.colors.text}}; font-size: 16px; line-height: 1.6; margin: 0 0 32px 0;">
-    {{t "emails.welcome.content"}}
+    {{t "emails.security.content"}}
   </p>
   
-  {{> button url=(concat frontendUrl "/dashboard") label=(t "emails.welcome.cta") }}
-  
+  {{> alert type="info" message=(t "emails.security.alertDetails" device=device location=location ip=ip) }}
+
+  <div style="margin-top: 32px;">
+    {{> button url=blockUrl label=(t "emails.security.cta") }}
+  </div>
 {{/main}}

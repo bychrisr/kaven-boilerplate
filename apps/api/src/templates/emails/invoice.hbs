@@ -1,45 +1,16 @@
 {{#> main}}
   <h1 style="color: {{theme.colors.text}}; margin: 0 0 24px 0; font-size: 24px; font-weight: 700;">
-    Nova Invoice
+    {{t "emails.invoice.title"}}
   </h1>
   
   <p style="color: {{theme.colors.text}}; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
-    Olá <strong>{{name}}</strong>,
+    {{t "common.greeting" name=name}}
   </p>
   
   <p style="color: {{theme.colors.text}}; font-size: 16px; line-height: 1.6; margin: 0 0 32px 0;">
-    Uma nova invoice foi gerada e está disponível para pagamento:
+    {{t "emails.invoice.content" amount=formattedAmount dueDate=formattedDate}}
   </p>
   
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #F9FAFB; border-radius: 8px; border: 1px solid {{theme.colors.border}}; margin-bottom: 32px;">
-    <tr>
-      <td style="padding: 24px;">
-        <table width="100%" cellpadding="0" cellspacing="0">
-          <tr>
-            <td style="padding-bottom: 12px; color: {{theme.colors.textMuted}}; font-size: 14px;">Número</td>
-            <td style="padding-bottom: 12px; color: {{theme.colors.text}}; font-size: 14px; font-family: {{theme.typography.headingFont}}; font-weight: 600; text-align: right;">{{invoiceNumber}}</td>
-          </tr>
-          <tr>
-            <td style="padding-bottom: 12px; color: {{theme.colors.textMuted}}; font-size: 14px;">Vencimento</td>
-            <td style="padding-bottom: 12px; color: {{theme.colors.text}}; font-size: 14px; font-weight: 500; text-align: right;">{{formattedDate}}</td>
-          </tr>
-          <tr>
-            <td style="padding-top: 12px; border-top: 1px dashed {{theme.colors.border}}; color: {{theme.colors.text}}; font-size: 16px; font-weight: 600;">Total</td>
-            <td style="padding-top: 12px; border-top: 1px dashed {{theme.colors.border}}; color: {{theme.colors.primary}}; font-size: 18px; font-family: {{theme.typography.headingFont}}; font-weight: 700; text-align: right;">{{formattedAmount}}</td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
+  {{> button url=(concat frontendUrl "/invoices/" invoiceNumber) label=(t "emails.invoice.cta") }}
   
-  <table width="100%" cellpadding="0" cellspacing="0">
-    <tr>
-      <td align="center">
-        <a href="{{frontendUrl}}/invoices/{{invoiceNumber}}" 
-           style="display: inline-block; background-color: {{theme.colors.primary}}; color: #ffffff; text-decoration: none; padding: 14px 40px; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 12px rgba(0, 167, 111, 0.24);">
-          Pagar Invoice
-        </a>
-      </td>
-    </tr>
-  </table>
 {{/main}}

@@ -1,28 +1,22 @@
 {{#> main}}
   <h1 style="color: {{theme.colors.text}}; margin: 0 0 24px 0; font-size: 24px; font-weight: 700;">
-    Verifique seu email
+    {{t "emails.verification.title"}}
   </h1>
   
   <p style="color: {{theme.colors.text}}; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
-    Olá <strong>{{name}}</strong>,
+    {{t "common.greeting" name=name}}
   </p>
   
   <p style="color: {{theme.colors.text}}; font-size: 16px; line-height: 1.6; margin: 0 0 32px 0;">
-    Para garantir a segurança da sua conta, por favor confirme seu endereço de email clicando no botão abaixo:
+    {{t "emails.verification.content"}}
   </p>
   
-  <table width="100%" cellpadding="0" cellspacing="0">
-    <tr>
-      <td align="center">
-        <a href="{{verificationUrl}}" 
-           style="display: inline-block; background-color: {{theme.colors.primary}}; color: #ffffff; text-decoration: none; padding: 14px 40px; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 12px rgba(0, 167, 111, 0.24);">
-          Verificar Email
-        </a>
-      </td>
-    </tr>
-  </table>
-  
-  <p style="color: {{theme.colors.textMuted}}; font-size: 14px; line-height: 1.6; margin: 32px 0 0 0; text-align: center;">
-    Se você não criou esta conta, nenhuma ação é necessária.
+  {{> button url=verificationUrl label=(t "emails.verification.cta") }}
+
+  {{> alert type="info" message=(t "emails.verification.securityNote") }}
+
+  <p style="color: {{theme.colors.textMuted}}; font-size: 14px; margin-top: 24px;">
+    {{t "emails.verification.orLink"}} <br>
+    <a href="{{verificationUrl}}" style="color: {{theme.colors.primary}};">{{verificationUrl}}</a>
   </p>
 {{/main}}

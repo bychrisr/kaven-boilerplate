@@ -1,28 +1,12 @@
 {{#> main}}
   <h1 style="color: {{theme.colors.text}}; margin: 0 0 24px 0; font-size: 24px; font-weight: 700;">
-    Convite: {{tenantName}}
+    {{t "emails.invite.title"}}
   </h1>
   
-  <p style="color: {{theme.colors.text}}; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
-    Olá,
-  </p>
-  
   <p style="color: {{theme.colors.text}}; font-size: 16px; line-height: 1.6; margin: 0 0 32px 0;">
-    <strong>{{inviterName}}</strong> convidou você para colaborar no workspace <strong>{{tenantName}}</strong>.
+    {{t "emails.invite.content" inviterName=inviterName tenantName=tenantName}}
   </p>
   
-  <table width="100%" cellpadding="0" cellspacing="0">
-    <tr>
-      <td align="center">
-        <a href="{{inviteUrl}}" 
-           style="display: inline-block; background-color: {{theme.colors.primary}}; color: #ffffff; text-decoration: none; padding: 14px 40px; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 12px rgba(0, 167, 111, 0.24);">
-          Aceitar Convite
-        </a>
-      </td>
-    </tr>
-  </table>
+  {{> button url=inviteUrl label=(t "emails.invite.cta") }}
   
-  <p style="color: {{theme.colors.textMuted}}; font-size: 14px; line-height: 1.6; margin: 32px 0 0 0; text-align: center;">
-    Se você não esperava por este convite, pode ignorar este email.
-  </p>
 {{/main}}
