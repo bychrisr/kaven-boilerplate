@@ -74,9 +74,11 @@ export default function LoginForm() {
       
       console.log('✅ LOGIN FORM - Navigation triggered to:', targetUrl);
     } catch (error) {
-      console.error('❌ LOGIN FORM - Error:', error);
-      const axiosError = error as { response?: { data?: { message?: string } } };
-      const message = axiosError.response?.data?.message || 'Erro ao fazer login. Tente novamente.';
+      // Erros de login são esperados (ex: senha errada), então usamos warn/log para não acionar o Error Overlay do Next.js
+      console.warn('ℹ️ LOGIN FORM - Handled Error:', error);
+      const axiosError = error as { response?: { data?: { message?: string, error?: string } } };
+      // Backend envia { error: 'Mensagem' } ou { message: 'Mensagem' }
+      const message = axiosError.response?.data?.error || axiosError.response?.data?.message || 'Erro ao fazer login. Tente novamente.';
       setGeneralError(message);
       toast.error(message);
     }
