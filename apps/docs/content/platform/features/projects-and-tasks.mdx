@@ -1,0 +1,70 @@
+---
+title: Projects & Tasks
+description: Gestão de Projetos e Tarefas com isolamento por Space
+date: 2026-01-12
+author: Antigravity Agent
+version: 1.0.0
+tags: [projects, tasks, spaces, core]
+---
+
+# Projects & Tasks System
+
+O módulo de Projetos e Tarefas demonstra a capacidade do Kaven de gerenciar entidades complexas com isolamento duplo: **Tenant** e **Space**.
+
+## Arquitetura de Isolamento
+
+### Tenant Isolation
+
+Todas as queries de banco de dados (`findMany`, `findFirst`, etc.) aplicam obrigatoriamente o filtro `where: { tenantId }`. Isso garante segurança absoluta entre clientes.
+
+### Space Isolation
+
+Além do Tenant, os projetos podem pertencer a um `Space` específico.
+
+- **Global Projects**: Se `spaceId` for nulo, o projeto é visível em todos os contextos (ou apenas no contexto Global, dependendo da regra de negócio).
+- **Space-Specific Projects**: Se `spaceId` for definido (ex: "FINANCE"), este projeto **só aparecerá** quando o usuário estiver navegando no Space de Finanças.
+
+## Projetos
+
+### Modelo de Dados
+
+```prisma
+model Project {
+  id        String   @id @default(uuid())
+  name      String
+  status    ProjectStatus @default(ACTIVE)
+
+  tenantId  String   // Isolamento Nível 1
+  spaceId   String?  // Isolamento Nível 2 (Opcional)
+
+  tasks     Task[]
+}
+```
+
+### Frontend Implementation
+
+A página `/projects` utiliza o hook `useSpace()` para identificar o contexto atual.
+
+```typescript
+const { activeSpaceId } = useSpace();
+
+// A query invalida e refaz o fetch automaticamente quando o Space muda
+useQuery({
+  queryKey: ['projects', tenant.id, activeSpaceId],
+  queryFn: () => api.get('/projects', { params: { spaceId: activeSpaceId } }),
+});
+```
+
+## Tarefas (Tasks)
+
+As tarefas são filhas de um Projeto, mas também herdam o `tenantId` para performance e segurança.
+
+### API Endpoints
+
+- `GET /api/app/tasks?projectId=...` - Lista tarefas de um projeto
+- `GET /api/app/tasks?spaceId=...` - Lista todas as tarefas de um Space (cross-project)
+
+## Próximos Passos
+
+- Implementar visualização Kanban para Tarefas.
+- Adicionar campos de data e prioridade na UI de criação.

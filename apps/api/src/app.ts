@@ -34,6 +34,8 @@ import { invoiceRoutes } from './modules/invoices/routes/invoice.routes';
 import { orderRoutes } from './modules/orders/routes/order.routes';
 import { platformRoutes } from './modules/platform/routes/platform.routes';
 import { observabilityRoutes } from './modules/observability/routes/observability.routes';
+import { projectsRoutes } from './modules/app/projects/projects.routes';
+import { tasksRoutes } from './modules/app/tasks/tasks.routes';
 
 // [KAVEN_MODULE_IMPORTS]
 // [KAVEN_MODULE_IMPORTS_END]
@@ -203,6 +205,8 @@ app.register(orderRoutes, { prefix: '/api/orders' });
 app.register(notificationRoutes, { prefix: '/api/notifications' });
 app.register(platformRoutes, { prefix: '/api/settings/platform' });
 app.register(observabilityRoutes, { prefix: '/api/observability' });
+app.register(projectsRoutes, { prefix: '/api/app/projects' });
+app.register(tasksRoutes, { prefix: '/api/app/tasks' });
 
 // [KAVEN_MODULE_REGISTRATION]
 // [KAVEN_MODULE_REGISTRATION_END]
