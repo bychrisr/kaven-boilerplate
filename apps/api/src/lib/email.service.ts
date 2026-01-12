@@ -96,9 +96,8 @@ export class EmailService {
       const translations = getTranslations(locale);
 
       // Create translation helper
-      // Cannot pass functions to handlebars context directly in some setups, but here it works if compiled locally.
-      // Alternatively, we can pass the whole translation object and a helper 't'.
-      const t = (key: string, params: Record<string, any> = {}) => {
+      // Handlebars passes named parameters as 'hash' in the options object (last argument)
+      const t = function(this: any, key: string, options?: any) {
          // Deep access to key, e.g. "emails.welcome.title"
          const keys = key.split('.');
          let value: any = translations;
@@ -106,6 +105,8 @@ export class EmailService {
            value = value?.[k];
          }
          if (typeof value === 'string') {
+           // options.hash contains named parameters like inviterName=inviterName
+           const params = options?.hash || {};
            return interpolate(value, params);
          }
          return key; // Fallback to key if not found
