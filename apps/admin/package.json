@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "(fuser -k 3000/tcp || kill-port 3000) && next dev --turbopack -p 3000",
+    "dev": "(fuser -k -9 3000/tcp || true) && next dev --turbopack -p 3000",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

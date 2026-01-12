@@ -55,7 +55,7 @@ services:
     image: grafana/grafana:latest
     container_name: kaven-grafana
     ports:
-      - '3001:3000'
+      - '3004:3000'
     volumes:
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
       - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
@@ -108,4 +108,3 @@ volumes:
   postgres_data:
   prometheus_data:
   grafana_data:
-

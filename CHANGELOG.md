@@ -213,7 +213,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - Scrape interval: 10s
   - Retenção: 15 dias
   - Auto-discovery do backend via `host.docker.internal`
-- **Grafana** (:3001) para visualização
+- **Grafana** (:3004) para visualização
   - Login: admin/admin
   - Dashboard Kaven API pré-configurado
   - Datasource Prometheus integrado

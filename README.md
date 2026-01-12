@@ -118,8 +118,10 @@ pnpm dev
 ### Acessos Padrão
 
 - **Admin Dashboard:** http://localhost:3000
-- **API Server:** http://localhost:4000
+- **Tenant App:** http://localhost:3001
+- **API Server:** http://localhost:8000
 - **Documentação Técnica:** http://localhost:3002
+- **Grafana (Observability):** http://localhost:3004
 
 ---
 

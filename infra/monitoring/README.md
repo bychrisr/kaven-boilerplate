@@ -19,7 +19,7 @@ docker-compose -f docker-compose.monitoring.yml logs -f
 
 - **Prometheus:** http://localhost:9090
 - **Alertmanager:** http://localhost:9093
-- **Grafana:** http://localhost:3001 (admin/admin)
+- **Grafana:** http://localhost:3004 (admin/admin)
 
 ## 📁 Estrutura
 
