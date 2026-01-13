@@ -18,6 +18,7 @@ import { SettingsSecurity } from '../settings-security';
 
 export function SettingsView() {
   const t = useTranslations('Settings');
+  const tCommon = useTranslations('Common');
   const [activeTab, setActiveTab] = useState('general');
 
   return (
@@ -32,7 +33,7 @@ export function SettingsView() {
           <Breadcrumbs>
             <BreadcrumbItem>
               <Link href="/dashboard" className="transition-colors hover:text-foreground">
-                Dashboard
+                {tCommon('dashboard')}
               </Link>
             </BreadcrumbItem>
             <BreadcrumbItem current>{t('title')}</BreadcrumbItem>

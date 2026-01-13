@@ -6,80 +6,96 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export function SettingsNotifications() {
   const t = useTranslations('Settings');
 
   return (
-    <div className="bg-white rounded-xl border shadow-sm p-6">
-      <h2 className="text-xl font-semibold mb-4">{t('notifications.title')}</h2>
-      <p className="text-sm text-gray-600 mb-6">{t('notifications.description')}</p>
-
-      <div className="space-y-6">
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('notifications.title')}</CardTitle>
+        <CardDescription>{t('notifications.description')}</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
         {/* Email Notifications */}
         <div>
           <h3 className="text-lg font-medium mb-4">{t('notifications.email')}</h3>
-          <div className="space-y-3">
-            <label className="flex items-center gap-3">
-              <input type="checkbox" defaultChecked className="h-4 w-4 text-blue-600 rounded" />
-              <div>
-                <p className="font-medium text-sm">{t('notifications.newUsers')}</p>
-                <p className="text-xs text-gray-500">
+          <div className="space-y-4">
+            <div className="flex items-start space-x-2">
+              <Checkbox id="newUsers" defaultChecked />
+              <div className="grid gap-1.5 leading-none">
+                <Label htmlFor="newUsers">
+                  {t('notifications.newUsers')}
+                </Label>
+                <p className="text-sm text-muted-foreground">
                   {t('notifications.newUsersDesc')}
                 </p>
               </div>
-            </label>
-            <label className="flex items-center gap-3">
-              <input type="checkbox" defaultChecked className="h-4 w-4 text-blue-600 rounded" />
-              <div>
-                <p className="font-medium text-sm">{t('notifications.newOrders')}</p>
-                <p className="text-xs text-gray-500">
+            </div>
+
+            <div className="flex items-start space-x-2">
+              <Checkbox id="newOrders" defaultChecked />
+              <div className="grid gap-1.5 leading-none">
+                <Label htmlFor="newOrders">
+                  {t('notifications.newOrders')}
+                </Label>
+                <p className="text-sm text-muted-foreground">
                   {t('notifications.newOrdersDesc')}
                 </p>
               </div>
-            </label>
-            <label className="flex items-center gap-3">
-              <input type="checkbox" className="h-4 w-4 text-blue-600 rounded" />
-              <div>
-                <p className="font-medium text-sm">{t('notifications.systemUpdates')}</p>
-                <p className="text-xs text-gray-500">
+            </div>
+
+            <div className="flex items-start space-x-2">
+              <Checkbox id="systemUpdates" />
+              <div className="grid gap-1.5 leading-none">
+                <Label htmlFor="systemUpdates">
+                  {t('notifications.systemUpdates')}
+                </Label>
+                <p className="text-sm text-muted-foreground">
                   {t('notifications.systemUpdatesDesc')}
                 </p>
               </div>
-            </label>
+            </div>
           </div>
         </div>
 
         {/* Push Notifications */}
         <div className="pt-6 border-t">
           <h3 className="text-lg font-medium mb-4">{t('notifications.push')}</h3>
-          <div className="space-y-3">
-            <label className="flex items-center gap-3">
-              <input type="checkbox" defaultChecked className="h-4 w-4 text-blue-600 rounded" />
-              <div>
-                <p className="font-medium text-sm">{t('notifications.realTime')}</p>
-                <p className="text-xs text-gray-500">
+          <div className="space-y-4">
+            <div className="flex items-start space-x-2">
+              <Checkbox id="realTime" defaultChecked />
+              <div className="grid gap-1.5 leading-none">
+                <Label htmlFor="realTime">
+                  {t('notifications.realTime')}
+                </Label>
+                <p className="text-sm text-muted-foreground">
                   {t('notifications.realTimeDesc')}
                 </p>
               </div>
-            </label>
-            <label className="flex items-center gap-3">
-              <input type="checkbox" className="h-4 w-4 text-blue-600 rounded" />
-              <div>
-                <p className="font-medium text-sm">{t('notifications.reminders')}</p>
-                <p className="text-xs text-gray-500">{t('notifications.remindersDesc')}</p>
+            </div>
+
+            <div className="flex items-start space-x-2">
+              <Checkbox id="reminders" />
+              <div className="grid gap-1.5 leading-none">
+                <Label htmlFor="reminders">
+                  {t('notifications.reminders')}
+                </Label>
+                <p className="text-sm text-muted-foreground">{t('notifications.remindersDesc')}</p>
               </div>
-            </label>
+            </div>
           </div>
         </div>
-
-        {/* Save Button */}
-        <div className="flex justify-end pt-4">
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-            {t('actions.save')}
-          </button>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+      <CardFooter className="flex justify-end border-t px-6 py-4">
+        <Button>
+          {t('actions.save')}
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }

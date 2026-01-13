@@ -210,6 +210,79 @@
       "cancelError": "Failed to cancel invite"
     }
   },
+  "Tenants": {
+    "title": "Tenants",
+    "description": "Manage system organizations and workspaces.",
+    "create": "New Tenant",
+    "table": {
+      "headers": {
+        "name": "Name",
+        "domain": "Domain",
+        "users": "Users",
+        "status": "Status",
+        "created": "Created",
+        "actions": "Actions"
+      },
+      "empty": "No tenants found",
+      "selected": "selected",
+      "delete": "Delete",
+      "quickEdit": "Quick Edit",
+      "edit": "Edit",
+      "rowsPerPage": "Rows per page"
+    },
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "suspended": "Suspended",
+      "deleted": "Deleted",
+      "search": "Search tenants..."
+    },
+    "createPage": {
+      "title": "New Tenant",
+      "description": "Register a new organization in the system",
+      "back": "Back",
+      "form": {
+        "name": "Organization Name",
+        "namePlaceholder": "Ex: Acme Corporation",
+        "slug": "Slug (URL Identifier)",
+        "slugPlaceholder": "acme-corp",
+        "slugDescription": "Unique identifier used in URLs.",
+        "domain": "Custom Domain",
+        "domainPlaceholder": "app.acme.com",
+        "cancel": "Cancel",
+        "create": "Create Tenant",
+        "creating": "Creating...",
+        "success": "Tenant created successfully!",
+        "error": "Error creating tenant"
+      }
+    },
+    "detailsPage": {
+      "backToTenants": "Back to Tenants",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "tabs": {
+        "overview": "Overview",
+        "users": "Users",
+        "settings": "Settings"
+      },
+      "overview": {
+        "title": "Tenant Information",
+        "description": "Basic information about the tenant workspace."
+      },
+      "users": {
+        "title": "Users",
+        "description": "Manage users who have access to this tenant."
+      },
+      "dangerZone": {
+        "title": "Danger Zone",
+        "description": "Destructive actions for this tenant.",
+        "deleteTitle": "Delete Tenant",
+        "deleteDescription": "Permanently delete this tenant and all associated data. This action cannot be undone.",
+        "deleteButton": "Delete Tenant",
+        "confirmDelete": "Are you sure you want to delete this tenant? This action cannot be undone."
+      }
+    }
+  },
   "PlatformSettings": {
     "title": "Platform Settings",
     "general": {
@@ -291,6 +364,10 @@
     },
     "actions": {
       "save": "Save Changes"
+    },
+    "theme": {
+      "title": "Theme Customization",
+      "description": "Customize the look and feel of your system"
     }
   },
   "AuditLogs": {

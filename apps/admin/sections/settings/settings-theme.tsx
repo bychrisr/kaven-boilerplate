@@ -5,15 +5,22 @@
 
 'use client';
 
+import { useTranslations } from 'next-intl';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ThemeCustomizer } from '@/components/settings/theme-customizer';
 
 export function SettingsTheme() {
-  return (
-    <div className="bg-white rounded-xl border shadow-sm p-6">
-      <h2 className="text-xl font-semibold mb-4">Personalização de Tema</h2>
-      <p className="text-sm text-gray-600 mb-6">Personalize as cores e aparência do sistema</p>
+  const t = useTranslations('Settings');
 
-      <ThemeCustomizer />
-    </div>
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('theme.title')}</CardTitle>
+        <CardDescription>{t('theme.description')}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ThemeCustomizer />
+      </CardContent>
+    </Card>
   );
 }

@@ -271,6 +271,10 @@
     },
     "actions": {
       "save": "Salvar Alterações"
+    },
+    "theme": {
+      "title": "Personalização de Tema",
+      "description": "Personalize as cores e aparência do sistema"
     }
   },
   "AuditLogs": {
@@ -326,6 +330,79 @@
       "linkCopied": "Link do convite copiado",
       "cancelSuccess": "Convite cancelado",
       "cancelError": "Falha ao cancelar convite"
+    }
+  },
+  "Tenants": {
+    "title": "Tenants",
+    "description": "Gerencie as organizações e espaços de trabalho do sistema.",
+    "create": "Novo Tenant",
+    "table": {
+      "headers": {
+        "name": "Nome",
+        "domain": "Domínio",
+        "users": "Usuários",
+        "status": "Status",
+        "created": "Criado em",
+        "actions": "Ações"
+      },
+      "empty": "Nenhum tenant encontrado",
+      "selected": "selecionados",
+      "delete": "Excluir",
+      "quickEdit": "Edição Rápida",
+      "edit": "Editar",
+      "rowsPerPage": "Linhas por página"
+    },
+    "filters": {
+      "all": "Todos",
+      "active": "Ativos",
+      "suspended": "Suspensos",
+      "deleted": "Excluídos",
+      "search": "Buscar tenants..."
+    },
+    "createPage": {
+      "title": "Novo Tenant",
+      "description": "Cadastre uma nova organização no sistema",
+      "back": "Voltar",
+      "form": {
+        "name": "Nome da Organização",
+        "namePlaceholder": "Ex: Acme Corporation",
+        "slug": "Slug (Identificador URL)",
+        "slugPlaceholder": "acme-corp",
+        "slugDescription": "Identificador único usado nas URLs.",
+        "domain": "Domínio Personalizado",
+        "domainPlaceholder": "app.acme.com",
+        "cancel": "Cancelar",
+        "create": "Criar Tenant",
+        "creating": "Criando...",
+        "success": "Tenant criado com sucesso!",
+        "error": "Erro ao criar tenant"
+      }
+    },
+    "detailsPage": {
+      "backToTenants": "Voltar para Tenants",
+      "save": "Salvar Alterações",
+      "saving": "Salvando...",
+      "tabs": {
+        "overview": "Visão Geral",
+        "users": "Usuários",
+        "settings": "Configurações"
+      },
+      "overview": {
+        "title": "Informações do Tenant",
+        "description": "Informações básicas sobre o espaço de trabalho."
+      },
+      "users": {
+        "title": "Usuários",
+        "description": "Gerencie os usuários que têm acesso a este tenant."
+      },
+      "dangerZone": {
+        "title": "Zona de Perigo",
+        "description": "Ações destrutivas para este tenant.",
+        "deleteTitle": "Excluir Tenant",
+        "deleteDescription": "Excluir permanentemente este tenant e todos os dados associados. Esta ação não pode ser desfeita.",
+        "deleteButton": "Excluir Tenant",
+        "confirmDelete": "Tem certeza que deseja excluir este tenant? Esta ação não pode ser desfeita."
+      }
     }
   },
   "Observability": {
