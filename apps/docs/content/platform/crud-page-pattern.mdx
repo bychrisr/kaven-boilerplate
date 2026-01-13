@@ -1,0 +1,171 @@
+---
+title: Padrão de Páginas CRUD
+description: Documentação do padrão unificado para páginas de edição e configuração (Settings, Details, etc.) com Tabs, Save Global e Live Reload.
+date: 2026-01-13
+author: Chris + Antigravity
+version: 1.0.0
+tags: [standards, crud, ui, ux, patterns]
+---
+
+# Padrão de Páginas CRUD e Configurações
+
+> Padrão unificado de UI/UX para páginas de gerenciamento, configurações e detalhes de entidades (Ex: Tenant Details, Platform Settings).
+
+## Visão Geral
+
+Este documento define o padrão visual e comportamental para páginas que envolvem formulários complexos divididos em abas. O objetivo é garantir consistência em todo o painel administrativo (`admin`) e no app do inquilino (`tenant`).
+
+**Principais Características:**
+
+- ✅ **Navegação por Abas (Tabs):** Layout limpo com fundo transparente e indicador animado.
+- ✅ **Ações Globais:** Botão de "Salvar" no header, fora do conteúdo das abas.
+- ✅ **Feedback Sutil:** Utilização de `router.refresh()` para atualizações sem recarregamento total (Live Reload).
+- ✅ **Smart Save:** Botão de salvar desabilitado por padrão, ativo apenas quando há alterações (`isDirty`).
+
+## Estrutura do Layout
+
+O layout padrão consiste em um Header com Título, Breadcrumbs e Ações, seguido pelo conteúdo organizado em abas.
+
+```tsx
+<div className="space-y-6">
+  {/* 1. Header & Actions */}
+  <div className="flex items-start justify-between">
+    <HeaderInfo />
+    <GlobalActions />
+  </div>
+
+  {/* 2. Tabs Navigation */}
+  <Tabs value={activeTab}>
+    <TabsList>...</TabsList>
+
+    {/* 3. Tab Content */}
+    <TabsContent value="tab1">...</TabsContent>
+  </Tabs>
+</div>
+```
+
+## Componentes Chave
+
+### 1. Tabs Visual Pattern
+
+Utilizamos um estilo customizado para as abas, removendo o visual padrão de "card" e adotando um estilo mais moderno e limpo.
+
+**Classes Tailwind Padrão:**
+
+```tsx
+const tabTriggerClass = cn(
+  'relative h-14 rounded-none bg-transparent px-0 pb-3 pt-3 font-semibold text-muted-foreground shadow-none transition-none cursor-pointer',
+  '!bg-transparent !shadow-none !border-0 hover:text-foreground mx-4 first:ml-0',
+  'data-[state=active]:!bg-transparent data-[state=active]:!shadow-none data-[state=active]:!text-foreground data-[state=active]:!border-none',
+  'dark:data-[state=active]:!bg-transparent dark:data-[state=active]:!border-none',
+  'after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:bg-primary after:transition-transform after:duration-300 data-[state=active]:after:scale-x-100',
+);
+```
+
+### 2. Botão de Salvar Padronizado
+
+O botão de salvar deve seguir estritamente o seguinte comportamento:
+
+- **Posição:** Canto superior direito (Header).
+- **Estado Inicial:** Desabilitado (`disabled={!isDirty}`).
+- **Ícone:** `Save` (padrão) ou `Loader2` (salvando).
+- **Sem "Descartar":** Não utilizamos botão de cancelar/descartar; o usuário pode navegar para fora ou recarregar se quiser resetar.
+
+**Snippet de Implementação:**
+
+```tsx
+const {
+  formState: { isDirty },
+} = useFormContext();
+
+<Button
+  onClick={() => {}} // Submit controlado pelo Form wrapper
+  type="submit"
+  disabled={isSaving || !isDirty}
+>
+  {isSaving ? (
+    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+  ) : (
+    <Save className="mr-2 h-4 w-4" />
+  )}
+  {isSaving ? t('actions.saving') : t('actions.save')}
+</Button>;
+```
+
+### 3. Subtle Live Reload
+
+Para atualizações que afetam o layout global (como Branding ou Nome da Empresa) ou para garantir que os dados do servidor (Server Components) estejam frescos após uma mutação, utilizamos `router.refresh()` ao invés de `window.location.reload()`.
+
+**Vantagens:**
+
+- Mantém o estado do cliente (scroll, foco, state local).
+- Re-renderiza Server Components com novos dados.
+- UX muito superior e mais rápida.
+
+**Implementação:**
+
+```tsx
+import { useRouter } from 'next/navigation';
+
+// ...
+const router = useRouter();
+
+const onSubmit = async (data) => {
+  await saveData(data);
+
+  // ✅ Subtle Reload
+  router.refresh();
+
+  // ❌ Evitar Full Reload
+  // window.location.reload();
+};
+```
+
+## Exemplo Completo (View Component)
+
+```tsx
+export function SettingsView({ isSaving }: Props) {
+  const {
+    formState: { isDirty },
+  } = useFormContext();
+  const [activeTab, setActiveTab] = useState('general');
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-start justify-between">
+        {/* Header */}
+        <div>
+          <h1>Configurações</h1>
+          {/* Breadcrumbs */}
+        </div>
+
+        {/* Save Button */}
+        <div className="flex gap-2 items-center">
+          <Button type="submit" disabled={isSaving || !isDirty}>
+            {/* Icon & Label */}
+          </Button>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <div className="flex flex-col md:flex-row items-center w-full border-b border-border/40 gap-4 mb-8">
+          <TabsList className="...">
+            <TabsTrigger value="general" className={tabTriggerClass}>
+              Geral
+            </TabsTrigger>
+            {/* Other Triggers */}
+          </TabsList>
+        </div>
+
+        <TabsContent value="general">{/* Form Fields */}</TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+```
+
+## Referências no Código
+
+- **Origem do Padrão:** `apps/admin/sections/tenant/view/tenant-details-view.tsx`
+- **Nova Implementação:** `apps/admin/sections/saas-settings/view/saas-settings-view.tsx`

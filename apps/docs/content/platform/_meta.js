@@ -9,6 +9,7 @@ export default {
   backend: 'Backend',
   frontend: 'Frontend',
   features: 'Features',
+  'crud-page-pattern': 'Padrão de Páginas CRUD',
   guides: 'Guias',
   observability: 'Observabilidade & Monitoramento',
   'signup-flow': 'Fluxo de Cadastro',
