@@ -374,6 +374,36 @@
       "discard": "Descartar",
       "save": "Salvar Alterações",
       "saving": "Salvando..."
+    },
+    "tabs": {
+      "general": "Geral",
+      "branding": "Branding",
+      "seo": "SEO",
+      "integrations": "Integrações"
+    },
+    "validation": {
+      "companyNameRequired": "Nome da empresa é obrigatório",
+      "seoLimit": "Limite de SEO excedido (máx 160 caracteres)",
+      "invalidColor": "Código de cor inválido",
+      "fileTooLarge": "Arquivo muito grande. Máx {size}MB.",
+      "fileTooLargeOg": "Arquivo muito grande. Máx 2MB para imagens OG."
+    },
+    "placeholders": {
+      "companyName": "Ex: Kaven SaaS",
+      "seoDescription": "Descrição da plataforma para mecanismos de busca...",
+      "color": "#000000",
+      "url": "https://..."
+    },
+    "help": {
+      "colorDescription": "Selecione uma predefinição ou escolha uma cor personalizada. Isso será aplicado globalmente.",
+      "ogRecommended": "Recomendado: 1200x630px (proporção 1.91:1). Máx 2MB.",
+      "ogDefault": "1200x630\nRecomendado",
+      "noFile": "Nenhum"
+    },
+    "integrations": {
+      "title": "Integrações",
+      "description": "Gerencie as integrações externas da sua plataforma.",
+      "comingSoon": "Integrações em breve..."
     }
   },
   "Settings": {
