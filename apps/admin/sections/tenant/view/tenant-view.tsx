@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useTenants, useTenantStats } from '@/hooks/use-tenants';
 import { TenantTableRow } from '../tenant-table-row';
 
@@ -25,16 +26,10 @@ import { cn } from '@/lib/utils';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [
-  { value: 'all', label: 'All' },
-  { value: 'active', label: 'Active' },
-  { value: 'suspended', label: 'Suspended' },
-  // { value: 'deleted', label: 'Deleted' },
-];
-
-// ----------------------------------------------------------------------
-
 export function TenantView() {
+  const t = useTranslations('Tenants');
+  const tCommon = useTranslations('Common');
+  
   const [filterName, setFilterName] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   
@@ -44,7 +39,7 @@ export function TenantView() {
   const [selected, setSelected] = useState<string[]>([]);
 
   // API Hooks
-  const { tenants, pagination, isLoading, error } = useTenants({
+  const { tenants, pagination, isLoading } = useTenants({
     page: page + 1, // API uses 1-indexed
     limit: rowsPerPage,
     search: filterName || undefined,
@@ -104,17 +99,17 @@ export function TenantView() {
     <div className="space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Tenants</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('title')}</h1>
           <div className="mt-2">
             <Breadcrumbs>
               <BreadcrumbItem>
                 <Link href="/dashboard" className="transition-colors hover:text-foreground">
-                  Dashboard
+                  {tCommon('dashboard')}
                 </Link>
               </BreadcrumbItem>
               <BreadcrumbItem>
                 <Link href="#" className="transition-colors hover:text-foreground">
-                  Tenants
+                  {t('title')}
                 </Link>
               </BreadcrumbItem>
             </Breadcrumbs>
@@ -123,7 +118,7 @@ export function TenantView() {
         <Link href="/tenants/create">
           <Button className="gap-2">
             <Plus className="h-4 w-4" />
-            New Tenant
+            {t('create')}
           </Button>
         </Link>
       </div>
@@ -139,7 +134,11 @@ export function TenantView() {
           >
             <div className="flex flex-col md:flex-row items-center w-full border-b border-border/40 gap-4">
               <TabsList className="bg-transparent p-0 h-auto gap-8 justify-start px-4 w-auto flex-none border-b-0">
-                {STATUS_OPTIONS.map((tab) => {
+                {[
+                  { value: 'all', label: t('filters.all') },
+                  { value: 'active', label: t('filters.active') },
+                  { value: 'suspended', label: t('filters.suspended') },
+                ].map((tab) => {
                   const count = getStatusCount(tab.value);
                   const isActive = filterStatus === tab.value;
                   
@@ -189,7 +188,7 @@ export function TenantView() {
                  <div className="relative w-full">
                     <Search className="absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
-                      placeholder="Search tenants..."
+                      placeholder={t('filters.search')}
                       value={filterName}
                       onChange={handleFilterName}
                       className="w-full bg-transparent border-none focus-visible:ring-0 pl-9 placeholder:text-muted-foreground h-10"
@@ -214,7 +213,7 @@ export function TenantView() {
                           onCheckedChange={(checked: boolean | 'indeterminate') => handleSelectAll(checked === true)}
                         />
                         <span className="text-sm font-semibold text-foreground">
-                          {selected.length} selected
+                          {selected.length} {t('table.selected')}
                         </span>
                       </div>
                       <Button
@@ -224,7 +223,7 @@ export function TenantView() {
                         className="text-destructive hover:text-destructive hover:bg-destructive/10"
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
-                        Delete
+                        {t('table.delete')}
                       </Button>
                     </div>
                   </TableHead>
@@ -237,11 +236,11 @@ export function TenantView() {
                       onCheckedChange={(checked: boolean | 'indeterminate') => handleSelectAll(checked === true)}
                     />
                   </TableHead>
-                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Name</TableHead>
-                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Domain</TableHead>
-                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white text-center">Users</TableHead>
-                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Status</TableHead>
-                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Created</TableHead>
+                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">{t('table.headers.name')}</TableHead>
+                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">{t('table.headers.domain')}</TableHead>
+                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white text-center">{t('table.headers.users')}</TableHead>
+                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">{t('table.headers.status')}</TableHead>
+                  <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">{t('table.headers.created')}</TableHead>
                   <TableHead className="px-4 h-16 font-semibold bg-transparent text-right last:rounded-tr-none"></TableHead>
                 </TableRow>
               )}
@@ -259,7 +258,7 @@ export function TenantView() {
                 <TableRow>
                   <TableCell colSpan={6} className="h-64 text-center">
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <p className="text-muted-foreground font-medium">No tenants found</p>
+                      <p className="text-muted-foreground font-medium">{t('table.empty')}</p>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -281,7 +280,7 @@ export function TenantView() {
         <div className="flex items-center justify-end p-4 border-t border-border/40">
           <div className="flex items-center gap-6 lg:gap-8">
             <div className="flex items-center space-x-2">
-              <p className="text-sm font-medium text-muted-foreground">Rows per page</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('table.rowsPerPage')}</p>
               <Select
                 value={String(rowsPerPage)}
                 onValueChange={(value) => {

@@ -15,7 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { TextField } from '@/components/ui/text-field';
 import { Label } from '@/components/ui/label';
-import { Select, SelectOption } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/radix-select';
 import { Input } from '@/components/ui/input';
 
 const formSchema = z.object({
@@ -287,13 +287,14 @@ export default function PlatformSettingsPage() {
                             name="language"
                             control={control}
                             render={({ field }) => (
-                                <Select 
-                                    value={field.value} 
-                                    onChange={field.onChange}
-                                    fullWidth
-                                >
-                                    <SelectOption value="pt-BR">🇧🇷 Português (Brasil)</SelectOption>
-                                    <SelectOption value="en-US">🇺🇸 English (US)</SelectOption>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder={t('general.language')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="pt-BR">🇧🇷 Português (Brasil)</SelectItem>
+                                        <SelectItem value="en-US">🇺🇸 English (US)</SelectItem>
+                                    </SelectContent>
                                 </Select>
                             )}
                         />
@@ -304,14 +305,15 @@ export default function PlatformSettingsPage() {
                             name="currency"
                             control={control}
                             render={({ field }) => (
-                                <Select 
-                                    value={field.value} 
-                                    onChange={field.onChange}
-                                    fullWidth
-                                >
-                                    <SelectOption value="BRL">R$ Real (BRL)</SelectOption>
-                                    <SelectOption value="USD">$ Dollar (USD)</SelectOption>
-                                    <SelectOption value="BTC">₿ Bitcoin (Sats)</SelectOption>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder={t('general.currency')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="BRL">R$ Real (BRL)</SelectItem>
+                                        <SelectItem value="USD">$ Dollar (USD)</SelectItem>
+                                        <SelectItem value="BTC">₿ Bitcoin (Sats)</SelectItem>
+                                    </SelectContent>
                                 </Select>
                             )}
                         />
@@ -325,13 +327,14 @@ export default function PlatformSettingsPage() {
                             name="numberFormat"
                             control={control}
                             render={({ field }) => (
-                                <Select 
-                                    value={field.value} 
-                                    onChange={field.onChange}
-                                    fullWidth
-                                >
-                                    <SelectOption value="1.000,00">1.000,00 (Ex: R$ 1.234,56)</SelectOption>
-                                    <SelectOption value="1,000.00">1,000.00 (Ex: $ 1,234.56)</SelectOption>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder={t('general.numberFormat')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="1.000,00">1.000,00 (Ex: R$ 1.234,56)</SelectItem>
+                                        <SelectItem value="1,000.00">1,000.00 (Ex: $ 1,234.56)</SelectItem>
+                                    </SelectContent>
                                 </Select>
                             )}
                         />
