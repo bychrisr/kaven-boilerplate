@@ -30,7 +30,12 @@ export async function csrfMiddleware(
   const allowedOrigins = [env.FRONTEND_URL, env.CORS_ORIGIN].filter(Boolean) as string[];
   
   // Normalizar origens (remover trailing slash)
-  const normalizedOrigins = new Set(allowedOrigins.map(url => url.replace(/\/$/, '')));
+  // Garantir que todos os valores são strings antes de usar .replace()
+  const normalizedOrigins = new Set(
+    allowedOrigins
+      .filter((url): url is string => typeof url === 'string')
+      .map(url => url.replace(/\/$/, ''))
+  );
   
   const requestOrigin = origin ? origin.replace(/\/$/, '') : null;
   const requestReferer = referer ? new URL(referer).origin.replace(/\/$/, '') : null;
