@@ -205,7 +205,7 @@ export function TenantView() {
             <TableHeader className="bg-muted/50">
               {selected.length > 0 ? (
                 <TableRow className="bg-primary/10 hover:bg-primary/10">
-                  <TableHead colSpan={6} className="h-16 px-4">
+                  <TableHead colSpan={7} className="h-16 px-4">
                     <div className="flex items-center justify-between w-full">
                       <div className="flex items-center gap-4">
                         <Checkbox 
