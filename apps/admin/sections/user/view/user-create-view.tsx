@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useCreateUser } from '@/hooks/use-users';
 import { useTenants } from '@/hooks/use-tenants';
 import { Loader2, Eye, EyeOff, Plus } from 'lucide-react';
@@ -16,26 +17,28 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectSe
 import { Switch } from '@/components/ui/switch';
 import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
 import { AvatarUpload } from '@/components/avatar-upload';
-import { AddressAutocomplete } from '@/components/address-autocomplete';
-import { PhoneInput } from '@/components/phone-input';
-import { PasswordValidator, PASSWORD_REGEX, PASSWORD_ERROR_MESSAGE } from '@/components/password-validator';
+import { AddressAutocomplete, PlaceData } from '@/components/address-autocomplete';
+import { PhoneInput, isPhoneValid } from '@/components/phone-input';
+import { PasswordValidator, PASSWORD_REGEX } from '@/components/password-validator';
 import { cn } from '@/lib/utils';
 
-const userSchema = z.object({
+const userSchema = (t: (key: string) => string, tUser: (key: string) => string) => z.object({
   name: z.string()
-    .min(3, 'Name must be at least 3 characters')
+    .min(3, tUser('validation.nameMin'))
     .refine((val) => val.trim().split(/\s+/).length >= 2, {
-      message: 'Please enter your full name (first and last name)',
+      message: tUser('create.validation.fullName'),
     }),
-  email: z.string().email('Invalid email address'),
+  email: z.string().email(tUser('validation.emailInvalid')),
   password: z.string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(PASSWORD_REGEX, PASSWORD_ERROR_MESSAGE),
-  phone: z.string().optional(),
+    .min(8, t('passwordValidator.checklist.length'))
+    .regex(PASSWORD_REGEX, t('passwordValidator.errors.invalid')),
+  phone: z.string().optional().refine(val => !val || isPhoneValid(val), {
+    message: tUser('validation.phoneInvalid')
+  }),
   role: z.enum(['USER', 'TENANT_ADMIN']),
-  status: z.enum(['ACTIVE', 'PENDING']),
+  status: z.enum(['ACTIVE', 'PENDING', 'BANNED']),
   emailVerified: z.boolean(),
-  tenantId: z.string().min(1, 'Tenant is required'),
+  tenantId: z.string().min(1, tUser('create.validation.tenantRequired')),
   // Optional address fields for future invoices/billing
   country: z.string().optional(),
   state: z.string().optional(),
@@ -45,36 +48,33 @@ const userSchema = z.object({
   company: z.string().optional(),
 });
 
-type UserFormData = z.infer<typeof userSchema>;
+type UserFormData = z.infer<ReturnType<typeof userSchema>>;
 
 export function UserCreateView() {
   const router = useRouter();
+  const t = useTranslations('Common');
+  const tUser = useTranslations('User');
   const { mutate: createUser, isPending } = useCreateUser();
   const { tenants, isLoading: isLoadingTenants } = useTenants();
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string>('');
-  const [isAddressAutoFilled, setIsAddressAutoFilled] = useState(false);
+
+  const [avatarPreview, setAvatarPreview] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [isAddressAutoFilled, setIsAddressAutoFilled] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors, isSubmitting, touchedFields },
-  } = useForm<UserFormData>({
-    resolver: zodResolver(userSchema),
+  const form = useForm<UserFormData>({
+    resolver: zodResolver(userSchema(t, tUser)),
     mode: 'onChange', // Valida em tempo real enquanto digita
     reValidateMode: 'onChange', // Re-valida em tempo real
     defaultValues: {
       name: '',
       email: '',
       password: '',
-      role: 'USER',
-      status: 'ACTIVE',
-      emailVerified: false,
       phone: '',
+      role: 'USER',
+      status: 'PENDING', // Changed from 'ACTIVE' to 'PENDING'
+      emailVerified: false,
+      tenantId: '', // Changed from empty string to empty string, but was 'create-own' in original onSubmit
       country: '',
       state: '',
       city: '',
@@ -84,16 +84,24 @@ export function UserCreateView() {
     },
   });
 
+  const {
+    register,
+    watch,
+    handleSubmit,
+    setValue,
+    formState: { isSubmitting, errors, touchedFields }
+  } = form;
+
   const emailVerified = watch('emailVerified');
   const addressValue = watch('address') || '';
 
-  const handleAvatarChange = (file: File | null, preview: string) => {
-    setAvatarFile(file);
+  const handleAvatarChange = (_file: File | null, preview: string) => {
     setAvatarPreview(preview);
   };
 
-  const handlePlaceSelected = (data: { address: string; city: string; state: string; country: string; zipcode: string }) => {
+  const handlePlaceSelected = (data: PlaceData) => {
     // Auto-fill address fields from Google Places
+    setValue('address', data.address, { shouldValidate: true, shouldTouch: true });
     setValue('city', data.city, { shouldValidate: true, shouldTouch: true });
     setValue('state', data.state, { shouldValidate: true, shouldTouch: true });
     setValue('country', data.country, { shouldValidate: true, shouldTouch: true });
@@ -103,24 +111,10 @@ export function UserCreateView() {
 
   const onSubmit = async (data: UserFormData) => {
     try {
-      // TODO: Upload avatar file to storage if avatarFile exists
-      createUser(
+      await createUser( // Changed to await
         {
-          name: data.name,
-          email: data.email,
-          password: data.password,
-          role: data.role,
-          phone: data.phone,
-          status: data.emailVerified ? 'ACTIVE' : 'PENDING',
-          emailVerified: data.emailVerified,
-          tenantId: 'create-own',
-          // Metadata fields
-          country: data.country,
-          state: data.state,
-          city: data.city,
-          address: data.address,
-          zipcode: data.zipcode,
-          company: data.company,
+          ...data,
+          status: data.emailVerified ? 'ACTIVE' : 'PENDING', // Updated status logic
         },
         {
           onSuccess: () => {
@@ -128,32 +122,40 @@ export function UserCreateView() {
           },
         }
       );
-    } catch {
+    } catch (error) {
       // Error handled by hook with toast
+      console.error(error);
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       {/* Page Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-center justify-between space-y-2">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Create a new user</h1>
-          <div className="mt-2">
-            <Breadcrumbs>
-              <BreadcrumbItem>
-                <Link href="/dashboard" className="transition-colors hover:text-foreground">
-                  Dashboard
-                </Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <Link href="/users" className="transition-colors hover:text-foreground">
-                  User
-                </Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem current>Create</BreadcrumbItem>
-            </Breadcrumbs>
-          </div>
+          <h2 className="text-3xl font-bold tracking-tight">
+            {tUser('create.title')}
+          </h2>
+          <Breadcrumbs>
+            <BreadcrumbItem>
+              <Link href="/dashboard" className="transition-colors hover:text-foreground">
+                {t('dashboard')}
+              </Link>
+            </BreadcrumbItem>
+            <BreadcrumbItem>
+              <Link href="/users" className="transition-colors hover:text-foreground">
+                {t('users')}
+              </Link>
+            </BreadcrumbItem>
+            <BreadcrumbItem current>{tUser('create.breadcrumb')}</BreadcrumbItem>
+          </Breadcrumbs>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button variant="outline" asChild>
+            <Link href="/users">
+              {tUser('create.buttons.cancel')}
+            </Link>
+          </Button>
         </div>
       </div>
 
@@ -171,9 +173,9 @@ export function UserCreateView() {
                 <div className="p-4 rounded-lg bg-muted/30 border border-border/40">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex-1">
-                      <p className="text-sm font-semibold text-foreground">Email verified</p>
+                      <p className="text-sm font-semibold text-foreground">{tUser('edit.emailVerified')}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        Disabling this will automatically send the user a verification email
+                        {tUser('edit.emailVerifiedDesc')}
                       </p>
                     </div>
                     <Switch
@@ -191,12 +193,12 @@ export function UserCreateView() {
                 {/* Full name - Full width */}
                 <div className="sm:col-span-2">
                   <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
-                    Full name <span className="text-destructive">*</span>
+                    {tUser('edit.fullName')} <span className="text-destructive">*</span>
                   </label>
                   <Input
                     {...register('name')}
                     id="name"
-                    placeholder="John Doe"
+                    placeholder={tUser('create.placeholders.name')}
                     className={cn(
                       "bg-transparent transition-colors",
                       errors.name && touchedFields.name && "border-red-500 focus:border-red-500",
@@ -210,7 +212,7 @@ export function UserCreateView() {
                 {/* Email address */}
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
-                    Email address <span className="text-destructive">*</span>
+                    {tUser('edit.email')} <span className="text-destructive">*</span>
                   </label>
                   {/* Honeypot field to trick browser autocomplete */}
                   <input
@@ -225,7 +227,7 @@ export function UserCreateView() {
                     {...register('email')}
                     id="email"
                     type="email"
-                    placeholder="john@example.com"
+                    placeholder={tUser('create.placeholders.email')}
                     autoComplete="new-password"
                     data-form-type="other"
                     data-lpignore="true"
@@ -242,25 +244,25 @@ export function UserCreateView() {
                 {/* Phone number */}
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
-                    Phone number
+                    {tUser('edit.phone')}
                   </label>
                   <PhoneInput
                     value={watch('phone') || ''}
                     onChange={(value) => {
                       setValue('phone', value, { shouldValidate: true, shouldTouch: true });
                     }}
-                    placeholder="Enter phone number"
                     id="phone"
                     className={cn(
                       (watch('phone') ?? '').length >= 10 && "border-green-500"
                     )}
+                    error={errors.phone?.message}
                   />
                 </div>
 
                 {/* Tenant - Required */}
                 <div>
                   <label htmlFor="tenantId" className="block text-sm font-medium text-foreground mb-2">
-                    Tenant <span className="text-destructive">*</span>
+                    {tUser('edit.tenant')} <span className="text-destructive">*</span>
                   </label>
                   <Select
                     value={watch('tenantId')}
@@ -273,14 +275,14 @@ export function UserCreateView() {
                         errors.tenantId && "border-red-500"
                       )}
                     >
-                      <SelectValue placeholder="Select tenant" />
+                      <SelectValue placeholder={tUser('edit.selectTenant')} />
                     </SelectTrigger>
                     <SelectContent>
                       {/* Primeira opção: Create own tenant */}
                       <SelectItem value="create-own">
                         <div className="flex items-center gap-2">
                           <Plus className="h-4 w-4" />
-                          <span>Create own tenant</span>
+                          <span>{tUser('create.placeholders.createTenant')}</span>
                         </div>
                       </SelectItem>
                       
@@ -288,9 +290,9 @@ export function UserCreateView() {
                       
                       {/* Lista de tenants existentes */}
                       {isLoadingTenants ? (
-                        <SelectItem value="loading" disabled>Loading tenants...</SelectItem>
+                        <SelectItem value="loading" disabled>{t('addressInput.loading')}</SelectItem>
                       ) : tenants?.length === 0 ? (
-                        <SelectItem value="empty" disabled>No tenants available</SelectItem>
+                        <SelectItem value="empty" disabled>{tUser('create.placeholders.noTenants')}</SelectItem>
                       ) : (
                         tenants?.map((tenant) => (
                           <SelectItem key={tenant.id} value={tenant.id}>
@@ -310,7 +312,7 @@ export function UserCreateView() {
                 {/* Role */}
                 <div>
                   <label htmlFor="role" className="block text-sm font-medium text-foreground mb-2">
-                    Role
+                    {tUser('edit.role')}
                   </label>
                   <Select
                     value={watch('role')}
@@ -320,8 +322,8 @@ export function UserCreateView() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="USER">User</SelectItem>
-                      <SelectItem value="TENANT_ADMIN">Tenant Admin</SelectItem>
+                      <SelectItem value="USER">{tUser('roles.USER')}</SelectItem>
+                      <SelectItem value="TENANT_ADMIN">{tUser('roles.TENANT_ADMIN')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -329,7 +331,7 @@ export function UserCreateView() {
                 {/* Password - Full width with eye toggle */}
                 <div className="sm:col-span-2">
                   <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
-                    Password <span className="text-destructive">*</span>
+                    {tUser('edit.password')} <span className="text-destructive">*</span>
                   </label>
                   {/* Honeypot field to trick browser autocomplete */}
                   <input
@@ -345,7 +347,7 @@ export function UserCreateView() {
                       {...register('password')}
                       id="password"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="••••••••"
+                      placeholder={tUser('create.placeholders.password')}
                       autoComplete="new-password"
                       data-form-type="other"
                       data-lpignore="true"
@@ -378,13 +380,13 @@ export function UserCreateView() {
                 {/* Address with Autocomplete - Full width */}
                 <div className="sm:col-span-2">
                   <label htmlFor="address" className="block text-sm font-medium text-foreground mb-2">
-                    Address
+                    {tUser('edit.address')}
                   </label>
                   <AddressAutocomplete
                     value={addressValue}
                     onChange={(value) => setValue('address', value)}
                     onPlaceSelected={handlePlaceSelected}
-                    placeholder="123 Main St"
+                    placeholder={tUser('create.placeholders.address')}
                     className={cn(
                       "bg-transparent transition-colors",
                       addressValue && "border-green-500"
@@ -396,12 +398,12 @@ export function UserCreateView() {
                 {/* City - Auto-filled, disabled when autocomplete used */}
                 <div>
                   <label htmlFor="city" className="block text-sm font-medium text-foreground mb-2">
-                    City
+                    {tUser('edit.city')}
                   </label>
                   <Input
                     {...register('city')}
                     id="city"
-                    placeholder="San Francisco"
+                    placeholder={tUser('create.placeholders.city')}
                     className={cn(
                       "bg-transparent transition-colors",
                       watch('city') && "border-green-500"
@@ -413,12 +415,12 @@ export function UserCreateView() {
                 {/* State/Region - Auto-filled, disabled when autocomplete used */}
                 <div>
                   <label htmlFor="state" className="block text-sm font-medium text-foreground mb-2">
-                    State/Region
+                    {tUser('edit.state')}
                   </label>
                   <Input
                     {...register('state')}
                     id="state"
-                    placeholder="California"
+                    placeholder={tUser('create.placeholders.state')}
                     className={cn(
                       "bg-transparent transition-colors",
                       watch('state') && "border-green-500"
@@ -430,12 +432,12 @@ export function UserCreateView() {
                 {/* Country - Auto-filled, disabled when autocomplete used */}
                 <div>
                   <label htmlFor="country" className="block text-sm font-medium text-foreground mb-2">
-                    Country
+                    {tUser('edit.country')}
                   </label>
                   <Input
                     {...register('country')}
                     id="country"
-                    placeholder="United States"
+                    placeholder={tUser('create.placeholders.country')}
                     className={cn(
                       "bg-transparent transition-colors",
                       watch('country') && "border-green-500"
@@ -447,12 +449,12 @@ export function UserCreateView() {
                 {/* Zip/code - Auto-filled, disabled when autocomplete used */}
                 <div>
                   <label htmlFor="zipcode" className="block text-sm font-medium text-foreground mb-2">
-                    Zip/code
+                    {tUser('edit.zipcode')}
                   </label>
                   <Input
                     {...register('zipcode')}
                     id="zipcode"
-                    placeholder="94102"
+                    placeholder={tUser('create.placeholders.zipcode')}
                     className={cn(
                       "bg-transparent transition-colors",
                       watch('zipcode') && "border-green-500"
@@ -464,12 +466,12 @@ export function UserCreateView() {
                 {/* Company - Optional */}
                 <div className="sm:col-span-2">
                   <label htmlFor="company" className="block text-sm font-medium text-foreground mb-2">
-                    Company
+                    {tUser('edit.company')}
                   </label>
                   <Input
                     {...register('company')}
                     id="company"
-                    placeholder="Acme Inc."
+                    placeholder={tUser('create.placeholders.company')}
                     className={cn(
                       "bg-transparent transition-colors",
                       watch('company') && "border-green-500"
@@ -490,7 +492,7 @@ export function UserCreateView() {
               disabled={isSubmitting || isPending}
               className="h-12"
             >
-              Cancel
+              {tUser('create.buttons.cancel')}
             </Button>
             <Button
               type="submit"
@@ -503,10 +505,10 @@ export function UserCreateView() {
               {isSubmitting || isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating...
+                  {tUser('create.buttons.creating')}
                 </>
               ) : (
-                'Create user'
+                tUser('create.buttons.create')
               )}
             </Button>
           </div>

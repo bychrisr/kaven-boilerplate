@@ -1,14 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useUser, useUpdateUser, useDeleteUser } from '@/hooks/use-users';
 import { useTenants } from '@/hooks/use-tenants';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Trash2, LayoutDashboard, Shield, Save } from 'lucide-react';
 import Link from 'next/link';
+
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,18 +19,16 @@ import { Switch } from '@/components/ui/switch';
 import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
 import { AvatarUpload } from '@/components/avatar-upload';
 import { AddressAutocomplete } from '@/components/address-autocomplete';
-import { PhoneInput } from '@/components/phone-input';
+import { PhoneInput, isPhoneValid } from '@/components/phone-input';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { api } from '@/lib/api';
+import { CONFIG } from '@/lib/config';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
-
-const userSchema = z.object({
-  name: z.string()
-    .min(3, 'Name must be at least 3 characters')
-    .refine((val) => val.trim().split(/\s+/).length >= 2, {
-      message: 'Please enter your full name (first and last name)',
-    }),
-  email: z.string().email('Invalid email address'),
+const baseSchema = z.object({
+  name: z.string().min(3),
+  email: z.string().email(),
   phone: z.string().optional(),
   role: z.enum(['USER', 'TENANT_ADMIN', 'SUPER_ADMIN']),
   status: z.enum(['ACTIVE', 'PENDING', 'BANNED', 'REJECTED']),
@@ -42,7 +42,15 @@ const userSchema = z.object({
   company: z.string().optional(),
 });
 
-type UserFormData = z.infer<typeof userSchema>;
+type UserFormData = z.infer<typeof baseSchema>;
+
+const getUserSchema = (t: (key: string) => string) => baseSchema.extend({
+  name: z.string().min(3, { message: t('validation.nameMin') }),
+  email: z.string().email({ message: t('validation.emailInvalid') }),
+  phone: z.string().optional().refine(val => !val || isPhoneValid(val), {
+    message: t('validation.phoneInvalid')
+  }),
+});
 
 interface UserEditViewProps {
   userId: string;
@@ -50,28 +58,20 @@ interface UserEditViewProps {
 
 export function UserEditView({ userId }: UserEditViewProps) {
   const router = useRouter();
+  const t = useTranslations('User.edit');
+  const tCommon = useTranslations('Common');
+  
   const { data: user, isLoading: isLoadingUser } = useUser(userId);
   const { mutateAsync: updateUser, isPending: isUpdating } = useUpdateUser(userId);
   const { mutateAsync: deleteUser, isPending: isDeleting } = useDeleteUser();
-  
-  // Buscar todos os tenants para o select (o tenant do usuário já está na lista)
   const { tenants, isLoading: isLoadingTenants } = useTenants({ limit: 100 });
 
   const [avatarPreview, setAvatarPreview] = useState<string>('');
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  
+  const [activeTab, setActiveTab] = useState('overview');
 
-  
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    reset,
-    control,
-    formState: { errors, isSubmitting },
-  } = useForm<UserFormData>({
-    resolver: zodResolver(userSchema),
+  const form = useForm<UserFormData>({
+    resolver: zodResolver(getUserSchema(t)),
     mode: 'onChange',
     defaultValues: {
       name: '',
@@ -90,13 +90,17 @@ export function UserEditView({ userId }: UserEditViewProps) {
     },
   });
 
-  // Populate form when user data loads
+  const {
+      reset,
+      setValue,
+      watch,
+      control,
+      handleSubmit,
+      formState: { isSubmitting, isDirty, errors }
+  } = form;
+
   useEffect(() => {
-
-    
     if (user) {
-
-      
       reset({
         name: user.name,
         email: user.email,
@@ -113,73 +117,41 @@ export function UserEditView({ userId }: UserEditViewProps) {
         company: user.company || '',
       });
       
-      console.log('👤 [USER EDIT] User loaded:', { 
-        userId: user.id, 
-        hasAvatar: !!user.avatar, 
-        avatarUrl: user.avatar 
-      });
-      
       if (user.avatar) {
-        // Adiciona URL base do backend se não estiver presente
         const avatarUrl = user.avatar.startsWith('http') 
           ? user.avatar 
-          : `http://localhost:8000${user.avatar}`;
-        console.log('🖼️ [USER EDIT] Setting avatar preview:', avatarUrl);
+          : `${CONFIG.serverUrl}${user.avatar}`;
         setAvatarPreview(avatarUrl);
       }
-    } else {
-
     }
   }, [user, reset]);
 
-
-  
-  // Proteger tenantId: restaurar se foi limpo mas user.tenantId existe
-  useEffect(() => {
-    const currentTenantId = watch('tenantId');
-    if (user?.tenantId && !currentTenantId) {
-      setValue('tenantId', user.tenantId, { shouldValidate: false, shouldDirty: false });
-    }
-  }); // SEM DEPENDÊNCIAS - roda em todo render
-  
   const emailVerified = watch('emailVerified');
   const status = watch('status');
-  const addressValue = watch('address') || '';
 
   const handleAvatarChange = (file: File | null, preview: string) => {
     setAvatarFile(file);
     setAvatarPreview(preview);
-    console.log('📸 Avatar changed:', { hasFile: !!file, preview: preview.substring(0, 50) });
   };
 
   const handlePlaceSelected = (data: { address: string; city: string; state: string; country: string; zipcode: string }) => {
-    setValue('city', data.city, { shouldValidate: true, shouldTouch: true });
-    setValue('state', data.state, { shouldValidate: true, shouldTouch: true });
-    setValue('country', data.country, { shouldValidate: true, shouldTouch: true });
-    setValue('zipcode', data.zipcode, { shouldValidate: true, shouldTouch: true });
+    setValue('city', data.city, { shouldValidate: true, shouldTouch: true, shouldDirty: true });
+    setValue('state', data.state, { shouldValidate: true, shouldTouch: true, shouldDirty: true });
+    setValue('country', data.country, { shouldValidate: true, shouldTouch: true, shouldDirty: true });
+    setValue('zipcode', data.zipcode, { shouldValidate: true, shouldTouch: true, shouldDirty: true });
   };
 
   const onSubmit = async (data: UserFormData) => {
     try {
-      console.log('💾 Submitting user update...', { hasAvatar: !!avatarFile });
-      
-      // Se tem avatar, fazer upload primeiro
       if (avatarFile) {
         const formData = new FormData();
         formData.append('avatar', avatarFile);
-        
-        console.log('📤 Uploading avatar...');
         try {
-          const response = await api.post(`/api/users/${userId}/avatar`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
+          await api.post(`/api/users/${userId}/avatar`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
           });
-          console.log('✅ Avatar uploaded:', response.data);
-          // Avatar URL já foi atualizado no banco pelo backend
-        } catch (uploadError) {
-          console.error('❌ Avatar upload failed:', uploadError);
-          // Continuar com update mesmo se avatar falhar
+        } catch (error) {
+          console.error('Avatar upload failed:', error);
         }
       }
       
@@ -187,16 +159,13 @@ export function UserEditView({ userId }: UserEditViewProps) {
         ...data,
         tenantId: data.tenantId === '' ? null : data.tenantId,
       });
-      // toast already in hook
-      router.push('/users');
     } catch (error) {
       console.error(error);
-      // toast already in hook
     }
   };
 
   const handleDelete = async () => {
-    if (confirm('Are you sure you want to delete this user?')) {
+    if (confirm(t('messages.deleteConfirm'))) {
       try {
         await deleteUser(userId);
         router.push('/users');
@@ -205,6 +174,16 @@ export function UserEditView({ userId }: UserEditViewProps) {
       }
     }
   };
+
+  const tabTriggerClass = cn(
+    "relative h-14 rounded-none bg-transparent px-0 pb-3 pt-3 font-semibold text-muted-foreground shadow-none transition-none cursor-pointer",
+    "!bg-transparent !shadow-none !border-0 hover:text-foreground mx-4 first:ml-0",
+    "data-[state=active]:!bg-transparent data-[state=active]:!shadow-none data-[state=active]:!text-foreground data-[state=active]:!border-none",
+    "dark:data-[state=active]:!bg-transparent dark:data-[state=active]:!border-none",
+    "after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:bg-primary after:transition-transform after:duration-300 data-[state=active]:after:scale-x-100"
+  );
+
+  const cardClass = "bg-card border-none shadow-md overflow-hidden relative dark:bg-[#212B36]";
 
   if (isLoadingUser) {
     return (
@@ -217,304 +196,358 @@ export function UserEditView({ userId }: UserEditViewProps) {
   if (!user) {
     return (
       <div className="flex h-96 flex-col items-center justify-center gap-4">
-        <p className="text-lg text-muted-foreground">User not found</p>
-        <Button onClick={() => router.push('/users')}>Back to list</Button>
+        <p className="text-lg text-muted-foreground">{t('notFound')}</p>
+        <Button onClick={() => router.push('/users')}>{t('backToList')}</Button>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Edit User</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('title')}</h1>
           <div className="mt-2">
             <Breadcrumbs>
               <BreadcrumbItem>
                 <Link href="/dashboard" className="transition-colors hover:text-foreground">
-                  Dashboard
+                  {tCommon('dashboard')}
                 </Link>
               </BreadcrumbItem>
               <BreadcrumbItem>
                 <Link href="/users" className="transition-colors hover:text-foreground">
-                  User
+                    {tCommon('users')}
                 </Link>
               </BreadcrumbItem>
               <BreadcrumbItem current>{user.name}</BreadcrumbItem>
             </Breadcrumbs>
           </div>
         </div>
+        <div className="flex items-center gap-2">
+           <Button
+              type="submit"
+              form="user-form"
+              variant="default" 
+              disabled={isSubmitting || isUpdating || (!isDirty && !avatarFile)}
+              className="gap-2"
+            >
+              {(isSubmitting || isUpdating) ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                  <Save className="h-4 w-4" />
+              )}
+              {isSubmitting || isUpdating ? t('buttons.saving') : t('buttons.save')}
+            </Button>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1 space-y-6">
-            <Card className="p-6 bg-card border-none shadow-sm dark:bg-[#212B36]">
-              {/* Avatar centralizado */}
-              <div className="relative mb-4 flex justify-center">
-                 <AvatarUpload value={avatarPreview} onChange={handleAvatarChange} />
-              </div>
+      <Form {...form}>
+        <form id="user-form" onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            {/* Left Column: Avatar & Controls (Glass Style) */}
+            <div className="lg:col-span-1 space-y-6">
+                <Card className={cn("p-6", cardClass)}>
+                    <div className="absolute top-0 right-0 p-4 z-10">
+                        <span className={cn(
+                            "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold uppercase",
+                            user.status === 'ACTIVE' ? "bg-emerald-500/15 text-emerald-500" : 
+                            user.status === 'BANNED' ? "bg-red-500/15 text-red-500" : 
+                            "bg-amber-500/15 text-amber-500"
+                        )}>
+                            {t(`statuses.${user.status}`)}
+                        </span>
+                    </div>
+                    
+                    <div className="flex flex-col items-center">
+                        <div className="mb-6 mt-4">
+                            <AvatarUpload value={avatarPreview} onChange={handleAvatarChange} />
+                        </div>
+                        
+                        <div className="w-full space-y-4 pt-6 border-t border-border/40">
+                            <div className="flex items-center justify-between">
+                                <span className="text-sm font-medium text-foreground">{t('labels.banned')}</span>
+                                <Switch
+                                checked={status === 'BANNED'}
+                                onChange={(e) => setValue('status', e.target.checked ? 'BANNED' : 'ACTIVE', { shouldDirty: true })}
+                                />
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-0">
+                                {t('hints.disableAccount')}
+                            </p>
 
-              {/* Status badge centralizado abaixo do avatar */}
-              <div className="flex justify-center mb-6">
-                <span className={cn(
-                    "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset",
-                    user.status === 'ACTIVE' ? "bg-green-50 text-green-700 ring-green-600/20" : 
-                    user.status === 'BANNED' ? "bg-red-50 text-red-700 ring-red-600/20" : 
-                    "bg-yellow-50 text-yellow-700 ring-yellow-600/20"
-                )}>
-                    {user.status}
-                </span>
-              </div>
+                            <div className="flex items-center justify-between pt-2">
+                                <span className="text-sm font-medium text-foreground">{t('labels.emailVerified')}</span>
+                                <Switch
+                                checked={emailVerified}
+                                onChange={(e) => setValue('emailVerified', e.target.checked, { shouldDirty: true })}
+                                />
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-0">
+                                {t('hints.emailVerification')}
+                            </p>
+                        </div>
+                        
+                        <div className="mt-8 w-full">
+                            <Button 
+                                type="button" 
+                                variant="destructive" 
+                                className="w-full bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:text-red-600 dark:bg-red-500/20 dark:hover:bg-red-500/30 dark:text-red-400"
+                                onClick={handleDelete}
+                                disabled={isDeleting}
+                            >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                {isDeleting ? t('buttons.deleting') : t('buttons.delete')}
+                            </Button>
+                        </div>
+                    </div>
+                </Card>
+            </div>
 
-              <div className="space-y-4 pt-4 border-t border-border/40">
-                 <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-foreground">Banned</span>
-                    <Switch
-                      checked={status === 'BANNED'}
-                      onChange={(e) => setValue('status', e.target.checked ? 'BANNED' : 'ACTIVE')}
-                    />
-                 </div>
-                 <p className="text-xs text-muted-foreground">
-                    Apply disable account
-                 </p>
+            {/* Right Column: Tabs inside unified Card */}
+            <div className="lg:col-span-2">
+                 <Card className={cardClass}>
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                        <div className="px-6 border-b border-border/40">
+                            <TabsList className="bg-transparent p-0 h-auto gap-0 justify-start px-0 w-full flex-nowrap overflow-x-auto border-b-0 no-scrollbar">
+                                <TabsTrigger value="overview" className={tabTriggerClass}>
+                                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                                    {t('tabs.overview')}
+                                </TabsTrigger>
+                                <TabsTrigger value="security" className={tabTriggerClass}>
+                                    <Shield className="mr-2 h-4 w-4" />
+                                    {t('tabs.security')}
+                                </TabsTrigger>
+                            </TabsList>
+                        </div>
 
-                 <div className="flex items-center justify-between pt-2">
-                    <span className="text-sm font-medium text-foreground">Email verified</span>
-                    <Switch
-                      checked={emailVerified}
-                      onChange={(e) => setValue('emailVerified', e.target.checked)}
-                    />
-                 </div>
-                 <p className="text-xs text-muted-foreground">
-                    Disabling this will automatically send the user a verification email
-                 </p>
-              </div>
+                        <div className="p-6">
+                            <TabsContent value="overview" className="mt-0 space-y-6 focus-visible:outline-none focus-visible:ring-0">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Full Name */}
+                                    <FormField
+                                        control={control}
+                                        name="name"
+                                        render={({ field }) => (
+                                            <FormItem className="md:col-span-2">
+                                                <FormLabel>{t('labels.fullName')}</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
 
-               <div className="mt-8 flex justify-center">
-                  <Button 
-                    type="button" 
-                    variant="destructive" 
-                    className="w-full text-red-500 bg-red-50 hover:bg-red-100 dark:bg-red-500/10 dark:hover:bg-red-500/20"
-                    onClick={handleDelete}
-                    disabled={isDeleting}
-                  >
-                    {isDeleting ? 'Deleting...' : 'Delete user'}
-                  </Button>
-               </div>
-            </Card>
-          </div>
+                                    {/* Email */}
+                                    <FormField
+                                        control={control}
+                                        name="email"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{t('labels.email')}</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} type="email" />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
 
-          <div className="lg:col-span-2">
-            <Card className="p-6 bg-card border-none shadow-sm dark:bg-[#212B36]">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* Full name - 100% */}
-                <div className="sm:col-span-2">
-                  <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
-                    Full name <span className="text-destructive">*</span>
-                  </label>
-                  <Input
-                    {...register('name')}
-                    id="name"
-                    className={cn(
-                      "bg-transparent transition-colors",
-                      errors.name && "border-red-500 needs-attention"
-                    )}
-                  />
-                   {errors.name && <p className="mt-1 text-sm text-destructive">{errors.name.message}</p>}
-                </div>
+                                    {/* Phone */}
+                                    <FormField
+                                        control={control}
+                                        name="phone"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{t('labels.phoneNumber')}</FormLabel>
+                                                <FormControl>
+                                                    <PhoneInput
+                                                        value={field.value || ''}
+                                                        onChange={field.onChange}
+                                                        id="phone"
+                                                        error={errors.phone?.message}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
 
-                {/* Email address - 50% */}
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
-                    Email address <span className="text-destructive">*</span>
-                  </label>
-                  <Input
-                    {...register('email')}
-                    id="email"
-                    type="email"
-                    className={cn(
-                      "bg-transparent transition-colors",
-                      errors.email && "border-red-500"
-                    )}
-                  />
-                  {errors.email && <p className="mt-1 text-sm text-destructive">{errors.email.message}</p>}
-                </div>
+                                    {/* Tenant */}
+                                    <FormField
+                                        control={control}
+                                        name="tenantId"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{t('labels.tenant')}</FormLabel>
+                                                <Select
+                                                    value={field.value ?? undefined}
+                                                    onValueChange={field.onChange}
+                                                >
+                                                    <FormControl>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder={t('placeholders.selectTenant')} />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        {isLoadingTenants ? (
+                                                            <SelectItem value="loading" disabled>{tCommon('loading')}</SelectItem>
+                                                        ) : (
+                                                            tenants.map((tenant) => (
+                                                                <SelectItem key={tenant.id} value={tenant.id}>
+                                                                    {tenant.name}
+                                                                </SelectItem>
+                                                            ))
+                                                        )}
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
 
-                {/* Phone number - 50% */}
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
-                    Phone number
-                  </label>
-                  <Controller
-                    name="phone"
-                    control={control}
-                    render={({ field }) => (
-                      <PhoneInput
-                        value={field.value || ''}
-                        onChange={field.onChange}
-                        id="phone"
-                      />
-                    )}
-                  />
-                </div>
+                                    {/* Role */}
+                                    <FormField
+                                        control={control}
+                                        name="role"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{t('labels.role')}</FormLabel>
+                                                <Select
+                                                    value={field.value}
+                                                    onValueChange={field.onChange}
+                                                    disabled={user?.role === 'SUPER_ADMIN'}
+                                                >
+                                                    <FormControl>
+                                                        <SelectTrigger>
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        <SelectItem value="USER">{t('roles.USER')}</SelectItem>
+                                                        <SelectItem value="TENANT_ADMIN">{t('roles.TENANT_ADMIN')}</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
 
-                {/* Tenant - 50% */}
-                <div>
-                  <label htmlFor="tenantId" className="block text-sm font-medium text-foreground mb-2">
-                    Tenant
-                  </label>
-                  <Select
-                    value={watch('tenantId') ?? undefined}
-                    onValueChange={(value) => setValue('tenantId', value)}
-                  >
-                    <SelectTrigger className="bg-transparent h-11">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {isLoadingTenants ? (
-                        <SelectItem value="loading" disabled>Loading tenants...</SelectItem>
-                      ) : tenants.length === 0 ? (
-                        <SelectItem value="empty" disabled>No tenants available</SelectItem>
-                      ) : (
-                        tenants.map((tenant) => (
-                          <SelectItem key={tenant.id} value={tenant.id}>
-                            {tenant.name}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
+                                    {/* Address */}
+                                    <FormField
+                                        control={control}
+                                        name="address"
+                                        render={({ field }) => (
+                                            <FormItem className="md:col-span-2">
+                                                <FormLabel>{t('labels.address')}</FormLabel>
+                                                <FormControl>
+                                                    <AddressAutocomplete
+                                                        value={field.value || ''}
+                                                        onChange={field.onChange}
+                                                        onPlaceSelected={handlePlaceSelected}
+                                                        placeholder={t('placeholders.searchAddress')}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
 
-                {/* Role - 50% */}
-                <div>
-                  <label htmlFor="role" className="block text-sm font-medium text-foreground mb-2">
-                    Role
-                  </label>
-                  <Select
-                    value={watch('role')}
-                    onValueChange={(value) => setValue('role', value as 'USER' | 'TENANT_ADMIN' | 'SUPER_ADMIN')}
-                    disabled={user?.role === 'SUPER_ADMIN'}
-                  >
-                    <SelectTrigger className="bg-transparent h-11">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="USER">User</SelectItem>
-                      <SelectItem value="TENANT_ADMIN">Tenant Admin</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                                    {/* City */}
+                                    <FormField
+                                        control={control}
+                                        name="city"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{t('labels.city')}</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    
+                                    {/* State */}
+                                    <FormField
+                                        control={control}
+                                        name="state"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{t('labels.state')}</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
 
-                {/* Address - 100% */}
-                <div className="sm:col-span-2">
-                  <label htmlFor="address" className="block text-sm font-medium text-foreground mb-2">
-                    Address
-                  </label>
-                  <AddressAutocomplete
-                    value={addressValue}
-                    onChange={(value) => setValue('address', value)}
-                    onPlaceSelected={handlePlaceSelected}
-                    placeholder="908 Jack Locks"
-                    className="bg-transparent"
-                    id="address"
-                  />
-                </div>
+                                    {/* Country */}
+                                    <FormField
+                                        control={control}
+                                        name="country"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{t('labels.country')}</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
 
-                {/* City - 50% */}
-                <div>
-                  <label htmlFor="city" className="block text-sm font-medium text-foreground mb-2">
-                    City
-                  </label>
-                  <Input
-                    {...register('city')}
-                    id="city"
-                    placeholder="Rancho Cordova"
-                    className="bg-transparent"
-                    disabled
-                  />
-                </div>
+                                    {/* Zipcode */}
+                                    <FormField
+                                        control={control}
+                                        name="zipcode"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{t('labels.zipcode')}</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
 
-                {/* State/Region - 50% */}
-                <div>
-                  <label htmlFor="state" className="block text-sm font-medium text-foreground mb-2">
-                    State/Region
-                  </label>
-                  <Input
-                    {...register('state')}
-                    id="state"
-                    placeholder="Virginia"
-                    className="bg-transparent"
-                    disabled
-                  />
-                </div>
+                                    {/* Company */}
+                                    <FormField
+                                        control={control}
+                                        name="company"
+                                        render={({ field }) => (
+                                            <FormItem className="md:col-span-2">
+                                                <FormLabel>{t('labels.company')}</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            </TabsContent>
 
-                {/* Country - 50% */}
-                <div>
-                  <label htmlFor="country" className="block text-sm font-medium text-foreground mb-2">
-                    Country
-                  </label>
-                  <Input
-                    {...register('country')}
-                    id="country"
-                    placeholder="United States"
-                    className="bg-transparent"
-                    disabled
-                  />
-                </div>
-
-                {/* Zip/code - 50% */}
-                <div>
-                  <label htmlFor="zipcode" className="block text-sm font-medium text-foreground mb-2">
-                    Zip/code
-                  </label>
-                  <Input
-                    {...register('zipcode')}
-                    id="zipcode"
-                    placeholder="85807"
-                    className="bg-transparent"
-                    disabled
-                  />
-                </div>
-
-                {/* Company - 100% */}
-                <div className="sm:col-span-2">
-                  <label htmlFor="company" className="block text-sm font-medium text-foreground mb-2">
-                    Company
-                  </label>
-                  <Input
-                    {...register('company')}
-                    id="company"
-                    placeholder="Gleichner, Mueller and Tromp"
-                    className="bg-transparent"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 mt-8 pt-6">
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="lg"
-                  disabled={isSubmitting || isUpdating}
-                  className="min-w-[140px] h-11"
-                >
-                    {isSubmitting || isUpdating ? (
-                    <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Saving...
-                    </>
-                    ) : (
-                    'Save changes'
-                    )}
-                </Button>
-              </div>
-            </Card>
-          </div>
-        </div>
-      </form>
+                            <TabsContent value="security" className="mt-0 space-y-6">
+                                <div className="flex flex-col items-center justify-center py-12 text-center">
+                                    <Shield className="h-12 w-12 text-muted-foreground/50 mb-4" />
+                                    <h3 className="text-lg font-semibold text-foreground">{t('sections.security.title')}</h3>
+                                    <p className="text-muted-foreground text-sm max-w-sm mt-2">
+                                        {t('sections.security.description')}
+                                    </p>
+                                </div>
+                            </TabsContent>
+                        </div>
+                    </Tabs>
+                 </Card>
+            </div>
+            </div>
+        </form>
+      </Form>
     </div>
   );
 }

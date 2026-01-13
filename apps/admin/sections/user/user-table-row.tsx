@@ -24,7 +24,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Tooltip } from '@/components/ui/tooltip';
+import { TooltipContent, TooltipRoot, TooltipTrigger } from '@/components/ui/tooltip';
 import { useDeleteUser } from '@/hooks/use-users';
 import { toast } from 'sonner';
 import { CONFIG } from '@/lib/config';
@@ -51,6 +51,7 @@ type UserTableRowProps = {
 
 export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
   const t = useTranslations('User.table');
+  const tUser = useTranslations('User.edit');
   const { name, email, role, status, phone, tenant } = row;
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { mutate: deleteUser, isPending } = useDeleteUser();
@@ -112,7 +113,7 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
       </TableCell>
 
       <TableCell className="whitespace-nowrap py-4 px-4 text-sm font-medium">
-        {role}
+        {tUser('roles.' + role)}
       </TableCell>
 
       <TableCell className="py-4 px-4">
@@ -129,19 +130,24 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
               : 'bg-slate-500/15 text-slate-600 dark:text-slate-400 hover:bg-slate-500/25'
           )}
         >
-          {status?.toLowerCase() || 'unknown'}
+          {status ? tUser('statuses.' + status.toUpperCase()) : 'unknown'}
         </Badge>
       </TableCell>
 
       <TableCell align="right" className="py-4 px-4 pr-4">
         <div className="flex items-center justify-end gap-1">
-            <Tooltip content="Edit" position="top">
-              <Link href={`/users/${row.id}`}>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
-                  <Pencil className="h-4 w-4" />
-                </Button>
-              </Link>
-            </Tooltip>
+            <TooltipRoot delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Link href={`/users/${row.id}`} tabIndex={-1}>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="min-w-0 w-auto px-2 py-1 text-xs">
+                {t('edit')}
+              </TooltipContent>
+            </TooltipRoot>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
