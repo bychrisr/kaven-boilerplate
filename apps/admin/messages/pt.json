@@ -11,6 +11,38 @@
       "settings": "Configurações",
       "logout": "Sair"
     },
+    "phoneInput": {
+      "placeholder": "Digite o número de telefone",
+      "search": "Buscar...",
+      "noCountries": "Nenhum país encontrado",
+      "invalid": "Número de telefone inválido"
+    },
+    "addressInput": {
+      "placeholder": "Digite o endereço",
+      "loading": "Carregando..."
+    },
+    "passwordValidator": {
+      "strength": "Força da Senha",
+      "requirements": "Requisitos",
+      "levels": {
+        "veryWeak": "Muito Fraca",
+        "weak": "Fraca",
+        "fair": "Regular",
+        "good": "Boa",
+        "strong": "Forte"
+      },
+      "checklist": {
+        "length": "Pelo menos 8 caracteres",
+        "lowercase": "Uma letra minúscula",
+        "uppercase": "Uma letra maiúscula",
+        "number": "Um número",
+        "special": "Um caractere especial"
+      },
+      "errors": {
+        "required": "A senha é obrigatória",
+        "invalid": "A senha deve conter pelo menos: 1 letra minúscula, 1 letra maiúscula, 1 número e 1 caractere especial"
+      }
+    },
     "errors": {
       "notFoundTitle": "Página não encontrada (404)",
       "notFoundDescription": "Ops! A página que você está procurando não existe ou foi movida. Verifique a URL ou volte para o início.",
@@ -188,7 +220,105 @@
       "confirmDeleteDesc": "Tem certeza que deseja excluir o usuário <bold>{name}</bold>? Esta ação não pode ser desfeita.",
       "cancel": "Cancelar",
       "delete": "Excluir",
-      "deleting": "Excluindo..."
+      "deleting": "Excluindo...",
+      "edit": "Editar",
+      "search": "Buscar...",
+      "roleAll": "Função: Todas"
+    },
+    "edit": {
+      "title": "Editar Usuário",
+      "notFound": "Usuário não encontrado",
+      "backToList": "Voltar para a lista",
+      "tabs": {
+        "overview": "Visão Geral",
+        "security": "Segurança"
+      },
+      "buttons": {
+        "save": "Salvar Alterações",
+        "saving": "Salvando...",
+        "delete": "Excluir Usuário",
+        "deleting": "Excluindo..."
+      },
+      "sections": {
+        "security": {
+          "title": "Configurações de Segurança",
+          "description": "Redefinição de senha e configurações de 2FA estarão disponíveis aqui. Por enquanto, os usuários devem gerenciar suas próprias configurações de segurança."
+        }
+      },
+      "labels": {
+        "fullName": "Nome Completo",
+        "email": "Endereço de E-mail",
+        "phoneNumber": "Telefone",
+        "tenant": "Tenant",
+        "role": "Função",
+        "address": "Endereço",
+        "city": "Cidade",
+        "state": "Estado/Região",
+        "country": "País",
+        "zipcode": "CEP",
+        "company": "Empresa",
+        "banned": "Banido",
+        "emailVerified": "E-mail Verificado"
+      },
+      "placeholders": {
+        "selectTenant": "Selecionar tenant",
+        "searchAddress": "Comece a digitar para buscar endereço...",
+        "fullName": "Digite o nome completo",
+        "email": "Digite o endereço de e-mail"
+      },
+      "hints": {
+        "disableAccount": "Aplicar desativação de conta",
+        "emailVerification": "Desativar isso enviará automaticamente um e-mail de verificação para o usuário"
+      },
+      "roles": {
+        "USER": "Usuário",
+        "TENANT_ADMIN": "Admin do Tenant",
+        "SUPER_ADMIN": "Super Admin"
+      },
+      "messages": {
+        "deleteConfirm": "Tem certeza que deseja excluir este usuário?",
+        "updateSuccess": "Usuário atualizado com sucesso",
+        "avatarSuccess": "Avatar atualizado com sucesso",
+        "avatarError": "Falha no upload do avatar"
+      },
+      "statuses": {
+        "ACTIVE": "Ativo",
+        "PENDING": "Pendente",
+        "BANNED": "Banido",
+        "REJECTED": "Rejeitado"
+      },
+      "validation": {
+        "nameMin": "O nome deve ter pelo menos 3 caracteres",
+        "emailInvalid": "Endereço de e-mail inválido",
+        "phoneInvalid": "Número de telefone inválido"
+      }
+    },
+    "create": {
+      "title": "Criar novo usuário",
+      "breadcrumb": "Criar",
+      "buttons": {
+        "create": "Criar usuário",
+        "creating": "Criando...",
+        "cancel": "Cancelar"
+      },
+      "validation": {
+        "fullName": "Por favor, insira seu nome completo (nome e sobrenome)",
+        "passwordMin": "A senha deve ter pelo menos 8 caracteres",
+        "tenantRequired": "O Tenant é obrigatório"
+      },
+      "placeholders": {
+        "name": "João Silva",
+        "email": "joao@exemplo.com",
+        "password": "••••••••",
+        "address": "Rua Exemplo, 123",
+        "city": "São Paulo",
+        "state": "São Paulo",
+        "country": "Brasil",
+        "zipcode": "01234-567",
+        "company": "Minha Empresa Ltda.",
+        "createTenant": "Criar próprio tenant",
+        "noTenants": "Nenhum tenant disponível"
+      }
     }
   },
   "PlatformSettings": {

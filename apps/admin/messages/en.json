@@ -11,6 +11,38 @@
       "settings": "Settings",
       "logout": "Logout"
     },
+    "phoneInput": {
+      "placeholder": "Enter phone number",
+      "search": "Search...",
+      "noCountries": "No countries found",
+      "invalid": "Invalid phone number"
+    },
+    "addressInput": {
+      "placeholder": "Enter address",
+      "loading": "Loading..."
+    },
+    "passwordValidator": {
+      "strength": "Password Strength",
+      "requirements": "Requirements",
+      "levels": {
+        "veryWeak": "Very Weak",
+        "weak": "Weak",
+        "fair": "Fair",
+        "good": "Good",
+        "strong": "Strong"
+      },
+      "checklist": {
+        "length": "At least 8 characters",
+        "lowercase": "One lowercase letter",
+        "uppercase": "One uppercase letter",
+        "number": "One number",
+        "special": "One special character"
+      },
+      "errors": {
+        "required": "Password is required",
+        "invalid": "Password must contain at least: 1 lowercase letter, 1 uppercase letter, 1 number and 1 special character"
+      }
+    },
     "errors": {
       "notFoundTitle": "Page Not Found (404)",
       "notFoundDescription": "Oops! The page you are looking for does not exist or has been moved. Check the URL or go back home.",
@@ -187,7 +219,105 @@
       "confirmDeleteDesc": "Are you sure you want to delete user <bold>{name}</bold>? This action cannot be undone.",
       "cancel": "Cancel",
       "delete": "Delete",
-      "deleting": "Deleting..."
+      "deleting": "Deleting...",
+      "edit": "Edit",
+      "search": "Search...",
+      "roleAll": "Role: All"
+    },
+    "edit": {
+      "title": "Edit User",
+      "notFound": "User not found",
+      "backToList": "Back to list",
+      "tabs": {
+        "overview": "Overview",
+        "security": "Security"
+      },
+      "buttons": {
+        "save": "Save Changes",
+        "saving": "Saving...",
+        "delete": "Delete User",
+        "deleting": "Deleting..."
+      },
+      "sections": {
+        "security": {
+          "title": "Security Settings",
+          "description": "Password reset and 2FA settings will be available here. For now, users must manage their own security settings."
+        }
+      },
+      "labels": {
+        "fullName": "Full Name",
+        "email": "Email Address",
+        "phoneNumber": "Phone Number",
+        "tenant": "Tenant",
+        "role": "Role",
+        "address": "Address",
+        "city": "City",
+        "state": "State/Region",
+        "country": "Country",
+        "zipcode": "Zip Code",
+        "company": "Company",
+        "banned": "Banned",
+        "emailVerified": "Email Verified"
+      },
+      "placeholders": {
+        "selectTenant": "Select tenant",
+        "searchAddress": "Start typing to search address...",
+        "fullName": "Enter full name",
+        "email": "Enter email address"
+      },
+      "hints": {
+        "disableAccount": "Apply disable account",
+        "emailVerification": "Disabling this will automatically send the user a verification email"
+      },
+      "roles": {
+        "USER": "User",
+        "TENANT_ADMIN": "Tenant Admin",
+        "SUPER_ADMIN": "Super Admin"
+      },
+      "messages": {
+        "deleteConfirm": "Are you sure you want to delete this user?",
+        "updateSuccess": "User updated successfully",
+        "avatarSuccess": "Avatar updated successfully",
+        "avatarError": "Avatar upload failed"
+      },
+      "statuses": {
+        "ACTIVE": "Active",
+        "PENDING": "Pending",
+        "BANNED": "Banned",
+        "REJECTED": "Rejected"
+      },
+      "validation": {
+        "nameMin": "Name must be at least 3 characters",
+        "emailInvalid": "Invalid email address",
+        "phoneInvalid": "Invalid phone number"
+      }
+    },
+    "create": {
+      "title": "Create a new user",
+      "breadcrumb": "Create",
+      "buttons": {
+        "create": "Create user",
+        "creating": "Creating...",
+        "cancel": "Cancel"
+      },
+      "validation": {
+        "fullName": "Please enter your full name (first and last name)",
+        "passwordMin": "Password must be at least 8 characters",
+        "tenantRequired": "Tenant is required"
+      },
+      "placeholders": {
+        "name": "John Doe",
+        "email": "john@example.com",
+        "password": "••••••••",
+        "address": "123 Main St",
+        "city": "San Francisco",
+        "state": "California",
+        "country": "United States",
+        "zipcode": "94102",
+        "company": "Acme Inc.",
+        "createTenant": "Create own tenant",
+        "noTenants": "No tenants available"
+      }
     }
   },
   "Invites": {
