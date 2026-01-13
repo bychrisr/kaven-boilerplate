@@ -27,6 +27,7 @@ export const metadata: Metadata = {
   },
 };
 
+import { QueryProvider } from '@/providers/query-provider';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { prisma } from '@/lib/prisma';
@@ -91,11 +92,13 @@ export default async function RootLayout({
       </head>
       <body suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
-          <TooltipProvider delayDuration={200} skipDelayDuration={300}>
-            <ThemeProvider defaultMode="dark">
-             {children}
-            </ThemeProvider>
-          </TooltipProvider>
+          <QueryProvider>
+            <TooltipProvider delayDuration={200} skipDelayDuration={300}>
+              <ThemeProvider defaultMode="dark">
+               {children}
+              </ThemeProvider>
+            </TooltipProvider>
+          </QueryProvider>
         </NextIntlClientProvider>
       </body>
     </html>
