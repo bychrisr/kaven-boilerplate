@@ -12,4 +12,5 @@ export default {
   observability: 'Observabilidade & Monitoramento',
   'plans-and-products': 'Planos & Produtos',
   'implementation-logs': 'Logs de Implementação',
+  'tenant-app-projects-tasks': 'Tenant App - Projects & Tasks',
 };

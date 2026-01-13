@@ -1,0 +1,437 @@
+---
+title: Tenant App - Projects & Tasks
+description: Documentação completa da implementação de Projects e Tasks no Tenant App, incluindo models Prisma, frontend completo, seed de dados e testes automatizados
+date: 2026-01-12
+author: Chris + Antigravity Agent
+version: 1.0.0
+tags: [tenant-app, projects, tasks, prisma, e2e, testing]
+---
+
+# Tenant App - Projects & Tasks
+
+> Implementação completa de gerenciamento de Projects e Tasks no Tenant App, com backend robusto, frontend polido e testes automatizados.
+
+## Visão Geral
+
+O Tenant App inclui um sistema completo de gerenciamento de Projects e Tasks, implementado em **4 fases principais**:
+
+- **Backend**: Models Prisma, migrations e APIs CRUD
+- **Frontend**: UI completa com Project Detail Page e Tasks Management
+- **Dados Demo**: Seed script com projetos e tasks realistas
+- **Testes**: Integração e E2E com Playwright
+
+### Funcionalidades
+
+- ✅ **CRUD completo** de Projects e Tasks
+- ✅ **Tenant isolation** - Dados isolados por tenant
+- ✅ **Space segmentation** - Projetos podem pertencer a Spaces
+- ✅ **Status tracking** - Múltiplos status para projects e tasks
+- ✅ **Prioridades** - Tasks com prioridades (LOW, MEDIUM, HIGH, URGENT)
+- ✅ **Assignees** - Atribuição de tasks a usuários
+- ✅ **UI polida** - Loading states, error boundaries, empty states
+
+---
+
+## Backend - Models Prisma
+
+### Models Implementados
+
+```prisma
+enum ProjectStatus {
+  ACTIVE
+  ARCHIVED
+  COMPLETED
+  ON_HOLD
+  IN_PROGRESS
+}
+
+model Project {
+  id          String        @id @default(uuid())
+  name        String
+  description String?
+  color       String?       @default("#3B82F6")
+  status      ProjectStatus @default(ACTIVE)
+
+  tenantId    String
+  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  spaceId     String?
+  space       Space?        @relation(fields: [spaceId], references: [id], onDelete: SetNull)
+
+  createdById String
+  createdBy   User          @relation("ProjectCreatedBy", fields: [createdById], references: [id])
+
+  tasks       Task[]
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([tenantId])
+  @@index([spaceId])
+  @@map("projects")
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  DONE
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Task {
+  id          String       @id @default(uuid())
+  title       String
+  description String?
+  status      TaskStatus   @default(TODO)
+  priority    TaskPriority @default(MEDIUM)
+  dueDate     DateTime?
+
+  tenantId    String
+  tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  projectId   String
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  assigneeId  String?
+  assignee    User?        @relation("TaskAssignee", fields: [assigneeId], references: [id])
+
+  createdById String
+  createdBy   User         @relation("TaskCreatedBy", fields: [createdById], references: [id])
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([tenantId])
+  @@index([projectId])
+  @@map("tasks")
+}
+```
+
+### API Endpoints
+
+**Projects**:
+
+- `GET /api/app/projects` - Lista projetos (com paginação)
+- `GET /api/app/projects/:id` - Detalhes do projeto
+- `POST /api/app/projects` - Criar projeto
+- `PUT /api/app/projects/:id` - Atualizar projeto
+- `DELETE /api/app/projects/:id` - Deletar projeto
+
+**Tasks**:
+
+- `GET /api/app/tasks` - Lista tasks (com filtros)
+- `GET /api/app/tasks/:id` - Detalhes da task
+- `POST /api/app/tasks` - Criar task
+- `PUT /api/app/tasks/:id` - Atualizar task
+- `DELETE /api/app/tasks/:id` - Deletar task
+
+---
+
+## Frontend - Componentes
+
+### Project Detail Page
+
+**Arquivo**: `apps/tenant/app/[locale]/(dashboard)/projects/[id]/page.tsx`
+
+Funcionalidades:
+
+- ✅ Exibe informações completas do projeto
+- ✅ Ações: Edit e Delete (com confirmação)
+- ✅ Integração com TasksTable
+- ✅ Loading skeleton e error states
+
+```typescript
+const { data: project, isLoading } = useQuery({
+  queryKey: ['project', projectId],
+  queryFn: async () => {
+    const res = await api.get(`/api/app/projects/${projectId}`);
+    return res.data as Project;
+  },
+});
+```
+
+### Tasks Table Component
+
+**Arquivo**: `apps/tenant/components/demo/tasks/tasks-table.tsx`
+
+Funcionalidades:
+
+- ✅ CRUD completo (Create, Read, Update, Delete)
+- ✅ Inline status update (dropdown na tabela)
+- ✅ Dialog para criar nova task
+- ✅ Exibe assignee, prioridade, datas
+
+```typescript
+const createMutation = useMutation({
+  mutationFn: async (data: typeof newTask) => {
+    const res = await api.post('/api/app/tasks', {
+      ...data,
+      projectId,
+    });
+    return res.data;
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['tasks', projectId] });
+    toast.success('Task created successfully');
+  },
+});
+```
+
+### Componentes Auxiliares
+
+**Error Boundary** (`components/error-boundary.tsx`):
+
+- Captura erros de runtime
+- Exibe UI de fallback amigável
+- Botão "Try again" para recuperação
+
+**Loading Skeleton** (`components/loading-skeleton.tsx`):
+
+- Variantes: `table`, `card`, `stats`, `default`
+- Animação de pulse automática
+
+**Empty State** (`components/empty-state.tsx`):
+
+- Componente reutilizável
+- Props: `icon`, `title`, `description`, `action`
+
+---
+
+## Seed de Dados Demo
+
+**Arquivo**: `packages/database/prisma/seeds/demo-projects-tasks.ts`
+
+**Dados Criados**:
+
+**5 Projetos**:
+
+1. Website Redesign (ACTIVE, 3 tasks)
+2. Mobile App Development (ACTIVE, 4 tasks)
+3. API Migration (IN_PROGRESS, 3 tasks)
+4. Security Audit (ACTIVE, 2 tasks)
+5. Documentation Portal (COMPLETED, 3 tasks)
+
+**15 Tasks** com status, prioridades e datas realistas
+
+**Execução**:
+
+```bash
+cd packages/database
+npx tsx prisma/seeds/demo-projects-tasks.ts
+```
+
+---
+
+## Testes
+
+### Testes de Integração
+
+**Arquivo**: `apps/api/src/modules/app/projects/__tests__/projects.integration.test.ts`
+
+**Cobertura** (15 test cases):
+
+```typescript
+describe('Projects API Integration Tests', () => {
+  it('should return list of projects with pagination', async () => {
+    const response = await axios.get(`${API_URL}/api/app/projects`, {
+      headers: { Authorization: `Bearer ${authToken}` },
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.data).toHaveProperty('data');
+    expect(response.data).toHaveProperty('meta');
+  });
+
+  it('should only return projects from user tenant', async () => {
+    const response = await axios.get(`${API_URL}/api/app/projects`);
+    const projects = response.data.data;
+
+    // Validar tenant isolation
+    const firstTenantId = projects[0].tenantId;
+    projects.forEach((project) => {
+      expect(project.tenantId).toBe(firstTenantId);
+    });
+  });
+});
+```
+
+**Test Cases**:
+
+- ✅ CRUD de Projects (10 tests)
+- ✅ CRUD de Tasks (5 tests)
+- ✅ Tenant Isolation
+- ✅ Paginação e filtros
+
+### Testes E2E
+
+**Arquivo**: `apps/tenant/e2e/projects-tasks.spec.ts`
+
+**Configuração Playwright**:
+
+```typescript
+export default defineConfig({
+  testDir: './e2e',
+  timeout: 60000,
+  expect: { timeout: 15000 },
+  use: {
+    baseURL: 'http://localhost:3001',
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+  },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+  ],
+});
+```
+
+**Test Cases** (15 tests):
+
+```typescript
+test('should create a new project', async ({ page }) => {
+  await login(page);
+  await page.goto('/projects');
+
+  await page.click('button:has-text("New Project")');
+  await expect(page.locator('text=Create Project')).toBeVisible();
+
+  const projectName = `E2E Test Project ${Date.now()}`;
+  await page.fill('input[id="name"]', projectName);
+  await page.click('button[type="submit"]:has-text("Create Project")');
+
+  await expect(page.locator('text=/created successfully/i')).toBeVisible();
+});
+```
+
+**Cobertura**:
+
+- ✅ Autenticação (2 tests)
+- ✅ Projects Management (5 tests)
+- ✅ Tasks Management (3 tests)
+- ✅ Navegação e UI (4 tests)
+- ✅ Tenant Isolation (1 test)
+
+---
+
+## Como Usar
+
+### Executar Seed de Dados
+
+```bash
+cd packages/database
+npx tsx prisma/seeds/demo-projects-tasks.ts
+```
+
+### Executar Testes de Integração
+
+```bash
+cd apps/api
+npm test -- projects.integration.test.ts
+```
+
+### Executar Testes E2E
+
+```bash
+cd apps/tenant
+
+# Todos os testes
+pnpm test:e2e
+
+# Com UI interativa
+pnpm test:e2e:ui
+
+# Com browser visível
+pnpm test:e2e:headed
+
+# Modo debug
+pnpm test:e2e:debug
+```
+
+### Iniciar Tenant App
+
+```bash
+cd apps/tenant
+pnpm dev
+# Acesse: http://localhost:3001
+```
+
+---
+
+## Arquitetura
+
+### Tenant Isolation
+
+Todos os dados são isolados por `tenantId`:
+
+```typescript
+// Exemplo de query com tenant isolation
+const projects = await prisma.project.findMany({
+  where: { tenantId: user.tenantId },
+  include: {
+    tasks: true,
+    createdBy: true,
+    space: true,
+  },
+});
+```
+
+### Space Segmentation
+
+Projects podem ser associados a Spaces (opcional):
+
+```typescript
+// Criar projeto em um Space específico
+const project = await prisma.project.create({
+  data: {
+    name: 'My Project',
+    tenantId: user.tenantId,
+    spaceId: 'space-123', // Opcional
+    createdById: user.id,
+  },
+});
+```
+
+---
+
+## Referências
+
+### Documentação Relacionada
+
+- [Tenant App Architecture](/platform/tenant-app-architecture)
+- [Prisma Schema](/platform/database-schema)
+- [Testing Guide](/platform/testing-guide)
+
+### Comandos Úteis
+
+```bash
+# Seed de dados
+npx tsx prisma/seeds/demo-projects-tasks.ts
+
+# Testes de integração
+npm test -- projects.integration.test.ts
+
+# Testes E2E
+pnpm test:e2e
+
+# Iniciar Tenant App
+pnpm --filter tenant dev
+
+# Iniciar Backend
+pnpm --filter api dev
+```
+
+---
+
+**Documentado por**: Antigravity Agent  
+**Data**: 2026-01-12  
+**Versão**: 1.0.0
