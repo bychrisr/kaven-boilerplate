@@ -396,7 +396,7 @@ export function UserEditView({ userId }: UserEditViewProps) {
                                                     </FormControl>
                                                     <SelectContent>
                                                         {isLoadingTenants ? (
-                                                            <SelectItem value="loading" disabled>{tCommon('loading')}</SelectItem>
+                                                            <SelectItem value="loading" disabled>{tCommon('addressInput.loading')}</SelectItem>
                                                         ) : (
                                                             tenants.map((tenant) => (
                                                                 <SelectItem key={tenant.id} value={tenant.id}>
