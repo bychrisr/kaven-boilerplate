@@ -40,7 +40,7 @@ export function TenantView() {
   
   // Pagination
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selected, setSelected] = useState<string[]>([]);
 
   // API Hooks

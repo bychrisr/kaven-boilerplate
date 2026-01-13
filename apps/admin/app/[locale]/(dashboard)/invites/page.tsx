@@ -1,6 +1,9 @@
+
 'use client';
 
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -14,10 +17,13 @@ import {
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { api } from '@/lib/api';
-import { Loader2, Copy, Trash2 } from 'lucide-react';
+import { Loader2, Copy, Trash2, Plus, Mail } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { InviteUserDialog } from '@/components/users/invite-dialog';
 
 export default function InvitesPage() {
+  const t = useTranslations('Invites');
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -53,7 +59,17 @@ export default function InvitesPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight">Pending Invites</h1>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('title')}</h1>
+          <p className="text-muted-foreground mt-1">{t('description')}</p>
+        </div>
+        <Button 
+            className="flex items-center gap-2 shadow-lg" 
+            onClick={() => setIsInviteOpen(true)}
+        >
+            <Plus className="h-4 w-4" />
+            {t('create')}
+        </Button>
       </div>
 
       <Card className="border-none shadow-md bg-card dark:bg-[#212B36] overflow-hidden">
@@ -65,23 +81,34 @@ export default function InvitesPage() {
             <Table>
                 <TableHeader className="bg-muted/50">
                 <TableRow>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Tenant</TableHead>
+                    <TableHead>{t('table.headers.email')}</TableHead>
+                    <TableHead>{t('table.headers.role')}</TableHead>
+                    <TableHead>{t('table.headers.tenant')}</TableHead>
                     <TableHead>Invited By</TableHead>
-                    <TableHead>Expires</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>{t('table.headers.expiresAt')}</TableHead>
+                    <TableHead className="text-right">{t('table.headers.actions')}</TableHead>
                 </TableRow>
                 </TableHeader>
                 <TableBody>
                 {invites.length === 0 ? (
                     <TableRow>
-                        <TableCell colSpan={6} className="h-48 text-center text-muted-foreground">
-                            No pending invites found
+                        <TableCell colSpan={6} className="h-48 text-center">
+                            <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                                <Mail className="h-8 w-8 opacity-20" />
+                                <p>{t('table.empty')}</p>
+                            </div>
                         </TableCell>
                     </TableRow>
                 ) : (
-                    invites.map((invite: any) => (
+                    invites.map((invite: { 
+                      id: string; 
+                      email: string; 
+                      role: string; 
+                      token: string;
+                      tenant?: { name: string };
+                      invitedBy: { name: string };
+                      expiresAt: string;
+                    }) => (
                         <TableRow key={invite.id}>
                         <TableCell className="font-medium">{invite.email}</TableCell>
                         <TableCell>
@@ -130,6 +157,11 @@ export default function InvitesPage() {
             </Table>
         )}
       </Card>
+
+      <InviteUserDialog 
+         open={isInviteOpen} 
+         onClose={() => setIsInviteOpen(false)} 
+      />
     </div>
   );
 }

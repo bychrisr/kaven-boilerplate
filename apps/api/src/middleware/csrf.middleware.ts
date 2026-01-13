@@ -27,7 +27,7 @@ export async function csrfMiddleware(
     return;
   }
 
-  const allowedOrigins = [env.FRONTEND_URL, env.CORS_ORIGIN];
+  const allowedOrigins = [env.FRONTEND_URL, env.CORS_ORIGIN].filter(Boolean) as string[];
   
   // Normalizar origens (remover trailing slash)
   const normalizedOrigins = new Set(allowedOrigins.map(url => url.replace(/\/$/, '')));

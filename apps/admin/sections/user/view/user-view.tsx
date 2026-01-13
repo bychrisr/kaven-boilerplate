@@ -49,7 +49,7 @@ export function UserView() {
   
   // Pagination (0-indexed for UI, 1-indexed for API)
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [selected, setSelected] = useState<string[]>([]);
 

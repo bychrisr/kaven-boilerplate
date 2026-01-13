@@ -66,7 +66,8 @@
       "analytics": "Análise",
       "platform settings": "Config. da Plataforma",
       "users": "Usuários",
-      "tenant": "Inquilinos",
+      "tenant": "Tenants",
+      "invites": "Convites",
       "revenue": "Receita",
       "orders": "Pedidos",
       "invoices": "Faturas",
@@ -269,6 +270,30 @@
       "previous": "Anterior",
       "next": "Próxima",
       "pageOf": "Página {page} de {total}"
+    }
+  },
+  "Invites": {
+    "title": "Gerenciamento de Convites",
+    "description": "Visualize e gerencie convites pendentes de novos usuários.",
+    "list": "Lista de Convites",
+    "create": "Novo Convite",
+    "table": {
+      "headers": {
+        "email": "Email",
+        "role": "Função",
+        "tenant": "Tenant",
+        "status": "Status",
+        "createdAt": "Data de Envio",
+        "expiresAt": "Expira em",
+        "actions": "Ações"
+      },
+      "status": {
+        "PENDING": "Pendente",
+        "ACCEPTED": "Aceito",
+        "EXPIRED": "Expirado",
+        "REVOKED": "Revogado"
+      },
+      "empty": "Nenhum convite encontrado."
     }
   },
   "Observability": {

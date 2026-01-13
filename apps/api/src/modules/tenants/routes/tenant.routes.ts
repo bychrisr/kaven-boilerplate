@@ -21,6 +21,12 @@ export async function tenantRoutes(fastify: FastifyInstance) {
     handler: tenantController.getById.bind(tenantController),
   });
 
+  // GET /api/tenants/:id/spaces - Listar spaces do tenant
+  fastify.get('/:id/spaces', {
+    preHandler: [authMiddleware, requireTenantAdmin],
+    handler: tenantController.getSpaces.bind(tenantController),
+  });
+
   // POST /api/tenants - Criar tenant (requer SUPER_ADMIN)
   fastify.post('/', {
     preHandler: [authMiddleware, requireSuperAdmin],

@@ -37,6 +37,16 @@ export class TenantController {
     }
   }
 
+  async getSpaces(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const { id } = request.params as { id: string };
+      const spaces = await tenantService.getTenantSpaces(id);
+      reply.send(spaces);
+    } catch (error: any) {
+      reply.status(404).send({ error: error.message });
+    }
+  }
+
   async create(request: FastifyRequest, reply: FastifyReply) {
     try {
       const data = createTenantSchema.parse(request.body);

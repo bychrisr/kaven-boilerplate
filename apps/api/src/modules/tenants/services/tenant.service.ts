@@ -105,6 +105,28 @@ export class TenantService {
   }
 
   /**
+   * GET /api/tenants/:id/spaces - Listar spaces de um tenant
+   */
+  async getTenantSpaces(tenantId: string) {
+    // Verificar se o tenant existe
+    await this.getTenantById(tenantId);
+    
+    // Buscar global spaces (tenantId: null) e spaces do tenant
+    const spaces = await prisma.space.findMany({
+      where: {
+        OR: [
+          { tenantId: null },
+          { tenantId },
+        ],
+        isActive: true,
+      },
+      orderBy: { sortOrder: 'asc' },
+    });
+    
+    return spaces;
+  }
+
+  /**
    * POST /api/tenants - Criar novo tenant
    */
   async createTenant(data: CreateTenantInput) {

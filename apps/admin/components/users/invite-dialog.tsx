@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import {
@@ -12,8 +12,16 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Select, SelectOption } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/radix-select';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { api } from '@/lib/api';
 
@@ -27,6 +35,9 @@ export function InviteUserDialog({ open, onClose }: InviteUserDialogProps) {
   const [email, setEmail] = useState('');
   const [role, setRole] = useState<'SUPER_ADMIN' | 'ADMIN' | 'MEMBER'>('MEMBER');
   const [tenantId, setTenantId] = useState<string>('');
+  
+  // Space Selection
+  const [selectedSpaceIds, setSelectedSpaceIds] = useState<string[]>([]);
 
   // Fetch current user to determine permissions
   const { data: currentUser } = useQuery({
@@ -42,21 +53,41 @@ export function InviteUserDialog({ open, onClose }: InviteUserDialogProps) {
     queryKey: ['tenants-list'],
     queryFn: async () => {
       const res = await api.get('/api/tenants');
-      return res.data;
+      return res.data.tenants;
     },
     enabled: currentUser?.role === 'SUPER_ADMIN',
   });
 
+  // Calculate effective Tenant ID for fetching spaces
+  const effectiveTenantId = currentUser?.role === 'SUPER_ADMIN' 
+    ? (tenantId || null) 
+    : currentUser?.tenantId;
+
+  // Fetch spaces for the selected/current tenant
+  const { data: spaces, isLoading: isLoadingSpaces } = useQuery({
+    queryKey: ['tenant-spaces', effectiveTenantId],
+    queryFn: async () => {
+      if (!effectiveTenantId) return [];
+      const res = await api.get(`/api/tenants/${effectiveTenantId}/spaces`);
+      return res.data; // Expected: Space[]
+    },
+    // Only fetch if we have a valid tenant context and user is not inviting a SUPER_ADMIN (who has no tenant)
+    enabled: !!effectiveTenantId && role !== 'SUPER_ADMIN',
+  });
+
+  const handleTenantChange = (val: string) => {
+    setTenantId(val);
+    setSelectedSpaceIds([]); // Reset spaces when tenant changes
+  };
+
   const inviteMutation = useMutation({
-    mutationFn: async (data: { email: string; role: string; tenantId?: string }) => {
+    mutationFn: async (data: { email: string; role: string; tenantId?: string; spaceIds?: string[] }) => {
       const response = await api.post('/api/users/invites', data);
       return response.data;
     },
     onSuccess: () => {
       toast.success(t('inviteSuccess'));
-      setEmail('');
-      setRole('MEMBER');
-      setTenantId('');
+      resetForm();
       onClose();
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -66,42 +97,51 @@ export function InviteUserDialog({ open, onClose }: InviteUserDialogProps) {
     },
   });
 
+  const resetForm = () => {
+    setEmail('');
+    setRole('MEMBER');
+    setTenantId('');
+    setSelectedSpaceIds([]);
+  };
+
+  const handleSpaceToggle = (spaceId: string) => {
+    setSelectedSpaceIds(prev => 
+      prev.includes(spaceId) 
+        ? prev.filter(id => id !== spaceId)
+        : [...prev, spaceId]
+    );
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (role === 'SUPER_ADMIN') {
-        // Super admin doesn't need tenantId
+        // Super admin invite
         inviteMutation.mutate({ email, role });
     } else {
-        // ADMIN and MEMBER need tenantId
-        // If current user is SUPER_ADMIN, they MUST select a tenant
-        if (currentUser?.role === 'SUPER_ADMIN' && !tenantId) {
-            toast.error(t('selectTenantRequired'));
-            return;
-        }
-
-        // If current user is ADMIN, tenantId is inferred by backend from their session, 
-        // OR we can pass it explicitly if we have it in currentUser context.
-        // For safety, let's pass it if we selected it (Super Admin) or if we are Admin (inferred).
-        // Actually, Controller expects tenantId for ADMIN/MEMBER.
-        // So if I am ADMIN, I should pass my tenantId? 
-        // The Controller checks: if (currentUser.tenantId !== tenantId) error.
-        // So Frontend MUST pass tenantId.
-        
-        const targetTenantId = currentUser?.role === 'SUPER_ADMIN' ? tenantId : currentUser?.tenantId;
+        // Tenant invite logic
+        const targetTenantId = effectiveTenantId;
         
         if (!targetTenantId) {
-             toast.error('Error: Unknown tenant context');
+             toast.error(currentUser?.role === 'SUPER_ADMIN' ? 'Please select a tenant' : 'Error: Unknown tenant context');
              return;
         }
 
-        inviteMutation.mutate({ email, role, tenantId: targetTenantId });
+        inviteMutation.mutate({ 
+          email, 
+          role, 
+          tenantId: targetTenantId,
+          spaceIds: selectedSpaceIds 
+        });
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
+    <Dialog open={open} onOpenChange={(val) => {
+        if (!val) resetForm();
+        onClose();
+    }}>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{t('inviteUser')}</DialogTitle>
           <DialogDescription>
@@ -109,10 +149,11 @@ export function InviteUserDialog({ open, onClose }: InviteUserDialogProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5 py-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t('emailLabel')}</label>
+            <Label htmlFor="email">{t('emailLabel')}</Label>
             <Input
+              id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -122,38 +163,77 @@ export function InviteUserDialog({ open, onClose }: InviteUserDialogProps) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium mb-1.5 block">{t('roleLabel')}</label>
-            <Select<'SUPER_ADMIN' | 'ADMIN' | 'MEMBER'>
+            <Label>{t('roleLabel')}</Label>
+            <Select
               value={role}
-              onChange={(val) => setRole(val)}
+              onValueChange={(val: any) => setRole(val)}
             >
-               {currentUser?.role === 'SUPER_ADMIN' && (
-                 <SelectOption value="SUPER_ADMIN">Platform Admin (Global)</SelectOption>
-               )}
-              <SelectOption value="ADMIN">{t('roleAdmin')}</SelectOption>
-              <SelectOption value="MEMBER">{t('roleMember')}</SelectOption>
+              <SelectTrigger>
+                <SelectValue placeholder="Select role" />
+              </SelectTrigger>
+              <SelectContent>
+                 {currentUser?.role === 'SUPER_ADMIN' && (
+                   <SelectItem value="SUPER_ADMIN">Platform Admin (Global)</SelectItem>
+                 )}
+                <SelectItem value="ADMIN">{t('roleAdmin')}</SelectItem>
+                <SelectItem value="MEMBER">{t('roleMember')}</SelectItem>
+              </SelectContent>
             </Select>
           </div>
 
           {/* Tenant Selection for Super Admin inviting non-Super Admin */}
           {currentUser?.role === 'SUPER_ADMIN' && role !== 'SUPER_ADMIN' && (
              <div className="space-y-2">
-              <label className="text-sm font-medium mb-1.5 block">Tenant</label>
+              <Label>Tenant</Label>
               <Select
                 value={tenantId}
-                onChange={setTenantId}
-                placeholder="Select a tenant..."
+                onValueChange={handleTenantChange} 
               >
-                {tenants?.data?.map((tenant: { id: string; name: string }) => (
-                    <SelectOption key={tenant.id} value={tenant.id}>
-                        {tenant.name}
-                    </SelectOption>
-                ))}
+                <SelectTrigger>
+                    <SelectValue placeholder="Select a tenant..." />
+                </SelectTrigger>
+                <SelectContent>
+                    {tenants?.map((tenant: { id: string; name: string }) => (
+                        <SelectItem key={tenant.id} value={tenant.id}>
+                            {tenant.name}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
               </Select>
              </div>
           )}
 
-          <div className="flex justify-end gap-2 pt-4">
+          {/* Space Selection (If not Super Admin role) */}
+          {role !== 'SUPER_ADMIN' && effectiveTenantId && (
+            <div className="space-y-3 pt-2">
+                <Label className="text-sm font-medium">Assign Spaces (Optional)</Label>
+                {isLoadingSpaces ? (
+                     <div className="text-xs text-muted-foreground">Loading spaces...</div>
+                ) : spaces?.length === 0 ? (
+                    <div className="text-xs text-muted-foreground italic">No spaces found for this tenant.</div>
+                ) : (
+                    <div className="grid grid-cols-2 gap-3 p-3 border rounded-md bg-muted/20 max-h-[150px] overflow-y-auto">
+                        {spaces?.map((space: { id: string; name: string }) => (
+                            <div key={space.id} className="flex items-center space-x-2">
+                                <Checkbox 
+                                    id={`space-${space.id}`} 
+                                    checked={selectedSpaceIds.includes(space.id)}
+                                    onCheckedChange={() => handleSpaceToggle(space.id)}
+                                />
+                                <label 
+                                    htmlFor={`space-${space.id}`} 
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                                >
+                                    {space.name}
+                                </label>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+          )}
+
+          <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={onClose}>
               {t('cancel')}
             </Button>
