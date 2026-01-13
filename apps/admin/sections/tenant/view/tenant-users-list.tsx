@@ -28,13 +28,18 @@ interface TenantUsersListProps {
   tenantId: string;
 }
 
+import { useTranslations } from 'next-intl';
+
+// ... (imports remain the same)
+
 export function TenantUsersList({ tenantId }: TenantUsersListProps) {
+  const t = useTranslations('Users');
   const [filterName, setFilterName] = useState('');
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selected, setSelected] = useState<string[]>([]);
   
-  const { data, isLoading, error } = useUsers({
+  const { data, isLoading } = useUsers({
     page: page + 1,
     limit: rowsPerPage,
     search: filterName || undefined,
@@ -80,7 +85,7 @@ export function TenantUsersList({ tenantId }: TenantUsersListProps) {
         <div className="relative w-72">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search users in this tenant..."
+            placeholder={t('filters.search')}
             value={filterName}
             onChange={handleFilterName}
             className="pl-9 bg-background"
@@ -101,7 +106,7 @@ export function TenantUsersList({ tenantId }: TenantUsersListProps) {
                         checked={users.length > 0 && selected.length === users.length}
                         onCheckedChange={(checked: boolean | 'indeterminate') => handleSelectAll(checked === true)}
                       />
-                      <span className="text-sm font-medium">{selected.length} selected</span>
+                      <span className="text-sm font-medium">{selected.length} {t('table.selected')}</span>
                        <Button
                           variant="ghost"
                           size="sm"
@@ -109,7 +114,7 @@ export function TenantUsersList({ tenantId }: TenantUsersListProps) {
                           className="text-destructive hover:text-destructive hover:bg-destructive/10 ml-auto"
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
+                          {t('table.delete')}
                         </Button>
                    </div>
                 </TableHead>
@@ -122,11 +127,11 @@ export function TenantUsersList({ tenantId }: TenantUsersListProps) {
                     onCheckedChange={(checked: boolean | 'indeterminate') => handleSelectAll(checked === true)}
                   />
                 </TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Phone Number</TableHead>
-                <TableHead>Tenant</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t('table.name')}</TableHead>
+                <TableHead>{t('table.phoneNumber')}</TableHead>
+                <TableHead>{t('table.tenant')}</TableHead>
+                <TableHead>{t('table.role')}</TableHead>
+                <TableHead>{t('table.status')}</TableHead>
                 <TableHead className="text-right"></TableHead>
               </TableRow>
             )}
@@ -142,7 +147,7 @@ export function TenantUsersList({ tenantId }: TenantUsersListProps) {
             ) : users.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
-                  No users found in this tenant.
+                  {t('table.noUsers')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -162,7 +167,7 @@ export function TenantUsersList({ tenantId }: TenantUsersListProps) {
       {/* Pagination */}
       <div className="flex items-center justify-end space-x-2 py-4">
          <div className="flex items-center gap-2 text-sm text-muted-foreground mr-4">
-            <span>Rows per page</span>
+            <span>{t('table.rowsPerPage')}</span>
             <Select
               value={String(rowsPerPage)}
               onValueChange={(value) => {
@@ -183,9 +188,9 @@ export function TenantUsersList({ tenantId }: TenantUsersListProps) {
          
          <div className="flex w-[100px] items-center justify-center text-sm font-medium">
             {totalUsers > 0 ? (
-              `${page * rowsPerPage + 1}-${Math.min((page + 1) * rowsPerPage, totalUsers)} of ${totalUsers}`
+              `${page * rowsPerPage + 1}-${Math.min((page + 1) * rowsPerPage, totalUsers)} ${t('table.ofLocal')} ${totalUsers}`
             ) : (
-              "0-0 of 0"
+              "0-0"
             )}
          </div>
 
@@ -195,7 +200,7 @@ export function TenantUsersList({ tenantId }: TenantUsersListProps) {
           onClick={() => setPage(p => Math.max(0, p - 1))}
           disabled={page === 0}
         >
-          Previous
+          {t('table.previousPage')}
         </Button>
         <Button
           variant="outline"
@@ -203,7 +208,7 @@ export function TenantUsersList({ tenantId }: TenantUsersListProps) {
           onClick={() => setPage(p => p + 1)}
           disabled={(page + 1) * rowsPerPage >= totalUsers}
         >
-          Next
+          {t('table.nextPage')}
         </Button>
       </div>
     </div>

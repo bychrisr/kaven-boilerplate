@@ -168,7 +168,8 @@
       "noUsers": "Nenhum usuário encontrado",
       "noUsersDesc": "Tente ajustar os filtros de busca",
       "previousPage": "Ir para página anterior",
-      "nextPage": "Ir para próxima página"
+      "nextPage": "Ir para próxima página",
+      "ofLocal": "de"
     },
     "filters": {
       "all": "Todos",
@@ -403,7 +404,23 @@
         "deleteButton": "Excluir Tenant",
         "confirmDelete": "Tem certeza que deseja excluir este tenant? Esta ação não pode ser desfeita."
       }
-    }
+    },
+    "addUserDialog": {
+        "trigger": "Adicionar Usuário",
+        "title": "Adicionar Usuário ao Tenant",
+        "description": "Busque por um usuário existente para adicionar a este espaço de trabalho.",
+        "searchPlaceholder": "Busque por nome ou email...",
+        "noUsers": "Nenhum usuário encontrado.",
+        "searchTip": "Tente um termo de busca diferente.",
+        "status": {
+          "current": "Atual"
+        },
+        "actions": {
+          "add": "Adicionar",
+          "move": "Mover"
+        }
+      }
+
   },
   "Observability": {
     "title": "Observabilidade",

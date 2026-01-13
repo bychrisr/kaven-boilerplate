@@ -127,7 +127,9 @@ export function Sidebar() {
 
   const renderNavItem = (item: NavigationItem) => {
     const isActive =
-      pathname === item.href || item.children?.some((child: NavigationChild) => pathname === child.href);
+      pathname === item.href ||
+      (item.href !== '/' && item.href !== '/dashboard' && pathname?.startsWith(`${item.href}/`)) ||
+      item.children?.some((child: NavigationChild) => pathname === child.href);
     const isExpanded = expandedItems.includes(item.name);
     const Icon = item.icon;
 

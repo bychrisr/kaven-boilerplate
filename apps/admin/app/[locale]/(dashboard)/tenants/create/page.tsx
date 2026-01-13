@@ -5,179 +5,198 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTenants } from '@/hooks/use-tenants';
-import { ArrowLeft, Save } from 'lucide-react';
+import { Save } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
+import { Loader2 } from 'lucide-react';
 
 const createTenantSchema = z.object({
-  name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
+  name: z.string().min(2, 'Name must be at least 2 characters'),
   slug: z
     .string()
-    .min(2, 'Slug deve ter pelo menos 2 caracteres')
-    .regex(/^[a-z0-9-]+$/, 'Slug deve conter apenas letras minúsculas, números e hífens'),
+    .min(2, 'Slug must be at least 2 characters')
+    .regex(/^[a-z0-9-]+$/, 'Slug must contain only lowercase letters, numbers, and hyphens'),
   domain: z.string().optional().or(z.literal('')),
 });
 
 type CreateTenantFormData = z.infer<typeof createTenantSchema>;
 
 export default function CreateTenantPage() {
+  const t = useTranslations('Tenants');
+  const tCommon = useTranslations('Common');
   const router = useRouter();
   const { createTenant } = useTenants();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
-    setValue,
-  } = useForm({
+  const form = useForm<CreateTenantFormData>({
     resolver: zodResolver(createTenantSchema),
     defaultValues: {
+      name: '',
+      slug: '',
       domain: '',
     },
   });
 
-  // Auto-generate slug from name if slug is empty
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const name = watch('name');
-  const slug = watch('slug');
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newName = e.target.value;
-    setValue('name', newName);
 
-    // Only auto-generate if slug hasn't been manually edited or is empty
-    if (
-      !slug ||
-      slug ===
-        name
-          ?.toLowerCase()
-          .replaceAll(/[^a-z0-9]+/g, '-')
-          .replaceAll(/(^-+)|(-+$)/g, '')
-    ) {
-      const newSlug = newName
-        .toLowerCase()
-        .replaceAll(/[^a-z0-9]+/g, '-')
-        .replaceAll(/(^-+)|(-+$)/g, '');
-      setValue('slug', newSlug);
-    }
-  };
 
   const onSubmit = async (data: CreateTenantFormData) => {
     try {
       await createTenant.mutateAsync({
         name: data.name,
         slug: data.slug,
-        domain: data.domain || undefined, // Send undefined if empty string
+        domain: data.domain || undefined,
       });
       router.push('/tenants');
     } catch (error) {
-      // Error handled by hook
       console.error(error);
     }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Link
-          href="/tenants"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg border bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Novo Tenant</h1>
-          <p className="text-sm text-gray-500">Cadastre uma nova organização no sistema</p>
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">{t('createPage.title')}</h1>
+          <div className="text-muted-foreground">
+            <Breadcrumbs>
+              <BreadcrumbItem>
+                <Link href="/dashboard">{tCommon('dashboard')}</Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link href="/tenants">{t('title')}</Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <span className="text-foreground">{t('createPage.title')}</span>
+              </BreadcrumbItem>
+            </Breadcrumbs>
+          </div>
         </div>
       </div>
 
-      <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
-          <div className="grid gap-6 md:grid-cols-2">
-            {/* Name */}
-            <div className="col-span-2">
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                Nome da Organização *
-              </label>
-              <input
-                id="name"
-                type="text"
-                {...register('name')}
-                onChange={handleNameChange}
-                className={`w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 ${
-                  errors.name
-                    ? 'border-error-main focus:border-error-main focus:ring-error-light/50'
-                    : 'border-gray-300 focus:border-primary-main focus:ring-primary-main/50'
-                }`}
-                placeholder="Ex: Acme Corporation"
-              />
-              {errors.name && <p className="mt-1 text-sm text-error-main">{errors.name.message}</p>}
-            </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('createPage.title')}</CardTitle>
+          <CardDescription>{t('createPage.description')}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid gap-6 md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="col-span-2 md:col-span-1">
+                      <FormLabel>{t('createPage.form.name')}</FormLabel>
+                      <FormControl>
+                        <Input 
+                            placeholder={t('createPage.form.namePlaceholder')} 
+                            {...field} 
+                            onChange={(e) => {
+                                field.onChange(e);
+                                
+                                // Enhanced Slug Generation Logic
+                                const newName = e.target.value;
+                                const currentSlug = form.getValues('slug');
+                                const expectedSlug = field.value
+                                    ?.toLowerCase()
+                                    .replaceAll(/[^a-z0-9]+/g, '-')
+                                    .replaceAll(/(^-+)|(-+$)/g, '');
+                                
+                                // If the current slug matches what we would expect from the *previous* name, 
+                                // OR if it's empty, update it.
+                                // Basically: only update if the user hasn't likely manually diverged the slug.
+                                if (!currentSlug || currentSlug === expectedSlug) {
+                                     const newSlug = newName
+                                        .toLowerCase()
+                                        .replaceAll(/[^a-z0-9]+/g, '-')
+                                        .replaceAll(/(^-+)|(-+$)/g, '');
+                                     form.setValue('slug', newSlug);
+                                }
+                            }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            {/* Slug */}
-            <div>
-              <label htmlFor="slug" className="block text-sm font-medium text-gray-700 mb-1">
-                Slug (URL Identifier) *
-              </label>
-              <div className="flex items-center">
-                <span className="inline-flex items-center px-3 py-2 rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                  /
-                </span>
-                <input
-                  id="slug"
-                  type="text"
-                  {...register('slug')}
-                  className={`flex-1 w-full rounded-r-lg border px-4 py-2 focus:outline-none focus:ring-2 ${
-                    errors.slug
-                      ? 'border-error-main focus:border-error-main focus:ring-error-light/50'
-                      : 'border-gray-300 focus:border-primary-main focus:ring-primary-main/50'
-                  }`}
-                  placeholder="acme-corp"
+                <FormField
+                  control={form.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('createPage.form.slug')}</FormLabel>
+                      <FormControl>
+                         <div className="relative flex items-center">
+                            <span className="absolute left-3 text-muted-foreground text-sm">/</span>
+                            <Input placeholder={t('createPage.form.slugPlaceholder')} {...field} className="pl-6" />
+                         </div>
+                      </FormControl>
+                      <FormDescription>
+                        {t('createPage.form.slugDescription')}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="domain"
+                  render={({ field }) => (
+                    <FormItem className="col-span-2 md:col-span-1">
+                      <FormLabel>{t('createPage.form.domain')}</FormLabel>
+                      <FormControl>
+                        <Input placeholder={t('createPage.form.domainPlaceholder')} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-              {errors.slug && <p className="mt-1 text-sm text-error-main">{errors.slug.message}</p>}
-            </div>
 
-            {/* Domain */}
-            <div>
-              <label htmlFor="domain" className="block text-sm font-medium text-gray-700 mb-1">
-                Domínio Personalizado (Opcional)
-              </label>
-              <input
-                id="domain"
-                type="text"
-                {...register('domain')}
-                className={`w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 ${
-                  errors.domain
-                    ? 'border-error-main focus:border-error-main focus:ring-error-light/50'
-                    : 'border-gray-300 focus:border-primary-main focus:ring-primary-main/50'
-                }`}
-                placeholder="app.acme.com"
-              />
-              {errors.domain && (
-                <p className="mt-1 text-sm text-error-main">{errors.domain.message}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center justify-end gap-3 pt-4 border-t">
-            <Link
-              href="/tenants"
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-main"
-            >
-              Cancelar
-            </Link>
-            <button
-              type="submit"
-              disabled={createTenant.isPending}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary-main rounded-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-main disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Save className="h-4 w-4" />
-              {createTenant.isPending ? 'Criando...' : 'Criar Tenant'}
-            </button>
-          </div>
-        </form>
-      </div>
+              <div className="flex items-center justify-end gap-4">
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => router.push('/tenants')}
+                >
+                  {t('createPage.form.cancel')}
+                </Button>
+                <Button type="submit" disabled={createTenant.isPending}>
+                  {createTenant.isPending ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                      <Save className="mr-2 h-4 w-4" />
+                  )}
+                  {createTenant.isPending ? t('createPage.form.creating') : t('createPage.form.create')}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

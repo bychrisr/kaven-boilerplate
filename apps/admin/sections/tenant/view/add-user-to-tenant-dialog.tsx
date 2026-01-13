@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Dialog,
   DialogContent,
@@ -21,6 +22,7 @@ interface AddUserToTenantDialogProps {
 }
 
 export function AddUserToTenantDialog({ tenantId }: AddUserToTenantDialogProps) {
+  const t = useTranslations('Tenants.addUserDialog');
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 500);
@@ -53,14 +55,14 @@ export function AddUserToTenantDialog({ tenantId }: AddUserToTenantDialogProps) 
       <DialogTrigger asChild>
         <Button className="gap-2">
           <UserPlus className="h-4 w-4" />
-          Add User
+          {t('trigger')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add User to Tenant</DialogTitle>
+          <DialogTitle>{t('title')}</DialogTitle>
           <DialogDescription>
-            Search for an existing user to add to this tenant workspace.
+            {t('description')}
           </DialogDescription>
         </DialogHeader>
         
@@ -68,7 +70,7 @@ export function AddUserToTenantDialog({ tenantId }: AddUserToTenantDialogProps) 
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by name or email..."
+              placeholder={t('searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9"
@@ -82,8 +84,8 @@ export function AddUserToTenantDialog({ tenantId }: AddUserToTenantDialogProps) 
               </div>
             ) : users.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center text-muted-foreground gap-2">
-                <p>No users found.</p>
-                <p className="text-xs">Try a different search term.</p>
+                <p>{t('noUsers')}</p>
+                <p className="text-xs">{t('searchTip')}</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -108,7 +110,7 @@ export function AddUserToTenantDialog({ tenantId }: AddUserToTenantDialogProps) 
                       </div>
 
                       {isAlreadyInTenant ? (
-                        <span className="text-xs text-muted-foreground italic px-3">Current</span>
+                        <span className="text-xs text-muted-foreground italic px-3">{t('status.current')}</span>
                       ) : (
                         <Button
                           size="sm"
@@ -116,7 +118,7 @@ export function AddUserToTenantDialog({ tenantId }: AddUserToTenantDialogProps) 
                           disabled={isUpdating}
                           onClick={() => handleAddUser(user.id)}
                         >
-                           {isInAnotherTenant ? "Move" : "Add"}
+                           {isInAnotherTenant ? t('actions.move') : t('actions.add')}
                         </Button>
                       )}
                     </div>

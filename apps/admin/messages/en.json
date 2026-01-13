@@ -167,7 +167,8 @@
       "noUsers": "No users found",
       "noUsersDesc": "Try adjusting your search filters",
       "previousPage": "Go to previous page",
-      "nextPage": "Go to next page"
+      "nextPage": "Go to next page",
+      "ofLocal": "of"
     },
     "filters": {
       "all": "All",
@@ -281,7 +282,23 @@
         "deleteButton": "Delete Tenant",
         "confirmDelete": "Are you sure you want to delete this tenant? This action cannot be undone."
       }
-    }
+    },
+    "addUserDialog": {
+        "trigger": "Add User",
+        "title": "Add User to Tenant",
+        "description": "Search for an existing user to add to this tenant workspace.",
+        "searchPlaceholder": "Search by name or email...",
+        "noUsers": "No users found.",
+        "searchTip": "Try a different search term.",
+        "status": {
+          "current": "Current"
+        },
+        "actions": {
+          "add": "Add",
+          "move": "Move"
+        }
+      }
+
   },
   "PlatformSettings": {
     "title": "Platform Settings",
