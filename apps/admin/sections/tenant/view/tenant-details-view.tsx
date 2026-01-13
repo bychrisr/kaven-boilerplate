@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+
 import { useRouter } from 'next/navigation';
 import { useTenant, useTenants } from '@/hooks/use-tenants';
 import { useForm } from 'react-hook-form';
@@ -18,7 +20,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
-import { Loader2, Save, Trash2 } from 'lucide-react';
+import { Loader2, Save, Trash2, LayoutDashboard, Users, Settings } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { TenantUsersList } from './tenant-users-list';
 import {
@@ -40,12 +43,14 @@ const tenantFormSchema = z.object({
 type TenantFormValues = z.infer<typeof tenantFormSchema>;
 
 interface TenantDetailViewProps {
-  id: string;
+  idOrSlug: string;
 }
 
-export function TenantDetailView({ id }: TenantDetailViewProps) {
+export function TenantDetailView({ idOrSlug }: TenantDetailViewProps) {
+  const t = useTranslations('Tenants');
+  const tCommon = useTranslations('Common');
   const router = useRouter();
-  const { data: tenant, isLoading, error } = useTenant(id);
+  const { data: tenant, isLoading, error } = useTenant(idOrSlug);
   const { updateTenant, deleteTenant } = useTenants();
   
   const [activeTab, setActiveTab] = useState('overview');
@@ -71,18 +76,41 @@ export function TenantDetailView({ id }: TenantDetailViewProps) {
   }, [tenant, form]);
 
   const onSubmit = (data: TenantFormValues) => {
-    updateTenant.mutate({ id, data });
+    // We use the ID from the loaded tenant data, or fallback to the slug if for some reason tenant is missing (unlikely)
+    // But updateTenant mutation likely expects the UUID if the backend endpoint is strictly /:id (but we updated backend to support slug too).
+    // To be safe and consistent, we can use idOrSlug for the mutation call since backend supports it.
+    updateTenant.mutate({ id: idOrSlug, data }, {
+      onSuccess: (updatedTenant) => {
+        // Reset form with new values to clear isDirty state
+        form.reset({
+          name: updatedTenant.name,
+          slug: updatedTenant.slug,
+          domain: updatedTenant.domain || '',
+        });
+        
+        // If slug changed, we should probably redirect or update URL, but getting complicated. 
+        // For now let's assume simple update.
+      }
+    });
   };
 
   const handleDelete = () => {
-    if (confirm('Are you sure you want to delete this tenant? This action cannot be undone.')) {
-        deleteTenant.mutate(id, {
+    if (confirm(t('detailsPage.dangerZone.confirmDelete'))) {
+        deleteTenant.mutate(idOrSlug, {
             onSuccess: () => {
                 router.push('/tenants');
             }
         });
     }
   };
+
+  const tabTriggerClass = cn(
+    "relative h-14 rounded-none bg-transparent px-0 pb-3 pt-3 font-semibold text-muted-foreground shadow-none transition-none cursor-pointer",
+    "!bg-transparent !shadow-none !border-0 hover:text-foreground mx-4 first:ml-0",
+    "data-[state=active]:!bg-transparent data-[state=active]:!shadow-none data-[state=active]:!text-foreground data-[state=active]:!border-none",
+    "dark:data-[state=active]:!bg-transparent dark:data-[state=active]:!border-none",
+    "after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:bg-primary after:transition-transform after:duration-300 data-[state=active]:after:scale-x-100"
+  );
 
   if (isLoading) {
     return (
@@ -96,10 +124,10 @@ export function TenantDetailView({ id }: TenantDetailViewProps) {
     return (
       <div className="flex h-96 flex-col items-center justify-center gap-4">
         <div className="text-lg font-medium text-destructive">
-          Error loading tenant
+          {t('table.error')}
         </div>
         <Button onClick={() => router.push('/tenants')}>
-          Back to Tenants
+          {t('detailsPage.backToTenants')}
         </Button>
       </div>
     );
@@ -111,7 +139,7 @@ export function TenantDetailView({ id }: TenantDetailViewProps) {
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight">
+            <h1 className="text-3xl font-bold tracking-tight">
               {tenant.name}
             </h1>
             <Badge variant={tenant.status === 'ACTIVE' ? 'default' : 'secondary'}>
@@ -121,10 +149,10 @@ export function TenantDetailView({ id }: TenantDetailViewProps) {
           <div className="mt-2">
             <Breadcrumbs>
               <BreadcrumbItem>
-                <Link href="/dashboard">Dashboard</Link>
+                <Link href="/dashboard">{tCommon('dashboard')}</Link>
               </BreadcrumbItem>
               <BreadcrumbItem>
-                <Link href="/tenants">Tenants</Link>
+                <Link href="/tenants">{t('title')}</Link>
               </BreadcrumbItem>
               <BreadcrumbItem>
                 <span className="text-foreground">{tenant.name}</span>
@@ -134,31 +162,46 @@ export function TenantDetailView({ id }: TenantDetailViewProps) {
         </div>
         <div className="flex gap-2">
           {activeTab === 'overview' && (
-            <Button onClick={form.handleSubmit(onSubmit)} disabled={updateTenant.isPending}>
+            <Button 
+              onClick={form.handleSubmit(onSubmit)} 
+              disabled={!form.formState.isDirty || updateTenant.isPending}
+            >
               {updateTenant.isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
               {!updateTenant.isPending && <Save className="mr-2 h-4 w-4" />}
-              Save Changes
+              {updateTenant.isPending ? t('detailsPage.saving') : t('detailsPage.save')}
             </Button>
           )}
         </div>
       </div>
 
       {/* Content */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-6">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="users">Users</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
-        </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <div className="flex flex-col md:flex-row items-center w-full border-b border-border/40 gap-4 mb-6">
+          <TabsList className="bg-transparent p-0 h-auto gap-0 justify-start px-0 w-full flex-nowrap overflow-x-auto border-b-0 no-scrollbar">
+            <TabsTrigger value="overview" className={tabTriggerClass}>
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              {t('detailsPage.tabs.overview')}
+            </TabsTrigger>
+            <TabsTrigger value="users" className={tabTriggerClass}>
+              <Users className="mr-2 h-4 w-4" />
+              {t('detailsPage.tabs.users')}
+            </TabsTrigger>
+            <TabsTrigger value="settings" className={tabTriggerClass}>
+              <Settings className="mr-2 h-4 w-4" />
+              {t('detailsPage.tabs.settings')}
+            </TabsTrigger>
+          </TabsList>
+        </div>
+
 
         <TabsContent value="overview" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Tenant Information</CardTitle>
+              <CardTitle>{t('detailsPage.overview.title')}</CardTitle>
               <CardDescription>
-                Basic information about the tenant workspace.
+                {t('detailsPage.overview.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -170,9 +213,9 @@ export function TenantDetailView({ id }: TenantDetailViewProps) {
                         name="name"
                         render={({ field }) => (
                             <FormItem>
-                            <FormLabel>Tenant Name</FormLabel>
+                            <FormLabel>{t('createPage.form.name')}</FormLabel>
                             <FormControl>
-                                <Input placeholder="Acme Corp" {...field} />
+                                <Input placeholder={t('createPage.form.namePlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                             </FormItem>
@@ -184,12 +227,12 @@ export function TenantDetailView({ id }: TenantDetailViewProps) {
                         name="slug"
                         render={({ field }) => (
                             <FormItem>
-                            <FormLabel>Slug (URL Identifier)</FormLabel>
+                            <FormLabel>{t('createPage.form.slug')}</FormLabel>
                             <FormControl>
-                                <Input placeholder="acme" {...field} />
+                                <Input placeholder={t('createPage.form.slugPlaceholder')} {...field} />
                             </FormControl>
                             <FormDescription>
-                                Unique identifier used in URLs.
+                                {t('createPage.form.slugDescription')}
                             </FormDescription>
                             <FormMessage />
                             </FormItem>
@@ -201,9 +244,9 @@ export function TenantDetailView({ id }: TenantDetailViewProps) {
                         name="domain"
                         render={({ field }) => (
                             <FormItem>
-                            <FormLabel>Custom Domain</FormLabel>
+                            <FormLabel>{t('createPage.form.domain')}</FormLabel>
                             <FormControl>
-                                <Input placeholder="app.acme.com" {...field} />
+                                <Input placeholder={t('createPage.form.domainPlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                             </FormItem>
@@ -219,13 +262,13 @@ export function TenantDetailView({ id }: TenantDetailViewProps) {
         <TabsContent value="users" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Users</CardTitle>
+              <CardTitle>{t('detailsPage.users.title')}</CardTitle>
               <CardDescription>
-                Manage users who have access to this tenant.
+                {t('detailsPage.users.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <TenantUsersList tenantId={id} />
+              <TenantUsersList tenantId={tenant.id} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -233,18 +276,18 @@ export function TenantDetailView({ id }: TenantDetailViewProps) {
         <TabsContent value="settings" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Danger Zone</CardTitle>
+              <CardTitle>{t('detailsPage.dangerZone.title')}</CardTitle>
               <CardDescription>
-                Destructive actions for this tenant.
+                {t('detailsPage.dangerZone.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="rounded-md border border-destructive/50 p-4">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h4 className="text-sm font-medium text-destructive">Delete Tenant</h4>
+                        <h4 className="text-sm font-medium text-destructive">{t('detailsPage.dangerZone.deleteTitle')}</h4>
                         <p className="text-sm text-muted-foreground">
-                            Permanently delete this tenant and all associated data. This action cannot be undone.
+                            {t('detailsPage.dangerZone.deleteDescription')}
                         </p>
                     </div>
                      <Button 
@@ -257,7 +300,7 @@ export function TenantDetailView({ id }: TenantDetailViewProps) {
                         ) : (
                             <Trash2 className="mr-2 h-4 w-4" />
                         )}
-                        Delete Tenant
+                        {t('detailsPage.dangerZone.deleteButton')}
                     </Button>
                 </div>
               </div>

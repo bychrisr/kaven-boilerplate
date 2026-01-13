@@ -84,9 +84,18 @@ export class TenantService {
   /**
    * GET /api/tenants/:id - Buscar tenant por ID
    */
-  async getTenantById(id: string) {
+  /**
+   * GET /api/tenants/:id - Buscar tenant por ID ou Slug
+   */
+  async getTenantById(idOrSlug: string) {
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug);
+
+    const where = isUuid 
+      ? { id: idOrSlug } 
+      : { slug: idOrSlug };
+
     const tenant = await prisma.tenant.findUnique({
-      where: { id },
+      where,
       include: {
         _count: {
           select: {
@@ -158,9 +167,12 @@ export class TenantService {
   /**
    * PUT /api/tenants/:id - Atualizar tenant
    */
-  async updateTenant(id: string, data: UpdateTenantInput) {
+  async updateTenant(idOrSlug: string, data: UpdateTenantInput) {
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug);
+    const where = isUuid ? { id: idOrSlug } : { slug: idOrSlug };
+
     const existingTenant = await prisma.tenant.findUnique({
-      where: { id },
+      where,
     });
 
     if (!existingTenant || existingTenant.deletedAt) {
@@ -186,7 +198,7 @@ export class TenantService {
     }
 
     const tenant = await prisma.tenant.update({
-      where: { id },
+      where: { id: existingTenant.id },
       data: {
         ...data,
         updatedAt: new Date(),
@@ -199,9 +211,12 @@ export class TenantService {
   /**
    * DELETE /api/tenants/:id - Deletar tenant (soft delete)
    */
-  async deleteTenant(id: string) {
+  async deleteTenant(idOrSlug: string) {
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug);
+    const where = isUuid ? { id: idOrSlug } : { slug: idOrSlug };
+
     const existingTenant = await prisma.tenant.findUnique({
-      where: { id },
+      where,
     });
 
     if (!existingTenant || existingTenant.deletedAt) {
@@ -210,7 +225,7 @@ export class TenantService {
 
     const now = Date.now();
     await prisma.tenant.update({
-      where: { id },
+      where: { id: existingTenant.id },
       data: {
         deletedAt: new Date(),
         slug: `deleted_${now}_${existingTenant.slug}`,

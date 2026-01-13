@@ -12,11 +12,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Tooltip } from '@/components/ui/tooltip';
+import { TooltipRoot, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { useTenants } from '@/hooks/use-tenants';
-import { toast } from 'sonner';
+
 
 // Tenant type from API
 interface Tenant {
@@ -59,7 +59,7 @@ export function TenantTableRow({ row, selected, onSelectRow }: TenantTableRowPro
 
       <TableCell className="py-4 px-4">
         <div className="flex flex-col">
-          <Link href={`/tenants/${id}`} className="hover:underline cursor-pointer">
+          <Link href={`/tenants/${slug}`} className="hover:underline cursor-pointer">
             <span className="text-sm font-semibold text-foreground">{name}</span>
           </Link>
           <span className="text-xs text-muted-foreground">{slug}</span>
@@ -102,12 +102,17 @@ export function TenantTableRow({ row, selected, onSelectRow }: TenantTableRowPro
 
       <TableCell align="right" className="py-4 px-4 pr-4">
         <div className="flex items-center justify-end gap-1">
-            <Link href={`/tenants/${id}`}>
-              <Tooltip content="Quick edit" position="top">
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
-                  <Pencil className="h-4 w-4" />
-                </Button>
-              </Tooltip>
+            <Link href={`/tenants/${slug}`}>
+              <TooltipRoot>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="min-w-0 w-auto">
+                  <p>Quick edit</p>
+                </TooltipContent>
+              </TooltipRoot>
             </Link>
  
           <DropdownMenu>
@@ -117,7 +122,7 @@ export function TenantTableRow({ row, selected, onSelectRow }: TenantTableRowPro
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <Link href={`/tenants/${id}`}>
+              <Link href={`/tenants/${slug}`}>
                 <DropdownMenuItem>
                   <Pencil className="mr-2 h-4 w-4" />
                   Edit

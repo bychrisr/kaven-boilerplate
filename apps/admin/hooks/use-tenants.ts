@@ -83,8 +83,9 @@ export function useTenants(params?: {
       const response = await api.put(`/api/tenants/${id}`, data);
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['tenants'] });
+      queryClient.invalidateQueries({ queryKey: ['tenant', variables.id] });
       toast.success('Tenant atualizado com sucesso!');
     },
     onError: (error: unknown) => {
@@ -116,16 +117,16 @@ export function useTenants(params?: {
   };
 }
 
-export function useTenant(id: string) {
+export function useTenant(idOrSlug: string) {
   const isInitialized = useAuthStore((state) => state.isInitialized);
   
   return useQuery<Tenant>({
-    queryKey: ['tenant', id],
+    queryKey: ['tenant', idOrSlug],
     queryFn: async () => {
-      const response = await api.get(`/api/tenants/${id}`);
+      const response = await api.get(`/api/tenants/${idOrSlug}`);
       return response.data;
     },
-    enabled: isInitialized && !!id,
+    enabled: isInitialized && !!idOrSlug,
   });
 }
 
