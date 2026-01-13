@@ -135,6 +135,26 @@
       "or": "OU",
       "success": "Login realizado com sucesso!"
     },
+    "signup": {
+      "title": "Complete seu cadastro",
+      "subtitle": "Junte-se a {tenant} no Kaven",
+      "emailLabel": "Email",
+      "firstNameLabel": "Nome",
+      "lastNameLabel": "Sobrenome",
+      "passwordLabel": "Senha",
+      "passwordPlaceholder": "Crie uma senha forte",
+      "firstNamePlaceholder": "João",
+      "lastNamePlaceholder": "Silva",
+      "submit": "Criar Conta",
+      "submitting": "Criando Conta...",
+      "success": "Conta criada! Redirecionando para o login...",
+      "invalidLink": "Link Inválido",
+      "invalidLinkDesc": "Nenhum token de convite fornecido.",
+      "expiredLink": "Convite Inválido ou Expirado",
+      "expiredLinkDesc": "Por favor, peça um novo convite.",
+      "validating": "Validando convite...",
+      "validationError": "Falha ao validar convite"
+    },
     "register": {
       "title": "Comece agora, é grátis",
       "subtitle": "Já tem uma conta?",

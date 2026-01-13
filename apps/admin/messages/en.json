@@ -134,6 +134,26 @@
       "or": "OR",
       "success": "Login successful!"
     },
+    "signup": {
+      "title": "Complete Your Signup",
+      "subtitle": "Join {tenant} on Kaven",
+      "emailLabel": "Email",
+      "firstNameLabel": "First Name",
+      "lastNameLabel": "Last Name",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Create a strong password",
+      "firstNamePlaceholder": "John",
+      "lastNamePlaceholder": "Doe",
+      "submit": "Create Account",
+      "submitting": "Creating Account...",
+      "success": "Account created! Redirecting to login...",
+      "invalidLink": "Invalid Link",
+      "invalidLinkDesc": "No invite token provided.",
+      "expiredLink": "Invalid or Expired Invite",
+      "expiredLinkDesc": "Please ask for a new invitation.",
+      "validating": "Validating invite...",
+      "validationError": "Failed to validate invite"
+    },
     "register": {
       "title": "Get started absolutely free",
       "subtitle": "Already have an account?",
