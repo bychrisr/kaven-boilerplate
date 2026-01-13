@@ -189,6 +189,27 @@
       "deleting": "Deleting..."
     }
   },
+  "Invites": {
+    "title": "Invite Management",
+    "description": "View and manage pending user invitations.",
+    "create": "New Invite",
+    "table": {
+      "headers": {
+        "email": "Email",
+        "role": "Role",
+        "tenant": "Tenant",
+        "invitedBy": "Invited By",
+        "expiresAt": "Expires At",
+        "actions": "Actions"
+      },
+      "empty": "No invites found.",
+      "copyLink": "Copy Link",
+      "cancelInvite": "Cancel Invite",
+      "linkCopied": "Invite link copied",
+      "cancelSuccess": "Invite cancelled",
+      "cancelError": "Failed to cancel invite"
+    }
+  },
   "PlatformSettings": {
     "title": "Platform Settings",
     "general": {

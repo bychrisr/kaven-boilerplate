@@ -311,6 +311,7 @@
         "status": "Status",
         "createdAt": "Data de Envio",
         "expiresAt": "Expira em",
+        "invitedBy": "Convidado Por",
         "actions": "Ações"
       },
       "status": {
@@ -319,7 +320,12 @@
         "EXPIRED": "Expirado",
         "REVOKED": "Revogado"
       },
-      "empty": "Nenhum convite encontrado."
+      "empty": "Nenhum convite encontrado.",
+      "copyLink": "Copiar Link",
+      "cancelInvite": "Cancelar Convite",
+      "linkCopied": "Link do convite copiado",
+      "cancelSuccess": "Convite cancelado",
+      "cancelError": "Falha ao cancelar convite"
     }
   },
   "Observability": {
