@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -66,9 +66,20 @@ export function UserEditView({ userId }: UserEditViewProps) {
   const { mutateAsync: deleteUser, isPending: isDeleting } = useDeleteUser();
   const { tenants, isLoading: isLoadingTenants } = useTenants({ limit: 100 });
 
-  const [avatarPreview, setAvatarPreview] = useState<string>('');
+  const [customAvatarPreview, setCustomAvatarPreview] = useState<string | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Derive avatar preview from user data or custom upload
+  const avatarPreview = useMemo(() => {
+    if (customAvatarPreview) return customAvatarPreview;
+    if (user?.avatar) {
+      return user.avatar.startsWith('http') 
+        ? user.avatar 
+        : `${CONFIG.serverUrl}${user.avatar}`;
+    }
+    return '';
+  }, [user, customAvatarPreview]);
 
   const form = useForm<UserFormData>({
     resolver: zodResolver(getUserSchema(t)),
@@ -115,13 +126,6 @@ export function UserEditView({ userId }: UserEditViewProps) {
         zipcode: user.zipcode || '',
         company: user.company || '',
       });
-      
-      if (user.avatar) {
-        const avatarUrl = user.avatar.startsWith('http') 
-          ? user.avatar 
-          : `${CONFIG.serverUrl}${user.avatar}`;
-        setAvatarPreview(avatarUrl);
-      }
     }
   }, [user, reset]);
 
@@ -130,7 +134,7 @@ export function UserEditView({ userId }: UserEditViewProps) {
 
   const handleAvatarChange = (file: File | null, preview: string) => {
     setAvatarFile(file);
-    setAvatarPreview(preview);
+    setCustomAvatarPreview(preview);
   };
 
   const handlePlaceSelected = (data: { address: string; city: string; state: string; country: string; zipcode: string }) => {
