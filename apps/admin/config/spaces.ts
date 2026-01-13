@@ -61,7 +61,7 @@ export const SPACES: Record<string, SpaceConfig> = {
         title: 'OVERVIEW',
         items: [
           { icon: Home, label: 'Dashboard', href: '/dashboard' },
-          { icon: BarChart3, label: 'Analytics', href: '/coming-soon' },
+          { icon: BarChart3, label: 'Analytics', href: '/dashboard/analytics' },
           { icon: Settings, label: 'Platform Settings', href: '/saas-settings' }
         ]
       },
@@ -116,14 +116,14 @@ export const SPACES: Record<string, SpaceConfig> = {
             label: 'Monitoring', 
             href: '#',
             children: [
-               { label: 'Dashboard', href: '/observability' },
+               { label: 'Dashboard', href: '/dashboard/analytics' },
                { label: 'Audit Logs', href: '/audit-logs' },
                { label: 'Grafana', href: process.env.NEXT_PUBLIC_GRAFANA_URL || 'http://localhost:3001', external: true },
                { label: 'Prometheus', href: process.env.NEXT_PUBLIC_PROMETHEUS_URL || 'http://localhost:9090', external: true }
             ]
           },
-          { icon: Server, label: 'Servers', href: '/observability' },
-          { icon: Database, label: 'Databases', href: '/observability' },
+          { icon: Server, label: 'Servers', href: '/dashboard/analytics' },
+          { icon: Database, label: 'Databases', href: '/dashboard/analytics' },
           { icon: FileText, label: 'Logs', href: '/audit-logs' }
         ]
       },
@@ -216,7 +216,7 @@ export const SPACES: Record<string, SpaceConfig> = {
       {
         title: 'MARKETING',
         items: [
-          { icon: BarChart3, label: 'Analytics', href: '/coming-soon' },
+          { icon: BarChart3, label: 'Analytics', href: '/dashboard/analytics' },
           { icon: Users, label: 'CRM', href: '/coming-soon' },
           { icon: Mail, label: 'Campaigns', href: '/coming-soon' },
           { icon: Target, label: 'Goals', href: '/coming-soon' }
@@ -247,14 +247,14 @@ export const SPACES: Record<string, SpaceConfig> = {
             label: 'Monitoring', 
             href: '#',
             children: [
-               { label: 'Dashboard', href: '/observability' },
+               { label: 'Dashboard', href: '/dashboard/analytics' },
                { label: 'Audit Logs', href: '/audit-logs' },
                { label: 'Grafana', href: 'http://localhost:3001', external: true },
                { label: 'Prometheus', href: 'http://localhost:9090', external: true }
             ]
           },
-          { icon: Server, label: 'Servers', href: '/observability' },
-          { icon: Database, label: 'Databases', href: '/observability' },
+          { icon: Server, label: 'Servers', href: '/dashboard/analytics' },
+          { icon: Database, label: 'Databases', href: '/dashboard/analytics' },
           { icon: FileText, label: 'Logs', href: '/audit-logs' }
         ]
       }
