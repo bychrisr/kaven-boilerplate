@@ -1,0 +1,136 @@
+---
+title: Fluxo de Cadastro (Signup)
+description: Documentação detalhada do fluxo de cadastro e convite de usuários, incluindo interface, validações e internacionalização.
+date: 2026-01-13
+author: Antigravity + Claude Sonnet 4.5
+version: 1.0.0
+tags: [auth, signup, invite, ui, i18n]
+---
+
+# Fluxo de Cadastro (Signup)
+
+> Fluxo completo de aceitação de convites e cadastro de novos usuários com validação robusta.
+
+## Visão Geral
+
+O fluxo de cadastro (`SignupForm`) é a porta de entrada para novos membros de equipe que receberam um convite via email. A interface foi desenhada para seguir rigorosamente o Design System da plataforma (semelhante ao Login), garantindo consistência visual e experiência de usuário premium.
+
+**Principais Funcionalidades:**
+
+- ✅ Validação automática de token de convite na montagem
+- ✅ Separação intuitiva de Nome e Sobrenome
+- ✅ Medidor visual de força de senha
+- ✅ Checklist interativo de requisitos de senha
+- ✅ Prevenção de autosuggest incorreto em campos de nome
+- ✅ Feedback imediato de erros (Toast + Alerts)
+- ✅ Internacionalização completa (i18n)
+
+## Interface do Usuário
+
+### Componente `SignupForm`
+
+O formulário é um Client Component (`use client`) que gerencia todo o estado da interação.
+
+#### Estrutura Visual
+
+- **Topo**: Logo e Título alinhados à esquerda.
+- **Campos de Nome**: Grid de 2 colunas para Nome e Sobrenome.
+- **Email**: Campo desabilitado (preenchido via token).
+- **Senha**: Campo com toggle de visibilidade, medidor de força e checklist.
+- **Termos**: Checkbox implícito ou explícito (configurável).
+
+## Detalhes de Implementação
+
+### Validação de Senha Robusta
+
+A validação de senha utiliza uma combinação de Regex e pontuação para determinar a força e segurança.
+
+```typescript
+// Lógica de cálculo de força (0-5)
+const getPasswordStrength = (password: string) => {
+  let strength = 0;
+  if (password.length >= 8) strength++;
+  if (/[A-Z]/.test(password)) strength++;
+  if (/[a-z]/.test(password)) strength++;
+  if (/[0-9]/.test(password)) strength++;
+  if (/[^A-Za-z0-9]/.test(password)) strength++;
+  return strength;
+};
+```
+
+> [!TIP]
+> O feedback visual é traduzido dinamicamente usando chaves como `Common.passwordValidator.levels.strong`, garantindo que "Forte", "Fraca", etc., estejam sempre no idioma correto.
+
+### Correção de Autosuggest
+
+Para evitar que gerenciadores de senha preencham incorretamente o campo "Sobrenome" com o email do usuário, utilizamos atributos `autoComplete` específicos:
+
+```tsx
+<TextField
+  id="firstName"
+  label={t('firstNameLabel')}
+  autoComplete="given-name" // ✅ Identifica como Primeiro Nome
+/>
+<TextField
+  id="lastName"
+  label={t('lastNameLabel')}
+  autoComplete="family-name" // ✅ Identifica como Sobrenome
+/>
+<TextField
+  id="email"
+  disabled
+  autoComplete="username" // ✅ Identifica como o "login" para o browser
+/>
+```
+
+## API Reference
+
+### `POST /api/users/invites/{token}/accept`
+
+Endpoint responsável por finalizar o cadastro do usuário convidado.
+
+**Parâmetros:**
+
+- `name` (string): Nome completo (concatenado de First + Last)
+- `password` (string): Senha validada
+
+**Retorno:**
+
+- `200 OK`: Cadastro realizado com sucesso
+- `400 Bad Request`: Token inválido ou dados malformados
+
+**Exemplo de Uso no Frontend:**
+
+```typescript
+const signupMutation = useMutation({
+  mutationFn: async (data: SignupFormData) => {
+    const payload = {
+      // Concatena nome e sobrenome antes de enviar
+      name: `${data.firstName} ${data.lastName}`.trim(),
+      password: data.password,
+    };
+    const res = await api.post(`/api/users/invites/${token}/accept`, payload);
+    return res.data;
+  },
+  // ...
+});
+```
+
+## Internacionalização (i18n)
+
+Todas as strings são gerenciadas via `next-intl`.
+
+**Arquivos de Tradução:**
+
+- `apps/admin/messages/pt.json`
+- `apps/admin/messages/en.json`
+
+**Chaves Utilizadas:**
+
+- `Auth.signup.*`: Títulos, labels e placeholders específicos.
+- `Common.passwordValidator.*`: Textos genéricos de validação de senha (reutilizáveis).
+
+## Relacionados
+
+- [Sistema de Autenticação](/platform/authentication)
+- [Design System](/design-system)

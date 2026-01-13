@@ -11,6 +11,7 @@ export default {
   features: 'Features',
   guides: 'Guias',
   observability: 'Observabilidade & Monitoramento',
+  'signup-flow': 'Fluxo de Cadastro',
   'plans-and-products': 'Planos & Produtos',
   'implementation-logs': 'Logs de Implementação',
   'tenant-app-projects-tasks': 'Tenant App - Projects & Tasks',
