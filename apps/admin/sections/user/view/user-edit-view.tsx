@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
@@ -93,7 +93,6 @@ export function UserEditView({ userId }: UserEditViewProps) {
   const {
       reset,
       setValue,
-      watch,
       control,
       handleSubmit,
       formState: { isSubmitting, isDirty, errors }
@@ -126,8 +125,8 @@ export function UserEditView({ userId }: UserEditViewProps) {
     }
   }, [user, reset]);
 
-  const emailVerified = watch('emailVerified');
-  const status = watch('status');
+  const emailVerified = useWatch({ control, name: 'emailVerified' });
+  const status = useWatch({ control, name: 'status' });
 
   const handleAvatarChange = (file: File | null, preview: string) => {
     setAvatarFile(file);

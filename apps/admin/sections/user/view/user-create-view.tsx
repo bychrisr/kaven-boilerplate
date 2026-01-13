@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
@@ -72,9 +72,9 @@ export function UserCreateView() {
       password: '',
       phone: '',
       role: 'USER',
-      status: 'PENDING', // Changed from 'ACTIVE' to 'PENDING'
+      status: 'PENDING',
       emailVerified: false,
-      tenantId: '', // Changed from empty string to empty string, but was 'create-own' in original onSubmit
+      tenantId: '',
       country: '',
       state: '',
       city: '',
@@ -86,14 +86,25 @@ export function UserCreateView() {
 
   const {
     register,
-    watch,
     handleSubmit,
     setValue,
+    control,
     formState: { isSubmitting, errors, touchedFields }
   } = form;
 
-  const emailVerified = watch('emailVerified');
-  const addressValue = watch('address') || '';
+  const emailVerified = useWatch({ control, name: 'emailVerified' });
+  const addressValue = useWatch({ control, name: 'address' }) || '';
+  const nameValue = useWatch({ control, name: 'name' });
+  const emailValue = useWatch({ control, name: 'email' });
+  const phoneValue = useWatch({ control, name: 'phone' });
+  const cityValue = useWatch({ control, name: 'city' });
+  const stateValue = useWatch({ control, name: 'state' });
+  const countryValue = useWatch({ control, name: 'country' });
+  const zipcodeValue = useWatch({ control, name: 'zipcode' });
+  const companyValue = useWatch({ control, name: 'company' });
+  const passwordValue = useWatch({ control, name: 'password' });
+  const tenantIdValue = useWatch({ control, name: 'tenantId' });
+  const roleValue = useWatch({ control, name: 'role' });
 
   const handleAvatarChange = (_file: File | null, preview: string) => {
     setAvatarPreview(preview);
@@ -202,7 +213,7 @@ export function UserCreateView() {
                     className={cn(
                       "bg-transparent transition-colors",
                       errors.name && touchedFields.name && "border-red-500 focus:border-red-500",
-                      !errors.name && touchedFields.name && watch('name') && "border-green-500 focus:border-green-500"
+                      !errors.name && touchedFields.name && nameValue && "border-green-500 focus:border-green-500"
                     )}
                     aria-invalid={errors.name ? "true" : "false"}
                   />
@@ -234,7 +245,7 @@ export function UserCreateView() {
                     className={cn(
                       "bg-transparent transition-colors",
                       errors.email && touchedFields.email && "border-red-500 focus:border-red-500",
-                      !errors.email && touchedFields.email && watch('email') && "border-green-500 focus:border-green-500"
+                      !errors.email && touchedFields.email && emailValue && "border-green-500 focus:border-green-500"
                     )}
                     aria-invalid={errors.email ? "true" : "false"}
                   />
@@ -247,13 +258,13 @@ export function UserCreateView() {
                     {tUser('edit.phone')}
                   </label>
                   <PhoneInput
-                    value={watch('phone') || ''}
+                    value={phoneValue || ''}
                     onChange={(value) => {
                       setValue('phone', value, { shouldValidate: true, shouldTouch: true });
                     }}
                     id="phone"
                     className={cn(
-                      (watch('phone') ?? '').length >= 10 && "border-green-500"
+                      (phoneValue ?? '').length >= 10 && "border-green-500"
                     )}
                     error={errors.phone?.message}
                   />
@@ -265,7 +276,7 @@ export function UserCreateView() {
                     {tUser('edit.tenant')} <span className="text-destructive">*</span>
                   </label>
                   <Select
-                    value={watch('tenantId')}
+                    value={tenantIdValue}
                     onValueChange={(value) => setValue('tenantId', value, { shouldValidate: true, shouldTouch: true })}
                   >
                     <SelectTrigger 
@@ -315,7 +326,7 @@ export function UserCreateView() {
                     {tUser('edit.role')}
                   </label>
                   <Select
-                    value={watch('role')}
+                    value={roleValue}
                     onValueChange={(value) => setValue('role', value as 'USER' | 'TENANT_ADMIN')}
                   >
                     <SelectTrigger className="bg-transparent h-11">
@@ -359,7 +370,7 @@ export function UserCreateView() {
                       className={cn(
                         "bg-transparent pr-10 transition-colors",
                         errors.password && touchedFields.password && "border-red-500 focus:border-red-500",
-                        !errors.password && touchedFields.password && watch('password') && "border-green-500 focus:border-green-500"
+                        !errors.password && touchedFields.password && passwordValue && "border-green-500 focus:border-green-500"
                       )}
                       aria-invalid={errors.password ? "true" : "false"}
                     />
@@ -373,7 +384,7 @@ export function UserCreateView() {
                   </div>
                   {/* Password Validator - Shows when focused or has errors */}
                   {(isPasswordFocused || errors.password) && (
-                    <PasswordValidator password={watch('password') || ''} className="mt-2" />
+                    <PasswordValidator password={passwordValue || ''} className="mt-2" />
                   )}
                 </div>
 
@@ -406,7 +417,7 @@ export function UserCreateView() {
                     placeholder={tUser('create.placeholders.city')}
                     className={cn(
                       "bg-transparent transition-colors",
-                      watch('city') && "border-green-500"
+                      cityValue && "border-green-500"
                     )}
                     disabled={isAddressAutoFilled}
                   />
@@ -423,7 +434,7 @@ export function UserCreateView() {
                     placeholder={tUser('create.placeholders.state')}
                     className={cn(
                       "bg-transparent transition-colors",
-                      watch('state') && "border-green-500"
+                      stateValue && "border-green-500"
                     )}
                     disabled={isAddressAutoFilled}
                   />
@@ -440,7 +451,7 @@ export function UserCreateView() {
                     placeholder={tUser('create.placeholders.country')}
                     className={cn(
                       "bg-transparent transition-colors",
-                      watch('country') && "border-green-500"
+                      countryValue && "border-green-500"
                     )}
                     disabled={isAddressAutoFilled}
                   />
@@ -457,7 +468,7 @@ export function UserCreateView() {
                     placeholder={tUser('create.placeholders.zipcode')}
                     className={cn(
                       "bg-transparent transition-colors",
-                      watch('zipcode') && "border-green-500"
+                      zipcodeValue && "border-green-500"
                     )}
                     disabled={isAddressAutoFilled}
                   />
@@ -474,7 +485,7 @@ export function UserCreateView() {
                     placeholder={tUser('create.placeholders.company')}
                     className={cn(
                       "bg-transparent transition-colors",
-                      watch('company') && "border-green-500"
+                      companyValue && "border-green-500"
                     )}
                   />
                 </div>
