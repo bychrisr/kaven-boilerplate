@@ -140,6 +140,7 @@
     }
   },
   "Users": {
+    "title": "All Users",
     "inviteSuccess": "Invite sent successfully!",
     "inviteError": "Failed to send invite",
     "inviteUser": "Invite User",
@@ -150,7 +151,32 @@
     "roleAdmin": "Admin",
     "cancel": "Cancel",
     "sending": "Sending...",
-    "sendInvite": "Send Invite"
+    "sendInvite": "Send Invite",
+    "table": {
+      "name": "Name",
+      "phoneNumber": "Phone Number",
+      "tenant": "Tenant",
+      "role": "Role",
+      "status": "Status",
+      "selected": "selected",
+      "delete": "Delete",
+      "rowsPerPage": "Rows per page",
+      "loading": "Loading users...",
+      "error": "Error loading users",
+      "errorRetry": "Try again later",
+      "noUsers": "No users found",
+      "noUsersDesc": "Try adjusting your search filters",
+      "previousPage": "Go to previous page",
+      "nextPage": "Go to next page"
+    },
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "pending": "Pending",
+      "banned": "Banned",
+      "rejected": "Rejected",
+      "search": "Search..."
+    }
   },
   "User": {
     "table": {

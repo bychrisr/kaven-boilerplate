@@ -141,6 +141,7 @@
     }
   },
   "Users": {
+    "title": "Todos os Usuários",
     "inviteSuccess": "Convite enviado com sucesso!",
     "inviteError": "Falha ao enviar convite",
     "inviteUser": "Convidar Usuário",
@@ -151,7 +152,32 @@
     "roleAdmin": "Admin",
     "cancel": "Cancelar",
     "sending": "Enviando...",
-    "sendInvite": "Enviar Convite"
+    "sendInvite": "Enviar Convite",
+    "table": {
+      "name": "Nome",
+      "phoneNumber": "Telefone",
+      "tenant": "Tenant",
+      "role": "Função",
+      "status": "Status",
+      "selected": "selecionados",
+      "delete": "Excluir",
+      "rowsPerPage": "Linhas por página",
+      "loading": "Carregando usuários...",
+      "error": "Erro ao carregar usuários",
+      "errorRetry": "Tente novamente mais tarde",
+      "noUsers": "Nenhum usuário encontrado",
+      "noUsersDesc": "Tente ajustar os filtros de busca",
+      "previousPage": "Ir para página anterior",
+      "nextPage": "Ir para próxima página"
+    },
+    "filters": {
+      "all": "Todos",
+      "active": "Ativos",
+      "pending": "Pendentes",
+      "banned": "Banidos",
+      "rejected": "Rejeitados",
+      "search": "Buscar..."
+    }
   },
   "User": {
     "table": {

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { useUsers, useUserStats, useDeleteUser } from '@/hooks/use-users';
 
 import { UserTableRow } from '../user-table-row';
@@ -31,17 +32,12 @@ import {
   SelectValue,
 } from '@/components/ui/radix-select';
 
-const STATUS_OPTIONS = [
-  { value: 'all', label: 'All' },
-  { value: 'active', label: 'Active' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'banned', label: 'Banned' },
-  { value: 'rejected', label: 'Rejected' },
-];
-
 import { InviteUserDialog } from '@/components/users/invite-dialog';
 
 export function UserView() {
+  const t = useTranslations('Users');
+  const tCommon = useTranslations('Common');
+  
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   // Filters
   const [filterName, setFilterName] = useState('');
@@ -138,20 +134,19 @@ export function UserView() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">All Users</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('title')}</h1>
           <div className="mt-2">
             <Breadcrumbs>
               <BreadcrumbItem>
                 <Link href="/dashboard" className="transition-colors hover:text-foreground">
-                  Dashboard
+                  {tCommon('dashboard')}
                 </Link>
               </BreadcrumbItem>
               <BreadcrumbItem>
                 <Link href="#" className="transition-colors hover:text-foreground">
-                  User
+                  {tCommon('users')}
                 </Link>
               </BreadcrumbItem>
               <BreadcrumbItem current>List</BreadcrumbItem>
@@ -161,12 +156,11 @@ export function UserView() {
         <Button 
           variant="contained"
           color="primary"
-          size="lg"
-          className="h-12 text-md font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all"
+          size="md"
           onClick={() => setIsInviteOpen(true)}
         >
-          <Plus className="mr-2 h-4 w-4" />
-          Invite User
+          <Plus className="h-4 w-4" />
+          {t('inviteUser')}
         </Button>
       </div>
 
@@ -181,7 +175,13 @@ export function UserView() {
           >
             <div className="flex flex-col md:flex-row items-center w-full border-b border-border/40 gap-4">
               <TabsList className="bg-transparent p-0 h-auto gap-8 justify-start px-4 w-auto flex-none border-b-0">
-                {STATUS_OPTIONS.map((tab) => {
+                {[
+                  { value: 'all', label: t('filters.all') },
+                  { value: 'active', label: t('filters.active') },
+                  { value: 'pending', label: t('filters.pending') },
+                  { value: 'banned', label: t('filters.banned') },
+                  { value: 'rejected', label: t('filters.rejected') },
+                ].map((tab) => {
                   const count = getStatusCount(tab.value);
                   const isActive = filterStatus === tab.value;
                   
@@ -239,7 +239,7 @@ export function UserView() {
                  <div className="relative w-full">
                     <Search className="absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
-                      placeholder="Search..."
+                      placeholder={t('filters.search')}
                       value={filterName}
                       onChange={handleFilterName}
                       className="w-full bg-transparent border-none focus-visible:ring-0 pl-9 placeholder:text-muted-foreground h-10"
@@ -264,17 +264,17 @@ export function UserView() {
                             onCheckedChange={(checked: boolean | 'indeterminate') => handleSelectAll(checked === true)}
                           />
                           <span className="text-sm font-semibold text-foreground">
-                            {selected.length} selected
+                            {selected.length} {t('table.selected')}
                           </span>
                         </div>
                         <Button
                           variant="ghost"
-                          size="sm"
+                          size="md"
                           onClick={handleDeleteSelected}
                           className="text-destructive hover:text-destructive hover:bg-destructive/10"
                         >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
+                          <Trash2 className="h-4 w-4" />
+                          {t('table.delete')}
                         </Button>
                       </div>
                     </TableHead>
@@ -287,11 +287,11 @@ export function UserView() {
                         onCheckedChange={(checked: boolean | 'indeterminate') => handleSelectAll(checked === true)}
                       />
                     </TableHead>
-                    <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Name</TableHead>
-                    <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Phone Number</TableHead>
-                    <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Tenant</TableHead>
-                    <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Role</TableHead>
-                    <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">Status</TableHead>
+                    <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">{t('table.name')}</TableHead>
+                    <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">{t('table.phoneNumber')}</TableHead>
+                    <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">{t('table.tenant')}</TableHead>
+                    <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">{t('table.role')}</TableHead>
+                    <TableHead className="px-4 h-16 font-semibold bg-transparent text-foreground dark:text-white">{t('table.status')}</TableHead>
                     <TableHead className="px-4 h-16 font-semibold bg-transparent text-right last:rounded-tr-none"></TableHead>
                   </TableRow>
                 )}
@@ -309,8 +309,8 @@ export function UserView() {
                 <TableRow>
                   <TableCell colSpan={7} className="h-64 text-center">
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <p className="text-destructive font-medium">Erro ao carregar usuários</p>
-                      <p className="text-sm text-muted-foreground">Tente novamente mais tarde</p>
+                      <p className="text-destructive font-medium">{t('table.error')}</p>
+                      <p className="text-sm text-muted-foreground">{t('table.errorRetry')}</p>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -318,8 +318,8 @@ export function UserView() {
                 <TableRow>
                   <TableCell colSpan={7} className="h-64 text-center">
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <p className="text-muted-foreground font-medium">Nenhum usuário encontrado</p>
-                      <p className="text-sm text-muted-foreground">Tente ajustar os filtros de busca</p>
+                      <p className="text-muted-foreground font-medium">{t('table.noUsers')}</p>
+                      <p className="text-sm text-muted-foreground">{t('table.noUsersDesc')}</p>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -341,7 +341,7 @@ export function UserView() {
         <div className="flex items-center justify-end p-4 border-t border-border/40">
             <div className="flex items-center gap-6 lg:gap-8">
               <div className="flex items-center space-x-2">
-                <p className="text-sm font-medium text-muted-foreground">Rows per page</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('table.rowsPerPage')}</p>
                 <Select
                   value={String(rowsPerPage)}
                   onValueChange={(value) => {
@@ -375,7 +375,7 @@ export function UserView() {
                   onClick={() => setPage((p) => Math.max(0, p - 1))}
                   disabled={page === 0}
                 >
-                  <span className="sr-only">Go to previous page</span>
+                  <span className="sr-only">{t('table.previousPage')}</span>
                   {'<'}
                 </Button>
                 <Button
@@ -385,7 +385,7 @@ export function UserView() {
                   onClick={() => setPage((p) => p + 1)}
                   disabled={(page + 1) * rowsPerPage >= totalUsers}
                 >
-                  <span className="sr-only">Go to next page</span>
+                  <span className="sr-only">{t('table.nextPage')}</span>
                   {'>'}
                 </Button>
               </div>
