@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Folder, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import Link from 'next/link';
 
 interface Project {
   id: string;
@@ -166,7 +167,9 @@ export default function ProjectsPage() {
               </CardContent>
               <CardFooter className="border-t pt-4 text-xs text-muted-foreground justify-between">
                 <span>By {project.createdBy?.name || 'Unknown'}</span>
-                <Button variant="ghost" size="sm" className="h-6">View Details</Button>
+                <Link href={`/projects/${project.id}`}>
+                  <Button variant="ghost" size="sm" className="h-6">View Details</Button>
+                </Link>
               </CardFooter>
             </Card>
           ))}
