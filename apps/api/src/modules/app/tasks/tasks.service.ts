@@ -27,7 +27,7 @@ export class TasksService {
         where,
         include: {
            assignee: {
-             select: { id: true, name: true, avatarUrl: true }
+             select: { id: true, name: true, avatar: true }
            },
            project: {
              select: { id: true, name: true, color: true, spaceId: true }

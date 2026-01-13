@@ -31,7 +31,7 @@ export class ProjectsService {
              select: { tasks: true }
            },
            createdBy: {
-             select: { id: true, name: true, avatarUrl: true }
+             select: { id: true, name: true, avatar: true }
            },
            space: {
              select: { id: true, name: true, color: true }
@@ -63,7 +63,7 @@ export class ProjectsService {
            orderBy: { createdAt: 'desc' }
         },
         createdBy: {
-             select: { id: true, name: true, avatarUrl: true }
+             select: { id: true, name: true, avatar: true }
         },
         space: {
              select: { id: true, name: true, color: true }
