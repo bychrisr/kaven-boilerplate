@@ -5,6 +5,7 @@ export default {
   database: 'Banco de Dados (Split-Schema)',
   modules: 'Sistema Modular',
   architecture: 'Arquitetura',
+  'tenant-system': 'Tenant System',
   backend: 'Backend',
   frontend: 'Frontend',
   features: 'Features',

@@ -1,0 +1,120 @@
+---
+title: Tenant System
+description: Sistema completo de gerenciamento de Tenants (Multi-tenancy) com suporte a Friendly URLs
+date: 2026-01-13
+author: Chris + Antigravity
+version: 1.1.0
+tags: [tenants, multi-tenancy, friendly-urls, saas]
+---
+
+# Tenant System
+
+> Sistema completo de gerenciamento de Tenants com suporte a Friendly URLs, isolamento de dados e gestão de membros.
+
+## Visão Geral
+
+O módulo de Tenants é o coração da arquitetura multi-tenant do Kaven Boilerplate. Ele permite criar, gerenciar e isolar organizações (Tenants), cada uma com seus próprios usuários, configurações e dados.
+
+**Principais Features:**
+
+- ✅ **Friendly URLs**: Acesso via `/tenants/[slug]` (ex: `/tenants/kaven-tech`)
+- ✅ **Smart Lookup**: API aceita UUID ou Slug transparentemente
+- ✅ **Gestão de Membros**: Adicionar/Remover usuários em tenants específicos
+- ✅ **Isolamento**: Dados segregados via `tenantId` (camada de aplicação)
+
+## Como Funciona
+
+### Friendly URLs (Smart Lookup)
+
+O sistema implementa uma estratégia de "Smart Lookup" no backend para identificar se uma requisição está buscando um tenant por seu UUID interno ou pelo Slug legível.
+
+```typescript
+// TenantService.ts
+
+async getTenantById(idOrSlug: string) {
+  // Regex para identificar se é UUID
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug);
+
+  const where = isUuid
+    ? { id: idOrSlug }
+    : { slug: idOrSlug };
+
+  // ... busca no banco
+}
+```
+
+Isso permite que a mesma rota `/api/tenants/:id` sirva ambos os propósitos sem duplicação de endpoints.
+
+## Estrutura de Rotas (Frontend)
+
+O Admin Panel utiliza Next.js App Router com rotas dinâmicas:
+
+- **Listagem**: `/tenants`
+- **Criação**: `/tenants/create`
+- **Detalhes**: `/tenants/[slug]` (Anteriormente `[id]`)
+
+A página de detalhes detecta o parâmetro `slug` e o passa para os hooks de dados, que por sua vez comunicam-se com a API unificada.
+
+## API Reference
+
+### `GET /api/tenants`
+
+Lista tenants com paginação e filtros.
+
+**Query Params:**
+
+- `page` (number) - Página atual (default: 1)
+- `limit` (number) - Itens por página (default: 10)
+- `search` (string) - Busca por nome, slug ou domínio
+- `status` (string) - Filtrar por status (ACTIVE, SUSPENDED)
+
+### `GET /api/tenants/:idOrSlug`
+
+Busca detalhes de um tenant.
+
+**Parâmetros:**
+
+- `idOrSlug`: UUID ou Slug do tenant.
+
+**Exemplo:**
+
+```bash
+GET /api/tenants/acme-corp
+# ou
+GET /api/tenants/123e4567-e89b-12d3-a456-426614174000
+```
+
+### `POST /api/tenants`
+
+Cria um novo tenant.
+
+**Body:**
+
+```json
+{
+  "name": "Acme Corp",
+  "slug": "acme-corp",
+  "domain": "acme.com" // Opcional
+}
+```
+
+## Tenants vs Spaces
+
+É importante distinguir Tenants de Spaces:
+
+- **Tenant**: A organização raiz (Cliente). Pagamentos e usuários estão atrelados aqui.
+- **Space**: Ambientes dentro de um Tenant (ex: Produção, Staging).
+
+## Troubleshooting
+
+### Erro 404 em Detalhes
+
+Se receber 404 ao acessar `/tenants/slug`, verifique:
+
+1. Se o slug existe no banco.
+2. Se o tenant não foi "Soft Deleted".
+3. Se a rota no Next.js está capturando corretamente o parâmetro (verifique `page.tsx`).
+
+### Slugs Duplicados
+
+O sistema impede slugs duplicados na criação e edição. Se ocorrer erro de conflito, escolha um slug diferente.

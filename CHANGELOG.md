@@ -5,6 +5,38 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-01-13
+
+### ✨ Adicionado
+
+#### Friendly URLs & Tenant Refactoring
+
+**1. Tenant Friendly URLs (`/tenants/:slug`)**
+
+- Suporte a busca de tenants por **Slug** ou **UUID** no backend (`TenantService`).
+- URLs amigáveis no frontend (ex: `/tenants/acme-inc` em vez de UUID).
+- Detecção automática de ID vs Slug na API.
+
+**2. Tenant Create Page Refactor**
+
+- Migração para Shadcn UI + React Hook Form.
+- Validação Zod completa.
+- Geração automática de slug baseada no nome.
+
+**3. Tenant Users List**
+
+- Tabela refatorada com tradução completa (i18n).
+- Paginação funcional.
+- Filtros por nome.
+
+### 🔧 Corrigido
+
+- **Edit Popup**: Ajustada largura do tooltip no botão de edição da lista de tenants (removida restrição de `min-w-[200px]`).
+- **404 Detail Page**: Corrigido erro de roteamento ao acessar detalhes do tenant via slug.
+- **JSON Syntax**: Corrigidos erros de sintaxe nos arquivos de tradução (`pt.json/en.json`).
+
+---
+
 ## [1.0.0] - 2026-01-06
 
 ### ✨ Adicionado
