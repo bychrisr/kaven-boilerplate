@@ -17,9 +17,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
-import { ChevronLeft, Loader2, Save, Trash2 } from 'lucide-react';
+import { Loader2, Save, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { TenantUsersList } from './tenant-users-list';
 import {
@@ -112,14 +111,6 @@ export function TenantDetailView({ id }: TenantDetailViewProps) {
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => router.push('/tenants')}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
             <h1 className="text-2xl font-bold tracking-tight">
               {tenant.name}
             </h1>
@@ -127,7 +118,7 @@ export function TenantDetailView({ id }: TenantDetailViewProps) {
               {tenant.status}
             </Badge>
           </div>
-          <div className="pl-10">
+          <div className="mt-2">
             <Breadcrumbs>
               <BreadcrumbItem>
                 <Link href="/dashboard">Dashboard</Link>
@@ -155,8 +146,8 @@ export function TenantDetailView({ id }: TenantDetailViewProps) {
       </div>
 
       {/* Content */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="mb-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
