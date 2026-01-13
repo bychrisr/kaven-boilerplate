@@ -1,10 +1,20 @@
 export default {
-  authentication: 'Authentication',
-  authorization: 'Authorization (CASL)',
-  'mail-system': 'Mail System',
-  'api-keys': 'API Keys Management',
-  'rate-limiting': 'Rate Limiting',
-  'tenant-app': 'Tenant App & Spaces', // New Entry
-  'projects-and-tasks': 'Projects & Tasks', // New Entry
+  'RBAC_MIDDLEWARE': 'Authorization (CASL)',
+  'EMAIL_SERVICE': 'Email Service',
+  'email-system': 'Email System',
+  'notifications': 'Notifications',
+  'password-recovery': 'Password Recovery',
+  'user-invites': 'User Invites',
+  'observability': 'Observability',
+  'AVATAR_UPLOAD_FEATURE': 'Avatar Upload',
+  'ENVIRONMENT_VARIABLES': 'Environment Variables',
+  'PLATFORM_SETTINGS': 'Platform Settings',
+  'SETUP_WIZARD': 'Setup Wizard',
+  'TENANT_MANAGEMENT': 'Tenant Management',
+  'TENANT_MIDDLEWARE': 'Tenant Middleware',
+  'PLANS_PRODUCTS': 'Plans & Products',
+  'tenant-app': 'Tenant App & Spaces',
+  'projects-and-tasks': 'Projects & Tasks',
   'spaces-and-permissions': 'Spaces & Permissions',
+  'payments': 'Payments'
 };
