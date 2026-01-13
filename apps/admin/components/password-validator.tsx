@@ -1,18 +1,7 @@
-/**
- * Password Validator Component
- * Production-ready password validation for SaaS applications
- * 
- * Features:
- * - Real-time validation with 5 security requirements
- * - Visual strength indicator (5 levels)
- * - Client-side validation (no API latency)
- * - Accessible with ARIA labels
- * - Only shows when password has value
- */
-
 'use client';
 
 import { CheckCircle, XCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface PasswordRequirements {
   length: boolean;
@@ -31,6 +20,8 @@ export function PasswordValidator({
   password, 
   className = '' 
 }: PasswordValidatorProps) {
+  const t = useTranslations('Common.passwordValidator');
+
   // Don't show if password is empty
   if (!password) return null;
 
@@ -55,16 +46,16 @@ export function PasswordValidator({
     if (requirements.special) score++;
 
     const levels = [
-      { label: 'Very Weak', color: 'bg-red-500' },
-      { label: 'Weak', color: 'bg-orange-500' },
-      { label: 'Fair', color: 'bg-yellow-500' },
-      { label: 'Good', color: 'bg-blue-500' },
-      { label: 'Strong', color: 'bg-green-500' },
+      { label: t('levels.veryWeak'), color: 'bg-red-500' },
+      { label: t('levels.weak'), color: 'bg-orange-500' },
+      { label: t('levels.fair'), color: 'bg-yellow-500' },
+      { label: t('levels.good'), color: 'bg-blue-500' },
+      { label: t('levels.strong'), color: 'bg-green-500' },
     ];
 
     return {
       score,
-      label: levels[score - 1]?.label || 'Very Weak',
+      label: levels[score - 1]?.label || t('levels.veryWeak'),
       color: levels[score - 1]?.color || 'bg-red-500',
     };
   };
@@ -85,7 +76,7 @@ export function PasswordValidator({
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-foreground">
-            Password Strength
+            {t('strength')}
           </span>
           <span 
             className={`text-sm font-medium ${
@@ -93,7 +84,7 @@ export function PasswordValidator({
               strength.score <= 3 ? 'text-yellow-600 dark:text-yellow-400' :
               'text-green-600 dark:text-green-400'
             }`}
-            aria-label={`Password strength: ${strength.label}`}
+            aria-label={`${t('strength')}: ${strength.label}`}
           >
             {strength.label}
           </span>
@@ -116,37 +107,37 @@ export function PasswordValidator({
       {/* Requirements Checklist */}
       <div className="space-y-2">
         <h4 className="text-sm font-medium text-foreground">
-          Requirements
+          {t('requirements')}
         </h4>
         <div className="space-y-1 text-sm">
           <div className="flex items-center space-x-2">
             {getRequirementIcon(requirements.length)}
             <span className={requirements.length ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}>
-              At least 8 characters
+              {t('checklist.length')}
             </span>
           </div>
           <div className="flex items-center space-x-2">
             {getRequirementIcon(requirements.lowercase)}
             <span className={requirements.lowercase ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}>
-              One lowercase letter
+              {t('checklist.lowercase')}
             </span>
           </div>
           <div className="flex items-center space-x-2">
             {getRequirementIcon(requirements.uppercase)}
             <span className={requirements.uppercase ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}>
-              One uppercase letter
+              {t('checklist.uppercase')}
             </span>
           </div>
           <div className="flex items-center space-x-2">
             {getRequirementIcon(requirements.number)}
             <span className={requirements.number ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}>
-              One number
+              {t('checklist.number')}
             </span>
           </div>
           <div className="flex items-center space-x-2">
             {getRequirementIcon(requirements.special)}
             <span className={requirements.special ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}>
-              One special character
+              {t('checklist.special')}
             </span>
           </div>
         </div>
@@ -159,13 +150,13 @@ export function PasswordValidator({
  * Password validation for Zod schema
  * Enforces all security requirements
  */
-export function validatePasswordRequirements(password: string): string | true {
-  if (!password) return 'Password is required';
-  if (password.length < 8) return 'Password must be at least 8 characters';
-  if (!/[a-z]/.test(password)) return 'Password must contain at least one lowercase letter';
-  if (!/[A-Z]/.test(password)) return 'Password must contain at least one uppercase letter';
-  if (!/[0-9]/.test(password)) return 'Password must contain at least one number';
-  if (!/[^A-Za-z0-9]/.test(password)) return 'Password must contain at least one special character';
+export function validatePasswordRequirements(password: string, t: (key: string) => string): string | true {
+  if (!password) return t('errors.required');
+  if (password.length < 8) return t('checklist.length');
+  if (!/[a-z]/.test(password)) return t('checklist.lowercase');
+  if (!/[A-Z]/.test(password)) return t('checklist.uppercase');
+  if (!/[0-9]/.test(password)) return t('checklist.number');
+  if (!/[^A-Za-z0-9]/.test(password)) return t('checklist.special');
   return true;
 }
 
@@ -174,8 +165,3 @@ export function validatePasswordRequirements(password: string): string | true {
  * Use this in your schema for comprehensive validation
  */
 export const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]+$/;
-
-/**
- * Password validation error message
- */
-export const PASSWORD_ERROR_MESSAGE = 'Password must contain at least: 1 lowercase letter, 1 uppercase letter, 1 number and 1 special character';

@@ -13,10 +13,11 @@ import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/radix-select';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 
-const isPhoneValid = (phone: string): boolean => {
+export const isPhoneValid = (phone: string): boolean => {
   try {
     return phoneUtil.isValidNumber(phoneUtil.parseAndKeepRawInput(phone));
   } catch {
@@ -37,12 +38,14 @@ interface PhoneInputProps {
 export function PhoneInput({
   value,
   onChange,
-  placeholder = 'Enter phone number',
+  placeholder,
   className,
   id,
   error,
   onValidationChange,
 }: PhoneInputProps) {
+  const t = useTranslations('Common.phoneInput');
+  const defaultPlaceholder = placeholder || t('placeholder');
   const [touched, setTouched] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
@@ -113,7 +116,7 @@ export function PhoneInput({
               <div className="relative">
                 <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search..."
+                  placeholder={t('search')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-8 h-9 bg-transparent"
@@ -158,7 +161,7 @@ export function PhoneInput({
                 })
               ) : (
                 <div className="py-6 text-center text-sm text-muted-foreground">
-                  No countries found
+                  {t('noCountries')}
                 </div>
               )}
             </div>
@@ -176,7 +179,7 @@ export function PhoneInput({
           }}
           onFocus={() => setIsFocused(true)}
           type="tel"
-          placeholder={placeholder}
+          placeholder={defaultPlaceholder}
           id={id}
           className={cn(
             'flex-1 h-full border-0 rounded-none rounded-r-md bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0',
@@ -188,7 +191,7 @@ export function PhoneInput({
       {/* Error Message - Only show after touched */}
       {(showError || error) && (
         <p className="mt-1 text-sm text-destructive">
-          {error || 'Invalid phone number'}
+          {error || t('invalid')}
         </p>
       )}
     </div>
