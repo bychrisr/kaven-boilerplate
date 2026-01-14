@@ -87,8 +87,8 @@ model PlatformConfig {
   
   // Configurações de Timezone e Formatos
   timezone     String @default("UTC") // IANA timezone (GMT+0)
-  dateFormat   String @default("d/m/Y") // d/m/Y, m/d/Y, Y-m-d, j \d\e F \d\e Y
-  timeFormat   String @default("H:i")   // H:i (24h) ou g:i A (12h)
+  dateFormat   String @default("Y-m-d") // Y-m-d, d/m/Y, m/d/Y, j \\de F \\de Y
+  timeFormat   String @default("g:i A")   // H:i (24h) ou g:i A (12h)
   
   // SEO & Social
   twitterHandle String?

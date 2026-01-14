@@ -70,7 +70,11 @@ async function main() {
       primaryColor: '#00A76F',
       faviconUrl: '/favicon.ico',
       language: 'pt-BR',
-      currency: 'BRL'
+      currency: 'BRL',
+      numberFormat: '1.000,00',
+      timezone: 'UTC',
+      dateFormat: 'Y-m-d',
+      timeFormat: 'g:i A',
     }
   });
   console.log('✅ Platform Config ensured.');

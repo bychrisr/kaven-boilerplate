@@ -27,8 +27,8 @@ const formSchema = z.object({
   twitterHandle: z.string().optional().default(''),
   // Novos campos
   timezone: z.string().optional().default('UTC'),
-  dateFormat: z.string().optional().default('d/m/Y'),
-  timeFormat: z.string().optional().default('H:i'),
+  dateFormat: z.string().optional().default('Y-m-d'),
+  timeFormat: z.string().optional().default('g:i A'),
   smtpHost: z.string().optional().default('localhost'),
   smtpPort: z.number().optional().default(1025),
   smtpSecure: z.boolean().optional().default(false),
@@ -62,8 +62,8 @@ export default function PlatformSettingsPage() {
       twitterHandle: '',
       // Novos campos
       timezone: 'UTC',
-      dateFormat: 'd/m/Y',
-      timeFormat: 'H:i',
+      dateFormat: 'Y-m-d',
+      timeFormat: 'g:i A',
       smtpHost: 'localhost',
       smtpPort: 1025,
       smtpSecure: false,
