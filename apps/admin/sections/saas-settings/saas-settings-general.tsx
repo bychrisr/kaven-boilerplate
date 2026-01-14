@@ -194,7 +194,8 @@ export function SaasSettingsGeneral() {
                       ))}
                     </SelectContent>
                   </Select>
-                </Controller>
+                )}
+              />
             </div>
 
             {/* Formato de Data */}
