@@ -24,9 +24,10 @@ export function SaasSettingsBranding() {
     const t = useTranslations('PlatformSettings');
     const { control, setValue, watch, register } = useFormContext();
     const primaryColor = watch('primaryColor');
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const faviconInputRef = useRef<HTMLInputElement>(null);
+    const logoInputRef = useRef<HTMLInputElement>(null);
 
-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFaviconUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             if (file.size > 1024 * 1024) { // 1MB limit for base64
@@ -36,6 +37,21 @@ export function SaasSettingsBranding() {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setValue('faviconUrl', reader.result as string, { shouldDirty: true });
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            if (file.size > 2 * 1024 * 1024) { // 2MB limit for logo
+                toast.error(t('validation.fileTooLarge', { size: '2' }));
+                return;
+            }
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setValue('logoUrl', reader.result as string, { shouldDirty: true });
             };
             reader.readAsDataURL(file);
         }
@@ -128,12 +144,31 @@ export function SaasSettingsBranding() {
                                             </div>
                                             
                                             <div className="flex-1 space-y-3">
-                                                <TextField
-                                                    {...field}
-                                                    label={t('branding.logoUrl')}
-                                                    placeholder={t('placeholders.url')}
-                                                    fullWidth
-                                                />
+                                                <div className="flex gap-2 w-full items-end">
+                                                    <TextField
+                                                        {...field}
+                                                        label={t('branding.logoUrl')}
+                                                        placeholder={t('placeholders.url')}
+                                                        fullWidth
+                                                        className="flex-1"
+                                                    />
+                                                    <input 
+                                                        type="file" 
+                                                        ref={logoInputRef}
+                                                        className="hidden" 
+                                                        accept=".png,.jpg,.svg,.webp"
+                                                        onChange={handleLogoUpload}
+                                                    />
+                                                    <Button 
+                                                        type="button" 
+                                                        variant="outlined" 
+                                                        className="h-[46px] px-6"
+                                                        onClick={() => logoInputRef.current?.click()}
+                                                    >
+                                                        <UploadCloud className="mr-2 h-4 w-4" />
+                                                        {t('branding.upload')}
+                                                    </Button>
+                                                </div>
                                                 <p className="text-xs text-muted-foreground">
                                                     {t('branding.logoRecommended')}
                                                 </p>
@@ -177,16 +212,16 @@ export function SaasSettingsBranding() {
                                                     />
                                                     <input 
                                                         type="file" 
-                                                        ref={fileInputRef}
+                                                        ref={faviconInputRef}
                                                         className="hidden" 
                                                         accept=".ico,.png,.jpg,.svg"
-                                                        onChange={handleFileUpload}
+                                                        onChange={handleFaviconUpload}
                                                     />
                                                     <Button 
                                                         type="button" 
                                                         variant="outlined" 
                                                         className="h-[46px] px-6"
-                                                        onClick={() => fileInputRef.current?.click()}
+                                                        onClick={() => faviconInputRef.current?.click()}
                                                     >
                                                         <UploadCloud className="mr-2 h-4 w-4" />
                                                         {t('branding.upload')}
