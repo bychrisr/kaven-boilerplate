@@ -17,7 +17,7 @@ export interface Plan {
   badge?: string;
   stripeProductId?: string;
   tenantId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
   prices: Price[];
@@ -86,7 +86,7 @@ export function usePlans(filters?: { tenantId?: string; isActive?: boolean; isPu
       if (filters?.isActive !== undefined) params.append('isActive', String(filters.isActive));
       if (filters?.isPublic !== undefined) params.append('isPublic', String(filters.isPublic));
       
-      const { data } = await api.get(`/plans?${params.toString()}`);
+      const { data } = await api.get(`/api/plans?${params.toString()}`);
       return data.plans as Plan[];
     },
   });
@@ -96,7 +96,7 @@ export function usePlan(id: string) {
   return useQuery({
     queryKey: ['plans', id],
     queryFn: async () => {
-      const { data } = await api.get(`/plans/${id}`);
+      const { data } = await api.get(`/api/plans/${id}`);
       return data as Plan;
     },
     enabled: !!id,

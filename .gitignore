@@ -50,5 +50,8 @@ kaven-cli/dist/
 # Docker
 .docker/data/
 
+# Uploads (User Generated Content)
+apps/api/uploads/avatars/
+
 # Documentation (Internal)
 Phase 0 - FOUNDATION/
