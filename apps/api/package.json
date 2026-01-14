@@ -12,7 +12,6 @@
     "grafana:import": "bash ../../scripts/import-grafana-dashboards.sh"
   },
   "dependencies": {
-    "@kaven/shared": "workspace:*",
     "@fastify/cors": "^11.2.0",
     "@fastify/helmet": "^13.0.2",
     "@fastify/multipart": "^9.3.0",
@@ -20,6 +19,7 @@
     "@fastify/static": "^9.0.0",
     "@fastify/swagger": "^9.6.1",
     "@fastify/swagger-ui": "^5.2.3",
+    "@kaven/shared": "workspace:*",
     "@prisma/client": "^5.22.0",
     "@sentry/node": "^10.32.1",
     "@sentry/profiling-node": "^10.32.1",
@@ -48,6 +48,7 @@
     "@types/bcrypt": "^6.0.0",
     "@types/bcryptjs": "^3.0.0",
     "@types/handlebars": "^4.1.0",
+    "@types/inquirer": "^9.0.9",
     "@types/ioredis": "^5.0.0",
     "@types/node": "^20.11.0",
     "@types/nodemailer": "^7.0.4",
