@@ -158,7 +158,7 @@ export class CoinGeckoService {
    * Busca cotação de criptomoeda em moeda fiat
    */
   private async getCryptoToFiatRate(
-    cryptoCurrency: any,
+    cryptoCurrency: { code: string; metadata: any; isCrypto: boolean },
     fiatCode: string,
     source: 'coingecko' | 'tradingview'
   ): Promise<number> {
@@ -173,7 +173,7 @@ export class CoinGeckoService {
    * Busca cotação via CoinGecko
    */
   private async getCryptoToFiatRateFromCoinGecko(
-    cryptoCurrency: any,
+    cryptoCurrency: { code: string; metadata: any },
     fiatCode: string
   ): Promise<number> {
     const metadata = cryptoCurrency.metadata as CurrencyMetadata | null;
@@ -218,7 +218,7 @@ export class CoinGeckoService {
    * Busca cotação via TradingView (fallback)
    */
   private async getCryptoToFiatRateFromTradingView(
-    cryptoCurrency: any,
+    cryptoCurrency: { code: string; metadata: any },
     fiatCode: string
   ): Promise<number> {
     const metadata = cryptoCurrency.metadata as CurrencyMetadata | null;
