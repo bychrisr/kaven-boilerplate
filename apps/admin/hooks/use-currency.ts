@@ -57,9 +57,23 @@ export function useCurrency(): CurrencyConfig {
   const defaultCurrency = currencies.find(c => c.code === defaultCurrencyCode);
   const symbol = defaultCurrency?.symbol || defaultCurrencyCode;
 
+  // DEBUG LOGS
+  console.log('🔍 [useCurrency] Settings currency:', settings?.currency);
+  console.log('🔍 [useCurrency] Default code:', defaultCurrencyCode);
+  console.log('🔍 [useCurrency] Currencies loaded:', currencies.length);
+  console.log('🔍 [useCurrency] Currency codes:', currencies.map(c => c.code));
+  console.log('🔍 [useCurrency] Found currency:', defaultCurrency ? {
+    code: defaultCurrency.code,
+    decimals: defaultCurrency.decimals,
+    iconType: defaultCurrency.iconType,
+    hasIconSvgPath: !!defaultCurrency.iconSvgPath,
+  } : null);
+
   const format = (value: number, currencyCode?: string) => {
     const code = currencyCode || defaultCurrencyCode;
     const currency = currencies.find(c => c.code === code);
+
+    console.log('💰 [useCurrency.format] Value:', value, 'Code:', code, 'Found:', !!currency);
 
     if (!currency) {
       return value.toFixed(2);
@@ -67,7 +81,9 @@ export function useCurrency(): CurrencyConfig {
 
     // Para sats, formatação especial (sem Intl.NumberFormat)
     if (code === 'SATS') {
-      return Math.round(value).toLocaleString(locale);
+      const result = Math.round(value).toLocaleString(locale);
+      console.log('⚡ [useCurrency.format] SATS result:', result);
+      return result;
     }
 
     return new Intl.NumberFormat(locale, {
@@ -79,7 +95,9 @@ export function useCurrency(): CurrencyConfig {
   };
 
   const getCurrency = (code: string): Currency | undefined => {
-    return currencies.find(c => c.code === code);
+    const found = currencies.find(c => c.code === code);
+    console.log('🔎 [useCurrency.getCurrency] Code:', code, 'Found:', !!found);
+    return found;
   };
 
   return {
