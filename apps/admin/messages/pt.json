@@ -403,7 +403,35 @@
     "integrations": {
       "title": "Integrações",
       "description": "Gerencie as integrações externas da sua plataforma.",
-      "comingSoon": "Integrações em breve..."
+      "comingSoon": "Integrações em breve...",
+      "emailIntegration": "Configuração de Email (SMTP)",
+      "smtpHost": "Servidor SMTP",
+      "smtpPort": "Porta SMTP",
+      "smtpSecure": "Conexão Segura (TLS/SSL)",
+      "smtpSecureDescription": "Ativar para conexões criptografadas",
+      "smtpUser": "Usuário SMTP",
+      "smtpPassword": "Senha SMTP",
+      "smtpPasswordDescription": "Será armazenada de forma criptografada",
+      "emailFrom": "Email Remetente",
+      "emailFromDescription": "Nome e email que aparecerão como remetente",
+      "testEmailConfiguration": "Testar Configuração",
+      "testing": "Testando...",
+      "testEmailHint": "Envia um email de teste para verificar a configuração",
+      "emailTestSuccess": "Email de teste enviado com sucesso!",
+      "emailTestFailed": "Falha ao enviar email de teste",
+      "emailTestError": "Erro ao testar configuração de email"
+    },
+    "timezone": {
+      "title": "Fuso Horário e Formatos",
+      "label": "Fuso Horário",
+      "placeholder": "Selecione o fuso horário",
+      "hint": "Suporta horário de verão automaticamente.",
+      "detected": "Detectado"
+    },
+    "formats": {
+      "title": "Formatos de Data e Hora",
+      "dateFormat": "Formato de Data",
+      "timeFormat": "Formato de Hora"
     }
   },
   "Settings": {
