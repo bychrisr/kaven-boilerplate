@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { CurrencyDisplay } from '@/components/ui/currency-display';
 
 export default function ProductsPage() {
   const { data: products, isLoading } = useProducts();
@@ -60,7 +61,7 @@ export default function ProductsPage() {
                   <TableCell className="font-medium">{product.name}</TableCell>
                   <TableCell><code className="text-xs bg-muted px-2 py-1 rounded">{product.code}</code></TableCell>
                   <TableCell>{product.type === 'ONE_TIME' ? 'Único' : product.type === 'CONSUMABLE' ? 'Consumível' : 'Add-on'}</TableCell>
-                  <TableCell>R$ {product.price.toFixed(2)}</TableCell>
+                  <TableCell><CurrencyDisplay value={Number(product.price)} /></TableCell>
                   <TableCell>{product.stock === -1 ? 'Ilimitado' : product.stock}</TableCell>
                   <TableCell><Badge variant={product.isActive ? 'default' : 'secondary'}>{product.isActive ? 'Ativo' : 'Inativo'}</Badge></TableCell>
                   <TableCell className="text-right">

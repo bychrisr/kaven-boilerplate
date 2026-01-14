@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/card';
 import { Loader2, Copy, CheckCircle2, XCircle, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import Image from 'next/image';
+import { CurrencyDisplay } from '@/components/ui/currency-display';
 
 interface PaymentModalProps {
   purchaseId: string;
@@ -150,7 +151,7 @@ export function PaymentModal({ purchaseId, onSuccess, onClose }: PaymentModalPro
         </div>
         
         <div className="bg-muted p-4 rounded-lg space-y-2 text-sm">
-          <p className="font-medium">Valor: R$ {purchase?.amount.toFixed(2)}</p>
+          <p className="font-medium">Valor: <CurrencyDisplay value={Number(purchase?.amount)} /></p>
           <p className="text-muted-foreground">
             Após o pagamento, seu plano será ativado automaticamente.
           </p>

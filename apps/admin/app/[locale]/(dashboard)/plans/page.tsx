@@ -25,6 +25,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { CurrencyDisplay } from '@/components/ui/currency-display';
 
 export default function PlansPage() {
   const { data: plans, isLoading } = usePlans();
@@ -113,7 +114,7 @@ export default function PlansPage() {
                   <TableCell>
                     {plan.prices.length > 0 ? (
                       <div className="text-sm">
-                        R$ {plan.prices[0].amount.toFixed(2)}
+                        <CurrencyDisplay value={Number(plan.prices[0].amount)} />
                         <span className="text-muted-foreground">
                           /{plan.prices[0].interval.toLowerCase()}
                         </span>
