@@ -16,7 +16,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/components/ui/radix-select';
 import { currencySchema, type CurrencyFormData } from '@/lib/validations/currency';
 import { toast } from 'sonner';
 import type { Currency } from '@/hooks/use-currency';
