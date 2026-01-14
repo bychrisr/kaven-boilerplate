@@ -76,8 +76,8 @@ export function CurrencyDisplay({
 
     return (
       <span className={`flex items-center gap-2 ${className}`}>
-        <CurrencyIcon currency={currency} size={32} variant={iconVariant} />
-        <span className="font-semibold">{displayValue}</span>
+        <CurrencyIcon currency={currency} size={34} variant={iconVariant} />
+        {displayValue}
       </span>
     );
   }
