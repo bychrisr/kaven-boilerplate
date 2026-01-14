@@ -10,6 +10,7 @@ export default {
   frontend: 'Frontend',
   features: 'Features',
   'crud-page-pattern': 'Padrão de Páginas CRUD',
+  'timezone-system': 'Sistema de Timezones Multi-idioma',
   guides: 'Guias',
   observability: 'Observabilidade & Monitoramento',
   'signup-flow': 'Fluxo de Cadastro',
@@ -17,3 +18,4 @@ export default {
   'implementation-logs': 'Logs de Implementação',
   'tenant-app-projects-tasks': 'Tenant App - Projects & Tasks',
 };
+
