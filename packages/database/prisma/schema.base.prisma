@@ -68,6 +68,45 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum IconType {
+  TEXT
+  SVG
+}
+
+// ===========================
+// CURRENCIES
+// ===========================
+
+model Currency {
+  id          String   @id @default(uuid())
+  code        String   @unique // BRL, USD, SATS
+  name        String   // Real Brasileiro, US Dollar, Bitcoin (sats)
+  symbol      String?  // R$, $, null (para sats que usa SVG)
+  
+  // Ícone (SVG ou texto)
+  iconType    IconType @default(TEXT) // TEXT ou SVG
+  iconSvgPath String?  @db.Text // Path do SVG (para sats)
+  
+  // Formatação
+  decimals    Int      @default(2) // BRL=2, USD=2, SATS=0
+  
+  // Configurações
+  isActive    Boolean  @default(true)
+  isCrypto    Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  
+  // Metadata (para configurações futuras)
+  metadata    Json?
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  @@index([code])
+  @@index([isActive])
+  @@index([isCrypto])
+  @@map("currencies")
+}
+
 // ===========================
 // PLATFORM CONFIGURATION
 // ===========================
@@ -132,6 +171,8 @@ model Tenant {
   UsageRecord   UsageRecord[]
   invites       TenantInvite[] @relation("TenantInvites")
   spaces        Space[]        @relation("TenantSpaces")
+  projects      Project[]
+  tasks         Task[]
 
   @@index([slug])
   @@index([domain])
@@ -191,6 +232,11 @@ model User {
   
   sentInvites               TenantInvite[] @relation("SentInvites")
   userSpaces                UserSpace[]    @relation("UserSpaces")
+
+  // Project & Task Relations (Demo Features)
+  createdProjects Project[] @relation("ProjectCreator")
+  createdTasks    Task[]    @relation("TaskCreator")
+  assignedTasks   Task[]    @relation("TaskAssignee")
 
   @@index([email])
   @@index([tenantId])

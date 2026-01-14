@@ -80,6 +80,72 @@ async function main() {
   });
   console.log('✅ Platform Config ensured.');
 
+  // 0.1 Currencies
+  const currencies = [
+    // Moedas Fiat
+    {
+      code: 'BRL',
+      name: 'Real Brasileiro',
+      symbol: 'R$',
+      iconType: 'TEXT' as const,
+      decimals: 2,
+      isActive: true,
+      isCrypto: false,
+      sortOrder: 1,
+    },
+    {
+      code: 'USD',
+      name: 'US Dollar',
+      symbol: '$',
+      iconType: 'TEXT' as const,
+      decimals: 2,
+      isActive: true,
+      isCrypto: false,
+      sortOrder: 2,
+    },
+    {
+      code: 'EUR',
+      name: 'Euro',
+      symbol: '€',
+      iconType: 'TEXT' as const,
+      decimals: 2,
+      isActive: true,
+      isCrypto: false,
+      sortOrder: 3,
+    },
+    {
+      code: 'GBP',
+      name: 'British Pound',
+      symbol: '£',
+      iconType: 'TEXT' as const,
+      decimals: 2,
+      isActive: true,
+      isCrypto: false,
+      sortOrder: 4,
+    },
+    // Criptomoedas
+    {
+      code: 'SATS',
+      name: 'Bitcoin (sats)',
+      symbol: null,
+      iconType: 'SVG' as const,
+      iconSvgPath: 'M12.75 3V5.5H11.25V3H12.75ZM17 8.75H7V7.25H17V8.75ZM17 12.7499H7V11.2499H17V12.7499ZM17 16.75H7V15.25H17V16.75ZM12.75 18.5V21H11.25V18.5H12.75Z',
+      decimals: 0,
+      isActive: true,
+      isCrypto: true,
+      sortOrder: 10,
+    },
+  ];
+
+  for (const currency of currencies) {
+    await prisma.currency.upsert({
+      where: { code: currency.code },
+      update: {},
+      create: currency,
+    });
+  }
+  console.log('✅ Currencies seeded (BRL, USD, EUR, GBP, SATS).');
+
   // 1. Admin Tenant
   const adminTenant = await prisma.tenant.upsert({
     where: { slug: 'admin' },
