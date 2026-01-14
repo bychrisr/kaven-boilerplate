@@ -125,31 +125,45 @@ async function main() {
     },
     // Criptomoedas
     {
-      code: 'SATS',
-      name: 'Bitcoin (sats)',
-      symbol: null,
-      iconType: 'SVG' as const,
-      iconSvgPath: 'M12.75 3V5.5H11.25V3H12.75ZM17 8.75H7V7.25H17V8.75ZM17 12.7499H7V11.2499H17V12.7499ZM17 16.75H7V15.25H17V16.75ZM12.75 18.5V21H11.25V18.5H12.75Z',
-      decimals: 0,
+      code: 'BTC',
+      name: 'Bitcoin',
+      symbol: '₿',
+      iconType: 'TEXT' as const,
+      decimals: 8, // BTC puro com 8 decimais
       isActive: true,
       isCrypto: true,
       sortOrder: 10,
       metadata: {
         coingeckoId: 'bitcoin',
         tradingviewSymbol: 'BTC',
+      },
+    },
+    {
+      code: 'SATS',
+      name: 'Bitcoin (sats)',
+      symbol: null,
+      iconType: 'SVG' as const,
+      iconSvgPath: 'M12.75 3V5.5H11.25V3H12.75ZM17 8.75H7V7.25H17V8.75ZM17 12.7499H7V11.2499H17V12.7499ZM17 16.75H7V15.25H17V16.75ZM12.75 18.5V21H11.25V18.5H12.75Z',
+      decimals: 0, // Sats sempre inteiro
+      isActive: true,
+      isCrypto: true,
+      sortOrder: 11,
+      metadata: {
+        coingeckoId: 'bitcoin',
+        tradingviewSymbol: 'BTC',
         satsPerBtc: 100000000, // 1 BTC = 100 milhões de sats
+        displayUnit: 'sats', // Indica que é unidade de display, não moeda base
       },
     },
     {
       code: 'USDT',
       name: 'Tether',
-      symbol: null,
-      iconType: 'SVG' as const,
-      iconSvgPath: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.08-2.26-.39-2.26-.82 0-.39.39-.66 1.03-.66.64 0 1.12.2 1.44.61.06.08.15.13.25.13h.83c.13 0 .24-.11.24-.24v-.02c-.03-.53-.32-1.03-.83-1.36v-.91c0-.13-.11-.24-.24-.24h-.83c-.13 0-.24.11-.24.24v.85c-.79.13-1.42.66-1.42 1.42 0 .91.66 1.48 2.25 1.56 1.77.08 2.14.48 2.14.87 0 .39-.39.79-1.29.79-.9 0-1.51-.27-1.77-.79-.05-.08-.13-.13-.22-.13h-.89c-.13 0-.24.11-.24.24v.03c.11.7.59 1.29 1.53 1.52v.9c0 .13.11.24.24.24h.83c.13 0 .24-.11.24-.24v-.88c.79-.13 1.42-.66 1.42-1.45 0-1.18-.95-1.54-2.37-1.62z',
+      symbol: '₮',
+      iconType: 'TEXT' as const,
       decimals: 2,
       isActive: true,
       isCrypto: true,
-      sortOrder: 11,
+      sortOrder: 12,
       metadata: {
         coingeckoId: 'tether',
         tradingviewSymbol: 'USDT',

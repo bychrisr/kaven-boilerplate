@@ -79,19 +79,66 @@ export function useCurrency(): CurrencyConfig {
       return value.toFixed(2);
     }
 
-    // Para sats, formatação especial (sem Intl.NumberFormat)
+    // Para SATS: converter de BTC para sats e formatar como inteiro
     if (code === 'SATS') {
-      const result = Math.round(value).toLocaleString(locale);
-      console.log('⚡ [useCurrency.format] SATS result:', result);
-      return result;
+      const metadata = currency.metadata as { satsPerBtc?: number } | null;
+      const satsPerBtc = metadata?.satsPerBtc || 100000000;
+      const satsValue = Math.round(value * satsPerBtc);
+      
+      // Respeitar numberFormat do usuário (1.000,00 ou 1,000.00)
+      const numberFormat = settings?.numberFormat || '1.000,00';
+      const useCommaDecimal = numberFormat === '1.000,00';
+      
+      const formatted = satsValue.toLocaleString(
+        useCommaDecimal ? 'pt-BR' : 'en-US',
+        { maximumFractionDigits: 0 }
+      );
+      
+      console.log('⚡ [useCurrency.format] SATS result:', formatted);
+      return formatted;
     }
 
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: code,
-      minimumFractionDigits: currency.decimals,
-      maximumFractionDigits: currency.decimals,
-    }).format(value);
+    // Para criptomoedas que não são fiat-compatíveis (USDT, etc)
+    if (currency.isCrypto && code !== 'BTC') {
+      const numberFormat = settings?.numberFormat || '1.000,00';
+      const useCommaDecimal = numberFormat === '1.000,00';
+      
+      const formatted = value.toLocaleString(
+        useCommaDecimal ? 'pt-BR' : 'en-US',
+        {
+          minimumFractionDigits: currency.decimals,
+          maximumFractionDigits: currency.decimals,
+        }
+      );
+      
+      // Adicionar símbolo manualmente
+      return `${currency.symbol || code} ${formatted}`;
+    }
+
+    // Para moedas fiat e BTC (compatíveis com Intl.NumberFormat)
+    try {
+      return new Intl.NumberFormat(locale, {
+        style: 'currency',
+        currency: code,
+        minimumFractionDigits: currency.decimals,
+        maximumFractionDigits: currency.decimals,
+      }).format(value);
+    } catch {
+      // Fallback se Intl.NumberFormat falhar
+      console.warn(`[useCurrency] Intl.NumberFormat failed for ${code}, using manual format`);
+      const numberFormat = settings?.numberFormat || '1.000,00';
+      const useCommaDecimal = numberFormat === '1.000,00';
+      
+      const formatted = value.toLocaleString(
+        useCommaDecimal ? 'pt-BR' : 'en-US',
+        {
+          minimumFractionDigits: currency.decimals,
+          maximumFractionDigits: currency.decimals,
+        }
+      );
+      
+      return `${currency.symbol || code} ${formatted}`;
+    }
   };
 
   const getCurrency = (code: string): Currency | undefined => {
