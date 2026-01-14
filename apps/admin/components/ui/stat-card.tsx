@@ -35,7 +35,7 @@ import { InfoTooltip } from './info-tooltip';
 
 interface StatCardProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof statCardVariants> {
   title: string;
-  value: string | number;
+  value: React.ReactNode; // Aceita ReactNode para permitir CurrencyDisplay
   icon?: LucideIcon;
   trend?: number;
   trendLabel?: string;

@@ -19,6 +19,7 @@ import {
   Database,
   Settings,
   Book,
+  Coins,
   LucideIcon
 } from 'lucide-react';
 
@@ -89,7 +90,8 @@ export const SPACES: Record<string, SpaceConfig> = {
           { icon: CreditCard, label: 'Plans', href: '/plans' },
           { icon: ShoppingCart, label: 'Products', href: '/products' },
           { icon: Target, label: 'Features', href: '/features' },
-          { icon: Receipt, label: 'Subscriptions', href: '/subscriptions' }
+          { icon: Receipt, label: 'Subscriptions', href: '/subscriptions' },
+          { icon: Coins, label: 'Currencies', href: '/currencies' }
         ]
       },
       {

@@ -10,6 +10,7 @@ import { useUsers } from '@/hooks/use-users';
 import { useDashboardSummary, useDashboardCharts } from '@/hooks/use-dashboard';
 import { DashboardSkeleton } from '@/components/skeletons/dashboard-skeleton';
 import { StatCard } from '@/components/ui/stat-card';
+import { CurrencyDisplay } from '@/components/ui/currency-display';
 import { Users, DollarSign, FileText, Lock } from 'lucide-react';
 import {
   BarChart,
@@ -203,7 +204,7 @@ export default function DashboardPage() {
                 {showCard('revenue') && (
                     <StatCard
                         title={t('cards.totalRevenue')}
-                        value={formatCurrency(metrics.revenue.value)}
+                        value={<CurrencyDisplay value={metrics.revenue.value} />}
                         icon={DollarSign}
                         trend={metrics.revenue.trend}
                         subtitle={t('metrics.last7Days')}
