@@ -4,14 +4,15 @@ import { currencySchema, validateCurrencyData } from '@/lib/validations/currency
 
 /**
  * GET /api/currencies
- * Lista todas as moedas ativas
+ * Lista todas as moedas ativas (ou todas se includeInactive=true)
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const includeInactive = searchParams.get('includeInactive') === 'true';
+
     const currencies = await prisma.currency.findMany({
-      where: {
-        isActive: true,
-      },
+      where: includeInactive ? {} : { isActive: true },
       orderBy: {
         sortOrder: 'asc',
       },
