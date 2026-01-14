@@ -281,7 +281,7 @@ export function PlanForm({ onSubmit, defaultValues, isLoading }: PlanFormProps) 
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Valor (R$) *</Label>
+                  <Label>Valor *</Label>
                   <Input
                     type="number"
                     step="0.01"

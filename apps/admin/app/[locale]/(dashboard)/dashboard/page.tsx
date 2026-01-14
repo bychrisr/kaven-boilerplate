@@ -4,6 +4,7 @@
 import { useSpaces } from '@/hooks/use-spaces';
 import { SPACES } from '@/config/spaces';
 import { useTranslations } from 'next-intl';
+import { useCurrency } from '@/hooks/use-currency';
 
 import { useUsers } from '@/hooks/use-users';
 import { useDashboardSummary, useDashboardCharts } from '@/hooks/use-dashboard';
@@ -39,13 +40,15 @@ const getRoleBadgeClasses = (role: string) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label, formatCurrency, locale }: any) => {
   if (active && payload && payload.length) {
     const value = payload[0].value;
     const name = payload[0].name;
     // Format value based on context or type (simplified here)
     const formattedValue = typeof value === 'number' 
-        ? value.toLocaleString('pt-BR', { style: name === 'revenue' ? 'currency' : 'decimal', currency: 'BRL' })
+        ? name === 'revenue' 
+          ? formatCurrency(value)
+          : value.toLocaleString(locale, { style: 'decimal' })
         : value;
 
     return (
@@ -75,6 +78,7 @@ const normalizeMetric = (metric: any) => {
 export default function DashboardPage() {
   const t = useTranslations('Dashboard');
   const tCommon = useTranslations('Common');
+  const { format: formatCurrency, locale } = useCurrency();
   
   const { data: usersData } = useUsers({ page: 1, limit: 5 });
   const { data: summary, isLoading: isLoadingSummary } = useDashboardSummary();
@@ -199,7 +203,7 @@ export default function DashboardPage() {
                 {showCard('revenue') && (
                     <StatCard
                         title={t('cards.totalRevenue')}
-                        value={metrics.revenue.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                        value={formatCurrency(metrics.revenue.value)}
                         icon={DollarSign}
                         trend={metrics.revenue.trend}
                         subtitle={t('metrics.last7Days')}
@@ -286,7 +290,7 @@ export default function DashboardPage() {
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#919EAB33" />
                             <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#919EAB'}} dy={10} />
                             <YAxis axisLine={false} tickLine={false} tick={{fill: '#919EAB'}} />
-                            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
+                            <Tooltip content={<CustomTooltip formatCurrency={formatCurrency} locale={locale} />} cursor={{ fill: 'transparent' }} />
                             <Bar dataKey="users" stackId="a" fill="#00A76F" radius={[0,0,0,0]} />
                             <Bar dataKey="revenue" stackId="a" fill="#FFAB00" radius={[4,4,0,0]} /> 
                         </BarChart>

@@ -2,6 +2,7 @@ import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { CurrencyDisplay } from '@/components/ui/currency-display';
 import type { Plan } from '@/hooks/use-plans';
 
 interface PlanCardProps {
@@ -45,7 +46,7 @@ export function PlanCard({ plan, interval, isCurrent, isPopular, onSelect }: Pla
         <div className="space-y-1">
           <div className="flex items-baseline gap-2">
             <span className="text-4xl font-bold">
-              R$ {amount.toFixed(2)}
+              <CurrencyDisplay value={amount} />
             </span>
             <span className="text-muted-foreground">
               /{interval === 'MONTHLY' ? 'mês' : 'ano'}
@@ -53,7 +54,7 @@ export function PlanCard({ plan, interval, isCurrent, isPopular, onSelect }: Pla
           </div>
           {hasDiscount && (
             <p className="text-sm text-muted-foreground line-through">
-              R$ {originalAmount.toFixed(2)}
+              <CurrencyDisplay value={originalAmount!} />
             </p>
           )}
         </div>
