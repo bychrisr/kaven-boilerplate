@@ -1,18 +1,39 @@
+```typescript
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import React, { use } from 'react';
+import { notFound } from 'next/navigation';
 import { CurrencyForm } from '@/components/currencies/currency-form';
-import type { Currency } from '@/hooks/use-currency';
 
-export default function EditCurrencyPage({ params }: { params: { id: string } }) {
-  const { data: currency, isLoading } = useQuery<Currency>({
-    queryKey: ['currency', params.id],
-    queryFn: async () => {
-      const response = await fetch(`/api/currencies/${params.id}`);
-      if (!response.ok) throw new Error('Failed to fetch currency');
-      return response.json();
-    },
-  });
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default function EditCurrencyPage({ params }: PageProps) {
+  const { id } = use(params);
+
+  // Fetch currency data
+  const [currency, setCurrency] = React.useState(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    async function fetchCurrency() {
+      try {
+        const response = await fetch(`/api/currencies/${id}`);
+        if (!response.ok) {
+          notFound();
+        }
+        const data = await response.json();
+        setCurrency(data);
+      } catch (error) {
+        console.error('Error fetching currency:', error);
+        notFound();
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchCurrency();
+  }, [id]);
 
   if (isLoading) {
     return (
