@@ -208,7 +208,7 @@ export function SaasSettingsGeneral() {
                 name="dateFormat"
                 control={control}
                 render={({ field }) => (
-                  <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="space-y-2">
+                  <RadioGroup onValueChange={field.onChange} value={field.value} className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="Y-m-d" id="date-1" />
                       <Label htmlFor="date-1" className="font-normal cursor-pointer text-sm">
@@ -248,7 +248,7 @@ export function SaasSettingsGeneral() {
                 name="timeFormat"
                 control={control}
                 render={({ field }) => (
-                  <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="space-y-2">
+                  <RadioGroup onValueChange={field.onChange} value={field.value} className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="H:i" id="time-1" />
                       <Label htmlFor="time-1" className="font-normal cursor-pointer text-sm">

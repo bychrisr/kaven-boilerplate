@@ -97,6 +97,17 @@ export default function PlatformSettingsPage() {
             faviconUrl: data.faviconUrl || '',
             ogImageUrl: data.ogImageUrl || '',
             twitterHandle: data.twitterHandle || '',
+            // Timezone and formats
+            timezone: data.timezone || 'UTC',
+            dateFormat: data.dateFormat || 'Y-m-d',
+            timeFormat: data.timeFormat || 'g:i A',
+            // SMTP
+            smtpHost: data.smtpHost || 'localhost',
+            smtpPort: data.smtpPort || 1025,
+            smtpSecure: data.smtpSecure || false,
+            smtpUser: data.smtpUser || '',
+            smtpPassword: data.smtpPassword || '',
+            emailFrom: data.emailFrom || 'Kaven <noreply@kaven.com>',
         });
       } catch (error) {
         console.error(error);
