@@ -57,29 +57,63 @@ export function useCurrency(): CurrencyConfig {
   const defaultCurrency = currencies.find(c => c.code === defaultCurrencyCode);
   const symbol = defaultCurrency?.symbol || defaultCurrencyCode;
 
+  // DEBUG: Log completo
+  console.log('[useCurrency] DEBUG:', {
+    settingsCurrency: settings?.currency,
+    defaultCurrencyCode,
+    defaultCurrency: defaultCurrency ? {
+      code: defaultCurrency.code,
+      name: defaultCurrency.name,
+      decimals: defaultCurrency.decimals,
+      iconType: defaultCurrency.iconType,
+      hasIconSvgPath: !!defaultCurrency.iconSvgPath,
+    } : null,
+    totalCurrencies: currencies.length,
+    currencyCodes: currencies.map(c => c.code),
+  });
+
   const format = (value: number, currencyCode?: string) => {
     const code = currencyCode || defaultCurrencyCode;
     const currency = currencies.find(c => c.code === code);
 
+    console.log('[useCurrency.format] DEBUG:', {
+      value,
+      requestedCode: currencyCode,
+      usedCode: code,
+      foundCurrency: currency ? {
+        code: currency.code,
+        decimals: currency.decimals,
+        iconType: currency.iconType,
+      } : null,
+    });
+
     if (!currency) {
+      console.warn('[useCurrency.format] Currency not found, using fallback');
       return value.toFixed(2);
     }
 
     // Para sats, formatação especial (sem Intl.NumberFormat)
     if (code === 'SATS') {
-      return Math.round(value).toLocaleString(locale);
+      const formatted = Math.round(value).toLocaleString(locale);
+      console.log('[useCurrency.format] SATS formatted:', formatted);
+      return formatted;
     }
 
-    return new Intl.NumberFormat(locale, {
+    const formatted = new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: code,
       minimumFractionDigits: currency.decimals,
       maximumFractionDigits: currency.decimals,
     }).format(value);
+
+    console.log('[useCurrency.format] Formatted:', formatted);
+    return formatted;
   };
 
   const getCurrency = (code: string): Currency | undefined => {
-    return currencies.find(c => c.code === code);
+    const found = currencies.find(c => c.code === code);
+    console.log('[useCurrency.getCurrency] DEBUG:', { code, found: !!found });
+    return found;
   };
 
   return {

@@ -25,6 +25,17 @@ export function CurrencyIcon({
   className = '',
   variant = 'default',
 }: CurrencyIconProps) {
+  // Debug: log para verificar dados
+  if (typeof window !== 'undefined') {
+    console.log('[CurrencyIcon] Debug:', {
+      hasCurrency: !!currency,
+      currencyCode: currency?.code || currencyCode,
+      iconType: currency?.iconType,
+      hasIconSvgPath: !!currency?.iconSvgPath,
+      iconSvgPath: currency?.iconSvgPath?.substring(0, 50) + '...',
+    });
+  }
+
   if (!currency && !currencyCode) return null;
 
   // Se for ícone de texto (símbolo)
