@@ -49,14 +49,7 @@ export function CurrencyDisplay({
     iconVariant = variant;
   }
 
-  // Formatação do número baseado em decimals
-  const formattedValue = format(value, code);
-
-  if (!showIcon) {
-    return <span className={className}>{formattedValue}</span>;
-  }
-
-  // Para sats, usar formatação especial (milhões)
+  // IMPORTANTE: Para sats, formatar ANTES de chamar format() para evitar decimais
   if (code === 'SATS') {
     let displayValue: string;
     if (value === 0) {
@@ -67,6 +60,10 @@ export function CurrencyDisplay({
       displayValue = `${(value / 1000000).toFixed(1)}M`;
     }
 
+    if (!showIcon) {
+      return <span className={className}>{displayValue}</span>;
+    }
+
     return (
       <span className={`flex items-center gap-1 ${className}`}>
         {displayValue}
@@ -75,7 +72,14 @@ export function CurrencyDisplay({
     );
   }
 
-  // Para moedas com ícone SVG, exibir valor + ícone
+  // Para outras moedas, usar format() normalmente
+  const formattedValue = format(value, code);
+
+  if (!showIcon) {
+    return <span className={className}>{formattedValue}</span>;
+  }
+
+  // Para moedas com ícone SVG (não-sats), exibir valor + ícone
   if (currency.iconType === 'SVG') {
     return (
       <span className={`flex items-center gap-1 ${className}`}>
