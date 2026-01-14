@@ -77,17 +77,30 @@ model PlatformConfig {
   companyName  String  @default("Kaven SaaS")
   description  String?
   primaryColor String  @default("#00A76F")
-  logoUrl      String? // URL do logo principal
-  faviconUrl   String? // URL do favicon
+  logoUrl      String? // URL do logo principal (sidebar, auth, emails)
+  faviconUrl   String? // URL do favicon (ícone do navegador)
 
   // Configurações Regionais
   language     String @default("pt-BR")
   currency     String @default("BRL")
   numberFormat String @default("1.000,00") // 1.000,00 or 1,000.00
   
+  // Configurações de Timezone e Formatos
+  timezone     String @default("UTC") // IANA timezone (GMT+0)
+  dateFormat   String @default("d/m/Y") // d/m/Y, m/d/Y, Y-m-d, j \d\e F \d\e Y
+  timeFormat   String @default("H:i")   // H:i (24h) ou g:i A (12h)
+  
   // SEO & Social
   twitterHandle String?
   ogImageUrl    String?
+
+  // Configurações de Email/SMTP
+  smtpHost     String? @default("localhost")
+  smtpPort     Int?    @default(1025)
+  smtpSecure   Boolean @default(false)
+  smtpUser     String?
+  smtpPassword String? // Armazenado criptografado
+  emailFrom    String? @default("Kaven <noreply@kaven.com>")
 
   updatedAt DateTime @updatedAt
 }
