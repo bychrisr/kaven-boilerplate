@@ -136,6 +136,7 @@ async function main() {
       sortOrder: 10,
       metadata: {
         coingeckoId: 'bitcoin',
+        tradingviewSymbol: 'BTC',
         satsPerBtc: 100000000, // 1 BTC = 100 milhões de sats
       },
     },
@@ -151,6 +152,7 @@ async function main() {
       sortOrder: 11,
       metadata: {
         coingeckoId: 'tether',
+        tradingviewSymbol: 'USDT',
       },
     },
   ];
