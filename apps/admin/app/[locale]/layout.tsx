@@ -1,13 +1,26 @@
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
-import '@fontsource/inter';
-import '@fontsource/plus-jakarta-sans/600.css';
-import '@fontsource/plus-jakarta-sans/700.css';
-import '@fontsource/plus-jakarta-sans/800.css';
-import '@fontsource/source-code-pro/400.css';
-import '@fontsource/source-code-pro/500.css';
+import { Inter, Plus_Jakarta_Sans, Source_Code_Pro } from 'next/font/google';
 import '../globals.css';
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-plus-jakarta',
+});
+
+const sourceCodePro = Source_Code_Pro({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-source-code',
+});
 
 export const metadata: Metadata = {
   title: 'Kaven Admin',
@@ -90,7 +103,7 @@ export default async function RootLayout({
         <style dangerouslySetInnerHTML={{ __html: themeStyles }} />
         <link rel="icon" href={faviconUrl} />
       </head>
-      <body suppressHydrationWarning>
+      <body suppressHydrationWarning className={`${inter.variable} ${plusJakarta.variable} ${sourceCodePro.variable}`}>
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <TooltipProvider delayDuration={200} skipDelayDuration={300}>
