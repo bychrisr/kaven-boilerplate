@@ -103,13 +103,53 @@ export function SaasSettingsBranding() {
                     <div className="pt-4 border-t border-border">
                         <Label className="text-foreground font-medium mb-3 block">{t('branding.faviconAndLogo')}</Label>
                         
-                        <div className="grid grid-cols-1 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Logo */}
+                            <Controller
+                                name="logoUrl"
+                                control={control}
+                                render={({ field }) => (
+                                    <div className="space-y-4">
+                                        <div className="flex items-start gap-4 border p-4 rounded-lg bg-card">
+                                            <div className="space-y-1">
+                                                <Label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">{t('branding.activeLogo')}</Label>
+                                                <div className="mt-2 h-16 w-16 rounded-xl border border-dashed border-border flex items-center justify-center bg-background/50 overflow-hidden shadow-sm">
+                                                    {field.value ? (
+                                                        // eslint-disable-next-line @next/next/no-img-element
+                                                        <img 
+                                                            src={field.value} 
+                                                            alt="Active Logo" 
+                                                            className="max-w-full max-h-full object-contain"
+                                                        />
+                                                    ) : (
+                                                        <span className="text-xs text-muted-foreground">{t('help.noFile')}</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="flex-1 space-y-3">
+                                                <TextField
+                                                    {...field}
+                                                    label={t('branding.logoUrl')}
+                                                    placeholder={t('placeholders.url')}
+                                                    fullWidth
+                                                />
+                                                <p className="text-xs text-muted-foreground">
+                                                    {t('branding.logoRecommended')}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            />
+
+                            {/* Favicon */}
                             <Controller
                                 name="faviconUrl"
                                 control={control}
                                 render={({ field }) => (
                                     <div className="space-y-4">
-                                        <div className="flex items-start gap-6 border p-4 rounded-lg bg-card">
+                                        <div className="flex items-start gap-4 border p-4 rounded-lg bg-card">
                                             <div className="space-y-1">
                                                 <Label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">{t('branding.activeFavicon')}</Label>
                                                 <div className="mt-2 h-16 w-16 rounded-xl border border-dashed border-border flex items-center justify-center bg-background/50 overflow-hidden shadow-sm">
