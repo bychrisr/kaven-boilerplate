@@ -25,6 +25,16 @@ const formSchema = z.object({
   faviconUrl: z.string().optional().default(''),
   ogImageUrl: z.string().optional().default(''),
   twitterHandle: z.string().optional().default(''),
+  // Novos campos
+  timezone: z.string().optional().default('UTC'),
+  dateFormat: z.string().optional().default('d/m/Y'),
+  timeFormat: z.string().optional().default('H:i'),
+  smtpHost: z.string().optional().default('localhost'),
+  smtpPort: z.number().optional().default(1025),
+  smtpSecure: z.boolean().optional().default(false),
+  smtpUser: z.string().optional().default(''),
+  smtpPassword: z.string().optional().default(''),
+  emailFrom: z.string().optional().default('Kaven <noreply@kaven.com>'),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -50,6 +60,16 @@ export default function PlatformSettingsPage() {
       faviconUrl: '',
       ogImageUrl: '',
       twitterHandle: '',
+      // Novos campos
+      timezone: 'UTC',
+      dateFormat: 'd/m/Y',
+      timeFormat: 'H:i',
+      smtpHost: 'localhost',
+      smtpPort: 1025,
+      smtpSecure: false,
+      smtpUser: '',
+      smtpPassword: '',
+      emailFrom: 'Kaven <noreply@kaven.com>',
     }
   });
 
