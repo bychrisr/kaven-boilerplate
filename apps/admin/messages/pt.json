@@ -50,7 +50,8 @@
       "errorTitle": "Algo deu errado! (500)",
       "errorDescription": "Encontramos um erro inesperado ao processar sua solicitação. Nossos engenheiros já foram notificados.",
       "errorRetry": "Tentar novamente"
-    }
+    },
+    "saved": "Salvo com sucesso"
   },
   "Dashboard": {
     "title": "Dashboard {name}",

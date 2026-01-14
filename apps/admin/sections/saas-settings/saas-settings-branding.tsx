@@ -147,6 +147,7 @@ export function SaasSettingsBranding() {
                                                 <div className="flex gap-2 w-full items-end">
                                                     <TextField
                                                         {...field}
+                                                        value={field.value ?? ''}
                                                         label={t('branding.logoUrl')}
                                                         placeholder={t('placeholders.url')}
                                                         fullWidth
@@ -205,6 +206,7 @@ export function SaasSettingsBranding() {
                                                 <div className="flex gap-2 w-full items-end">
                                                     <TextField
                                                         {...field}
+                                                        value={field.value ?? ''}
                                                         label={t('branding.faviconUrl')}
                                                         placeholder={t('placeholders.url')}
                                                         fullWidth

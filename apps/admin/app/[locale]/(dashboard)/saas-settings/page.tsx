@@ -142,7 +142,7 @@ export default function PlatformSettingsPage() {
       // Invalidate cache to trigger live reload
       queryClient.invalidateQueries({ queryKey: ['platform-settings'] });
       
-      toast.success(tCommon('success.saved') + ' success');
+      toast.success(tCommon('saved'));
       
       // Refresh server components to apply changes without full reload
       router.refresh();
