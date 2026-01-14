@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
+import { usePlatformSettings } from '@/hooks/use-platform-settings';
 
 export function Logo({
   size = 'medium',
@@ -10,24 +10,9 @@ export function Logo({
   size?: 'small' | 'medium' | 'large';
   className?: string;
 }) {
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
-  const [companyName, setCompanyName] = useState('Kaven');
-
-  useEffect(() => {
-    async function loadLogo() {
-      try {
-        const res = await fetch('/api/settings/platform');
-        if (res.ok) {
-          const data = await res.json();
-          setLogoUrl(data.logoUrl || null);
-          setCompanyName(data.companyName || 'Kaven');
-        }
-      } catch (error) {
-        console.error('Failed to load logo:', error);
-      }
-    }
-    loadLogo();
-  }, []);
+  const { data } = usePlatformSettings();
+  const logoUrl = data?.logoUrl || null;
+  const companyName = data?.companyName || 'Kaven';
 
   const sizes = {
     small: 'h-6',

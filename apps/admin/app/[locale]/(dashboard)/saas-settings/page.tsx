@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -9,6 +8,8 @@ import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 
 import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/routing';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { SaasSettingsView } from '@/sections/saas-settings/view/saas-settings-view';
 
@@ -44,6 +45,7 @@ export default function PlatformSettingsPage() {
   const t = useTranslations('PlatformSettings');
   const tCommon = useTranslations('Common');
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -136,7 +138,11 @@ export default function PlatformSettingsPage() {
       
       const updated = await res.json();
       reset(updated); // Update form with server response
-      toast.success(t('actions.save') + ' success');
+      
+      // Invalidate cache to trigger live reload
+      queryClient.invalidateQueries({ queryKey: ['platform-settings'] });
+      
+      toast.success(tCommon('success.saved') + ' success');
       
       // Refresh server components to apply changes without full reload
       router.refresh();

@@ -68,6 +68,7 @@ async function main() {
       companyName: SEED_CONFIG.companyName,
       description: 'The Ultimate SaaS Boilerplate',
       primaryColor: '#00A76F',
+      logoUrl: '/logo.svg',
       faviconUrl: '/favicon.ico',
       language: 'pt-BR',
       currency: 'BRL',
