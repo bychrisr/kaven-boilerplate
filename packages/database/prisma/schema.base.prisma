@@ -73,6 +73,11 @@ enum IconType {
   SVG
 }
 
+enum IconColorMode {
+  MONOCHROME  // Respeita theme (currentColor)
+  COLORED     // SVG colorido original
+}
+
 // ===========================
 // CURRENCIES
 // ===========================
@@ -84,8 +89,9 @@ model Currency {
   symbol      String?  // R$, $, null (para sats que usa SVG)
   
   // Ícone (SVG ou texto)
-  iconType    IconType @default(TEXT) // TEXT ou SVG
-  iconSvgPath String?  @db.Text // Path do SVG (para sats)
+  iconType      IconType      @default(TEXT) // TEXT ou SVG
+  iconColorMode IconColorMode @default(MONOCHROME) // MONOCHROME ou COLORED
+  iconSvgPath   String?       @db.Text // Path do SVG (para sats)
   
   // Formatação
   decimals    Int      @default(2) // BRL=2, USD=2, SATS=0
