@@ -10,6 +10,7 @@ export default {
   frontend: 'Frontend',
   features: 'Features',
   'crud-page-pattern': 'Padrão de Páginas CRUD',
+  'customization-live-reload': 'Customização & Live Reload',
   'timezone-system': 'Sistema de Timezones Multi-idioma',
   guides: 'Guias',
   observability: 'Observabilidade & Monitoramento',
