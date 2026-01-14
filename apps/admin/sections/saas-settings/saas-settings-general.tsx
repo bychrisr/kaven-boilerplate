@@ -10,10 +10,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGr
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Building2, Clock, Calendar, Globe } from 'lucide-react';
 import { useTimezoneDetection } from '@/hooks/use-timezone-detection';
+import { useCurrency } from '@/hooks/use-currency';
+import { CurrencyIcon } from '@/components/ui/currency-icon';
 
 export function SaasSettingsGeneral() {
   const t = useTranslations('PlatformSettings');
   const { control } = useFormContext();
+  const { currencies } = useCurrency();
 
   // Hook de auto-detecção de timezone com suporte multi-idioma
   const { grouped, isLoading } = useTimezoneDetection('timezone');
@@ -125,9 +128,18 @@ export function SaasSettingsGeneral() {
                                 <SelectValue placeholder={t('general.currency')} />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="BRL">R$ Real (BRL)</SelectItem>
-                                <SelectItem value="USD">$ Dollar (USD)</SelectItem>
-                                <SelectItem value="BTC">₿ Bitcoin (Sats)</SelectItem>
+                                {currencies.map((currency) => (
+                                    <SelectItem key={currency.code} value={currency.code}>
+                                        <div className="flex items-center gap-2">
+                                            {currency.iconType === 'SVG' ? (
+                                                <CurrencyIcon currency={currency} size={16} />
+                                            ) : (
+                                                <span>{currency.symbol}</span>
+                                            )}
+                                            <span>{currency.name} ({currency.code})</span>
+                                        </div>
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
                     )}
