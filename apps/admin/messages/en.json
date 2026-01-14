@@ -50,7 +50,8 @@
       "errorTitle": "Something went wrong! (500)",
       "errorDescription": "We encountered an unexpected error while processing your request. Our engineers have been notified.",
       "errorRetry": "Try again"
-    }
+    },
+    "saved": "Saved successfully"
   },
   "Dashboard": {
     "title": "{name} Dashboard",
@@ -467,6 +468,9 @@
       "presets": "Color Presets",
       "customColor": "Custom Color",
       "faviconAndLogo": "Favicon & Logo",
+      "activeLogo": "Active Logo",
+      "logoUrl": "Logo URL",
+      "logoRecommended": "Recommended: PNG or SVG with transparent background.",
       "activeFavicon": "Active Favicon",
       "faviconUrl": "Favicon URL",
       "upload": "Upload",
@@ -483,6 +487,64 @@
       "discard": "Discard",
       "save": "Save Changes",
       "saving": "Saving..."
+    },
+    "tabs": {
+      "general": "General",
+      "branding": "Branding",
+      "seo": "SEO",
+      "integrations": "Integrations"
+    },
+    "validation": {
+      "companyNameRequired": "Company name is required",
+      "seoLimit": "SEO limit exceeded (max 160 characters)",
+      "invalidColor": "Invalid color code",
+      "fileTooLarge": "File too large. Max {size}MB.",
+      "fileTooLargeOg": "File too large. Max 2MB for OG images."
+    },
+    "placeholders": {
+      "companyName": "Ex: Kaven SaaS",
+      "seoDescription": "Platform description for search engines...",
+      "color": "#000000",
+      "url": "https://..."
+    },
+    "help": {
+      "colorDescription": "Select a preset or choose a custom color. This will be applied globally.",
+      "ogRecommended": "Recommended: 1200x630px (ratio 1.91:1). Max 2MB.",
+      "ogDefault": "1200x630\nRecommended",
+      "noFile": "None"
+    },
+    "integrations": {
+      "title": "Integrations",
+      "description": "Manage external integrations for your platform.",
+      "comingSoon": "Integrations coming soon...",
+      "emailIntegration": "Email Configuration (SMTP)",
+      "smtpHost": "SMTP Host",
+      "smtpPort": "SMTP Port",
+      "smtpSecure": "Secure Connection (TLS/SSL)",
+      "smtpSecureDescription": "Enable for encrypted connections",
+      "smtpUser": "SMTP User",
+      "smtpPassword": "SMTP Password",
+      "smtpPasswordDescription": "Stored securely encrypted",
+      "emailFrom": "Sender Email",
+      "emailFromDescription": "Name and email that will appear as sender",
+      "testEmailConfiguration": "Test Configuration",
+      "testing": "Testing...",
+      "testEmailHint": "Sends a test email to verify configuration",
+      "emailTestSuccess": "Test email sent successfully!",
+      "emailTestFailed": "Failed to send test email",
+      "emailTestError": "Error testing email configuration"
+    },
+    "timezone": {
+      "title": "Timezone and Formats",
+      "label": "Timezone",
+      "placeholder": "Select timezone",
+      "hint": "Supports daylight saving time automatically.",
+      "detected": "Detected"
+    },
+    "formats": {
+      "title": "Date and Time Formats",
+      "dateFormat": "Date Format",
+      "timeFormat": "Time Format"
     }
   },
   "Settings": {
