@@ -3,16 +3,18 @@ import { prisma } from '@/lib/prisma';
 import { currencySchema, validateCurrencyData } from '@/lib/validations/currency';
 
 /**
- * GET /api/currencies/[id]
- * Busca uma moeda por ID
+ * GET /api/currencies/[code]
+ * Busca uma moeda por código (ex: BRL, USD, SATS)
  */
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ code: string }> }
 ) {
   try {
+    const { code } = await params;
+    
     const currency = await prisma.currency.findUnique({
-      where: { id: params.id },
+      where: { code: code.toUpperCase() },
     });
 
     if (!currency) {
@@ -33,15 +35,16 @@ export async function GET(
 }
 
 /**
- * PUT /api/currencies/[id]
+ * PUT /api/currencies/[code]
  * Atualiza uma moeda
  * Requer: SUPER_ADMIN
  */
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ code: string }> }
 ) {
   try {
+    const { code } = await params;
     const body = await request.json();
 
     // Validar com Zod
@@ -66,7 +69,7 @@ export async function PUT(
 
     // Verificar se currency existe
     const existing = await prisma.currency.findUnique({
-      where: { id: params.id },
+      where: { code: code.toUpperCase() },
     });
 
     if (!existing) {
@@ -92,7 +95,7 @@ export async function PUT(
 
     // Atualizar currency
     const currency = await prisma.currency.update({
-      where: { id: params.id },
+      where: { code: code.toUpperCase() },
       data: {
         code: data.code,
         name: data.name,
@@ -118,18 +121,20 @@ export async function PUT(
 }
 
 /**
- * DELETE /api/currencies/[id]
+ * DELETE /api/currencies/[code]
  * Desativa uma moeda (soft delete)
  * Requer: SUPER_ADMIN
  */
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ code: string }> }
 ) {
   try {
+    const { code } = await params;
+    
     // Verificar se currency existe
     const existing = await prisma.currency.findUnique({
-      where: { id: params.id },
+      where: { code: code.toUpperCase() },
     });
 
     if (!existing) {
@@ -141,7 +146,7 @@ export async function DELETE(
 
     // Soft delete (desativar)
     await prisma.currency.update({
-      where: { id: params.id },
+      where: { code: code.toUpperCase() },
       data: { isActive: false },
     });
 

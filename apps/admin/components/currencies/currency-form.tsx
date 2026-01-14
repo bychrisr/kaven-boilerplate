@@ -68,7 +68,7 @@ export function CurrencyForm({ currency, mode }: CurrencyFormProps) {
       const url =
         mode === 'create'
           ? '/api/currencies'
-          : `/api/currencies/${currency?.id}`;
+          : `/api/currencies/${currency?.code}`;
       const method = mode === 'create' ? 'POST' : 'PUT';
 
       const response = await fetch(url, {

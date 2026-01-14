@@ -35,8 +35,8 @@ export default function CurrenciesPage() {
 
   // Mutation para deletar currency
   const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const response = await fetch(`/api/currencies/${id}`, {
+    mutationFn: async (code: string) => {
+      const response = await fetch(`/api/currencies/${code}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete currency');
@@ -53,10 +53,10 @@ export default function CurrenciesPage() {
     },
   });
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (code: string) => {
     if (confirm('Tem certeza que deseja desativar esta moeda?')) {
-      setDeletingId(id);
-      deleteMutation.mutate(id);
+      setDeletingId(code);
+      deleteMutation.mutate(code);
     }
   };
 
@@ -107,7 +107,7 @@ export default function CurrenciesPage() {
               </TableRow>
             ) : (
               currencies.map((currency) => (
-                <TableRow key={currency.id}>
+                <TableRow key={currency.code}>
                   <TableCell className="font-mono font-semibold">
                     {currency.code}
                   </TableCell>
@@ -148,15 +148,15 @@ export default function CurrenciesPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => router.push(`/currencies/${currency.id}/edit`)}
+                        onClick={() => router.push(`/currencies/${currency.code}/edit`)}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleDelete(currency.id)}
-                        disabled={deletingId === currency.id || !currency.isActive}
+                        onClick={() => handleDelete(currency.code)}
+                        disabled={deletingId === currency.code || !currency.isActive}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
