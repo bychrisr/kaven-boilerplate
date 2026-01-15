@@ -110,7 +110,7 @@ export default function PlatformSettingsPage() {
             smtpUser: data.smtpUser || '',
             smtpPassword: data.smtpPassword || '',
             emailFrom: data.emailFrom || 'Kaven <noreply@kaven.com>',
-        });
+        }, { keepDirty: false, keepDefaultValues: false });
       } catch (error) {
         console.error(error);
         toast.error(tCommon('errors.errorTitle'));
@@ -137,7 +137,7 @@ export default function PlatformSettingsPage() {
       }
       
       const updated = await res.json();
-      reset(updated); // Update form with server response
+      reset(updated, { keepDirty: false, keepDefaultValues: false }); // Update form with server response
       
       // Invalidate cache to trigger live reload
       queryClient.invalidateQueries({ queryKey: ['platform-settings'] });
