@@ -42,7 +42,6 @@ type FormData = z.infer<typeof formSchema>;
 
 
 export default function PlatformSettingsPage() {
-  const t = useTranslations('PlatformSettings');
   const tCommon = useTranslations('Common');
   const router = useRouter();
   const queryClient = useQueryClient();
