@@ -190,20 +190,14 @@ export function CurrencyForm({ currency, mode }: CurrencyFormProps) {
           {/* SVG Path (se SVG) */}
           {iconType === 'SVG' && (
             <div className="space-y-2">
-              <Label htmlFor="iconSvgPath">SVG Path *</Label>
-              <Textarea
-                id="iconSvgPath"
-                {...register('iconSvgPath')}
-                placeholder="M12.75 3V5.5H11.25V3H12.75Z..."
-                rows={4}
-                className="font-mono text-xs"
+              <Label htmlFor="iconSvgPath">SVG Icon *</Label>
+              <SvgUploader
+                value={watch('iconSvgPath') || ''}
+                onChange={(path) => setValue('iconSvgPath', path)}
               />
               {errors.iconSvgPath && (
                 <p className="text-sm text-red-600">{errors.iconSvgPath.message}</p>
               )}
-              <p className="text-xs text-muted-foreground">
-                Cole o path do SVG (atributo "d" da tag path)
-              </p>
             </div>
           )}
 
