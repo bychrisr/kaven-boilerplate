@@ -30,15 +30,15 @@ model Currency {
   code           String   @unique // BRL, USD, SATS
   name           String   // Real Brasileiro, Bitcoin
   symbol         String?  // R$, $
-  
+
   // Ícone
   iconType       IconType @default(TEXT) // TEXT ou SVG
   iconSvgPath    String?  @db.Text       // Path data do SVG
   iconSvgViewBox String?  @default("0 0 24 24") // ViewBox dinâmico!
-  
+
   // Formatação
   decimals       Int      @default(2) // 2 para Fiat, 0 para SATS
-  
+
   // Config
   isActive       Boolean  @default(true)
   isCrypto       Boolean  @default(false)
@@ -63,10 +63,7 @@ O componente `<CurrencyIcon />` utiliza esses dados para renderizar o ícone per
 
 ```tsx
 // Exemplo simplificado de uso
-<CurrencyIcon
-  currency={currency}
-  className="w-6 h-6 text-primary"
-/>
+<CurrencyIcon currency={currency} className="w-6 h-6 text-primary" />
 ```
 
 Se o `iconSvgViewBox` estiver ausente, o sistema faz fallback para `'0 0 24 24'`, mas recomenda-se re-uploadar o ícone para corrigir.
@@ -80,6 +77,7 @@ A conversão é feita via API Backend (`/api/currencies/convert`) para garantir 
 - **Cache Cliente**: 30 segundos (React Query)
 
 ### Fluxo de Conversão
+
 1.  Frontend solicita `/api/currencies/convert?from=BRL&to=SATS&amount=100`.
 2.  Backend verifica cache local.
 3.  Se expirado, consulta CoinGecko.
@@ -88,22 +86,31 @@ A conversão é feita via API Backend (`/api/currencies/convert`) para garantir 
 ## API Reference
 
 ### `GET /api/currencies`
+
 Lista todas as moedas ativas.
+
 - **Query Params**: `?includeInactive=true` (para Admin)
 
 ### `GET /api/currencies/:code`
+
 Busca detalhes de uma moeda específica.
+
 - **Exemplo**: `/api/currencies/BTC`
 
 ### `POST /api/currencies` (Admin)
+
 Cria uma nova moeda.
+
 - **Body**: `{ code, name, iconType, ... }`
 
 ### `PUT /api/currencies/:code` (Admin)
+
 Atualiza uma moeda.
+
 - **Body**: `{ iconSvgPath, iconSvgViewBox, ... }`
 
 ### `DELETE /api/currencies/:code` (Admin)
+
 Soft-delete (marca como inativa).
 
 ## Troubleshooting
@@ -114,8 +121,270 @@ Soft-delete (marca como inativa).
 **Causa**: O `viewBox` salvo no banco não corresponde ao `viewBox` do path do SVG. Isso acontece em moedas criadas antes da atualização do sistema.
 
 **Solução**:
+
 1.  Acesse o **Admin > Currencies**.
 2.  Edite a moeda afetada.
 3.  Faça o upload do arquivo SVG original novamente.
 4.  O sistema atualizará o `viewBox` automaticamente.
 5.  Salve.
+
+---
+
+## Como Adicionar Ícones SVG de Criptomoedas
+
+### Passo 1: Baixar o SVG
+
+Recomendamos o site **[CryptoLogos.cc](https://cryptologos.cc/)** para baixar ícones SVG de alta qualidade de criptomoedas.
+
+**Processo:**
+
+1. Acesse [https://cryptologos.cc/](https://cryptologos.cc/)
+2. Busque pela criptomoeda desejada (ex: "Bitcoin", "Ethereum", "Cardano")
+3. Clique no ícone desejado
+4. Baixe no formato **SVG** (geralmente há opções de cor: colorido, preto, branco)
+
+> [!TIP]
+> Prefira a versão **colorida** do SVG para melhor visualização. O sistema suporta SVGs com múltiplas cores e gradientes.
+
+### Passo 2: Preparar o SVG (Opcional)
+
+Se o SVG baixado for muito complexo ou grande, você pode otimizá-lo:
+
+**Opção A: Usar SVGOMG (Online)**
+
+1. Acesse [https://jakearchibald.github.io/svgomg/](https://jakearchibald.github.io/svgomg/)
+2. Faça upload do SVG
+3. Ajuste as configurações (mantenha `viewBox` ativado!)
+4. Baixe o SVG otimizado
+
+**Opção B: Editar Manualmente**
+
+```xml
+<!-- Exemplo de SVG otimizado do Bitcoin -->
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" fill-rule="evenodd">
+    <circle cx="16" cy="16" r="16" fill="#F7931A"/>
+    <path fill="#FFF" fill-rule="nonzero" d="M23.189 14.02c.314-2.096-1.283-3.223-3.465-3.975l.708-2.84-1.728-.43-.69 2.765c-.454-.114-.92-.22-1.385-.326l.695-2.783L15.596 6l-.708 2.839c-.376-.086-.746-.17-1.104-.26l.002-.009-2.384-.595-.46 1.846s1.283.294 1.256.312c.7.175.826.638.805 1.006l-.806 3.235c.048.012.11.03.18.057l-.183-.045-1.13 4.532c-.086.212-.303.531-.793.41.018.025-1.256-.313-1.256-.313l-.858 1.978 2.25.561c.418.105.828.215 1.231.318l-.715 2.872 1.727.43.708-2.84c.472.127.93.245 1.378.357l-.706 2.828 1.728.43.715-2.866c2.948.558 5.164.333 6.097-2.333.752-2.146-.037-3.385-1.588-4.192 1.13-.26 1.98-1.003 2.207-2.538zm-3.95 5.538c-.533 2.147-4.148.986-5.32.695l.95-3.805c1.172.293 4.929.872 4.37 3.11zm.535-5.569c-.487 1.953-3.495.96-4.47.717l.86-3.45c.975.243 4.118.696 3.61 2.733z"/>
+  </g>
+</svg>
+```
+
+### Passo 3: Adicionar no Admin
+
+1. **Acesse Admin > Currencies**
+2. **Clique em "Nova Moeda"** (ou edite uma existente)
+3. **Preencha os campos básicos:**
+   - **Code**: Código da moeda (ex: `BTC`, `ETH`, `ADA`)
+   - **Name**: Nome completo (ex: `Bitcoin`, `Ethereum`)
+   - **Symbol**: Símbolo opcional (ex: `₿`, `Ξ`)
+   - **Decimals**:
+     - `0` para criptos sem decimais (ex: SATS)
+     - `8` para Bitcoin
+     - `18` para Ethereum
+   - **Is Crypto**: ✅ Marque como `true`
+
+4. **Upload do SVG:**
+   - Na seção "Ícone SVG", clique em **"Escolher arquivo"**
+   - Selecione o arquivo `.svg` baixado
+   - O sistema automaticamente:
+     - Extrai o `path` do SVG
+     - Detecta o `viewBox` correto
+     - Mostra um preview do ícone
+
+5. **Salvar**
+
+> [!IMPORTANT]
+> **Não cole manualmente o código SVG!** Use sempre o uploader para garantir que o `viewBox` seja detectado corretamente.
+
+### Passo 4: Verificar Renderização
+
+Após salvar, verifique se o ícone está renderizando corretamente:
+
+1. Vá para qualquer página que exiba moedas (ex: Dashboard, Configurações)
+2. Confirme que o ícone aparece sem cortes
+3. Se houver problemas, re-faça o upload do SVG
+
+---
+
+## Entendendo a Conversão de SATS (Satoshis)
+
+### O que são Satoshis?
+
+**Satoshi (SATS)** é a menor unidade do Bitcoin:
+
+- **1 Bitcoin (BTC) = 100.000.000 Satoshis**
+- Similar a centavos para o Real: 1 BRL = 100 centavos
+
+### Por que usar SATS?
+
+Para valores pequenos em Bitcoin, usar SATS é mais intuitivo:
+
+| Valor em BTC   | Valor em SATS  | Mais Legível? |
+| -------------- | -------------- | ------------- |
+| 0.00001000 BTC | 1,000 SATS     | ✅ SATS       |
+| 0.00050000 BTC | 50,000 SATS    | ✅ SATS       |
+| 0.01000000 BTC | 1,000,000 SATS | ⚖️ Ambos      |
+
+### Como o Sistema Converte SATS
+
+O sistema trata SATS como uma moeda separada, mas internamente converte para BTC:
+
+```typescript
+// Exemplo de conversão interna
+const SATS_TO_BTC = 0.00000001; // 1 SATS = 0.00000001 BTC
+
+// Converter BRL para SATS
+async function convertBRLtoSATS(amountBRL: number) {
+  // 1. Obter taxa BRL -> BTC
+  const btcRate = await getExchangeRate('BRL', 'BTC');
+
+  // 2. Converter BRL para BTC
+  const btcAmount = amountBRL * btcRate;
+
+  // 3. Converter BTC para SATS
+  const satsAmount = btcAmount / SATS_TO_BTC;
+
+  return Math.floor(satsAmount); // SATS não tem decimais
+}
+
+// Exemplo: R$ 100,00 -> SATS
+// 1. R$ 100 = 0.00234 BTC (taxa hipotética)
+// 2. 0.00234 BTC = 234,000 SATS
+```
+
+### Configuração de SATS no Admin
+
+Ao criar a moeda SATS:
+
+```json
+{
+  "code": "SATS",
+  "name": "Satoshis",
+  "symbol": "sats",
+  "decimals": 0, // ← IMPORTANTE: SATS não tem decimais
+  "isCrypto": true,
+  "isActive": true
+}
+```
+
+> [!WARNING]
+> **Nunca use decimais para SATS!** A configuração `decimals: 0` garante que valores como `1,234.56 SATS` sejam arredondados para `1,235 SATS`.
+
+### Exibição de SATS no Frontend
+
+O sistema formata SATS automaticamente:
+
+```tsx
+// Componente CurrencyDisplay
+<CurrencyDisplay
+  amount={234000}
+  currencyCode="SATS"
+/>
+// Renderiza: "234,000 sats"
+
+<CurrencyDisplay
+  amount={1500000}
+  currencyCode="SATS"
+/>
+// Renderiza: "1,500,000 sats"
+```
+
+---
+
+## Melhores Práticas
+
+### 1. Nomenclatura de Códigos
+
+Use códigos padronizados:
+
+| Tipo   | Código | Nome Completo   |
+| ------ | ------ | --------------- |
+| Fiat   | `BRL`  | Real Brasileiro |
+| Fiat   | `USD`  | US Dollar       |
+| Fiat   | `EUR`  | Euro            |
+| Crypto | `BTC`  | Bitcoin         |
+| Crypto | `ETH`  | Ethereum        |
+| Crypto | `SATS` | Satoshis        |
+
+> [!TIP]
+> Siga o padrão **ISO 4217** para moedas fiat e **símbolos oficiais** para criptos.
+
+### 2. Configuração de Decimais
+
+| Tipo de Moeda            | Decimais Recomendados |
+| ------------------------ | --------------------- |
+| Fiat (BRL, USD, EUR)     | `2`                   |
+| Bitcoin (BTC)            | `8`                   |
+| Ethereum (ETH)           | `18`                  |
+| Satoshis (SATS)          | `0`                   |
+| Stablecoins (USDT, USDC) | `2` ou `6`            |
+
+### 3. Ícones SVG
+
+**Recomendações:**
+
+- ✅ Use SVGs otimizados (< 10KB)
+- ✅ Prefira ícones coloridos para melhor UX
+- ✅ Sempre use o uploader (nunca cole código manualmente)
+- ✅ Teste em dark mode e light mode
+- ❌ Evite SVGs com animações ou scripts
+
+**Fontes Confiáveis:**
+
+- [CryptoLogos.cc](https://cryptologos.cc/) - Criptomoedas
+- [Flagpedia](https://flagpedia.net/) - Bandeiras para moedas fiat
+- [Simple Icons](https://simpleicons.org/) - Ícones genéricos
+
+### 4. Cache e Performance
+
+O sistema usa cache em múltiplas camadas:
+
+```
+┌─────────────┐
+│   Frontend  │ ← React Query (30s)
+└──────┬──────┘
+       │
+┌──────▼──────┐
+│   Backend   │ ← Node Cache (5min)
+└──────┬──────┘
+       │
+┌──────▼──────┐
+│  CoinGecko  │ ← API Externa
+└─────────────┘
+```
+
+**Implicações:**
+
+- Taxas podem estar até **5 minutos desatualizadas**
+- Para aplicações financeiras críticas, considere reduzir o TTL
+- O cache é **por par de moedas** (BRL→BTC é diferente de USD→BTC)
+
+### 5. Tratamento de Erros
+
+Sempre trate possíveis falhas na conversão:
+
+```tsx
+const { data, error, isLoading } = useCurrencyConverter({
+  from: 'BRL',
+  to: 'SATS',
+  amount: 100,
+});
+
+if (error) {
+  return <Alert>Erro ao converter moeda. Tente novamente.</Alert>;
+}
+
+if (isLoading) {
+  return <Skeleton />;
+}
+
+return <CurrencyDisplay amount={data.convertedAmount} currencyCode="SATS" />;
+```
+
+---
+
+## Relacionados
+
+- [Payment System](/platform/features/payment-system) - Sistema de pagamentos
+- [Admin Panel](/platform/features/admin-panel) - Painel administrativo
+- [API Reference](/platform/api/currencies) - Documentação completa da API
