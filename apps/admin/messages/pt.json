@@ -819,5 +819,8 @@
       "minutes": "Minutos",
       "seconds": "Segundos"
     }
+  },
+  "Currencies": {
+    "title": "Moedas"
   }
 }

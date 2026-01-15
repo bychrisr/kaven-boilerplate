@@ -22,23 +22,41 @@ const sourceCodePro = Source_Code_Pro({
   variable: '--font-source-code',
 });
 
-export const metadata: Metadata = {
-  title: 'Kaven Admin',
-  description: 'SaaS Admin Dashboard',
-  robots: {
-    index: false,
-    follow: false,
-    nocache: true,
-    googleBot: {
+export async function generateMetadata(): Promise<Metadata> {
+  let companyName = 'Kaven Admin';
+  
+  try {
+    const config = await prisma.platformConfig.findFirst({
+      select: { companyName: true }
+    });
+    if (config?.companyName) {
+      companyName = config.companyName;
+    }
+  } catch (error) {
+    console.error('Failed to fetch platform config for metadata:', error);
+  }
+
+  return {
+    title: {
+      template: `${companyName} - %s`,
+      default: companyName,
+    },
+    description: 'SaaS Admin Dashboard',
+    robots: {
       index: false,
       follow: false,
-      noimageindex: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'none',
-      'max-snippet': -1,
+      nocache: true,
+      googleBot: {
+        index: false,
+        follow: false,
+        noimageindex: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'none',
+        'max-snippet': -1,
+      },
     },
-  },
-};
+  };
+}
 
 import { QueryProvider } from '@/providers/query-provider';
 import { ThemeProvider } from '@/providers/theme-provider';
