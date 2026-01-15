@@ -1,0 +1,121 @@
+---
+title: Currency System
+description: Sistema dinâmico de moedas com suporte a SVG, conversão em tempo real e gerenciamento via Admin.
+date: 2026-01-15
+author: Kaven Agent
+version: 1.0.0
+tags: [currencies, svg, conversion, backend, frontend]
+---
+
+# Currency System
+
+> Sistema completo para gerenciamento de moedas fiduciárias e criptomoedas, com suporte a ícones SVG dinâmicos e taxas de câmbio em tempo real.
+
+## Visão Geral
+
+O **Currency System** permite que a plataforma suporte múltiplas moedas de forma dinâmica. Diferente de sistemas estáticos, ele permite:
+
+- **Gerenciamento via Admin**: criar, editar e desativar moedas sem deploy.
+- **Ícones SVG Nativos**: upload direto de arquivos SVG com detecção automática de `viewBox`.
+- **Conversão em Tempo Real**: integração com CoinGecko para taxas de câmbio (ex: BRL → SATS).
+- **Suporte a Cripto**: tratamento especial para Satoshis (SATS) e casas decimais variáveis.
+
+## Modelo de Dados
+
+A entidade `Currency` no banco de dados foi projetada para flexibilidade:
+
+```prisma
+model Currency {
+  id             String   @id @default(uuid())
+  code           String   @unique // BRL, USD, SATS
+  name           String   // Real Brasileiro, Bitcoin
+  symbol         String?  // R$, $
+  
+  // Ícone
+  iconType       IconType @default(TEXT) // TEXT ou SVG
+  iconSvgPath    String?  @db.Text       // Path data do SVG
+  iconSvgViewBox String?  @default("0 0 24 24") // ViewBox dinâmico!
+  
+  // Formatação
+  decimals       Int      @default(2) // 2 para Fiat, 0 para SATS
+  
+  // Config
+  isActive       Boolean  @default(true)
+  isCrypto       Boolean  @default(false)
+}
+```
+
+> [!IMPORTANT]
+> O campo `iconSvgViewBox` é crucial para renderizar ícones corretamente. Ícones antigos podem ter este campo nulo ou `0 0 24 24` hardcoded, o que pode causar cortes visuais se o SVG original tiver dimensões diferentes (ex: `0 0 512 512`).
+
+## Gerenciamento de Ícones SVG
+
+O sistema possui um **Uploader Inteligente** no Admin (`SvgUploader`) que:
+
+1.  Lê o arquivo SVG enviado.
+2.  Extrai o conteúdo do `path`.
+3.  **Detecta automaticamente o `viewBox`** do arquivo original.
+4.  Salva ambos no banco de dados.
+
+### Exibição no Frontend
+
+O componente `<CurrencyIcon />` utiliza esses dados para renderizar o ícone perfeitamente:
+
+```tsx
+// Exemplo simplificado de uso
+<CurrencyIcon
+  currency={currency}
+  className="w-6 h-6 text-primary"
+/>
+```
+
+Se o `iconSvgViewBox` estiver ausente, o sistema faz fallback para `'0 0 24 24'`, mas recomenda-se re-uploadar o ícone para corrigir.
+
+## Conversão em Tempo Real
+
+A conversão é feita via API Backend (`/api/currencies/convert`) para garantir segurança e cache.
+
+- **Provider**: CoinGecko API (Free Tier)
+- **Cache Local**: 5 minutos (Backend)
+- **Cache Cliente**: 30 segundos (React Query)
+
+### Fluxo de Conversão
+1.  Frontend solicita `/api/currencies/convert?from=BRL&to=SATS&amount=100`.
+2.  Backend verifica cache local.
+3.  Se expirado, consulta CoinGecko.
+4.  Retorna valor calculado.
+
+## API Reference
+
+### `GET /api/currencies`
+Lista todas as moedas ativas.
+- **Query Params**: `?includeInactive=true` (para Admin)
+
+### `GET /api/currencies/:code`
+Busca detalhes de uma moeda específica.
+- **Exemplo**: `/api/currencies/BTC`
+
+### `POST /api/currencies` (Admin)
+Cria uma nova moeda.
+- **Body**: `{ code, name, iconType, ... }`
+
+### `PUT /api/currencies/:code` (Admin)
+Atualiza uma moeda.
+- **Body**: `{ iconSvgPath, iconSvgViewBox, ... }`
+
+### `DELETE /api/currencies/:code` (Admin)
+Soft-delete (marca como inativa).
+
+## Troubleshooting
+
+### Ícones Cortados ou Invisíveis
+
+**Sintoma**: O ícone aparece cortado ou muito pequeno.
+**Causa**: O `viewBox` salvo no banco não corresponde ao `viewBox` do path do SVG. Isso acontece em moedas criadas antes da atualização do sistema.
+
+**Solução**:
+1.  Acesse o **Admin > Currencies**.
+2.  Edite a moeda afetada.
+3.  Faça o upload do arquivo SVG original novamente.
+4.  O sistema atualizará o `viewBox` automaticamente.
+5.  Salve.

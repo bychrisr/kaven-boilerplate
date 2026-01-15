@@ -5,6 +5,26 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-01-15
+
+### ✨ Adicionado
+
+#### Currency System (SVG & Real-time)
+
+- **Moedas Dinâmicas**: CRUD completo para gerenciamento de moedas no Admin.
+- **Suporte Avançado a SVG**: Upload de ícones SVG com detecção automática de `viewBox` para renderização perfeita.
+- **Conversão em Tempo Real**: Integração com CoinGecko para taxas de câmbio (ex: BRL -> SATS).
+- **Suporte a Cripto**: Tratamento especial para Satoshis (SATS) e moedas com decimais variáveis.
+- **Cache Inteligente**: Cache de 5min no backend e 30s no frontend para taxas de câmbio.
+
+### 🔧 Corrigido
+
+- **Ícones Cortados**: Resolvido problema de ícones SVG cortados através do novo campo `iconSvgViewBox`.
+- **Prisma Client**: Corrigido erro de inicialização do Prisma no Admin App (`DATABASE_URL`).
+- **Logs**: Removidos logs excessivos de debug no módulo de moedas.
+
+---
+
 ## [1.1.0] - 2026-01-13
 
 ### ✨ Adicionado

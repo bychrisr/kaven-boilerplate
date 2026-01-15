@@ -101,6 +101,19 @@ Integração nativa com gateway brasileiro:
 
 ---
 
+### 💱 **Sistema de Moedas & Câmbio**
+
+Gerenciamento dinâmico de moedas fiduciárias e criptoativos:
+
+- **SVG Nativo**: Suporte a ícones SVG vetoriais com redimensionamento automático
+- **Real-time Conversion**: Cotações ao vivo via CoinGecko (cacheado)
+- **Multi-currency**: Suporte a BRL, USD, EUR, BTC, SATS e mais
+- **Admin Management**: Interface visual para adicionar/editar moedas
+
+**Destaque**: O sistema lida automaticamente com a complexidade de Satoshis (sem decimais) vs Fiat (2 decimais).
+
+---
+
 ### 🔐 **Autenticação & Segurança Enterprise**
 
 Sistema completo de autenticação e controle de acesso:

@@ -16,5 +16,6 @@ export default {
   'tenant-app': 'Tenant App & Spaces',
   'projects-and-tasks': 'Projects & Tasks',
   'spaces-and-permissions': 'Spaces & Permissions',
+  'currency-system': 'Currency System',
   'payments': 'Payments'
 };
