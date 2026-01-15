@@ -10,23 +10,38 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ code: string }> }
 ) {
+  console.log('[DEBUG] API GET /api/currencies/[code] chamada');
+  console.log('[DEBUG] Request URL:', request.url);
+  console.log('[DEBUG] Params (antes await):', params);
+  
   try {
-    const { code } = await params;
+    const resolvedParams = await params;
+    console.log('[DEBUG] Params (depois await):', resolvedParams);
+    
+    const { code } = resolvedParams;
+    console.log('[DEBUG] Code extraído:', code);
+    
+    const upperCode = code.toUpperCase();
+    console.log('[DEBUG] Buscando currency com code:', upperCode);
     
     const currency = await prisma.currency.findUnique({
-      where: { code: code.toUpperCase() },
+      where: { code: upperCode },
     });
 
+    console.log('[DEBUG] Currency encontrada:', currency ? 'SIM' : 'NÃO', currency);
+
     if (!currency) {
+      console.log('[DEBUG] Retornando 404 - Currency not found');
       return NextResponse.json(
         { error: 'Currency not found' },
         { status: 404 }
       );
     }
 
+    console.log('[DEBUG] Retornando currency:', currency.code);
     return NextResponse.json(currency);
   } catch (error) {
-    console.error('Error fetching currency:', error);
+    console.error('[DEBUG] Erro no GET handler:', error);
     return NextResponse.json(
       { error: 'Failed to fetch currency' },
       { status: 500 }

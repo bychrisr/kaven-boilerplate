@@ -148,7 +148,14 @@ export default function CurrenciesPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => router.push(`/currencies/${currency.code}/edit`)}
+                        onClick={() => {
+                          console.log('[DEBUG] Botão Editar clicado:', {
+                            currencyCode: currency.code,
+                            currencyId: currency.id,
+                            url: `/currencies/${currency.code}/edit`
+                          });
+                          router.push(`/currencies/${currency.code}/edit`);
+                        }}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
