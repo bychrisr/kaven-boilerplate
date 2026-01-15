@@ -36,6 +36,7 @@ import { platformRoutes } from './modules/platform/routes/platform.routes';
 import { observabilityRoutes } from './modules/observability/routes/observability.routes';
 import { projectsRoutes } from './modules/app/projects/projects.routes';
 import { tasksRoutes } from './modules/app/tasks/tasks.routes';
+import { currenciesRoutes } from './modules/currencies/routes/currencies.routes';
 
 // [KAVEN_MODULE_IMPORTS]
 // [KAVEN_MODULE_IMPORTS_END]
@@ -207,6 +208,7 @@ app.register(platformRoutes, { prefix: '/api/settings/platform' });
 app.register(observabilityRoutes, { prefix: '/api/observability' });
 app.register(projectsRoutes, { prefix: '/api/app/projects' });
 app.register(tasksRoutes, { prefix: '/api/app/tasks' });
+app.register(currenciesRoutes, { prefix: '/api/currencies' });
 
 // [KAVEN_MODULE_REGISTRATION]
 // [KAVEN_MODULE_REGISTRATION_END]
