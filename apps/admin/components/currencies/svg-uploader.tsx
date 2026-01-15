@@ -15,8 +15,9 @@ export function SvgUploader({ value, onChange, className }: SvgUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [viewBox, setViewBox] = useState<string>('0 0 24 24');
 
-  const extractSvgPath = (svgContent: string): string | null => {
+  const extractSvgPath = (svgContent: string): { path: string; viewBox: string } | null => {
     try {
       // Parse SVG content
       const parser = new DOMParser();
@@ -28,6 +29,15 @@ export function SvgUploader({ value, onChange, className }: SvgUploaderProps) {
         throw new Error('Invalid SVG file');
       }
 
+      // Get SVG element to extract viewBox
+      const svgElement = doc.querySelector('svg');
+      if (!svgElement) {
+        throw new Error('No SVG element found');
+      }
+
+      // Extract viewBox (with fallback)
+      const viewBox = svgElement.getAttribute('viewBox') || '0 0 24 24';
+
       // Find all <path> elements
       const paths = doc.querySelectorAll('path');
       
@@ -36,23 +46,25 @@ export function SvgUploader({ value, onChange, className }: SvgUploaderProps) {
       }
 
       // If multiple paths, combine them
+      let pathData: string;
       if (paths.length === 1) {
         const d = paths[0].getAttribute('d');
         if (!d) throw new Error('Path element has no "d" attribute');
-        return d;
+        pathData = d;
+      } else {
+        // Multiple paths: combine them
+        const combinedPaths = Array.from(paths)
+          .map(path => path.getAttribute('d'))
+          .filter(Boolean)
+          .join(' ');
+
+        if (!combinedPaths) {
+          throw new Error('No valid path data found');
+        }
+        pathData = combinedPaths;
       }
 
-      // Multiple paths: combine them
-      const combinedPaths = Array.from(paths)
-        .map(path => path.getAttribute('d'))
-        .filter(Boolean)
-        .join(' ');
-
-      if (!combinedPaths) {
-        throw new Error('No valid path data found');
-      }
-
-      return combinedPaths;
+      return { path: pathData, viewBox };
     } catch (err) {
       throw new Error(err instanceof Error ? err.message : 'Failed to parse SVG');
     }
@@ -75,10 +87,11 @@ export function SvgUploader({ value, onChange, className }: SvgUploaderProps) {
 
     try {
       const content = await file.text();
-      const pathData = extractSvgPath(content);
+      const result = extractSvgPath(content);
       
-      if (pathData) {
-        onChange(pathData);
+      if (result) {
+        onChange(result.path);
+        setViewBox(result.viewBox);
         setFileName(file.name);
         setError(null);
       }
@@ -185,7 +198,7 @@ export function SvgUploader({ value, onChange, className }: SvgUploaderProps) {
               <svg
                 width="32"
                 height="32"
-                viewBox="0 0 24 24"
+                viewBox={viewBox}
                 fill="currentColor"
                 className="text-foreground"
               >
@@ -198,7 +211,7 @@ export function SvgUploader({ value, onChange, className }: SvgUploaderProps) {
               <svg
                 width="24"
                 height="24"
-                viewBox="0 0 24 24"
+                viewBox={viewBox}
                 fill="currentColor"
                 className="text-foreground"
               >
@@ -211,7 +224,7 @@ export function SvgUploader({ value, onChange, className }: SvgUploaderProps) {
               <svg
                 width="16"
                 height="16"
-                viewBox="0 0 24 24"
+                viewBox={viewBox}
                 fill="currentColor"
                 className="text-foreground"
               >
