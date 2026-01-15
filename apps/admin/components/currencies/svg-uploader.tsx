@@ -7,15 +7,16 @@ import { cn } from '@/lib/utils';
 
 interface SvgUploaderProps {
   value?: string;
-  onChange: (path: string) => void;
+  viewBox?: string;
+  onChange: (data: { path: string; viewBox: string }) => void;
   className?: string;
 }
 
-export function SvgUploader({ value, onChange, className }: SvgUploaderProps) {
+export function SvgUploader({ value, viewBox: initialViewBox, onChange, className }: SvgUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
-  const [viewBox, setViewBox] = useState<string>('0 0 24 24');
+  const [viewBox, setViewBox] = useState<string>(initialViewBox || '0 0 24 24');
 
   const extractSvgPath = (svgContent: string): { path: string; viewBox: string } | null => {
     try {
@@ -90,7 +91,7 @@ export function SvgUploader({ value, onChange, className }: SvgUploaderProps) {
       const result = extractSvgPath(content);
       
       if (result) {
-        onChange(result.path);
+        onChange(result); // Passa objeto completo
         setViewBox(result.viewBox);
         setFileName(file.name);
         setError(null);
@@ -118,9 +119,10 @@ export function SvgUploader({ value, onChange, className }: SvgUploaderProps) {
   }, [handleFile]);
 
   const handleClear = () => {
-    onChange('');
+    onChange({ path: '', viewBox: '0 0 24 24' });
     setFileName(null);
     setError(null);
+    setViewBox('0 0 24 24');
   };
 
   return (

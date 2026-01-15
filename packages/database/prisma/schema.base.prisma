@@ -92,6 +92,7 @@ model Currency {
   iconType      IconType      @default(TEXT) // TEXT ou SVG
   iconColorMode IconColorMode @default(MONOCHROME) // MONOCHROME ou COLORED
   iconSvgPath   String?       @db.Text // Path do SVG (para sats)
+  iconSvgViewBox String?      @default("0 0 24 24") // ViewBox do SVG original
   
   // Formatação
   decimals    Int      @default(2) // BRL=2, USD=2, SATS=0

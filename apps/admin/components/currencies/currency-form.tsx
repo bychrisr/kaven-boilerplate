@@ -193,7 +193,11 @@ export function CurrencyForm({ currency, mode }: CurrencyFormProps) {
               <Label htmlFor="iconSvgPath">SVG Icon *</Label>
               <SvgUploader
                 value={watch('iconSvgPath') || ''}
-                onChange={(path) => setValue('iconSvgPath', path)}
+                viewBox={watch('iconSvgViewBox') || '0 0 24 24'}
+                onChange={(data) => {
+                  setValue('iconSvgPath', data.path);
+                  setValue('iconSvgViewBox', data.viewBox);
+                }}
               />
               {errors.iconSvgPath && (
                 <p className="text-sm text-red-600">{errors.iconSvgPath.message}</p>

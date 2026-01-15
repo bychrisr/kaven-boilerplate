@@ -30,6 +30,11 @@ export const currencySchema = z.object({
     .nullable()
     .optional(),
   
+  iconSvgViewBox: z
+    .string()
+    .default('0 0 24 24')
+    .optional(),
+  
   decimals: z
     .number()
     .int('Decimais deve ser um número inteiro')

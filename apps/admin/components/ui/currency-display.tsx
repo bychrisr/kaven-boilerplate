@@ -35,15 +35,10 @@ export function CurrencyDisplay({
   const code = currencyCode || defaultCode;
   const currency = getCurrency(code);
 
-  console.log('💵 [CurrencyDisplay] Value:', value, 'Code:', code, 'Currency:', currency ? {
-    code: currency.code,
-    decimals: currency.decimals,
-    iconType: currency.iconType,
-    hasIconSvgPath: !!currency.iconSvgPath,
-  } : null);
+
 
   if (!currency) {
-    console.warn('⚠️ [CurrencyDisplay] Currency not found, using fallback');
+
     return <span className={className}>{value.toFixed(2)}</span>;
   }
 
@@ -68,7 +63,7 @@ export function CurrencyDisplay({
       displayValue = `${(value / 1000000).toFixed(1)}M`;
     }
 
-    console.log('⚡ [CurrencyDisplay] SATS path - Display value:', displayValue, 'Show icon:', showIcon);
+
 
     if (!showIcon) {
       return <span className={className}>{displayValue}</span>;
@@ -85,7 +80,7 @@ export function CurrencyDisplay({
   // Para outras moedas, usar format() normalmente
   const formattedValue = format(value, code);
 
-  console.log('💰 [CurrencyDisplay] Non-SATS path - Formatted:', formattedValue, 'Icon type:', currency.iconType);
+
 
   if (!showIcon) {
     return <span className={className}>{formattedValue}</span>;

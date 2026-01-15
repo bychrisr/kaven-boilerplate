@@ -8,6 +8,7 @@ interface Currency {
   iconType: 'TEXT' | 'SVG';
   iconColorMode?: 'MONOCHROME' | 'COLORED';
   iconSvgPath: string | null;
+  iconSvgViewBox?: string | null;
 }
 
 interface CurrencyIconProps {
@@ -59,7 +60,7 @@ export function CurrencyIcon({
       <svg
         width={size}
         height={size}
-        viewBox="0 0 24 24"
+        viewBox={currency.iconSvgViewBox || '0 0 24 24'}
         fill={isMonochrome ? 'currentColor' : 'none'}
         className={cn(
           isMonochrome && variantColors[variant],
