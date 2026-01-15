@@ -11,33 +11,13 @@ interface PageProps {
 
 export default function EditCurrencyPage({ params }: PageProps) {
   const { code } = use(params);
-  
-  console.log('[DEBUG] EditCurrencyPage montado:', { code });
 
-  const { data: currency, isLoading, error } = useQuery<Currency>({
+  const { data: currency, isLoading } = useQuery<Currency>({
     queryKey: ['currency', code],
     queryFn: async () => {
-      const url = `/api/currencies/${code}`;
-      console.log('[DEBUG] Fazendo fetch:', { url, code });
-      
-      const response = await fetch(url);
-      
-      console.log('[DEBUG] Response recebido:', {
-        url,
-        status: response.status,
-        ok: response.ok,
-        statusText: response.statusText
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('[DEBUG] Erro na API:', { url, status: response.status, errorText });
-        throw new Error('Failed to fetch currency');
-      }
-      
-      const data = await response.json();
-      console.log('[DEBUG] Currency carregada:', data);
-      return data;
+      const response = await fetch(`/api/currencies/${code}`);
+      if (!response.ok) throw new Error('Failed to fetch currency');
+      return response.json();
     },
   });
 
