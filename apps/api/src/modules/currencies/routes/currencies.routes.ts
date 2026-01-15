@@ -19,6 +19,35 @@ export async function currenciesRoutes(app: FastifyInstance) {
     }
   });
 
+  // POST /api/currencies - Cria nova currency
+  app.post('/', async (request: FastifyRequest<{ Body: any }>, reply: FastifyReply) => {
+    try {
+      const data = request.body;
+
+      // Verifica se o código já existe
+      const existing = await prisma.currency.findUnique({
+        where: { code: data.code.toUpperCase() },
+      });
+
+      if (existing) {
+        return reply.status(400).send({ error: 'Currency code already exists' });
+      }
+
+      // Cria a currency
+      const currency = await prisma.currency.create({
+        data: {
+          ...data,
+          code: data.code.toUpperCase(),
+        },
+      });
+
+      return reply.status(201).send(currency);
+    } catch (error) {
+      app.log.error(error);
+      return reply.status(500).send({ error: 'Failed to create currency' });
+    }
+  });
+
   // GET /api/currencies/:code - Busca currency por código
   app.get('/:code', async (request: FastifyRequest<{ Params: { code: string } }>, reply: FastifyReply) => {
     try {
