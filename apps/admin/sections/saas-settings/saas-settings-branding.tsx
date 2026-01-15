@@ -231,7 +231,7 @@ export function SaasSettingsBranding() {
                                                 </div>
                                                 <p className="text-xs text-muted-foreground">
                                                     {t('branding.recommended')}
-                                                    <span className="opacity-70"> (Max 1MB)</span>
+                                                    <span className="opacity-70"> {t('branding.maxSize', { size: '1' })}</span>
                                                 </p>
                                             </div>
                                         </div>

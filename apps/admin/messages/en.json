@@ -460,7 +460,15 @@
       "seoDescription": "Description (SEO)",
       "language": "Default Language",
       "currency": "Default Currency",
-      "numberFormat": "Number Format"
+      "numberFormat": "Number Format",
+      "sections": {
+        "companyInfo": "Company Information",
+        "regional": "Regional Settings",
+        "dateTime": "Date and Time"
+      },
+      "dateFormats": {
+        "extended": "Extended"
+      }
     },
     "branding": {
       "title": "Branding",
@@ -474,14 +482,16 @@
       "activeFavicon": "Active Favicon",
       "faviconUrl": "Favicon URL",
       "upload": "Upload",
-      "recommended": "Recommended: 32x32px or 64x64px. Formats: .ico, .png, .svg."
+      "recommended": "Recommended: 32x32px or 64x64px. Formats: .ico, .png, .svg.",
+      "maxSize": "(Max {size}MB)"
     },
     "seo": {
       "title": "Public SEO Configuration",
       "description": "Configure Global SEO settings for your public pages (OG Image, Twitter).",
       "twitterHandle": "Twitter Handle",
       "ogImage": "OpenGraph Image (Social Share)",
-      "preview": "Preview"
+      "preview": "Preview",
+      "ogImageUrl": "OG Image URL"
     },
     "actions": {
       "discard": "Discard",

@@ -37,7 +37,7 @@ export function SaasSettingsGeneral() {
         <div className="space-y-4">
           <div className="flex items-center gap-2 pb-2">
             <Building2 className="h-4 w-4 text-primary" />
-            <h3 className="text-sm font-semibold">Informações da Empresa</h3>
+            <h3 className="text-sm font-semibold">{t('general.sections.companyInfo')}</h3>
           </div>
           
           <Controller
@@ -95,7 +95,7 @@ export function SaasSettingsGeneral() {
         <div className="space-y-4">
           <div className="flex items-center gap-2 pb-2">
             <Globe className="h-4 w-4 text-primary" />
-            <h3 className="text-sm font-semibold">Configurações Regionais</h3>
+            <h3 className="text-sm font-semibold">{t('general.sections.regional')}</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -174,7 +174,7 @@ export function SaasSettingsGeneral() {
         <div className="space-y-4">
           <div className="flex items-center gap-2 pb-2">
             <Clock className="h-4 w-4 text-primary" />
-            <h3 className="text-sm font-semibold">Data e Hora</h3>
+            <h3 className="text-sm font-semibold">{t('general.sections.dateTime')}</h3>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -242,7 +242,7 @@ export function SaasSettingsGeneral() {
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="j \\de F \\de Y" id="date-4" />
                       <Label htmlFor="date-4" className="font-normal cursor-pointer text-sm">
-                        Extenso <span className="text-muted-foreground">(13 de janeiro de 2026)</span>
+                        {t('general.dateFormats.extended')} <span className="text-muted-foreground">(13 de janeiro de 2026)</span>
                       </Label>
                     </div>
                   </RadioGroup>

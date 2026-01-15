@@ -89,7 +89,7 @@ export function SaasSettingsSeo() {
                                      <div className="flex gap-2 w-full items-end">
                                         <TextField
                                             {...field}
-                                            label="OG Image URL"
+                                            label={t('seo.ogImageUrl')}
                                             placeholder={t('placeholders.url')}
                                             fullWidth
                                             className="flex-1"
