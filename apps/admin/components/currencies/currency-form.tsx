@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/radix-select';
 import { currencySchema, type CurrencyFormData } from '@/lib/validations/currency';
+import { SvgUploader } from './svg-uploader';
 import { toast } from 'sonner';
 import type { Currency } from '@/hooks/use-currency';
 
