@@ -254,7 +254,7 @@ export function CurrencyForm({ currency, mode }: CurrencyFormProps) {
             </div>
             <Switch
               checked={watch('isCrypto')}
-              onCheckedChange={(checked) => setValue('isCrypto', checked)}
+              onChange={(e) => setValue('isCrypto', e.target.checked)}
             />
           </div>
 
@@ -268,7 +268,7 @@ export function CurrencyForm({ currency, mode }: CurrencyFormProps) {
             </div>
             <Switch
               checked={watch('isActive')}
-              onCheckedChange={(checked) => setValue('isActive', checked)}
+              onChange={(e) => setValue('isActive', e.target.checked)}
             />
           </div>
         </div>
