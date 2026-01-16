@@ -822,5 +822,29 @@
   },
   "Currencies": {
     "title": "Moedas"
+  },
+  "Plans": {
+    "title": "Planos"
+  },
+  "Products": {
+    "title": "Produtos"
+  },
+  "Help": {
+    "title": "Central de Ajuda"
+  },
+  "Pricing": {
+    "title": "Preços"
+  },
+  "Features": {
+    "title": "Funcionalidades"
+  },
+  "FAQ": {
+    "title": "Perguntas Frequentes"
+  },
+  "Contact": {
+    "title": "Contato"
+  },
+  "Docs": {
+    "title": "Documentação"
   }
 }

@@ -812,5 +812,29 @@
   },
   "Currencies": {
     "title": "Currencies"
+  },
+  "Plans": {
+    "title": "Plans"
+  },
+  "Products": {
+    "title": "Products"
+  },
+  "Help": {
+    "title": "Help Center"
+  },
+  "Pricing": {
+    "title": "Pricing"
+  },
+  "Features": {
+    "title": "Features"
+  },
+  "FAQ": {
+    "title": "FAQ"
+  },
+  "Contact": {
+    "title": "Contact"
+  },
+  "Docs": {
+    "title": "Documentation"
   }
 }

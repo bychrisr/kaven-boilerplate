@@ -1,3 +1,16 @@
+
+import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'FAQ' });
+
+  return {
+    title: t('title'),
+  };
+}
+
 export default function FAQPage() {
   const faqs = [
     {
@@ -48,12 +61,12 @@ export default function FAQPage() {
         <p className="text-gray-600 mb-4">
           Can&apos;t find the answer you&apos;re looking for? Contact our support team.
         </p>
-        <a
+        <Link
           href="/contact"
           className="inline-block bg-primary-main text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-dark transition-colors"
         >
           Contact Support
-        </a>
+        </Link>
       </div>
     </div>
   );
