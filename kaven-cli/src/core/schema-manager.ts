@@ -18,6 +18,9 @@ export class SchemaManager {
    * Merge base and extended schemas into the final schema.prisma
    */
   async mergeSchemas(): Promise<void> {
+    logger.info(`Source Base: ${this.basePath}`);
+    logger.info(`Source Extended: ${this.extendedPath}`);
+    logger.info(`Output: ${this.outputPath}`);
     logger.startSpinner('Merging Prisma schemas...');
 
     try {

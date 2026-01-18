@@ -39,6 +39,8 @@ const TENANT_SCOPED_MODELS = [
   'Invoice',
   'Order',
   'AuditLog',
+  'EmailQueue',
+  'EmailEvent',
   // Adicione outros modelos conforme necessário
 ];
 

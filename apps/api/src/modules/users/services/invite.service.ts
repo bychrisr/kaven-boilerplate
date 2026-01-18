@@ -1,8 +1,9 @@
-import { PrismaClient, Role, TenantInvite, User } from '@prisma/client';
-import crypto from 'crypto';
+import { PrismaClient, Role } from '@prisma/client';
+import crypto from 'node:crypto';
 import { addHours } from 'date-fns';
-import bcrypt from 'bcrypt';
-import { emailService } from '../../../lib/email.service';
+import { emailServiceV2 } from '../../../lib/email';
+import { EmailType } from '../../../lib/email/types';
+import { hashPassword } from '../../../lib/password';
 
 export class InviteService {
   constructor(private prisma: PrismaClient) {}
@@ -31,7 +32,7 @@ export class InviteService {
     });
 
     if (existingUser) {
-      throw new Error('User already exists');
+      throw new Error('Usuário já existe');
     }
 
     // Check for pending invite (same email + same tenant)
@@ -46,7 +47,7 @@ export class InviteService {
     });
 
     if (pendingInvite) {
-      throw new Error('Active invite already sent to this email for this scope');
+      throw new Error('Já existe um convite ativo para este e-mail');
     }
 
     // Generate secure token
@@ -68,16 +69,23 @@ export class InviteService {
       },
     });
 
-    // Send email
+    // Send email using V2
     const inviteUrl = `${process.env.FRONTEND_URL}/signup?token=${invite.token}`;
     const tenantName = invite.tenant?.name || 'Kaven Platform';
     
-    await emailService.sendInviteEmail(
-      invite.email,
-      inviteUrl,
-      tenantName,
-      invite.invitedBy.name
-    );
+    await emailServiceV2.send({
+      to: invite.email,
+      subject: `Convite para participar de ${tenantName}`,
+      template: 'invite',
+      templateData: {
+        inviterName: invite.invitedBy.name,
+        tenantName,
+        inviteUrl,
+      },
+      type: EmailType.TRANSACTIONAL,
+      userId: invite.invitedById,
+      tenantId: invite.tenantId || undefined,
+    });
 
     return invite;
   }
@@ -132,18 +140,18 @@ export class InviteService {
     });
 
     if (!invite) {
-      throw new Error('Invite not found');
+      throw new Error('Convite não encontrado');
     }
 
     // Permission Check:
     // 1. SUPER_ADMIN can cancel ANY invite.
     // 2. Otherwise, only the Inviter can cancel.
     if (userRole !== 'SUPER_ADMIN' && invite.invitedById !== userId) {
-        throw new Error('Unauthorized: You can only cancel invites you created');
+        throw new Error('Não autorizado: você só pode cancelar convites que você criou');
     }
 
     if (invite.usedAt) {
-      throw new Error('Cannot cancel an invite that has already been used');
+      throw new Error('Não é possível cancelar um convite que já foi usado');
     }
 
     // Hard delete or expire? Plan says Cancel, let's delete to remove clutter or expire.
@@ -163,15 +171,15 @@ export class InviteService {
     });
 
     if (!invite) {
-      throw new Error('Invalid invite token');
+      throw new Error('Token de convite inválido');
     }
 
     if (invite.usedAt) {
-      throw new Error('Invite already used');
+      throw new Error('Convite já utilizado');
     }
 
     if (invite.expiresAt < new Date()) {
-      throw new Error('Invite expired');
+      throw new Error('Convite expirado');
     }
 
     return invite;
@@ -188,12 +196,14 @@ export class InviteService {
       data: {
         email: invite.email,
         name: userData.name,
-        password: await this.hashPassword(userData.password),
+        password: await hashPassword(userData.password),
         tenantId: invite.tenantId, // Can be null if SUPER_ADMIN invite
         role: invite.role,
         status: 'ACTIVE',
         emailVerified: true, 
-      },
+        emailVerifiedAt: new Date(),
+        unsubscribeToken: crypto.randomBytes(24).toString('hex'),
+      } as any,
     });
 
     // Mark invite as used
@@ -203,9 +213,5 @@ export class InviteService {
     });
 
     return user;
-  }
-
-  private async hashPassword(password: string): Promise<string> {
-    return bcrypt.hash(password, 10);
   }
 }

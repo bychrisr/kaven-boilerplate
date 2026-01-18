@@ -95,3 +95,8 @@ dbCmd
 export async function run(): Promise<void> {
   await program.parseAsync(process.argv);
 }
+
+run().catch((error) => {
+  logger.error(`CLI execution failed: ${error}`);
+  process.exit(1);
+});

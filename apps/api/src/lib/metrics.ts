@@ -294,6 +294,39 @@ export const rateLimitViolationRate = new client.Gauge({
 });
 
 // ============================================
+// EMAIL INFRASTRUCTURE METRICS
+// ============================================
+
+export const emailSentTotal = new client.Counter({
+  name: 'kaven_email_sent_total',
+  help: 'Total emails sent',
+  labelNames: ['provider', 'template', 'type'],
+  registers: [register]
+});
+
+export const emailBouncedTotal = new client.Counter({
+  name: 'kaven_email_bounced_total',
+  help: 'Total email bounces',
+  labelNames: ['provider', 'type'],
+  registers: [register]
+});
+
+export const emailComplaintsTotal = new client.Counter({
+  name: 'kaven_email_complaints_total',
+  help: 'Total email spam complaints',
+  labelNames: ['provider'],
+  registers: [register]
+});
+
+export const emailDeliveryDuration = new client.Histogram({
+  name: 'kaven_email_delivery_duration_seconds',
+  help: 'Email delivery duration in seconds',
+  labelNames: ['provider'],
+  buckets: [0.1, 0.5, 1, 2, 5, 10, 30],
+  registers: [register]
+});
+
+// =[]
 // DATABASE METRICS
 // ============================================
 

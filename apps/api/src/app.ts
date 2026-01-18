@@ -15,6 +15,7 @@ import { metricsMiddleware } from './middleware/metrics.middleware';
 import { tenantMiddleware } from './middleware/tenant.middleware';
 import { rateLimitConfig } from './middleware/rate-limit.middleware';
 import { csrfMiddleware } from './middleware/csrf.middleware';
+import { authMiddleware } from './middleware/auth.middleware';
 import { secureLog } from './utils/secure-logger';
 
 // [KAVEN_MODULE_IMPORTS_START]
@@ -33,11 +34,15 @@ import { notificationRoutes } from './modules/notifications/routes/notification.
 import { invoiceRoutes } from './modules/invoices/routes/invoice.routes';
 import { orderRoutes } from './modules/orders/routes/order.routes';
 import { platformRoutes } from './modules/platform/routes/platform.routes';
+import { emailIntegrationRoutes } from './modules/platform/routes/email-integration.routes';
 import { observabilityRoutes } from './modules/observability/routes/observability.routes';
 import { projectsRoutes } from './modules/app/projects/projects.routes';
 import { tasksRoutes } from './modules/app/tasks/tasks.routes';
 import { currenciesRoutes } from './modules/currencies/routes/currencies.routes';
-
+import { emailWebhookRoutes } from './modules/webhooks/routes/email-webhook.routes';
+import { unsubscribeRoutes } from './modules/webhooks/routes/unsubscribe.routes';
+import { diagnosticsRoutes } from './modules/observability/routes/diagnostics.routes';
+import { advancedMetricsMiddleware, onResponseMetricsHook } from './modules/observability/middleware/advanced-metrics.middleware';
 // [KAVEN_MODULE_IMPORTS]
 // [KAVEN_MODULE_IMPORTS_END]
 
@@ -141,6 +146,8 @@ app.register(rateLimit, rateLimitConfig);
 // Metrics middleware (aplicado globalmente)
 app.addHook('onRequest', metricsMiddleware);
 
+app.addHook('onRequest', advancedMetricsMiddleware);
+app.addHook('onResponse', onResponseMetricsHook);
 // [KAVEN_MODULE_HOOKS]
 // [KAVEN_MODULE_HOOKS_END]
 
@@ -205,11 +212,17 @@ app.register(invoiceRoutes, { prefix: '/api/invoices' });
 app.register(orderRoutes, { prefix: '/api/orders' });
 app.register(notificationRoutes, { prefix: '/api/notifications' });
 app.register(platformRoutes, { prefix: '/api/settings/platform' });
+app.register(emailIntegrationRoutes, { prefix: '/api/settings/email' });
 app.register(observabilityRoutes, { prefix: '/api/observability' });
 app.register(projectsRoutes, { prefix: '/api/app/projects' });
 app.register(tasksRoutes, { prefix: '/api/app/tasks' });
 app.register(currenciesRoutes, { prefix: '/api/currencies' });
 
+// Webhooks
+app.register(emailWebhookRoutes, { prefix: '/api/webhooks/email' });
+app.register(unsubscribeRoutes, { prefix: '/api/webhooks/email/unsubscribe' });
+
+app.register(diagnosticsRoutes, { prefix: '/api/diagnostics' });
 // [KAVEN_MODULE_REGISTRATION]
 // [KAVEN_MODULE_REGISTRATION_END]
 

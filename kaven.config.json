@@ -18,17 +18,18 @@
       },
       "optional": {
         "payments": false,
-        "observability": false,
+        "observability": true,
         "analytics": false,
         "ai-assistant": false,
         "notifications": false
       }
     },
     "customizations": {
-      "addedModules": [],
-      "removedModules": [
-        "payments",
+      "addedModules": [
         "observability"
+      ],
+      "removedModules": [
+        "payments"
       ]
     }
   }

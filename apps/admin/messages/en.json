@@ -1,5 +1,4 @@
 {
-
   "Common": {
     "dashboard": "Dashboard",
     "actions": "Actions",
@@ -167,7 +166,12 @@
       "submit": "Create account",
       "or": "OR",
       "success": "Account created! Please check your email to verify.",
-      "passwordStrength": ["Weak", "Fair", "Good", "Strong"]
+      "passwordStrength": [
+        "Weak",
+        "Fair",
+        "Good",
+        "Strong"
+      ]
     },
     "forgotPassword": {
       "title": "Forgot your password?",
@@ -435,21 +439,20 @@
       }
     },
     "addUserDialog": {
-        "trigger": "Add User",
-        "title": "Add User to Tenant",
-        "description": "Search for an existing user to add to this tenant workspace.",
-        "searchPlaceholder": "Search by name or email...",
-        "noUsers": "No users found.",
-        "searchTip": "Try a different search term.",
-        "status": {
-          "current": "Current"
-        },
-        "actions": {
-          "add": "Add",
-          "move": "Move"
-        }
+      "trigger": "Add User",
+      "title": "Add User to Tenant",
+      "description": "Search for an existing user to add to this tenant workspace.",
+      "searchPlaceholder": "Search by name or email...",
+      "noUsers": "No users found.",
+      "searchTip": "Try a different search term.",
+      "status": {
+        "current": "Current"
+      },
+      "actions": {
+        "add": "Add",
+        "move": "Move"
       }
-
+    }
   },
   "PlatformSettings": {
     "title": "Platform Settings",
@@ -644,7 +647,8 @@
       "external": "External APIs",
       "alerts": "Alerts",
       "protection": "Protection",
-      "diagnostics": "Diagnostics"
+      "diagnostics": "Diagnostics",
+      "email": "Email"
     },
     "goldenSignals": {
       "title": "Golden Signals",
@@ -785,6 +789,24 @@
       "critical": "Critical",
       "resolveSuccess": "Alert resolved successfully",
       "resolveError": "Error resolving alert"
+    },
+    "email": {
+      "title": "Email Metrics",
+      "description": "Monitoring sends, reputation, and delivery performance",
+      "sent": "Emails Sent",
+      "sentTooltip": "Total emails dispatched by the platform. Includes transactional and marketing",
+      "deliveryRate": "Delivery Rate",
+      "deliveryRateTooltip": "Percentage of emails accepted by destination providers. Ideal: > 98%",
+      "bounces": "Bounces",
+      "bouncesTooltip": "Emails that could not be delivered (non-existent address or full mailbox). Keep < 2%",
+      "complaints": "Spam Complaints",
+      "complaintsTooltip": "Users who marked the email as Spam. Severely impacts reputation. Keep < 0.1%",
+      "latency": "Delivery Latency",
+      "latencyTooltip": "Average time the provider takes to accept the send request. Ideal: < 2s",
+      "reputation": "Reputation",
+      "bounceRate": "Bounce Rate",
+      "complaintRate": "Spam Rate",
+      "byProvider": "By Provider"
     }
   },
   "Maintenance": {
@@ -836,5 +858,78 @@
   },
   "Docs": {
     "title": "Documentation"
+  },
+  "EmailIntegrations": {
+    "title": "Email Integrations",
+    "description": "Manage email providers for your platform",
+    "addIntegration": "Add Integration",
+    "addIntegrationDescription": "Configure a new email provider",
+    "editIntegration": "Edit Integration",
+    "editIntegrationDescription": "Update provider settings",
+    "deleteConfirmTitle": "Delete Integration",
+    "deleteConfirm": "Are you sure you want to delete this integration? This action cannot be undone.",
+    "provider": "Provider",
+    "providerCannotChange": "Provider cannot be changed after creation",
+    "active": "Active",
+    "activeDescription": "Allow this integration to be used for sending emails",
+    "inactive": "Inactive",
+    "primary": "Primary",
+    "primaryDescription": "Set as default provider for sending",
+    "test": "Test",
+    "testing": "Testing...",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "create": "Create",
+    "emptyState": "No integrations configured",
+    "emptyStateDescription": "Add your first email integration to start sending",
+    "testSuccess": "Test email sent successfully!",
+    "testFailed": "Failed to send test email",
+    "testError": "Error testing integration",
+    "createSuccess": "Integration created successfully!",
+    "createFailed": "Failed to create integration",
+    "updateSuccess": "Integration updated successfully!",
+    "updateFailed": "Failed to update integration",
+    "deleteSuccess": "Integration deleted successfully!",
+    "deleteFailed": "Failed to delete integration",
+    "advanced": "Advanced Settings",
+    "advancedDescription": "Additional options for fine-grained control",
+    "sendingConfig": "Sending Configuration",
+    "transactionalDomain": "Transactional Domain",
+    "marketingDomain": "Marketing Domain",
+    "trackOpens": "Track Opens",
+    "trackOpensDescription": "Track when emails are opened",
+    "trackClicks": "Track Clicks",
+    "trackClicksDescription": "Track clicks on links",
+    "dailyLimit": "Daily Limit",
+    "dailyLimitDescription": "Max emails per day (0 = unlimited)",
+    "hourlyLimit": "Hourly Limit",
+    "hourlyLimitDescription": "Max emails per hour (0 = unlimited)",
+    "region": "AWS Region",
+    "regionDescription": "Region where SES is configured",
+    "messageStreams": "Message Streams",
+    "transactionalStream": "Transactional Stream",
+    "marketingStream": "Marketing Stream",
+    "streamPlaceholder": "default (outbound)",
+    "smtpHost": "SMTP Host",
+    "smtpPort": "SMTP Port",
+    "smtpSecure": "Secure Connection (TLS/SSL)",
+    "smtpSecureDescription": "Enable for encrypted connections",
+    "smtpUser": "SMTP User",
+    "smtpPassword": "SMTP Password",
+    "smtpPasswordDescription": "Stored securely encrypted",
+    "validation": {
+      "smtpHostRequired": "SMTP Host is required",
+      "smtpPortRequired": "SMTP Port is required",
+      "apiKeyRequired": "API Key is required",
+      "regionRequired": "Region is required for AWS SES"
+    },
+    "providers": {
+      "SMTP": "SMTP",
+      "RESEND": "Resend",
+      "POSTMARK": "Postmark",
+      "AWS_SES": "AWS SES"
+    }
   }
 }

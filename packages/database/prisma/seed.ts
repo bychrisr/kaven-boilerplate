@@ -76,6 +76,10 @@ async function main() {
       timezone: 'UTC',
       dateFormat: 'Y-m-d',
       timeFormat: 'g:i A',
+      smtpHost: 'localhost',
+      smtpPort: 1025,
+      smtpSecure: false,
+      emailFrom: 'Kaven <noreply@localhost>',
     }
   });
   console.log('✅ Platform Config ensured.');
@@ -232,6 +236,97 @@ async function main() {
     }
   });
   console.log(`✅ ARCHITECT seeded: ${architect.email}`);
+
+  // 6. Email Infrastructure Seeds
+  console.log('\n📧 Seeding Email Infrastructure...');
+  
+  // 6.1 Default Email Templates
+  const emailTemplates = [
+    {
+      code: 'welcome',
+      name: 'Boas-vindas',
+      type: 'TRANSACTIONAL' as const,
+      subjectPt: 'Bem-vindo ao {{companyName}}!',
+      subjectEn: 'Welcome to {{companyName}}!',
+      htmlContentPt: '<p>Olá {{name}},</p><p>Bem-vindo à plataforma {{companyName}}!</p>',
+      htmlContentEn: '<p>Hello {{name}},</p><p>Welcome to the {{companyName}} platform!</p>',
+      variables: ['name', 'companyName'],
+    },
+    {
+      code: 'email-verify',
+      name: 'Verificação de E-mail',
+      type: 'TRANSACTIONAL' as const,
+      subjectPt: 'Confirme seu e-mail',
+      subjectEn: 'Verify your email',
+      htmlContentPt: '<p>Olá {{name}},</p><p>Clique no link para verificar seu e-mail: <a href="{{verificationUrl}}">Verificar E-mail</a></p>',
+      htmlContentEn: '<p>Hello {{name}},</p><p>Click the link to verify your email: <a href="{{verificationUrl}}">Verify Email</a></p>',
+      variables: ['name', 'verificationUrl'],
+    },
+    {
+      code: 'password-reset',
+      name: 'Redefinição de Senha',
+      type: 'TRANSACTIONAL' as const,
+      subjectPt: 'Redefinir sua senha',
+      subjectEn: 'Reset your password',
+      htmlContentPt: '<p>Olá {{name}},</p><p>Clique aqui para redefinir sua senha: <a href="{{resetUrl}}">Redefinir Senha</a></p>',
+      htmlContentEn: '<p>Hello {{name}},</p><p>Click here to reset your password: <a href="{{resetUrl}}">Reset Password</a></p>',
+      variables: ['name', 'resetUrl'],
+    },
+    {
+      code: 'invoice',
+      name: 'Fatura',
+      type: 'TRANSACTIONAL' as const,
+      subjectPt: 'Sua fatura de {{month}} está disponível',
+      subjectEn: 'Your {{month}} invoice is available',
+      htmlContentPt: '<p>Olá {{name}},</p><p>Sua fatura de {{month}} no valor de {{amount}} está disponível para pagamento.</p>',
+      htmlContentEn: '<p>Hello {{name}},</p><p>Your {{month}} invoice for {{amount}} is available for payment.</p>',
+      variables: ['name', 'month', 'amount'],
+    }
+  ];
+
+  for (const template of emailTemplates) {
+    await prisma.emailTemplate.upsert({
+      where: { code: template.code },
+      update: {},
+      create: {
+        code: template.code,
+        name: template.name,
+        type: template.type,
+        subjectPt: template.subjectPt,
+        subjectEn: template.subjectEn,
+        htmlContentPt: template.htmlContentPt,
+        htmlContentEn: template.htmlContentEn,
+        variables: template.variables as any,
+        status: 'ACTIVE'
+      }
+    });
+  }
+  console.log('✅ Default email templates ensured.');
+
+  // 6.2 Default Email Integration (SMTP Fallback/Dev)
+  await prisma.emailIntegration.upsert({
+    where: { primary_integration_unique: { isPrimary: true } },
+    update: {
+      smtpHost: 'localhost',
+      smtpPort: 1025,
+      smtpSecure: false,
+      transactionalDomain: 'localhost',
+      fromName: 'Kaven Dev',
+      fromEmail: 'noreply@localhost',
+    },
+    create: {
+      provider: 'SMTP',
+      isActive: true,
+      isPrimary: true,
+      smtpHost: 'localhost',
+      smtpPort: 1025,
+      smtpSecure: false,
+      transactionalDomain: 'localhost',
+      fromName: 'Kaven Dev',
+      fromEmail: 'noreply@localhost',
+    }
+  });
+  console.log('✅ Default SMTP integration ensured.');
 
   // 3. Personas
   const personas = [

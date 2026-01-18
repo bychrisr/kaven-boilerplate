@@ -1,5 +1,4 @@
 {
-
   "Common": {
     "dashboard": "Dashboard",
     "actions": "Ações",
@@ -168,7 +167,12 @@
       "submit": "Criar conta",
       "or": "OU",
       "success": "Conta criada! Verifique seu email.",
-      "passwordStrength": ["Fraca", "Razoável", "Boa", "Forte"]
+      "passwordStrength": [
+        "Fraca",
+        "Razoável",
+        "Boa",
+        "Forte"
+      ]
     },
     "forgotPassword": {
       "title": "Esqueceu sua senha?",
@@ -628,21 +632,20 @@
       }
     },
     "addUserDialog": {
-        "trigger": "Adicionar Usuário",
-        "title": "Adicionar Usuário ao Tenant",
-        "description": "Busque por um usuário existente para adicionar a este espaço de trabalho.",
-        "searchPlaceholder": "Busque por nome ou email...",
-        "noUsers": "Nenhum usuário encontrado.",
-        "searchTip": "Tente um termo de busca diferente.",
-        "status": {
-          "current": "Atual"
-        },
-        "actions": {
-          "add": "Adicionar",
-          "move": "Mover"
-        }
+      "trigger": "Adicionar Usuário",
+      "title": "Adicionar Usuário ao Tenant",
+      "description": "Busque por um usuário existente para adicionar a este espaço de trabalho.",
+      "searchPlaceholder": "Busque por nome ou email...",
+      "noUsers": "Nenhum usuário encontrado.",
+      "searchTip": "Tente um termo de busca diferente.",
+      "status": {
+        "current": "Atual"
+      },
+      "actions": {
+        "add": "Adicionar",
+        "move": "Mover"
       }
-
+    }
   },
   "Observability": {
     "title": "Observabilidade",
@@ -654,7 +657,8 @@
       "external": "APIs Externas",
       "alerts": "Alertas",
       "protection": "Proteção",
-      "diagnostics": "Diagnóstico"
+      "diagnostics": "Diagnóstico",
+      "email": "E-mail"
     },
     "goldenSignals": {
       "title": "Golden Signals",
@@ -795,6 +799,24 @@
       "critical": "Críticos",
       "resolveSuccess": "Alerta resolvido com sucesso",
       "resolveError": "Erro ao resolver alerta"
+    },
+    "email": {
+      "title": "Métricas de E-mail",
+      "description": "Monitoramento de envios, reputação e performance de entrega",
+      "sent": "E-mails Enviados",
+      "sentTooltip": "Total de e-mails disparados pela plataforma. Inclui transacionais e marketing",
+      "deliveryRate": "Taxa de Entrega",
+      "deliveryRateTooltip": "Porcentagem de e-mails aceitos pelos provedores de destino. Ideal: > 98%",
+      "bounces": "Bounces (Devoluções)",
+      "bouncesTooltip": "E-mails que não puderam ser entregues (endereço inexistente ou caixa cheia). Mantenha < 2%",
+      "complaints": "Reclamações de Spam",
+      "complaintsTooltip": "Usuários que marcaram o e-mail como Spam. Impacta severamente a reputação. Mantenha < 0.1%",
+      "latency": "Latência de Entrega",
+      "latencyTooltip": "Tempo médio que o provedor leva para aceitar a requisição de envio. Ideal: < 2s",
+      "reputation": "Reputação",
+      "bounceRate": "Taxa de Bounce",
+      "complaintRate": "Taxa de Spam",
+      "byProvider": "Por Provedor"
     }
   },
   "Maintenance": {
@@ -846,5 +868,78 @@
   },
   "Docs": {
     "title": "Documentação"
+  },
+  "EmailIntegrations": {
+    "title": "Integrações de Email",
+    "description": "Gerencie provedores de email para sua plataforma",
+    "addIntegration": "Adicionar Integração",
+    "addIntegrationDescription": "Configure um novo provedor de email",
+    "editIntegration": "Editar Integração",
+    "editIntegrationDescription": "Atualize as configurações do provedor",
+    "deleteConfirmTitle": "Deletar Integração",
+    "deleteConfirm": "Tem certeza que deseja deletar esta integração? Esta ação não pode ser desfeita.",
+    "provider": "Provedor",
+    "providerCannotChange": "O provedor não pode ser alterado após a criação",
+    "active": "Ativo",
+    "activeDescription": "Permite que esta integração seja usada para enviar emails",
+    "inactive": "Inativo",
+    "primary": "Principal",
+    "primaryDescription": "Define como provedor padrão para envios",
+    "test": "Testar",
+    "testing": "Testando...",
+    "edit": "Editar",
+    "delete": "Deletar",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "create": "Criar",
+    "emptyState": "Nenhuma integração configurada",
+    "emptyStateDescription": "Adicione sua primeira integração de email para começar a enviar",
+    "testSuccess": "Email de teste enviado com sucesso!",
+    "testFailed": "Falha ao enviar email de teste",
+    "testError": "Erro ao testar integração",
+    "createSuccess": "Integração criada com sucesso!",
+    "createFailed": "Falha ao criar integração",
+    "updateSuccess": "Integração atualizada com sucesso!",
+    "updateFailed": "Falha ao atualizar integração",
+    "deleteSuccess": "Integração deletada com sucesso!",
+    "deleteFailed": "Falha ao deletar integração",
+    "advanced": "Configurações Avançadas",
+    "advancedDescription": "Opções adicionais para controle fino",
+    "sendingConfig": "Configurações de Envio",
+    "transactionalDomain": "Domínio Transacional",
+    "marketingDomain": "Domínio de Marketing",
+    "trackOpens": "Rastrear Aberturas",
+    "trackOpensDescription": "Rastreia quando emails são abertos",
+    "trackClicks": "Rastrear Cliques",
+    "trackClicksDescription": "Rastreia cliques em links",
+    "dailyLimit": "Limite Diário",
+    "dailyLimitDescription": "Máximo de emails por dia (0 = ilimitado)",
+    "hourlyLimit": "Limite por Hora",
+    "hourlyLimitDescription": "Máximo de emails por hora (0 = ilimitado)",
+    "region": "Região AWS",
+    "regionDescription": "Região onde o SES está configurado",
+    "messageStreams": "Message Streams",
+    "transactionalStream": "Stream Transacional",
+    "marketingStream": "Stream de Marketing",
+    "streamPlaceholder": "padrao (outbound)",
+    "smtpHost": "Servidor SMTP",
+    "smtpPort": "Porta SMTP",
+    "smtpSecure": "Conexão Segura (TLS/SSL)",
+    "smtpSecureDescription": "Ativar para conexões criptografadas",
+    "smtpUser": "Usuário SMTP",
+    "smtpPassword": "Senha SMTP",
+    "smtpPasswordDescription": "Será armazenada de forma criptografada",
+    "validation": {
+      "smtpHostRequired": "Host SMTP é obrigatório",
+      "smtpPortRequired": "Porta SMTP é obrigatória",
+      "apiKeyRequired": "API Key é obrigatória",
+      "regionRequired": "Região é obrigatória para AWS SES"
+    },
+    "providers": {
+      "SMTP": "SMTP",
+      "RESEND": "Resend",
+      "POSTMARK": "Postmark",
+      "AWS_SES": "AWS SES"
+    }
   }
 }

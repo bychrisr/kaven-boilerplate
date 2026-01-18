@@ -260,9 +260,36 @@ export const observabilityApi = {
     const { data } = await api.post<{ success: boolean; data: HardwareMetrics; refreshTime: number }>('/api/diagnostics/refresh');
     return data.data;
   },
+ 
+  getEmailMetrics: async () => {
+    const { data } = await api.get<{ success: boolean; data: EmailMetrics }>('/api/observability/email');
+    return data.data;
+  },
 };
-
+ 
 // Additional types for new features
+export interface EmailMetrics {
+  overview: {
+    sent: number;
+    bounced: number;
+    complaints: number;
+    deliveryRate: number;
+    avgLatencySeconds: number;
+  };
+  byProvider: Record<string, {
+    sent: number;
+    bounced: number;
+    complaints: number;
+    deliveryRate: number;
+  }>;
+  health: {
+    status: 'healthy' | 'warning' | 'critical';
+    indicators: {
+      bounceRate: number;
+      complaintRate: number;
+    };
+  };
+}
 export interface CacheMetrics {
   hitCount: number;
   missCount: number;

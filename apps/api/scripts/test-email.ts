@@ -1,108 +1,65 @@
-import { emailService } from '../src/lib/email.service';
-import { Decimal } from '@prisma/client/runtime/library';
+#!/usr/bin/env tsx
 
-async function main() {
-  console.log('🧪 Testing Email Service...');
+/**
+ * Script de Teste: Envio de E-mail via MailHog
+ * 
+ * Uso:
+ *   pnpm tsx scripts/test-email.ts
+ * 
+ * Pré-requisitos:
+ *   - MailHog rodando em localhost:1025
+ *   - Banco de dados com seed executado
+ */
+
+import { emailServiceV2 } from '../src/lib/email';
+import { EmailType } from '../src/lib/email/types';
+
+async function testEmailSending() {
+  console.log('🧪 Iniciando teste de envio de e-mail...\n');
 
   try {
-    // ----------------------------------------------------------------
-    // SECTION 1: CORE AUTH EMAILS
-    // ----------------------------------------------------------------
+    // 1. Inicializar o serviço
+    console.log('📋 Inicializando EmailServiceV2...');
+    await emailServiceV2.initialize();
+    console.log('✅ EmailServiceV2 inicializado com sucesso\n');
 
-    // 1a. Welcome Email (PT)
-    console.log('📧 Sending Welcome (PT)...');
-    await emailService.sendWelcomeEmail({ email: 'test-welcome-pt@kaven.com', name: 'João Silva' }, 'pt');
-    
-    // 1b. Welcome Email (EN)
-    console.log('📧 Sending Welcome (EN)...');
-    await emailService.sendWelcomeEmail({ email: 'test-welcome-en@kaven.com', name: 'John Doe' }, 'en');
-
-    // 2a. Verification Email (PT)
-    console.log('📧 Sending Verification (PT)...');
-    await emailService.sendVerificationEmail({ email: 'test-verify-pt@kaven.com', name: 'João Silva' }, 'token-pt', 'pt');
-    
-    // 2b. Verification Email (EN)
-    console.log('📧 Sending Verification (EN)...');
-    await emailService.sendVerificationEmail({ email: 'test-verify-en@kaven.com', name: 'John Doe' }, 'token-en', 'en');
-
-    // 3a. Reset Password Email (PT)
-    console.log('📧 Sending Reset Password (PT)...');
-    await emailService.sendPasswordResetEmail({ email: 'test-reset-pt@kaven.com', name: 'João Silva' }, 'token-pt', 'pt');
-
-    // 3b. Reset Password Email (EN)
-    console.log('📧 Sending Reset Password (EN)...');
-    await emailService.sendPasswordResetEmail({ email: 'test-reset-en@kaven.com', name: 'John Doe' }, 'token-en', 'en');
-
-    // ----------------------------------------------------------------
-    // SECTION 2: APP NOTIFICATIONS
-    // ----------------------------------------------------------------
-
-    // 4a. Invite Email (PT)
-    console.log('📧 Sending Invite (PT)...');
-    await emailService.sendInviteEmail('test-invite-pt@kaven.com', 'https://kaven.com/invite', 'Acme Corp', 'Admin User', 'pt');
-
-    // 4b. Invite Email (EN)
-    console.log('📧 Sending Invite (EN)...');
-    await emailService.sendInviteEmail('test-invite-en@kaven.com', 'https://kaven.com/invite', 'Global Inc', 'Admin User', 'en');
-
-    // 5a. Invoice Email (PT)
-    console.log('📧 Sending Invoice (PT)...');
-    await emailService.sendInvoiceEmail({ email: 'test-invoice-pt@kaven.com', name: 'João Silva' }, {
-      invoiceNumber: 'INV-001',
-      amountDue: new Decimal(150.00),
-      dueDate: new Date(),
-    }, 'pt');
-
-    // 5b. Invoice Email (EN)
-    console.log('📧 Sending Invoice (EN)...');
-    await emailService.sendInvoiceEmail({ email: 'test-invoice-en@kaven.com', name: 'John Doe' }, {
-      invoiceNumber: 'INV-002',
-      amountDue: new Decimal(50.00),
-      dueDate: new Date(),
-    }, 'en');
-
-    // ----------------------------------------------------------------
-    // SECTION 3: SECURITY & TRANSACTIONAL (NEW)
-    // ----------------------------------------------------------------
-
-    // 6a. OTP Email (PT)
-    console.log('📧 Sending OTP (PT)...');
-    await emailService.sendOtpEmail({ email: 'test-otp-pt@kaven.com', name: 'João Silva' }, '123 456', 'pt');
-
-    // 6b. OTP Email (EN)
-    console.log('📧 Sending OTP (EN)...');
-    await emailService.sendOtpEmail({ email: 'test-otp-en@kaven.com', name: 'John Doe' }, '654 321', 'en');
-
-    // 7a. Security Alert (PT)
-    console.log('📧 Sending Security Alert (PT)...');
-    await emailService.sendSecurityAlertEmail(
-      { email: 'test-security-pt@kaven.com', name: 'João Silva' },
-      { device: 'Chrome on macOS', location: 'São Paulo, Brazil', ip: '200.100.50.25' },
-      'pt'
+    // 2. Enviar e-mail de teste
+    console.log('📧 Enviando e-mail de teste...');
+    const result = await emailServiceV2.send(
+      {
+        to: 'test@example.com',
+        subject: 'Teste de Infraestrutura de E-mail - Kaven',
+        html: `
+          <h1>Teste de E-mail</h1>
+          <p>Este é um e-mail de teste enviado via MailHog.</p>
+          <p><strong>Data:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+          <p><strong>Provider:</strong> SMTP (MailHog)</p>
+        `,
+        text: 'Este é um e-mail de teste enviado via MailHog.',
+        type: EmailType.TRANSACTIONAL,
+      },
+      { useQueue: false } // Envio direto para teste
     );
 
-    // 7b. Security Alert (EN)
-    console.log('📧 Sending Security Alert (EN)...');
-    await emailService.sendSecurityAlertEmail(
-      { email: 'test-security-en@kaven.com', name: 'John Doe' },
-      { device: 'Safari on iPhone', location: 'New York, USA', ip: '10.0.0.1' },
-      'en'
-    );
+    // 3. Verificar resultado
+    if (result.success) {
+      console.log('✅ E-mail enviado com sucesso!');
+      console.log(`   Message ID: ${result.messageId}`);
+      console.log(`   Provider: ${result.provider}`);
+      console.log('\n📬 Verifique o MailHog em: http://localhost:8025');
+    } else {
+      console.error('❌ Falha ao enviar e-mail:');
+      console.error(`   Erro: ${result.error}`);
+      process.exit(1);
+    }
 
-    // 8a. Payment Failed (PT)
-    console.log('📧 Sending Payment Failed (PT)...');
-    await emailService.sendPaymentFailedEmail({ email: 'test-failed-pt@kaven.com', name: 'João Silva' }, 'pt');
-
-    // 8b. Payment Failed (EN)
-    console.log('📧 Sending Payment Failed (EN)...');
-    await emailService.sendPaymentFailedEmail({ email: 'test-failed-en@kaven.com', name: 'John Doe' }, 'en');
-
-
-    console.log('🎉 All emails sent successfully! Check http://localhost:8025');
-  } catch (error) {
-    console.error('❌ Error sending emails:', error);
+    console.log('\n✅ Teste concluído com sucesso!');
+  } catch (error: any) {
+    console.error('\n❌ Erro durante o teste:');
+    console.error(error);
     process.exit(1);
   }
 }
 
-main();
+// Executar teste
+testEmailSending();

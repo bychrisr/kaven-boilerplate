@@ -63,10 +63,12 @@ export class SetupService {
         users.push(devops);
       }
       
-      // 4. Create Plans & Features
-      console.log('\n💳 Creating Plans & Features...');
-      await this.createPlans(adminTenant.id);
       console.log('✅ Plans created successfully');
+      
+      // 5. Create Email Infrastructure
+      console.log('\n📧 Seeding Email Infrastructure...');
+      await this.seedEmailInfrastructure(config);
+      console.log('✅ Email infrastructure seeded successfully');
       
       console.log('\n✅ Seed completed successfully!');
       console.log('📊 Summary:');
@@ -396,5 +398,98 @@ export class SetupService {
     });
 
     return { freePlan, proPlan, enterprisePlan };
+  }
+
+  /**
+   * Seeds email infrastructure (templates and default integration)
+   */
+  private static async seedEmailInfrastructure(config: SeedConfig) {
+    // 1. Create Default Email Templates
+    const emailTemplates = [
+      {
+        code: 'welcome',
+        name: 'Boas-vindas',
+        type: 'TRANSACTIONAL' as const,
+        subjectPt: 'Bem-vindo ao {{companyName}}!',
+        subjectEn: 'Welcome to {{companyName}}!',
+        htmlContentPt: '<p>Olá {{name}},</p><p>Bem-vindo à plataforma {{companyName}}!</p>',
+        htmlContentEn: '<p>Hello {{name}},</p><p>Welcome to the {{companyName}} platform!</p>',
+        variables: ['name', 'companyName'],
+      },
+      {
+        code: 'email-verify',
+        name: 'Verificação de E-mail',
+        type: 'TRANSACTIONAL' as const,
+        subjectPt: 'Confirme seu e-mail',
+        subjectEn: 'Verify your email',
+        htmlContentPt: '<p>Olá {{name}},</p><p>Clique no link para verificar seu e-mail: <a href="{{verificationUrl}}">Verificar E-mail</a></p>',
+        htmlContentEn: '<p>Hello {{name}},</p><p>Click the link to verify your email: <a href="{{verificationUrl}}">Verify Email</a></p>',
+        variables: ['name', 'verificationUrl'],
+      },
+      {
+        code: 'password-reset',
+        name: 'Redefinição de Senha',
+        type: 'TRANSACTIONAL' as const,
+        subjectPt: 'Redefinir sua senha',
+        subjectEn: 'Reset your password',
+        htmlContentPt: '<p>Olá {{name}},</p><p>Clique aqui para redefinir sua senha: <a href="{{resetUrl}}">Redefinir Senha</a></p>',
+        htmlContentEn: '<p>Hello {{name}},</p><p>Click here to reset your password: <a href="{{resetUrl}}">Reset Password</a></p>',
+        variables: ['name', 'resetUrl'],
+      },
+      {
+        code: 'invoice',
+        name: 'Fatura',
+        type: 'TRANSACTIONAL' as const,
+        subjectPt: 'Sua fatura de {{month}} está disponível',
+        subjectEn: 'Your {{month}} invoice is available',
+        htmlContentPt: '<p>Olá {{name}},</p><p>Sua fatura de {{month}} no valor de {{amount}} está disponível para pagamento.</p>',
+        htmlContentEn: '<p>Hello {{name}},</p><p>Your {{month}} invoice for {{amount}} is available for payment.</p>',
+        variables: ['name', 'month', 'amount'],
+      }
+    ];
+
+    for (const template of emailTemplates) {
+      await (prisma as any).emailTemplate.upsert({
+        where: { code: template.code },
+        update: {},
+        create: {
+          code: template.code,
+          name: template.name,
+          type: template.type,
+          subjectPt: template.subjectPt,
+          subjectEn: template.subjectEn,
+          htmlContentPt: template.htmlContentPt,
+          htmlContentEn: template.htmlContentEn,
+          variables: template.variables as any,
+          status: 'ACTIVE'
+        }
+      });
+    }
+    console.log('   ✅ Default email templates ensured.');
+
+    // 2. Create Default Email Integration (SMTP Fallback/Dev)
+    // Use upsert with unique constraint on isPrimary if possible, or just check existence
+    const existingPrimary = await (prisma as any).emailIntegration.findFirst({
+      where: { isPrimary: true }
+    });
+
+    if (!existingPrimary) {
+      await (prisma as any).emailIntegration.create({
+        data: {
+          provider: 'SMTP',
+          isActive: true,
+          isPrimary: true,
+          smtpHost: 'localhost',
+          smtpPort: 1025,
+          smtpSecure: false,
+          transactionalDomain: 'localhost',
+          fromName: config?.companyName || 'Kaven Platform',
+          fromEmail: 'noreply@localhost',
+        }
+      });
+      console.log('   ✅ Default SMTP integration created.');
+    } else {
+      console.log('   ℹ️ Primary e-mail integration already exists.');
+    }
   }
 }

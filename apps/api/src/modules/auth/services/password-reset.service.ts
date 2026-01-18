@@ -1,9 +1,9 @@
-
 import { PrismaClient } from '@prisma/client';
-import crypto from 'crypto';
-import bcrypt from 'bcrypt';
+import crypto from 'node:crypto';
 import { addHours } from 'date-fns';
-import { emailService } from '../../../lib/email.service';
+import { emailServiceV2 } from '../../../lib/email';
+import { EmailType } from '../../../lib/email/types';
+import { hashPassword, validatePasswordStrength } from '../../../lib/password';
 
 export class PasswordResetService {
   constructor(private prisma: PrismaClient) {}
@@ -16,7 +16,7 @@ export class PasswordResetService {
 
     if (!user) {
       // Don't reveal if email exists
-      return { message: 'If email exists, reset link sent' };
+      return { message: 'Se o e-mail existir, um link de recuperação será enviado' };
     }
 
     // Generate token
@@ -27,7 +27,7 @@ export class PasswordResetService {
       .digest('hex');
 
     // Store token (expires in 1 hour)
-    await this.prisma.passwordResetToken.create({
+    await (this.prisma as any).passwordResetToken.create({
       data: {
         userId: user.id,
         token: hashedToken,
@@ -35,10 +35,21 @@ export class PasswordResetService {
       },
     });
 
-    // Send email
-    await emailService.sendPasswordResetEmail({ email: user.email, name: user.name }, token);
+    // Send email using V2
+    await emailServiceV2.send({
+      to: user.email,
+      subject: 'Redefinição de senha',
+      template: 'password-reset',
+      templateData: {
+        name: user.name,
+        resetUrl: `${process.env.FRONTEND_URL}/reset-password?token=${token}`,
+      },
+      type: EmailType.TRANSACTIONAL,
+      userId: user.id,
+      tenantId: user.tenantId || undefined,
+    });
 
-    return { message: 'If email exists, reset link sent' };
+    return { message: 'Se o e-mail existir, um link de recuperação será enviado' };
   }
 
   async resetPassword(token: string, newPassword: string) {
@@ -49,7 +60,7 @@ export class PasswordResetService {
       .digest('hex');
 
     // Find valid token
-    const resetToken = await this.prisma.passwordResetToken.findFirst({
+    const resetToken = await (this.prisma as any).passwordResetToken.findFirst({
       where: {
         token: hashedToken,
         usedAt: null,
@@ -59,26 +70,36 @@ export class PasswordResetService {
     });
 
     if (!resetToken) {
-      throw new Error('Invalid or expired reset token');
+      throw new Error('Token de redefinição inválido ou expirado');
     }
 
-    // Hash new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    // Validate password strength
+    const passwordValidation = validatePasswordStrength(newPassword);
+    if (!passwordValidation.isValid) {
+      throw new Error(passwordValidation.message || 'Senha fraca');
+    }
+
+    // Hash new password using project utility
+    const hashedPassword = await hashPassword(newPassword);
 
     // Update password
     await this.prisma.user.update({
       where: { id: resetToken.userId },
-      data: { password: hashedPassword },
+      data: { 
+        password: hashedPassword,
+        loginAttempts: 0,
+        lockedUntil: null
+      },
     });
 
     // Mark token as used
-    await this.prisma.passwordResetToken.update({
+    await (this.prisma as any).passwordResetToken.update({
       where: { id: resetToken.id },
       data: { usedAt: new Date() },
     });
 
-    // Invalidate all other tokens for this user (security best practice)
-    await this.prisma.passwordResetToken.updateMany({
+    // Invalidate all other tokens for this user
+    await (this.prisma as any).passwordResetToken.updateMany({
       where: {
         userId: resetToken.userId,
         usedAt: null,
@@ -86,6 +107,6 @@ export class PasswordResetService {
       data: { usedAt: new Date() },
     });
 
-    return { message: 'Password reset successfully' };
+    return { message: 'Senha redefinida com sucesso' };
   }
 }

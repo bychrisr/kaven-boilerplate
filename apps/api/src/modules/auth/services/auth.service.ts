@@ -1,11 +1,13 @@
-import prisma from '../../../lib/prisma';
+import { prisma } from '../../../lib/prisma';
 import crypto from 'node:crypto';
 import { hashPassword, comparePassword, validatePasswordStrength } from '../../../lib/password';
 import { generateAccessToken, generateRefreshToken, getRefreshTokenExpiry } from '../../../lib/jwt';
 import { generate2FASecret, verify2FACode, generateBackupCodes } from '../../../lib/2fa';
-import { emailService } from '../../../lib/email.service';
+import { emailServiceV2 } from '../../../lib/email';
+import { EmailType } from '../../../lib/email/types';
 import type { RegisterInput, LoginInput } from '../../../lib/validation';
 import { auditService } from '../../audit/services/audit.service';
+import { addHours } from 'date-fns';
 
 
 export class AuthService {
@@ -79,7 +81,9 @@ export class AuthService {
         name: data.name,
         tenantId,
         role: 'USER',
-      },
+        emailVerified: false,
+        unsubscribeToken: crypto.randomBytes(24).toString('hex'), // Token de logout para conformidade
+      } as any,
       select: {
         id: true,
         email: true,
@@ -89,8 +93,34 @@ export class AuthService {
       },
     });
 
-    // Enviar email de boas-vindas
-    await emailService.sendWelcomeEmail(user);
+    // Gerar token de verificação
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const hashedVerificationToken = crypto
+      .createHash('sha256')
+      .update(verificationToken)
+      .digest('hex');
+
+    await (prisma as any).verificationToken.create({
+      data: {
+        token: hashedVerificationToken,
+        userId: user.id,
+        expiresAt: addHours(new Date(), 24), // 24 horas de validade
+      },
+    });
+
+    // Enviar email de verificação (Substituindo Welcome direto pelo fluxo de segurança)
+    await emailServiceV2.send({
+      to: user.email,
+      subject: 'Verifique seu e-mail',
+      template: 'email-verify',
+      templateData: {
+        name: user.name,
+        verificationUrl: `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`,
+      },
+      type: EmailType.TRANSACTIONAL,
+      userId: user.id,
+      tenantId: user.tenantId || undefined,
+    });
     
     // Log Audit
     await auditService.log({
@@ -113,9 +143,15 @@ export class AuthService {
    * Verifica email do usuário
    */
   async verifyEmail(token: string) {
+    // Hash token to compare
+    const hashedToken = crypto
+      .createHash('sha256')
+      .update(token)
+      .digest('hex');
+
     // Buscar token no banco
-    const verificationToken = await prisma.verificationToken.findUnique({
-      where: { token },
+    const verificationToken = await (prisma as any).verificationToken.findUnique({
+      where: { token: hashedToken },
     });
 
     if (!verificationToken) {
@@ -126,18 +162,44 @@ export class AuthService {
       throw new Error('Token expirado');
     }
 
+    if (verificationToken.usedAt) {
+      throw new Error('Token já utilizado');
+    }
+
     // Atualizar usuário
-    await prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: { id: verificationToken.userId },
       data: { 
         emailVerified: true,
         emailVerifiedAt: new Date(),
+        status: 'ACTIVE',
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        tenantId: true,
       },
     });
 
-    // Deletar token usado
-    await prisma.verificationToken.delete({
+    // Marcar token como usado ao invés de deletar (Forensic Audit)
+    await (prisma as any).verificationToken.update({
       where: { id: verificationToken.id },
+      data: { usedAt: new Date() },
+    });
+
+    // Enviar email de boas-vindas após verificação bem-sucedida
+    await emailServiceV2.send({
+      to: updatedUser.email,
+      subject: 'Bem-vindo ao Kaven!',
+      template: 'welcome',
+      templateData: {
+        name: updatedUser.name,
+        dashboardUrl: `${process.env.FRONTEND_URL}/dashboard`,
+      },
+      type: EmailType.MARKETING, // Boas-vindas é onboarding/marketing
+      userId: updatedUser.id,
+      tenantId: updatedUser.tenantId || undefined,
     });
 
     return { message: 'Email verificado com sucesso' };
@@ -162,13 +224,33 @@ export class AuthService {
     }
 
     // Gerar novo token de verificação
-    const verificationToken = `${user.id}.${Date.now()}.${Math.random().toString(36)}`;
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const hashedVerificationToken = crypto
+      .createHash('sha256')
+      .update(verificationToken)
+      .digest('hex');
     
-    // NOTE: Salvar token no banco com expiração
-    // await prisma.verificationToken.create({ data: { token: verificationToken, userId: user.id, expiresAt: ... } });
+    await (prisma as any).verificationToken.create({
+      data: {
+        token: hashedVerificationToken,
+        userId: user.id,
+        expiresAt: addHours(new Date(), 24),
+      },
+    });
     
-    // Enviar email de verificação
-    await emailService.sendVerificationEmail(user, verificationToken);
+    // Enviar email de verificação usando V2
+    await emailServiceV2.send({
+      to: user.email,
+      subject: 'Verifique seu e-mail',
+      template: 'email-verify',
+      templateData: {
+        name: user.name,
+        verificationUrl: `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`,
+      },
+      type: EmailType.TRANSACTIONAL,
+      userId: user.id,
+      tenantId: user.tenantId || undefined,
+    });
 
     return { message: 'Se o email existir, um novo link de verificação será enviado' };
   }
@@ -400,8 +482,19 @@ export class AuthService {
       } 
     });
     
-    // Enviar email de reset
-    await emailService.sendPasswordResetEmail(user, resetToken);
+    // Enviar email de reset usando V2
+    await emailServiceV2.send({
+      to: user.email,
+      subject: 'Redefinição de senha',
+      template: 'password-reset',
+      templateData: {
+        name: user.name,
+        resetUrl: `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`,
+      },
+      type: EmailType.TRANSACTIONAL,
+      userId: user.id,
+      tenantId: user.tenantId || undefined,
+    });
 
     return { message: 'Se o email existir, um link de recuperação será enviado' };
   }
@@ -434,12 +527,26 @@ export class AuthService {
     // Atualizar senha do usuário
     await prisma.user.update({
       where: { id: resetTokenRecord.userId },
-      data: { password: hashedPassword },
+      data: { 
+        password: hashedPassword,
+        loginAttempts: 0, // Resetar tentativas ao trocar senha
+        lockedUntil: null,
+      },
     });
 
-    // Deletar token usado (e outros tokens do mesmo usuário por segurança)
-    await prisma.passwordResetToken.deleteMany({
-      where: { userId: resetTokenRecord.userId },
+    // Marcar como usado
+    await (prisma as any).passwordResetToken.update({
+      where: { id: resetTokenRecord.id },
+      data: { usedAt: new Date() },
+    });
+
+    // Deletar outros tokens pendentes
+    await (prisma as any).passwordResetToken.updateMany({
+      where: { 
+        userId: resetTokenRecord.userId,
+        usedAt: null,
+      },
+      data: { usedAt: new Date() },
     });
 
     // Log Audit

@@ -1,4 +1,6 @@
 import prisma from '../../../lib/prisma';
+import { emailServiceV2 } from '../../../lib/email';
+import { EmailType } from '../../../lib/email/types';
 
 export class InvoiceService {
   /**
@@ -250,11 +252,35 @@ export class InvoiceService {
   async sendInvoice(id: string) {
     const invoice = await this.getInvoiceById(id);
 
-    // TODO: Integrar com serviço de email real (SendGrid/Resend)
-    // Por enquanto, logamos e simulamos o envio
-    console.log(`[Mock Email] Sending invoice ${invoice.invoiceNumber} to tenant...`);
-    
-    // await emailService.sendInvoice(invoice);
+    // Buscar o administrador do tenant para enviar a fatura
+    const admin = await prisma.user.findFirst({
+      where: { 
+        tenantId: invoice.tenantId, 
+        role: 'ADMIN' as any,
+        deletedAt: null 
+      },
+      select: { id: true, email: true, name: true }
+    });
+
+    if (!admin) {
+      throw new Error('Administrador do tenant não encontrado para envio da fatura');
+    }
+
+    // Enviar email usando V2
+    await emailServiceV2.send({
+      to: admin.email,
+      subject: `Fatura ${invoice.invoiceNumber} - ${invoice.tenant?.name}`,
+      template: 'invoice',
+      templateData: {
+        name: admin.name,
+        invoiceNumber: invoice.invoiceNumber,
+        formattedAmount: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: invoice.currency }).format(Number(invoice.amountDue)),
+        formattedDate: new Intl.DateTimeFormat('pt-BR').format(new Date(invoice.dueDate)),
+      },
+      type: EmailType.TRANSACTIONAL,
+      userId: admin.id,
+      tenantId: invoice.tenantId,
+    });
 
     // Atualizar metadata para marcar como enviada
     await prisma.invoice.update({
@@ -263,6 +289,7 @@ export class InvoiceService {
         metadata: {
           ...(invoice.metadata as object),
           sentAt: new Date().toISOString(),
+          lastSentTo: admin.email,
           status: 'SENT'
         },
         updatedAt: new Date()

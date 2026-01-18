@@ -181,6 +181,9 @@ model Tenant {
   projects      Project[]
   tasks         Task[]
 
+  // Email Relations
+  emailEvents EmailEvent[]
+
   @@index([slug])
   @@index([domain])
   @@index([status])
@@ -212,6 +215,15 @@ model User {
   lastLoginIp        String?
   lastLoginUserAgent String?
   sessionExpiresAt   DateTime?
+
+  // Email Tracking Fields
+  emailBounced        Boolean    @default(false) @map("email_bounced")
+  emailBouncedAt      DateTime?  @map("email_bounced_at")
+  emailBounceType     BounceType? @map("email_bounce_type")
+  emailOptOut         Boolean    @default(false) @map("email_opt_out")
+  emailOptOutDate     DateTime?  @map("email_opt_out_date")
+  emailComplaintCount Int        @default(0) @map("email_complaint_count")
+  unsubscribeToken    String?    @unique @map("unsubscribe_token")
 
   /// Metadata JSON para permissões granulares e preferências do usuário
   /// Estrutura: { internalRole?: string, permissions?: string[], preferences?: object }
@@ -245,10 +257,16 @@ model User {
   createdTasks    Task[]    @relation("TaskCreator")
   assignedTasks   Task[]    @relation("TaskAssignee")
 
+  // Email Relations
+  emailEvents EmailEvent[]
+
   @@index([email])
   @@index([tenantId])
   @@index([role])
   @@index([status])
+  @@index([emailBounced])
+  @@index([emailOptOut])
+  @@index([unsubscribeToken])
 }
 
 model RefreshToken {

@@ -118,7 +118,7 @@ export const SPACES: Record<string, SpaceConfig> = {
             label: 'Monitoring', 
             href: '#',
             children: [
-               { label: 'Dashboard', href: '/dashboard/analytics' },
+               { label: 'Dashboard', href: '/observability' },
                { label: 'Audit Logs', href: '/audit-logs' },
                { label: 'Grafana', href: process.env.NEXT_PUBLIC_GRAFANA_URL || 'http://localhost:3001', external: true },
                { label: 'Prometheus', href: process.env.NEXT_PUBLIC_PROMETHEUS_URL || 'http://localhost:9090', external: true }
@@ -249,7 +249,7 @@ export const SPACES: Record<string, SpaceConfig> = {
             label: 'Monitoring', 
             href: '#',
             children: [
-               { label: 'Dashboard', href: '/dashboard/analytics' },
+               { label: 'Dashboard', href: '/observability' },
                { label: 'Audit Logs', href: '/audit-logs' },
                { label: 'Grafana', href: 'http://localhost:3001', external: true },
                { label: 'Prometheus', href: 'http://localhost:9090', external: true }

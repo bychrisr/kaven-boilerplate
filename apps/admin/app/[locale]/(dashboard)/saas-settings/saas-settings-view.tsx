@@ -30,11 +30,6 @@ const formSchema = z.object({
   timezone: z.string().optional().default('UTC'),
   dateFormat: z.string().optional().default('Y-m-d'),
   timeFormat: z.string().optional().default('g:i A'),
-  smtpHost: z.string().optional().default('localhost'),
-  smtpPort: z.number().optional().default(1025),
-  smtpSecure: z.boolean().optional().default(false),
-  smtpUser: z.string().optional().default(''),
-  smtpPassword: z.string().optional().default(''),
   emailFrom: z.string().optional().default('Kaven <noreply@kaven.com>'),
 });
 
@@ -65,11 +60,6 @@ export default function PlatformSettingsView() {
       timezone: 'UTC',
       dateFormat: 'Y-m-d',
       timeFormat: 'g:i A',
-      smtpHost: 'localhost',
-      smtpPort: 1025,
-      smtpSecure: false,
-      smtpUser: '',
-      smtpPassword: '',
       emailFrom: 'Kaven <noreply@kaven.com>',
     }
   });
@@ -102,12 +92,6 @@ export default function PlatformSettingsView() {
             timezone: data.timezone || 'UTC',
             dateFormat: data.dateFormat || 'Y-m-d',
             timeFormat: data.timeFormat || 'g:i A',
-            // SMTP
-            smtpHost: data.smtpHost || 'localhost',
-            smtpPort: data.smtpPort || 1025,
-            smtpSecure: data.smtpSecure || false,
-            smtpUser: data.smtpUser || '',
-            smtpPassword: data.smtpPassword || '',
             emailFrom: data.emailFrom || 'Kaven <noreply@kaven.com>',
         }, { keepDirty: false, keepDefaultValues: false });
       } catch (error) {

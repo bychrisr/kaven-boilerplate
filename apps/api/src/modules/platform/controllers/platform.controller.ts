@@ -2,8 +2,6 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../../lib/prisma';
 import { z } from 'zod';
 import { TimezoneUtil } from '../../../utils/timezone.util';
-import { EncryptionUtil } from '../../../utils/encryption.util';
-import * as nodemailer from 'nodemailer';
 
 const updateSettingsSchema = z.object({
   companyName: z.string().min(1),
@@ -20,12 +18,6 @@ const updateSettingsSchema = z.object({
   timezone: z.string().optional(),
   dateFormat: z.string().optional(),
   timeFormat: z.string().optional(),
-  smtpHost: z.string().optional(),
-  smtpPort: z.number().optional(),
-  smtpSecure: z.boolean().optional(),
-  smtpUser: z.string().optional(),
-  smtpPassword: z.string().optional(),
-  emailFrom: z.string().optional(),
 });
 
 export class PlatformController {
@@ -68,11 +60,6 @@ export class PlatformController {
         return reply.status(400).send({ error: 'Timezone inválido' });
       }
 
-      // Criptografar senha SMTP se fornecida
-      if (data.smtpPassword) {
-        data.smtpPassword = EncryptionUtil.encrypt(data.smtpPassword);
-      }
-
       // Garante que existe apenas um registro, atualiza o primeiro encontrado
       const firstConfig = await prisma.platformConfig.findFirst();
 
@@ -86,11 +73,6 @@ export class PlatformController {
         config = await prisma.platformConfig.create({
           data,
         });
-      }
-
-      // Descriptografar senha antes de retornar (para não expor)
-      if (config.smtpPassword) {
-        config.smtpPassword = '********';
       }
 
       return reply.send(config);
@@ -120,55 +102,59 @@ export class PlatformController {
 
   /**
    * POST /api/settings/platform/test-email
-   * Testa a configuração de email enviando um email de teste
+   * Envia um e-mail de teste para validar configuração
    */
-  async testEmail(req: FastifyRequest, reply: FastifyReply) {
+  async testEmail(req: FastifyRequest<{ Body: { to?: string; provider?: string } }>, reply: FastifyReply) {
     try {
-      const config = await prisma.platformConfig.findFirst();
+      const { to, provider } = req.body || {};
 
-      if (!config || !config.smtpHost || !config.smtpPort) {
-        return reply.status(400).send({
+      // Usar email do request.user ou padrão
+      const recipientEmail = to || (req.user?.email) || 'test@example.com';
+
+      // Importar emailServiceV2
+      const { emailServiceV2 } = await import('../../../lib/email');
+      const { EmailType } = await import('../../../lib/email/types');
+
+      // Enviar e-mail de teste
+      const result = await emailServiceV2.send(
+        {
+          to: recipientEmail,
+          subject: 'Teste de Configuração de E-mail - Kaven',
+          html: `
+            <h1>✅ Teste de E-mail</h1>
+            <p>Este é um e-mail de teste enviado através do painel de administração.</p>
+            <p><strong>Data:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+            <p><strong>Provider:</strong> ${provider || 'Padrão'}</p>
+            <hr>
+            <p style="color: #666; font-size: 12px;">
+              Se você recebeu este e-mail, significa que sua configuração está funcionando corretamente!
+            </p>
+          `,
+          text: 'Teste de configuração de e-mail - Kaven',
+          type: EmailType.TRANSACTIONAL,
+          provider: provider as any,
+        },
+        { useQueue: false }
+      );
+
+      if (result.success) {
+        return reply.send({
+          success: true,
+          message: 'E-mail de teste enviado com sucesso!',
+          messageId: result.messageId,
+          provider: result.provider,
+        });
+      } else {
+        return reply.status(500).send({
           success: false,
-          message: 'Configuração de email incompleta',
+          error: result.error || 'Erro ao enviar e-mail de teste',
         });
       }
-
-      // Descriptografar senha
-      const smtpPassword = config.smtpPassword
-        ? EncryptionUtil.decrypt(config.smtpPassword)
-        : undefined;
-
-      // Criar transporter
-      const transporter = nodemailer.createTransport({
-        host: config.smtpHost,
-        port: config.smtpPort,
-        secure: config.smtpSecure || false,
-        auth: config.smtpUser
-          ? {
-              user: config.smtpUser,
-              pass: smtpPassword,
-            }
-          : undefined,
-      });
-
-      // Enviar email de teste
-      await transporter.sendMail({
-        from: config.emailFrom || 'Kaven <noreply@kaven.com>',
-        to: config.smtpUser || 'test@example.com',
-        subject: 'Teste de Configuração de Email - Kaven',
-        text: 'Este é um email de teste para verificar a configuração SMTP.',
-        html: '<p>Este é um email de teste para verificar a configuração SMTP.</p>',
-      });
-
-      return reply.send({
-        success: true,
-        message: 'Email de teste enviado com sucesso!',
-      });
-    } catch (error) {
+    } catch (error: any) {
       req.log.error(error);
-      return reply.send({
+      return reply.status(500).send({
         success: false,
-        message: error instanceof Error ? error.message : 'Erro ao enviar email de teste',
+        error: error.message || 'Erro ao enviar e-mail de teste',
       });
     }
   }

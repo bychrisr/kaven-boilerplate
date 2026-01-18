@@ -11,8 +11,8 @@ export async function csrfMiddleware(
   request: FastifyRequest,
   reply: FastifyReply
 ): Promise<void> {
-  // Pular verificação para métodos seguros (GET, HEAD, OPTIONS)
-  if (['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
+  // Pular verificação para métodos seguros ou webhooks
+  if (['GET', 'HEAD', 'OPTIONS'].includes(request.method) || request.url.startsWith('/api/webhooks')) {
     return;
   }
 
