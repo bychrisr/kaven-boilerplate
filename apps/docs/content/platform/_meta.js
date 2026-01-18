@@ -18,5 +18,6 @@ export default {
   'plans-and-products': 'Planos & Produtos',
   'implementation-logs': 'Logs de Implementação',
   'tenant-app-projects-tasks': 'Tenant App - Projects & Tasks',
+  'email-integrations': 'Email Integrations',
 };
 
