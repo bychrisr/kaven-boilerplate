@@ -1,0 +1,285 @@
+// ============================================
+// EMAIL INFRASTRUCTURE MODELS
+// ============================================
+
+enum EmailProvider {
+  POSTMARK
+  RESEND
+  AWS_SES
+  SMTP
+}
+
+enum EmailType {
+  TRANSACTIONAL
+  MARKETING
+}
+
+enum EmailEventType {
+  SENT
+  DELIVERED
+  BOUNCE
+  COMPLAINT
+  OPEN
+  CLICK
+  UNSUBSCRIBE
+}
+
+enum BounceType {
+  HARD
+  SOFT
+  TRANSIENT
+}
+
+enum TemplateStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum EmailQueueStatus {
+  PENDING
+  PROCESSING
+  SENT
+  FAILED
+  RETRY
+}
+
+/// Email Integration Configuration
+/// Stores provider credentials and settings (configurable via Admin Panel)
+model EmailIntegration {
+  id String @id @default(uuid())
+
+  // Provider Configuration
+  provider  EmailProvider @default(SMTP)
+  isActive  Boolean       @default(false) @map("is_active")
+  isPrimary Boolean       @default(false) @map("is_primary")
+
+  // Provider-specific credentials (encrypted in application layer)
+  apiKey        String? @map("api_key") // For Postmark/Resend/AWS SES
+  apiSecret     String? @map("api_secret") // For AWS SES
+  webhookSecret String? @map("webhook_secret") // For webhook validation
+
+  // SMTP Configuration (fallback)
+  smtpHost     String?  @map("smtp_host")
+  smtpPort     Int?     @default(587) @map("smtp_port")
+  smtpSecure   Boolean? @default(false) @map("smtp_secure")
+  smtpUser     String?  @map("smtp_user")
+  smtpPassword String?  @map("smtp_password")
+
+  // Domain Configuration
+  transactionalDomain String? @map("transactional_domain") // e.g., auth.kaven.site
+  marketingDomain     String? @map("marketing_domain") // e.g., mail.kaven.site
+  fromName            String? @default("Kaven Platform") @map("from_name")
+  fromEmail           String? @map("from_email") // e.g., noreply@auth.kaven.site
+
+  // Message Streams (Postmark)
+  transactionalStream String? @default("outbound") @map("transactional_stream")
+  marketingStream     String? @default("broadcasts") @map("marketing_stream")
+
+  // Features
+  trackOpens  Boolean @default(true) @map("track_opens")
+  trackClicks Boolean @default(true) @map("track_clicks")
+  enableDkim  Boolean @default(true) @map("enable_dkim")
+  enableBimi  Boolean @default(false) @map("enable_bimi")
+
+  // Rate Limiting
+  dailyLimit  Int? @map("daily_limit") // Max emails per day
+  hourlyLimit Int? @map("hourly_limit") // Max emails per hour
+
+  // Metadata
+  metadata Json?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([isPrimary], name: "primary_integration_unique")
+  @@index([provider])
+  @@index([isActive])
+  @@index([isPrimary])
+  @@map("email_integrations")
+}
+
+/// Email Events Tracking
+/// Tracks all email events (bounces, complaints, opens, clicks)
+model EmailEvent {
+  id String @id @default(uuid())
+
+  // User/Tenant Association
+  userId   String? @map("user_id")
+  tenantId String? @map("tenant_id")
+  email    String
+
+  // Event Details
+  eventType EmailEventType @map("event_type")
+  emailType EmailType      @default(TRANSACTIONAL) @map("email_type")
+  messageId String         @map("message_id") // Provider message ID
+  template  String? // Template name used
+
+  // Bounce/Complaint Details
+  bounceType            BounceType? @map("bounce_type")
+  bounceReason          String?     @map("bounce_reason")
+  complaintFeedbackType String?     @map("complaint_feedback_type")
+
+  // Tracking
+  userAgent   String? @map("user_agent")
+  ipAddress   String? @map("ip_address")
+  linkClicked String? @map("link_clicked") // URL clicked (for CLICK events)
+
+  // Provider Info
+  provider        EmailProvider? @map("provider")
+  providerEventId String?        @map("provider_event_id") // Original event ID from provider
+
+  // Metadata
+  metadata Json?
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([tenantId])
+  @@index([email])
+  @@index([messageId])
+  @@index([eventType])
+  @@index([createdAt])
+  @@map("email_events")
+}
+
+/// Email Templates
+/// Stores email templates with i18n support
+model EmailTemplate {
+  id          String         @id @default(uuid())
+  code        String         @unique // e.g., welcome, password-reset
+  name        String
+  description String?
+  type        EmailType      @default(TRANSACTIONAL)
+  status      TemplateStatus @default(ACTIVE)
+
+  // Content (supports i18n)
+  subjectPt     String  @map("subject_pt")
+  subjectEn     String? @map("subject_en")
+  htmlContentPt String  @map("html_content_pt") @db.Text
+  htmlContentEn String? @map("html_content_en") @db.Text
+  textContentPt String? @map("text_content_pt") @db.Text
+  textContentEn String? @map("text_content_en") @db.Text
+
+  // Template Variables
+  variables Json? // Array of required variables
+
+  // Provider-specific IDs
+  postmarkTemplateId String? @map("postmark_template_id")
+  resendTemplateId   String? @map("resend_template_id")
+
+  // Metadata
+  metadata Json?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([code])
+  @@index([type])
+  @@index([status])
+  @@map("email_templates")
+}
+
+/// Email Queue
+/// Async email queue with retry logic
+model EmailQueue {
+  id String @id @default(uuid())
+
+  // Recipient
+  to  String
+  cc  String[]
+  bcc String[]
+
+  // Content
+  subject      String
+  htmlBody     String? @map("html_body") @db.Text
+  textBody     String? @map("text_body") @db.Text
+  templateCode String? @map("template_code")
+  templateData Json?   @map("template_data")
+
+  // Configuration
+  emailType EmailType      @default(TRANSACTIONAL) @map("email_type")
+  provider  EmailProvider?
+  fromEmail String?        @map("from_email")
+  fromName  String?        @map("from_name")
+  replyTo   String?        @map("reply_to")
+
+  // Status
+  status      EmailQueueStatus @default(PENDING)
+  attempts    Int              @default(0)
+  maxAttempts Int              @default(3) @map("max_attempts")
+  lastError   String?          @map("last_error")
+
+  // Tracking
+  messageId String? @map("message_id") // Provider message ID after sending
+  userId    String? @map("user_id")
+  tenantId  String? @map("tenant_id")
+
+  // Idempotency
+  idempotencyKey String? @unique @map("idempotency_key")
+
+  // Scheduling
+  scheduledAt DateTime? @map("scheduled_at")
+  sentAt      DateTime? @map("sent_at")
+
+  // Metadata
+  metadata Json?
+  headers  Json?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([scheduledAt])
+  @@index([userId])
+  @@index([tenantId])
+  @@index([idempotencyKey])
+  @@map("email_queue")
+}
+
+/// Email Metrics
+/// Aggregated email metrics for analytics
+model EmailMetrics {
+  id String @id @default(uuid())
+
+  // Time Period
+  date DateTime @db.Date
+  hour Int? // 0-23 for hourly metrics
+
+  // Segmentation
+  tenantId     String?        @map("tenant_id")
+  emailType    EmailType?     @map("email_type")
+  provider     EmailProvider?
+  templateCode String?        @map("template_code")
+
+  // Metrics
+  sentCount         Int @default(0) @map("sent_count")
+  deliveredCount    Int @default(0) @map("delivered_count")
+  bounceCount       Int @default(0) @map("bounce_count")
+  hardBounceCount   Int @default(0) @map("hard_bounce_count")
+  softBounceCount   Int @default(0) @map("soft_bounce_count")
+  complaintCount    Int @default(0) @map("complaint_count")
+  openCount         Int @default(0) @map("open_count")
+  uniqueOpenCount   Int @default(0) @map("unique_open_count")
+  clickCount        Int @default(0) @map("click_count")
+  uniqueClickCount  Int @default(0) @map("unique_click_count")
+  unsubscribeCount  Int @default(0) @map("unsubscribe_count")
+
+  // Calculated Rates
+  deliveryRate Decimal? @map("delivery_rate") @db.Decimal(5, 2) // %
+  bounceRate   Decimal? @map("bounce_rate") @db.Decimal(5, 2) // %
+  openRate     Decimal? @map("open_rate") @db.Decimal(5, 2) // %
+  clickRate    Decimal? @map("click_rate") @db.Decimal(5, 2) // %
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([date, hour, tenantId, emailType, provider, templateCode], name: "metrics_unique")
+  @@index([date])
+  @@index([tenantId])
+  @@map("email_metrics")
+}

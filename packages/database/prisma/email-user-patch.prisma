@@ -1,0 +1,34 @@
+// ============================================
+// PATCH: Add Email Tracking Fields to User Model
+// ============================================
+// This file contains the additions needed to the User model
+// Merge these fields into the existing User model in schema.prisma
+
+// Add these fields to the User model (after line 211, before metadata):
+
+  // Email Tracking Fields
+  emailBounced       Boolean    @default(false)
+  emailBouncedAt     DateTime?
+  emailBounceType    BounceType?
+  emailOptOut        Boolean    @default(false)
+  emailOptOutDate    DateTime?
+  emailComplaintCount Int       @default(0)
+  unsubscribeToken   String?    @unique
+
+// Add these relations to the User model (after line 243, before @@index):
+
+  // Email Relations
+  emailEvents EmailEvent[]
+
+// Add these indexes to the User model (after line 248):
+
+  @@index([emailBounced])
+  @@index([emailOptOut])
+  @@index([unsubscribeToken])
+
+// ============================================
+// PATCH: Add Email Relations to Tenant Model
+// ============================================
+// Add this relation to the Tenant model:
+
+  emailEvents EmailEvent[]
