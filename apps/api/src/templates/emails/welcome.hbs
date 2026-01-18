@@ -1,16 +1,14 @@
 {{#> main}}
-  <h1 style="color: {{theme.colors.text}}; margin: 0 0 24px 0; font-size: 24px; font-weight: 700;">
-    {{t "emails.welcome.title"}}
-  </h1>
-  
-  <p style="color: {{theme.colors.text}}; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
-    {{t "common.greeting" name=name}}
-  </p>
-  
-  <p style="color: {{theme.colors.text}}; font-size: 16px; line-height: 1.6; margin: 0 0 32px 0;">
-    {{t "emails.welcome.content"}}
-  </p>
-  
-  {{> button url=(concat frontendUrl "/dashboard") label=(t "emails.welcome.cta") }}
-  
+    <h2>Bem-vindo ao {{companyName}}, {{name}}!</h2>
+    <p>Estamos muito felizes em ter você conosco. Sua conta foi criada com sucesso e você já pode começar a explorar nossa plataforma.</p>
+    
+    <p>Para começar agora mesmo, clique no botão abaixo para acessar seu painel:</p>
+    
+    <div style="text-align: center;">
+        <a href="{{dashboardUrl}}" class="button">Acessar Dashboard</a>
+    </div>
+    
+    <p style="margin-top: 30px;">Se você tiver qualquer dúvida, basta responder a este e-mail. Nossa equipe está sempre pronta para ajudar!</p>
+    
+    <p>Atenciosamente,<br>A equipe {{companyName}}</p>
 {{/main}}

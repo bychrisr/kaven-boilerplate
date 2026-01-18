@@ -1,53 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{locale}}">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: {{theme.typography.fontFamily}};
-      color: {{theme.colors.text}};
-      background-color: #f4f4f4;
-    }
-    h1, h2, h3, h4, h5, h6 {
-      font-family: {{theme.typography.headingFont}};
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{subject}}</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fa;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 30px;
+        }
+        .footer {
+            background-color: #f8fafc;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #000000;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        @media (prefers-color-scheme: dark) {
+            body { background-color: #0f172a; }
+            .container { background-color: #1e293b; color: #f8fafc; }
+            .header { background-color: #000000; }
+            .footer { background-color: #0f172a; color: #94a3b8; }
+        }
+    </style>
 </head>
-<body style="margin: 0; padding: 0; font-family: {{theme.typography.fontFamily}}; background-color: #f4f4f4;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 40px 20px;">
-    <tr>
-      <td align="center">
-        <!-- Card Container -->
-        <table width="600" cellpadding="0" cellspacing="0" style="background-color: {{theme.colors.surface}}; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
-          
-          <!-- Header Partial -->
-          <tr>
-            <td style="padding: 0;">
-              {{> header }}
-            </td>
-          </tr>
-
-          <!-- Content Injection -->
-          <tr>
-            <td style="padding: 40px;">
-              {{> @partial-block }}
-            </td>
-          </tr>
-          
-          <!-- Footer Partial -->
-          <tr>
-            <td style="padding: 0;">
-              {{> footer }}
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 style="margin:0;">{{companyName}}</h1>
+        </div>
+        <div class="content">
+            {{> @partial-block }}
+        </div>
+        <div class="footer">
+            <p>&copy; {{year}} {{companyName}}. Todos os direitos reservados.</p>
+            <p>Se você não solicitou este e-mail, pode ignorá-lo.</p>
+            <p><a href="{{unsubscribeUrl}}" style="color: #64748b; text-decoration: underline;">Cancelar inscrição</a></p>
+        </div>
+    </div>
 </body>
 </html>
-

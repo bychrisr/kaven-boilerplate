@@ -1,23 +1,23 @@
 import { Queue } from 'bullmq';
 import { defaultQueueConfig } from '../config/queue.config';
 
+/**
+ * Fila BullMQ para envio de e-mails
+ */
 export const emailQueue = new Queue('email', defaultQueueConfig);
 
-export enum EmailJobType {
-  WELCOME = 'welcome',
-  VERIFY_EMAIL = 'verify_email',
-  FORGOT_PASSWORD = 'forgot_password',
-  ALERT = 'alert',
-  LOGIN_ALERT = 'login_alert',
-}
-
-export interface EmailJobData {
-  to: string;
-  subject?: string;
-  template?: string;
-  context?: Record<string, any>;
-}
-
-export const addEmailJob = (type: EmailJobType, data: EmailJobData) => {
-  return emailQueue.add(type, data);
+/**
+ * Adiciona um e-mail para ser processado via worker
+ * @param queueId ID do registro na tabela EmailQueue (Prisma)
+ */
+export const addEmailJobV2 = (queueId: string) => {
+  return emailQueue.add('send_email', { queueId }, {
+    attempts: 3,
+    backoff: {
+      type: 'exponential',
+      delay: 5000,
+    },
+    removeOnComplete: true,
+    removeOnFail: false,
+  });
 };
