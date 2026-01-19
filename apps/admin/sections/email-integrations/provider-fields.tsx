@@ -99,6 +99,25 @@ export function ProviderFields({ provider, register, control }: ProviderFieldsPr
               Get your API key from Resend dashboard
             </p>
           </div>
+          
+          <div>
+            <Label htmlFor="testEmail">
+              Email de Teste (Opcional)
+              <span className="ml-2 text-xs font-normal text-muted-foreground">
+                Para testes em modo sandbox
+              </span>
+            </Label>
+            <Input
+              id="testEmail"
+              {...register('testEmail')}
+              type="email"
+              placeholder="kaventhecreator@gmail.com"
+              className="mt-2"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              📧 Informe o email da sua conta Resend. Os testes serão enviados para este endereço quando usar modo sandbox.
+            </p>
+          </div>
         </div>
       );
 

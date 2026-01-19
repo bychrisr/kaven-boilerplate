@@ -26,6 +26,7 @@ const emailIntegrationSchema = z.object({
   trackClicks: z.boolean().default(true),
   dailyLimit: z.number().optional().nullable(),
   hourlyLimit: z.number().optional().nullable(),
+  testEmail: z.string().email().optional().nullable(), // Email para testes (Resend)
 });
 
 export class EmailIntegrationController {
@@ -211,6 +212,7 @@ export class EmailIntegrationController {
           apiKey: integration.apiKey,
           apiSecret: integration.apiSecret,
           fromEmail: integration.fromEmail,
+          testEmail: integration.testEmail,
         },
         testMode,
         user.email // Fallback para email do admin

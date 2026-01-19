@@ -14,6 +14,7 @@ export interface EmailIntegrationForDetection {
   apiKey?: string | null;
   apiSecret?: string | null;
   fromEmail?: string | null;
+  testEmail?: string | null; // Email para testes (Resend)
   region?: string | null;
 }
 
@@ -61,14 +62,24 @@ export class ProviderEmailDetector {
 
   /**
    * Resend: Não tem API para buscar email da conta
-   * Estratégia: sandbox ou fromEmail configurado
+   * Estratégia: testEmail configurado, sandbox ou fromEmail
    */
   private async detectResendEmail(
     integration: EmailIntegrationForDetection,
     mode: 'sandbox' | 'custom',
     fallbackEmail: string
   ): Promise<ProviderEmailResult> {
-    // Modo sandbox: usar email de teste do Resend
+    // Se tem testEmail configurado, usar (prioridade máxima)
+    if (integration.testEmail) {
+      return {
+        email: integration.testEmail,
+        source: 'verified',
+        isVerified: true,
+        providerMessage: 'Usando email de teste configurado'
+      };
+    }
+
+    // Modo sandbox: usar email de fallback (admin)
     if (mode === 'sandbox') {
       return {
         email: fallbackEmail,
@@ -93,7 +104,7 @@ export class ProviderEmailDetector {
       email: fallbackEmail,
       source: 'fallback',
       isVerified: false,
-      providerMessage: 'Configure fromEmail na integração'
+      providerMessage: 'Configure testEmail ou fromEmail na integração'
     };
   }
 
