@@ -481,33 +481,29 @@ model File {
 }
 
 model VerificationToken {
-  id        String    @id @default(uuid())
-  token     String    @unique
+  id        String   @id @default(uuid())
+  token     String   @unique
   userId    String
   expiresAt DateTime
-  usedAt    DateTime? @map("used_at")
-  createdAt DateTime  @default(now()) @map("created_at")
+  createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([token])
   @@index([userId])
-  @@map("verification_tokens")
 }
 
 model PasswordResetToken {
-  id        String    @id @default(uuid())
-  token     String    @unique
+  id        String   @id @default(uuid())
+  token     String   @unique
   userId    String
   expiresAt DateTime
-  usedAt    DateTime? @map("used_at")
-  createdAt DateTime  @default(now()) @map("created_at")
+  createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([token])
   @@index([userId])
-  @@map("password_reset_tokens")
 }
 
 // ===========================
@@ -1377,6 +1373,7 @@ model EmailIntegration {
   marketingDomain     String? @map("marketing_domain") // e.g., mail.kaven.site
   fromName            String? @default("Kaven Platform") @map("from_name")
   fromEmail           String? @map("from_email") // e.g., noreply@auth.kaven.site
+  testEmail           String? @map("test_email") // Email para testes (usado principalmente para Resend)
 
   // Message Streams (Postmark)
   transactionalStream String? @default("outbound") @map("transactional_stream")
@@ -1534,7 +1531,6 @@ model EmailQueue {
 
   // Metadata
   metadata Json?
-  headers  Json?
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
