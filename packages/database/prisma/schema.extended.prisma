@@ -299,7 +299,6 @@ model EmailIntegration {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([isPrimary], name: "primary_integration_unique")
   @@index([provider])
   @@index([isActive])
   @@index([isPrimary])
