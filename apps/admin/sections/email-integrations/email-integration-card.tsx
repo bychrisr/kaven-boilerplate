@@ -79,7 +79,14 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
     onSettled: () => setIsTesting(false),
     onSuccess: (data) => {
       if (data.success) {
-        toast.success(data.message || t('testSuccess'));
+        // Se tem flag isInfo, é uma mensagem informativa (não erro)
+        if (data.isInfo) {
+          toast.info(data.message || t('testSuccess'), {
+            duration: 8000, // Mais tempo para ler a mensagem informativa
+          });
+        } else {
+          toast.success(data.message || t('testSuccess'));
+        }
       } else {
         toast.error(data.error || t('testFailed'));
       }

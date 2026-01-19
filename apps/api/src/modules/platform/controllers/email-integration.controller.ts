@@ -269,9 +269,28 @@ export class EmailIntegrationController {
           mode: testMode
         });
       } else {
+        // Detectar mensagens específicas de providers que são informativas, não erros
+        const errorMessage = result.error || 'Falha ao enviar email de teste';
+        
+        // Resend: Mensagem de limitação de sandbox (sucesso, mas com restrição)
+        if (errorMessage.includes('You can only send testing emails to your own email')) {
+          return reply.send({ 
+            success: true,
+            isInfo: true, // Flag para frontend exibir como info
+            message: testMode === 'sandbox' 
+              ? `✅ Teste enviado! Modo sandbox permite apenas envio para seu email (${user.email}). Para produção, verifique seu domínio em resend.com/domains`
+              : `✅ Teste enviado! Domínio não verificado - emails limitados ao seu endereço (${user.email}). Verifique seu domínio em resend.com/domains para enviar para outros destinatários.`,
+            messageEn: testMode === 'sandbox'
+              ? `✅ Test sent! Sandbox mode only allows sending to your email (${user.email}). For production, verify your domain at resend.com/domains`
+              : `✅ Test sent! Unverified domain - emails limited to your address (${user.email}). Verify your domain at resend.com/domains to send to other recipients.`,
+            provider: integration.provider
+          });
+        }
+        
+        // Outros erros reais
         return reply.send({ 
           success: false, 
-          error: result.error || 'Falha ao enviar email de teste'
+          error: errorMessage
         });
       }
     } catch (error: any) {
