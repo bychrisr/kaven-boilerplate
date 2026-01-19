@@ -4,7 +4,8 @@
   "description": "Kaven API",
   "main": "src/server.ts",
   "scripts": {
-    "dev": "(fuser -k -9 8000/tcp || true) && tsx watch src/server.ts",
+    "dev": "bash scripts/dev.sh",
+    "dev:simple": "(fuser -k -9 8000/tcp || true) && tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
     "test": "vitest run",
