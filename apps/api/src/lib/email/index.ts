@@ -223,13 +223,27 @@ export class EmailServiceV2 {
     const result = await provider.send(payload);
     const durationSeconds = (Date.now() - startTime) / 1000;
 
-    // Record metrics
+    // Record metrics (Prometheus - in-memory)
     businessMetricsService.trackEmailSent(
       result.provider, 
       payload.template || 'custom', 
       payload.type || EmailType.TRANSACTIONAL
     );
     businessMetricsService.trackEmailDeliveryDuration(result.provider, durationSeconds);
+
+    // Persist metrics to database (survives restarts)
+    try {
+      const { emailMetricsPersistence } = await import('./metrics-persistence.service');
+      await emailMetricsPersistence.recordEmailSent({
+        provider: result.provider as any,
+        emailType: payload.type || EmailType.TRANSACTIONAL,
+        tenantId: payload.tenantId,
+        templateCode: payload.template,
+      });
+    } catch (error) {
+      console.error('[EmailService] Failed to persist metrics:', error);
+      // Don't fail email send if metrics persistence fails
+    }
 
     // Track event
     if (result.success && result.messageId) {
