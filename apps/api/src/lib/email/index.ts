@@ -223,27 +223,53 @@ export class EmailServiceV2 {
     const result = await provider.send(payload);
     const durationSeconds = (Date.now() - startTime) / 1000;
 
+    console.log('[EmailService] 📧 Email enviado com sucesso:', {
+      provider: result.provider,
+      messageId: result.messageId,
+      success: result.success,
+    });
+
     // Record metrics (Prometheus - in-memory)
+    console.log('[EmailService] 📊 Registrando métricas Prometheus...');
     businessMetricsService.trackEmailSent(
       result.provider, 
       payload.template || 'custom', 
       payload.type || EmailType.TRANSACTIONAL
     );
     businessMetricsService.trackEmailDeliveryDuration(result.provider, durationSeconds);
+    console.log('[EmailService] ✅ Métricas Prometheus registradas');
 
     // Persist metrics to database (survives restarts)
+    console.log('[EmailService] 💾 INICIANDO persistência no banco...');
+    console.log('[EmailService] 📋 Parâmetros para persistência:', {
+      provider: result.provider,
+      emailType: payload.type || EmailType.TRANSACTIONAL,
+      tenantId: payload.tenantId,
+      templateCode: payload.template,
+    });
+
     try {
+      console.log('[EmailService] 🔄 Importando emailMetricsPersistence...');
       const { emailMetricsPersistence } = await import('./metrics-persistence.service');
+      console.log('[EmailService] ✅ emailMetricsPersistence importado com sucesso');
+      
+      console.log('[EmailService] 🔄 Chamando recordEmailSent...');
       await emailMetricsPersistence.recordEmailSent({
         provider: result.provider as any,
         emailType: payload.type || EmailType.TRANSACTIONAL,
         tenantId: payload.tenantId,
         templateCode: payload.template,
       });
+      console.log('[EmailService] ✅ recordEmailSent concluído com sucesso!');
     } catch (error) {
-      console.error('[EmailService] Failed to persist metrics:', error);
+      console.error('[EmailService] ❌ ERRO CRÍTICO ao persistir métricas:', error);
+      console.error('[EmailService] 📋 Stack trace:', (error as Error).stack);
+      console.error('[EmailService] 📋 Error name:', (error as Error).name);
+      console.error('[EmailService] 📋 Error message:', (error as Error).message);
       // Don't fail email send if metrics persistence fails
     }
+
+    console.log('[EmailService] 🎯 Continuando com tracking de evento...');
 
     // Track event
     if (result.success && result.messageId) {
@@ -259,6 +285,7 @@ export class EmailServiceV2 {
       });
     }
 
+    console.log('[EmailService] ✅ sendDirect concluído completamente');
     return result;
   }
 
