@@ -20,6 +20,7 @@
     "docker:down": "docker compose -f infra/docker-compose.yml down"
   },
   "devDependencies": {
+    "@types/node-cron": "^3.0.11",
     "kill-port": "^2.0.1",
     "prettier": "^3.4.2",
     "turbo": "^2.3.3",
@@ -28,6 +29,7 @@
   "packageManager": "pnpm@9.15.4",
   "dependencies": {
     "@prisma/client": "5.22.0",
+    "node-cron": "^3.0.3",
     "systeminformation": "^5.30.0"
   }
 }

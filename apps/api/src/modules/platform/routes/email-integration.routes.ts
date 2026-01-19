@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { emailIntegrationController } from '../controllers/email-integration.controller';
-// import { emailHealthCheckConfigController } from '../controllers/email-health-check-config.controller';
+import { emailHealthCheckConfigController } from '../controllers/email-health-check-config.controller';
 import { authMiddleware } from '../../../middleware/auth.middleware';
 import { requireSuperAdmin } from '../../../middleware/rbac.middleware';
 
@@ -17,8 +17,8 @@ export async function emailIntegrationRoutes(app: FastifyInstance) {
   app.get('/:id/health', emailIntegrationController.healthCheck);
   app.post('/test', emailIntegrationController.test);
 
-  // Health Check Configuration (temporariamente desabilitado - aguardando instalação de node-cron)
-  // app.get('/health-check-config', emailHealthCheckConfigController.getConfig);
-  // app.put('/health-check-config', emailHealthCheckConfigController.updateConfig);
-  // app.post('/health-check-config/run-now', emailHealthCheckConfigController.runNow);
+  // Health Check Configuration
+  app.get('/health-check-config', emailHealthCheckConfigController.getConfig);
+  app.put('/health-check-config', emailHealthCheckConfigController.updateConfig);
+  app.post('/health-check-config/run-now', emailHealthCheckConfigController.runNow);
 }
