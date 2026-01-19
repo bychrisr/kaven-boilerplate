@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
 import { observabilityApi } from '@/lib/api/observability';
-import { CreditCard, Map, DollarSign } from 'lucide-react';
+import { CreditCard, Map, DollarSign, Mail } from 'lucide-react';
 import { StatCard } from '@/components/ui/stat-card';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
 
@@ -42,7 +42,12 @@ export function ExternalAPIs() {
     }
   };
 
-  const getIcon = (provider: string) => {
+  const getIcon = (provider: string, name: string) => {
+    // Check if it's an email integration
+    if (name.startsWith('Email -')) {
+      return Mail;
+    }
+    
     switch (provider) {
       case 'stripe':
         return CreditCard;
@@ -76,7 +81,7 @@ export function ExternalAPIs() {
                 ? `${t('latency')}: ${api.latency}ms | ${t('successRate')}: ${api.successRate}%`
                 : api.provider.replace('_', ' ')
             }
-            icon={getIcon(api.provider)}
+            icon={getIcon(api.provider, api.name)}
             iconClassName={getStatusColor(api.status)}
             menuAction={
               <InfoTooltip 

@@ -166,35 +166,92 @@ export class EmailIntegrationController {
 
   /**
    * POST /api/settings/email/test
+   * Testa uma integração de email enviando um email real ao administrador logado
    */
   async test(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const { integrationId, to } = req.body as any;
+      const { id } = req.body as { id: string };
+      
+      if (!id) {
+        return reply.status(400).send({ 
+          success: false, 
+          error: 'ID da integração é obrigatório' 
+        });
+      }
       
       const integration = await prisma.emailIntegration.findUnique({
-        where: { id: integrationId }
+        where: { id }
       });
 
       if (!integration) {
-        return reply.status(404).send({ error: 'Integração não encontrada' });
+        return reply.status(404).send({ 
+          success: false, 
+          error: 'Integração não encontrada' 
+        });
       }
 
-      // We can use EmailServiceV2 to send a test email
-      // But we need to make sure the provider is loaded
+      // Buscar email do admin logado
+      const user = (req as any).user;
+      if (!user || !user.email) {
+        return reply.status(401).send({ 
+          success: false, 
+          error: 'Usuário não autenticado ou sem email' 
+        });
+      }
+
+      // Recarregar providers para garantir que a integração está disponível
       await EmailServiceV2.getInstance().reload();
       
+      // Enviar email de teste
       const result = await EmailServiceV2.getInstance().send({
-        to: to || 'test@example.com',
-        subject: 'Teste de Configuração de E-mail - Kaven',
-        html: '<p>Este é um e-mail de teste da sua nova infraestrutura Kaven.</p>',
-        userId: (req as any).user?.id,
-        tenantId: integration.isPrimary ? undefined : 'some-tenant-id' // Ideally we should have context
-      }, { useQueue: false }); // Bypass queue for immediate testing feedback
+        to: user.email,
+        subject: `✅ Teste de Integração - ${integration.provider}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #2563eb;">Teste de Configuração de Email</h2>
+            <p>Olá <strong>${user.name || user.email}</strong>,</p>
+            <p>Este é um email de teste da sua integração <strong>${integration.provider}</strong> configurada no Kaven.</p>
+            
+            <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 20px 0;">
+              <h3 style="margin-top: 0; color: #374151;">Detalhes da Integração:</h3>
+              <ul style="color: #6b7280;">
+                <li><strong>Provedor:</strong> ${integration.provider}</li>
+                <li><strong>Email de Envio:</strong> ${integration.fromEmail || 'Não configurado'}</li>
+                <li><strong>Status:</strong> ${integration.isActive ? '✅ Ativo' : '❌ Inativo'}</li>
+                <li><strong>Primário:</strong> ${integration.isPrimary ? 'Sim' : 'Não'}</li>
+              </ul>
+            </div>
+            
+            <p style="color: #10b981; font-weight: bold;">✅ Se você recebeu este email, sua integração está funcionando corretamente!</p>
+            
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;">
+            <p style="color: #9ca3af; font-size: 12px;">
+              Este email foi enviado automaticamente pelo sistema Kaven.<br>
+              Data/Hora: ${new Date().toLocaleString('pt-BR')}
+            </p>
+          </div>
+        `,
+        provider: integration.provider as any,
+      }, { useQueue: false }); // Envio direto para feedback imediato
 
-      return reply.send(result);
+      if (result.success) {
+        return reply.send({ 
+          success: true, 
+          message: `Email de teste enviado com sucesso para ${user.email}`,
+          messageId: result.messageId
+        });
+      } else {
+        return reply.send({ 
+          success: false, 
+          error: result.error || 'Falha ao enviar email de teste'
+        });
+      }
     } catch (error: any) {
       req.log.error(error);
-      return reply.send({ success: false, error: error.message });
+      return reply.send({ 
+        success: false, 
+        error: error.message || 'Erro ao testar integração'
+      });
     }
   }
 }

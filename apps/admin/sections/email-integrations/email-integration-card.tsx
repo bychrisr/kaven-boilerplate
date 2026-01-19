@@ -79,9 +79,9 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
     onSettled: () => setIsTesting(false),
     onSuccess: (data) => {
       if (data.success) {
-        toast.success(t('testSuccess'));
+        toast.success(data.message || t('testSuccess'));
       } else {
-        toast.error(data.message || t('testFailed'));
+        toast.error(data.error || t('testFailed'));
       }
     },
     onError: (error: Error) => {

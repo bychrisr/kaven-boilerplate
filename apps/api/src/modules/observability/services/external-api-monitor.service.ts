@@ -7,6 +7,7 @@ export interface ExternalAPI {
   priority: number;
   enabled: boolean;
   requiresAuth: boolean;
+  metadata?: Record<string, any>;
 }
 
 export interface ExternalAPIStatus extends ExternalAPI {
@@ -50,8 +51,14 @@ export class ExternalAPIMonitorService {
     console.log('[ExternalAPIMonitor] 🔍 Verificando todas as APIs externas...');
     const startTime = Date.now();
     
+    // Carregar integrações de email do banco de dados
+    const emailIntegrations = await this.loadEmailIntegrations();
+    
+    // Combinar APIs fixas com integrações de email
+    const allAPIs = [...this.apis, ...emailIntegrations];
+    
     const results = await Promise.all(
-      this.apis.map(api => this.checkAPI(api))
+      allAPIs.map(api => this.checkAPI(api))
     );
 
     const healthyCount = results.filter(r => r.status === 'healthy').length;
@@ -68,6 +75,60 @@ export class ExternalAPIMonitorService {
     });
 
     return results;
+  }
+
+  /**
+   * Carrega integrações de email do banco de dados
+   */
+  private async loadEmailIntegrations(): Promise<ExternalAPI[]> {
+    try {
+      const { prisma } = await import('../../../lib/prisma');
+      
+      const integrations = await (prisma as any).emailIntegration.findMany({
+        select: {
+          id: true,
+          provider: true,
+          isActive: true,
+          isPrimary: true,
+          fromEmail: true,
+        }
+      });
+
+      return integrations.map((integration: any) => ({
+        name: `Email - ${integration.provider}${integration.isPrimary ? ' (Primary)' : ''}`,
+        provider: 'custom' as const,
+        endpoint: this.getEmailProviderEndpoint(integration.provider),
+        priority: integration.isPrimary ? 1 : 2,
+        enabled: integration.isActive,
+        requiresAuth: true,
+        metadata: {
+          integrationId: integration.id,
+          emailProvider: integration.provider,
+          fromEmail: integration.fromEmail
+        }
+      }));
+    } catch (error) {
+      console.error('[ExternalAPIMonitor] ❌ Erro ao carregar integrações de email:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Retorna endpoint de health check para cada provedor de email
+   */
+  private getEmailProviderEndpoint(provider: string): string {
+    switch (provider) {
+      case 'RESEND':
+        return 'https://api.resend.com/emails';
+      case 'POSTMARK':
+        return 'https://api.postmarkapp.com/server';
+      case 'AWS_SES':
+        return 'https://email.us-east-1.amazonaws.com';
+      case 'SMTP':
+        return 'smtp://localhost'; // SMTP não tem endpoint HTTP
+      default:
+        return '';
+    }
   }
 
   private async checkAPI(api: ExternalAPI): Promise<ExternalAPIStatus> {
@@ -126,6 +187,12 @@ export class ExternalAPIMonitorService {
       throw new Error('Endpoint not configured');
     }
 
+    // SMTP não tem endpoint HTTP, considerar como "healthy" se configurado
+    if (api.endpoint.startsWith('smtp://')) {
+      // Para SMTP, apenas verificamos se está configurado
+      return;
+    }
+
     const headers: Record<string, string> = {};
 
     // Adicionar autenticação conforme o provider
@@ -144,6 +211,10 @@ export class ExternalAPIMonitorService {
         case 'google_maps':
           // Google Maps usa query param, não header
           break;
+        case 'custom':
+          // Email providers - não fazemos ping real para não consumir quota
+          // Apenas verificamos se está configurado
+          return;
       }
     }
 

@@ -95,7 +95,7 @@ export const emailIntegrationsApi = {
   /**
    * Test an email integration
    */
-  test: async (id: string, to?: string): Promise<{ success: boolean; message?: string }> => {
+  test: async (id: string, to?: string): Promise<{ success: boolean; message?: string; error?: string }> => {
     const { data } = await api.post('/api/settings/email/test', { id, to });
     return data;
   },
