@@ -74,7 +74,7 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
   });
 
   const testMutation = useMutation({
-    mutationFn: (id: string) => emailIntegrationsApi.test(id),
+    mutationFn: ({ id, mode }: { id: string; mode?: 'sandbox' | 'custom' }) => emailIntegrationsApi.test(id, mode),
     onMutate: () => setIsTesting(true),
     onSettled: () => setIsTesting(false),
     onSuccess: (data) => {
@@ -89,8 +89,8 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
     },
   });
 
-  const handleTest = () => {
-    testMutation.mutate(integration.id);
+  const handleTest = (mode: 'sandbox' | 'custom' = 'custom') => {
+    testMutation.mutate({ id: integration.id, mode });
   };
 
   return (
@@ -209,16 +209,44 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
                </Button>
             } />
          </div>
-         <Button 
-            variant="ghost" 
-            size="icon"
-            className="h-9 w-9 shrink-0 text-muted-foreground hover:text-foreground"
-            onClick={handleTest}
-            disabled={isTesting}
-            title={t('test')}
-         >
-            {isTesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Activity className="h-4 w-4" />}
-         </Button>
+         
+         {/* Test Buttons - Show two buttons for Resend/Postmark, one for others */}
+         {(integration.provider === 'RESEND' || integration.provider === 'POSTMARK') ? (
+           <DropdownMenu>
+             <DropdownMenuTrigger asChild>
+               <Button 
+                 variant="ghost" 
+                 size="icon"
+                 className="h-9 w-9 shrink-0 text-muted-foreground hover:text-foreground"
+                 disabled={isTesting}
+                 title={t('test')}
+               >
+                 {isTesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Activity className="h-4 w-4" />}
+               </Button>
+             </DropdownMenuTrigger>
+             <DropdownMenuContent align="end" className="w-[200px]">
+               <DropdownMenuItem onSelect={() => handleTest('sandbox')} disabled={isTesting}>
+                 <Activity className="mr-2 h-4 w-4" />
+                 Testar Sandbox
+               </DropdownMenuItem>
+               <DropdownMenuItem onSelect={() => handleTest('custom')} disabled={isTesting}>
+                 <Activity className="mr-2 h-4 w-4" />
+                 Testar Domínio
+               </DropdownMenuItem>
+             </DropdownMenuContent>
+           </DropdownMenu>
+         ) : (
+           <Button 
+             variant="ghost" 
+             size="icon"
+             className="h-9 w-9 shrink-0 text-muted-foreground hover:text-foreground"
+             onClick={() => handleTest('custom')}
+             disabled={isTesting}
+             title={t('test')}
+           >
+             {isTesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Activity className="h-4 w-4" />}
+           </Button>
+         )}
       </div>
     </div>
   );

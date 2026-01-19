@@ -170,7 +170,7 @@ export class EmailIntegrationController {
    */
   async test(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const { id } = req.body as { id: string };
+      const { id, mode } = req.body as { id: string; mode?: 'sandbox' | 'custom' };
       
       if (!id) {
         return reply.status(400).send({ 
@@ -199,13 +199,30 @@ export class EmailIntegrationController {
         });
       }
 
+      // Determinar email de envio baseado no modo
+      let fromEmail = integration.fromEmail;
+      let testMode = mode || 'custom';
+      
+      // Para Resend e Postmark, oferecer opção de sandbox
+      if (testMode === 'sandbox') {
+        if (integration.provider === 'RESEND') {
+          fromEmail = 'onboarding@resend.dev';
+        } else if (integration.provider === 'POSTMARK') {
+          fromEmail = 'test@blackhole.postmarkapp.com';
+        } else {
+          // Outros providers não têm sandbox, usar custom
+          testMode = 'custom';
+        }
+      }
+
       // Recarregar providers para garantir que a integração está disponível
       await EmailServiceV2.getInstance().reload();
       
       // Enviar email de teste
       const result = await EmailServiceV2.getInstance().send({
         to: user.email,
-        subject: `✅ Teste de Integração - ${integration.provider}`,
+        from: fromEmail || undefined,
+        subject: `✅ Teste de Integração - ${integration.provider} (${testMode === 'sandbox' ? 'Sandbox' : 'Domínio Customizado'})`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #2563eb;">Teste de Configuração de Email</h2>
@@ -216,13 +233,23 @@ export class EmailIntegrationController {
               <h3 style="margin-top: 0; color: #374151;">Detalhes da Integração:</h3>
               <ul style="color: #6b7280;">
                 <li><strong>Provedor:</strong> ${integration.provider}</li>
-                <li><strong>Email de Envio:</strong> ${integration.fromEmail || 'Não configurado'}</li>
+                <li><strong>Modo de Teste:</strong> ${testMode === 'sandbox' ? '🧪 Sandbox' : '🌐 Domínio Customizado'}</li>
+                <li><strong>Email de Envio:</strong> ${fromEmail || 'Não configurado'}</li>
                 <li><strong>Status:</strong> ${integration.isActive ? '✅ Ativo' : '❌ Inativo'}</li>
                 <li><strong>Primário:</strong> ${integration.isPrimary ? 'Sim' : 'Não'}</li>
               </ul>
             </div>
             
             <p style="color: #10b981; font-weight: bold;">✅ Se você recebeu este email, sua integração está funcionando corretamente!</p>
+            
+            ${testMode === 'sandbox' ? `
+              <div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+                <p style="margin: 0; color: #92400e; font-size: 14px;">
+                  <strong>⚠️ Modo Sandbox:</strong> Este email foi enviado usando o domínio de teste do provedor. 
+                  Para produção, configure e verifique seu domínio customizado.
+                </p>
+              </div>
+            ` : ''}
             
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;">
             <p style="color: #9ca3af; font-size: 12px;">
@@ -237,8 +264,9 @@ export class EmailIntegrationController {
       if (result.success) {
         return reply.send({ 
           success: true, 
-          message: `Email de teste enviado com sucesso para ${user.email}`,
-          messageId: result.messageId
+          message: `Email de teste (${testMode === 'sandbox' ? 'Sandbox' : 'Domínio Customizado'}) enviado com sucesso para ${user.email}`,
+          messageId: result.messageId,
+          mode: testMode
         });
       } else {
         return reply.send({ 
