@@ -93,7 +93,7 @@ export const emailIntegrationsApi = {
   },
 
   /**
-   * Test an email integration
+   * Test an email integration (health check)
    */
   test: async (id: string, mode?: 'sandbox' | 'custom'): Promise<{ 
     success: boolean; 
@@ -103,8 +103,14 @@ export const emailIntegrationsApi = {
     mode?: string;
     isInfo?: boolean;
     provider?: string;
+    healthy?: boolean;
   }> => {
-    const { data } = await api.post('/api/settings/email/test', { id, mode });
-    return data;
+    const { data } = await api.get(`/api/settings/email/${id}/health`);
+    // Convert health check response to test response format
+    return {
+      success: data.healthy || false,
+      message: data.message,
+      healthy: data.healthy,
+    };
   },
 };
