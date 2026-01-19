@@ -110,7 +110,62 @@ export class AlertingService {
       value: 500,
       severity: 'medium',
       enabled: true
-    }
+    },
+    // Service DOWN thresholds (0 = unhealthy, 1 = healthy)
+    {
+      id: 'redis_down',
+      name: 'Redis Down',
+      metric: 'redis_status',
+      operator: 'eq',
+      value: 0,
+      severity: 'critical',
+      enabled: true
+    },
+    {
+      id: 'database_down',
+      name: 'Database Down',
+      metric: 'database_status',
+      operator: 'eq',
+      value: 0,
+      severity: 'critical',
+      enabled: true
+    },
+    {
+      id: 'prometheus_down',
+      name: 'Prometheus Down',
+      metric: 'prometheus_status',
+      operator: 'eq',
+      value: 0,
+      severity: 'high',
+      enabled: true
+    },
+    {
+      id: 'grafana_down',
+      name: 'Grafana Down',
+      metric: 'grafana_status',
+      operator: 'eq',
+      value: 0,
+      severity: 'medium',
+      enabled: true
+    },
+    {
+      id: 'loki_down',
+      name: 'Loki Down',
+      metric: 'loki_status',
+      operator: 'eq',
+      value: 0,
+      severity: 'medium',
+      enabled: true
+    },
+    {
+      id: 'mailhog_down',
+      name: 'MailHog Down',
+      metric: 'mailhog_status',
+      operator: 'eq',
+      value: 0,
+      severity: 'low',
+      enabled: true
+    },
   ];
 
   // Armazena histórico completo de alertas (ativos e resolvidos)
@@ -211,6 +266,27 @@ export class AlertingService {
       case 'redis_latency':
         const redisService = metrics.infrastructure?.find((svc: any) => svc.name === 'Redis');
         return redisService?.latency || 0;
+      
+      // Service status checks (0 = unhealthy, 1 = healthy)
+      case 'redis_status':
+        const redis = metrics.infrastructure?.find((svc: any) => svc.name === 'Redis');
+        return redis?.status === 'healthy' ? 1 : 0;
+      case 'database_status':
+        const db = metrics.infrastructure?.find((svc: any) => svc.name === 'PostgreSQL');
+        return db?.status === 'healthy' ? 1 : 0;
+      case 'prometheus_status':
+        const prom = metrics.infrastructure?.find((svc: any) => svc.name === 'Prometheus');
+        return prom?.status === 'healthy' ? 1 : 0;
+      case 'grafana_status':
+        const grafana = metrics.infrastructure?.find((svc: any) => svc.name === 'Grafana');
+        return grafana?.status === 'healthy' ? 1 : 0;
+      case 'loki_status':
+        const loki = metrics.infrastructure?.find((svc: any) => svc.name === 'Loki');
+        return loki?.status === 'healthy' ? 1 : 0;
+      case 'mailhog_status':
+        const mailhog = metrics.infrastructure?.find((svc: any) => svc.name === 'MailHog');
+        return mailhog?.status === 'healthy' ? 1 : 0;
+        
       default:
         return 0;
     }
