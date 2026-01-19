@@ -106,11 +106,15 @@ export const emailIntegrationsApi = {
     healthy?: boolean;
   }> => {
     const { data } = await api.get(`/api/settings/email/${id}/health`);
-    // Convert health check response to test response format
+    
+    // success = requisição HTTP funcionou (200 OK)
+    // healthy = integração está configurada corretamente
+    // Se unhealthy, mostra como info (não erro) pois a requisição funcionou
     return {
-      success: data.healthy || false,
+      success: true, // Sempre true se chegou aqui (200 OK)
       message: data.message,
       healthy: data.healthy,
+      isInfo: !data.healthy, // Se unhealthy, mostra como info ao invés de erro
     };
   },
 };
