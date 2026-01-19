@@ -81,12 +81,20 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['email-integrations'] });
-      toast.success(data.healthy ? 'Connection successful!' : 'Connection failed', {
-        description: data.message,
-      });
+      
+      const title = data.healthy ? 'Connection successful!' : 'Connection failed';
+      const description = data.message || '';
+      
+      if (data.healthy) {
+        toast.success(title, { description });
+      } else {
+        toast.error(title, { description });
+      }
     },
-    onError: () => {
-      toast.error('Failed to test connection');
+    onError: (error) => {
+      toast.error('Failed to test connection', {
+        description: error instanceof Error ? error.message : 'Unknown error'
+      });
     },
   });
 
