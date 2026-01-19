@@ -1,4 +1,4 @@
-import { prisma } from '@kaven/database';
+import { prisma } from '../../config/database';
 import { EmailProvider } from '@prisma/client';
 
 /**
