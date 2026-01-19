@@ -15,6 +15,8 @@ export class EmailMetricsPersistenceService {
     tenantId?: string;
     templateCode?: string;
   }) {
+    console.log('[EmailMetricsPersistence] 📧 recordEmailSent chamado:', params);
+    
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -96,9 +98,6 @@ export class EmailMetricsPersistenceService {
     });
   }
 
-  /**
-   * Upsert genérico de métrica
-   */
   private async upsertMetric(params: {
     date: Date;
     provider: EmailProvider;
@@ -107,8 +106,17 @@ export class EmailMetricsPersistenceService {
     templateCode?: string;
     increment: Record<string, number>;
   }) {
+    console.log('[EmailMetricsPersistence] 🔄 upsertMetric chamado:', {
+      date: params.date.toISOString(),
+      provider: params.provider,
+      emailType: params.emailType,
+      tenantId: params.tenantId,
+      templateCode: params.templateCode,
+      increment: params.increment,
+    });
+
     try {
-      await prisma.emailMetrics.upsert({
+      const result = await prisma.emailMetrics.upsert({
         where: {
           metrics_unique: {
             date: params.date,
@@ -137,8 +145,14 @@ export class EmailMetricsPersistenceService {
           ),
         },
       });
+      
+      console.log('[EmailMetricsPersistence] ✅ Métrica persistida com sucesso:', result.id);
     } catch (error) {
-      console.error('[EmailMetricsPersistence] Error upserting metric:', error);
+      console.error('[EmailMetricsPersistence] ❌ ERRO ao persistir métrica:', error);
+      console.error('[EmailMetricsPersistence] 📋 Detalhes do erro:', {
+        message: (error as Error).message,
+        stack: (error as Error).stack,
+      });
       // Não falhar o envio de email por erro de métrica
     }
   }
