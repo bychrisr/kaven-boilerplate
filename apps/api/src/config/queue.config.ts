@@ -18,7 +18,12 @@ try {
   console.warn('Invalid REDIS_URL, falling back to localhost:6379');
 }
 
-export const connection = redisConfig;
+export const connection = {
+  host: redisConfig.host,
+  port: redisConfig.port,
+  password: redisConfig.password,
+  family: 4, // Força IPv4 (evita tentativa de IPv6)
+};
 
 export const defaultQueueConfig: QueueOptions = {
   connection,

@@ -22,7 +22,19 @@ export class InfrastructureMonitorService {
 
   constructor() {
     this.prisma = new PrismaClient();
-    this.redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+    this.redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
+      family: 4, // Força IPv4 (evita tentativa de IPv6)
+      enableOfflineQueue: false,
+      maxRetriesPerRequest: 20,
+      retryStrategy(times) {
+        const delay = Math.min(times * 50, 2000);
+        return delay;
+      },
+    });
+
+    this.redis.on('error', (err) => {
+      console.error('[InfrastructureMonitor] Redis connection error:', err.message);
+    });
   }
 
   private services: InfrastructureService[] = [

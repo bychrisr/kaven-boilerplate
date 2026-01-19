@@ -14,6 +14,7 @@ export const rateLimitConfig: FastifyPluginOptions = {
     ? (() => {
         const Redis = require('ioredis');
         const client = new Redis(env.REDIS_URL, {
+          family: 4, // Força IPv4 (evita tentativa de IPv6)
           enableOfflineQueue: false,
           maxRetriesPerRequest: 1,
         });
