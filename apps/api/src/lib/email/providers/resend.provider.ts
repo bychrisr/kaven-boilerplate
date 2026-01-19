@@ -68,7 +68,7 @@ export class ResendProvider implements IEmailProvider {
         subject: payload.subject,
         html: payload.html,
         text: payload.text,
-        reply_to: payload.replyTo,
+        replyTo: payload.replyTo,
         tags: [
           { name: 'type', value: payload.type || EmailType.TRANSACTIONAL },
           { name: 'template', value: payload.template || 'custom' },
@@ -244,6 +244,63 @@ export class ResendProvider implements IEmailProvider {
     }
     
     return 'SOFT' as BounceType;
+  }
+
+  /**
+   * Health check - validates API key and tests connectivity
+   */
+  async healthCheck(): Promise<{ healthy: boolean; message?: string; details?: Record<string, any> }> {
+    try {
+      // Check if API key exists
+      if (!this.config.apiKey) {
+        return {
+          healthy: false,
+          message: 'API key not configured',
+          details: { reason: 'missing_credentials' },
+        };
+      }
+
+      // Test API key by fetching domains (lightweight API call)
+      // This validates the key without sending an actual email
+      const response = await fetch('https://api.resend.com/domains', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${this.config.apiKey}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        return {
+          healthy: false,
+          message: `API key validation failed: ${response.statusText}`,
+          details: {
+            status: response.status,
+            error: error,
+            reason: response.status === 401 ? 'invalid_credentials' : 'api_error',
+          },
+        };
+      }
+
+      const data = await response.json();
+      
+      return {
+        healthy: true,
+        message: 'Resend API key is valid and working',
+        details: {
+          domains: data.data?.length || 0,
+          verified_domains: data.data?.filter((d: any) => d.status === 'verified').length || 0,
+        },
+      };
+    } catch (error: any) {
+      secureLog.error('[Resend] Health check failed:', error);
+      return {
+        healthy: false,
+        message: `Health check failed: ${error.message}`,
+        details: { reason: 'network_error', error: error.message },
+      };
+    }
   }
 
   /**

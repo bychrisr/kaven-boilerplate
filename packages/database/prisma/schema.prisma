@@ -1314,6 +1314,10 @@ enum EmailProvider {
 enum EmailType {
   TRANSACTIONAL
   MARKETING
+  BILLING       // Emails de faturamento (faturas, cobranças, recibos)
+  TEST          // Emails de teste (desenvolvimento, QA)
+  NOTIFICATION  // Notificações do sistema (alertas, avisos)
+  SECURITY      // Alertas de segurança (login suspeito, mudança de senha)
 }
 
 enum EmailEventType {
@@ -1391,6 +1395,12 @@ model EmailIntegration {
 
   // Metadata
   metadata Json?
+
+  // Health Check Status
+  healthStatus      String?   @map("health_status") // 'healthy', 'unhealthy', 'unconfigured'
+  healthMessage     String?   @map("health_message")
+  healthDetails     Json?     @map("health_details")
+  lastHealthCheck   DateTime? @map("last_health_check")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -1583,4 +1593,24 @@ model EmailMetrics {
   @@index([date])
   @@index([tenantId])
   @@map("email_metrics")
+}
+
+/// Email Health Check Settings
+/// Configuration for automatic email integration health checks
+model EmailHealthCheckSettings {
+  id String @id @default(uuid())
+
+  // Configuration
+  enabled   Boolean @default(false)
+  frequency String  @default("1h") // '15m', '30m', '1h', '6h', '12h', '24h'
+
+  // Execution Tracking
+  lastRun DateTime? @map("last_run")
+  nextRun DateTime? @map("next_run")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([enabled])
+  @@map("email_health_check_settings")
 }

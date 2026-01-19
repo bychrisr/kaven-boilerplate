@@ -15,8 +15,12 @@ export enum EmailProvider {
 }
 
 export enum EmailType {
-  TRANSACTIONAL = 'TRANSACTIONAL',
-  MARKETING = 'MARKETING',
+  TRANSACTIONAL = 'TRANSACTIONAL',  // Emails transacionais (confirmação, reset senha, etc)
+  MARKETING = 'MARKETING',          // Emails de marketing (newsletters, promoções)
+  BILLING = 'BILLING',              // Emails de faturamento (faturas, cobranças, recibos)
+  TEST = 'TEST',                    // Emails de teste (desenvolvimento, QA)
+  NOTIFICATION = 'NOTIFICATION',    // Notificações do sistema (alertas, avisos)
+  SECURITY = 'SECURITY',            // Alertas de segurança (login suspeito, mudança de senha)
 }
 
 export enum EmailEventType {
@@ -90,6 +94,16 @@ export interface IEmailProvider {
     * Parse webhook event
     */
   parseWebhookEvent(body: any): EmailWebhookEvent | null;
+  
+  /**
+   * Health check - validates credentials and tests connectivity
+   * @returns Object with status and optional error message
+   */
+  healthCheck(): Promise<{
+    healthy: boolean;
+    message?: string;
+    details?: Record<string, any>;
+  }>;
 }
 
 /**

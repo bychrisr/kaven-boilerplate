@@ -72,6 +72,55 @@ export class SMTPProvider implements IEmailProvider {
     }
   }
 
+  /**
+   * Health check - validates SMTP configuration and tests connectivity
+   */
+  async healthCheck(): Promise<{ healthy: boolean; message?: string; details?: Record<string, any> }> {
+    try {
+      // Check if SMTP host is configured
+      if (!this.config.smtpHost) {
+        return {
+          healthy: false,
+          message: 'SMTP host not configured',
+          details: { reason: 'missing_configuration' },
+        };
+      }
+
+      // Test SMTP connection
+      const isVerified = await this.verify();
+      
+      if (!isVerified) {
+        return {
+          healthy: false,
+          message: 'SMTP connection failed',
+          details: {
+            reason: 'connection_failed',
+            host: this.config.smtpHost,
+            port: this.config.smtpPort,
+          },
+        };
+      }
+
+      return {
+        healthy: true,
+        message: 'SMTP connection successful',
+        details: {
+          host: this.config.smtpHost,
+          port: this.config.smtpPort,
+          secure: this.config.smtpSecure,
+          auth: !!this.config.smtpUser,
+        },
+      };
+    } catch (error: any) {
+      secureLog.error('[SMTPProvider.healthCheck]', error);
+      return {
+        healthy: false,
+        message: `Health check failed: ${error.message}`,
+        details: { reason: 'error', error: error.message },
+      };
+    }
+  }
+
   validateWebhook(rawBody: string, signature: string): boolean {
     return true; 
   }

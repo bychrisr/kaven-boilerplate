@@ -250,6 +250,54 @@ export class PostmarkProvider implements IEmailProvider {
   }
 
   /**
+   * Health check - validates API key and tests connectivity
+   */
+  async healthCheck(): Promise<{ healthy: boolean; message?: string; details?: Record<string, any> }> {
+    try {
+      // Check if API key exists
+      if (!this.config.apiKey) {
+        return {
+          healthy: false,
+          message: 'Server token not configured',
+          details: { reason: 'missing_credentials' },
+        };
+      }
+
+      // Test API key by fetching server info (lightweight API call)
+      const serverInfo = await this.client.getServer();
+      
+      return {
+        healthy: true,
+        message: 'Postmark server token is valid and working',
+        details: {
+          server_name: serverInfo.Name,
+          color: serverInfo.Color,
+          smtp_api_activated: serverInfo.SmtpApiActivated,
+          inbound_address: serverInfo.InboundAddress,
+        },
+      };
+    } catch (error: any) {
+      secureLog.error('[Postmark] Health check failed:', error);
+      
+      // Check for specific error codes
+      const isUnauthorized = error.statusCode === 401 || error.code === 401;
+      const isForbidden = error.statusCode === 403 || error.code === 403;
+      
+      return {
+        healthy: false,
+        message: isUnauthorized || isForbidden 
+          ? 'Invalid server token' 
+          : `Health check failed: ${error.message}`,
+        details: {
+          reason: isUnauthorized || isForbidden ? 'invalid_credentials' : 'api_error',
+          error: error.message,
+          status_code: error.statusCode || error.code,
+        },
+      };
+    }
+  }
+
+  /**
    * Generate idempotency key for email
    */
   private generateIdempotencyKey(payload: EmailPayload): string {
