@@ -108,23 +108,35 @@ export class EmailServiceV2 {
    * Send email
    */
   async send(payload: EmailPayload, options?: SendOptions): Promise<EmailSendResult> {
+    console.log('[EmailService] 🚀 send() chamado com payload:', {
+      to: payload.to,
+      subject: payload.subject,
+      provider: payload.provider,
+      useQueue: options?.useQueue,
+    });
+
     try {
       // Merge options
       const sendOptions = { ...this.options, ...options };
+      console.log('[EmailService] ⚙️ sendOptions:', sendOptions);
 
       // Initialize if not already (safeguard)
       if (this.providers.size === 0) {
+        console.log('[EmailService] 🔄 Inicializando providers...');
         await this.initialize();
       }
 
       // Validate payload
+      console.log('[EmailService] ✅ Validando payload...');
       this.validatePayload(payload);
 
       // Handle Compliance (Unsubscribe, Opt-out)
+      console.log('[EmailService] 📋 Verificando compliance...');
       await this.handleCompliance(payload);
 
       // Dry run mode (for testing)
       if (this.options.dryRun) {
+        console.log('[EmailService] 🧪 DRY RUN mode ativo');
         secureLog.info('[EmailService] DRY RUN - Would send email:', {
           to: payload.to,
           subject: payload.subject,
@@ -138,12 +150,17 @@ export class EmailServiceV2 {
 
       // Check if should use queue
       if (sendOptions.useQueue) {
+        console.log('[EmailService] 📬 Usando QUEUE para envio');
         return await this.sendViaQueue(payload);
       }
 
       // Send directly
-      return await this.sendDirect(payload);
+      console.log('[EmailService] 🎯 Chamando sendDirect()...');
+      const result = await this.sendDirect(payload);
+      console.log('[EmailService] ✅ sendDirect() retornou:', result);
+      return result;
     } catch (error: any) {
+      console.error('[EmailService] ❌ ERRO em send():', error);
       secureLog.error('[EmailService] Error sending email:', error);
       return {
         success: false,
