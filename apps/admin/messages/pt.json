@@ -419,8 +419,33 @@
       "noFile": "Nenhum"
     },
     "integrations": {
-      "title": "Integrações",
-      "description": "Gerencie as integrações externas da sua plataforma.",
+      "title": "Integrações de Email",
+      "description": "Gerencie provedores de email e configurações",
+      "addIntegration": "Adicionar Integração",
+      "testConnection": "Testar Conexão",
+      "lastChecked": "Última verificação",
+      "healthStatus": {
+        "healthy": "Saudável",
+        "unhealthy": "Com Problemas",
+        "unconfigured": "Não Configurado"
+      },
+      "automaticHealthCheck": {
+        "title": "Verificação Automática",
+        "description": "Configure a validação automática das integrações de email",
+        "enabled": "Habilitar verificação automática",
+        "frequency": "Frequência",
+        "lastRun": "Última execução",
+        "nextRun": "Próxima execução",
+        "runNow": "Executar Agora",
+        "frequencies": {
+          "15m": "A cada 15 minutos",
+          "30m": "A cada 30 minutos",
+          "1h": "A cada hora",
+          "6h": "A cada 6 horas",
+          "12h": "A cada 12 horas",
+          "24h": "Diariamente"
+        }
+      },
       "comingSoon": "Integrações em breve...",
       "emailIntegration": "Configuração de Email (SMTP)",
       "smtpHost": "Servidor SMTP",
