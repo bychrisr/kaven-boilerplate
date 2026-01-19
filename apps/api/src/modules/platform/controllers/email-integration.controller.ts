@@ -5,6 +5,7 @@ import { encrypt } from '../../../lib/crypto/encryption';
 import { EmailServiceV2 } from '../../../lib/email';
 import { EmailProvider } from '../../../lib/email/types';
 import { providerEmailDetector } from '../../../lib/email/provider-email-detector';
+import { emailIntegrationHealthService } from '../services/email-integration-health.service';
 
 const emailIntegrationSchema = z.object({
   provider: z.nativeEnum(EmailProvider),
@@ -83,6 +84,11 @@ export class EmailIntegrationController {
       // Reload EmailServiceV2
       await EmailServiceV2.getInstance().reload();
 
+      // Executar health check em background (não bloquear resposta)
+      emailIntegrationHealthService.checkIntegration(integration.id).catch((error) => {
+        req.log.error('[HealthCheck] Failed to check integration:', error);
+      });
+
       return reply.status(201).send(integration);
     } catch (error) {
       req.log.error(error);
@@ -134,6 +140,11 @@ export class EmailIntegrationController {
       // Reload EmailServiceV2
       await EmailServiceV2.getInstance().reload();
 
+      // Executar health check em background (não bloquear resposta)
+      emailIntegrationHealthService.checkIntegration(id).catch((error) => {
+        req.log.error('[HealthCheck] Failed to check integration:', error);
+      });
+
       return reply.send(integration);
     } catch (error) {
       req.log.error(error);
@@ -163,6 +174,41 @@ export class EmailIntegrationController {
     } catch (error) {
       req.log.error(error);
       return reply.status(500).send({ error: 'Erro ao excluir integração de e-mail' });
+    }
+  }
+
+  /**
+   * GET /api/settings/email/:id/health
+   * Executa health check em uma integração específica
+   */
+  async healthCheck(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+    try {
+      const { id } = req.params;
+
+      // Verificar se integração existe
+      const integration = await prisma.emailIntegration.findUnique({
+        where: { id },
+        select: { id: true, provider: true, isActive: true },
+      });
+
+      if (!integration) {
+        return reply.status(404).send({ 
+          healthy: false,
+          error: 'Integration not found' 
+        });
+      }
+
+      // Executar health check
+      const result = await emailIntegrationHealthService.checkIntegration(id);
+
+      return reply.send(result);
+    } catch (error) {
+      req.log.error(error);
+      return reply.status(500).send({ 
+        healthy: false,
+        error: 'Erro ao executar health check',
+        message: (error as Error).message 
+      });
     }
   }
 
