@@ -111,7 +111,7 @@ export function ProviderFields({ provider, register, control }: ProviderFieldsPr
               id="testEmail"
               {...register('testEmail')}
               type="email"
-              placeholder="kaventhecreator@gmail.com"
+              placeholder="seu-email@exemplo.com"
               className="mt-2"
             />
             <p className="text-xs text-muted-foreground mt-1">

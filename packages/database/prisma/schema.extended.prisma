@@ -277,6 +277,7 @@ model EmailIntegration {
   marketingDomain     String? @map("marketing_domain") // e.g., mail.kaven.site
   fromName            String? @default("Kaven Platform") @map("from_name")
   fromEmail           String? @map("from_email") // e.g., noreply@auth.kaven.site
+  testEmail           String? @map("test_email") // Email para testes (usado principalmente para Resend)
 
   // Message Streams (Postmark)
   transactionalStream String? @default("outbound") @map("transactional_stream")
