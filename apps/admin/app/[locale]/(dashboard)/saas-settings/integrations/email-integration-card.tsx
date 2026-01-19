@@ -75,45 +75,70 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
 
   const testConnection = useMutation({
     mutationFn: async (id: string) => {
+      console.log('[TEST] Starting health check for ID:', id);
       const res = await fetch(`/api/settings/email/${id}/health`);
+      console.log('[TEST] Response status:', res.status, res.statusText);
+      
       if (!res.ok) {
         const errorText = await res.text();
+        console.error('[TEST] Error response:', errorText);
         throw new Error(errorText || 'Failed to test connection');
       }
+      
       const json = await res.json();
+      console.log('[TEST] Response JSON:', json);
       return json;
     },
     onSuccess: (result) => {
+      console.log('[TEST] onSuccess called with result:', result);
+      console.log('[TEST] Result type:', typeof result);
+      console.log('[TEST] Result keys:', result ? Object.keys(result) : 'null');
+      
       // Invalidate queries first
       queryClient.invalidateQueries({ queryKey: ['email-integrations'] });
+      console.log('[TEST] Queries invalidated');
       
       // Extract only primitive values to avoid circular references
       const isHealthy = Boolean(result?.healthy);
-      const message = String(result?.message || '');
+      const messageRaw = result?.message;
+      const message = messageRaw ? String(messageRaw) : '';
       
-      // Show appropriate toast
-      if (isHealthy) {
-        toast.success('Connection successful!', {
-          description: message
-        });
-      } else {
-        toast.error('Connection failed', {
-          description: message
-        });
+      console.log('[TEST] Extracted values - isHealthy:', isHealthy, 'message:', message);
+      
+      // Show appropriate toast with ONLY string literals
+      try {
+        if (isHealthy) {
+          console.log('[TEST] Calling toast.success');
+          toast.success('Connection successful!');
+        } else {
+          console.log('[TEST] Calling toast.error');
+          toast.error('Connection failed');
+        }
+        console.log('[TEST] Toast displayed successfully');
+      } catch (toastError) {
+        console.error('[TEST] Toast error:', toastError);
       }
     },
     onError: (err) => {
+      console.error('[TEST] onError called:', err);
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      toast.error('Failed to test connection', {
-        description: errorMessage
-      });
+      console.log('[TEST] Error message:', errorMessage);
+      
+      try {
+        toast.error('Failed to test connection');
+        console.log('[TEST] Error toast displayed');
+      } catch (toastError) {
+        console.error('[TEST] Toast error in onError:', toastError);
+      }
     },
   });
 
   const handleTest = () => {
+    console.log('[TEST] handleTest called for integration:', integration.id);
     setIsTesting(true);
     testConnection.mutate(integration.id, {
       onSettled: () => {
+        console.log('[TEST] onSettled called');
         setIsTesting(false);
       }
     });
