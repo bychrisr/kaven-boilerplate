@@ -145,7 +145,7 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
               {integration.healthMessage && (
                 <TooltipProvider>
                   <TooltipRoot>
-                    <TooltipTrigger asChild>
+                    <TooltipTrigger>
                       <Info className="h-4 w-4 text-muted-foreground cursor-help" />
                     </TooltipTrigger>
                     <TooltipContent>
