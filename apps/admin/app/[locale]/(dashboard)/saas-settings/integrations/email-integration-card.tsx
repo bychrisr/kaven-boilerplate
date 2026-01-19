@@ -76,35 +76,47 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
   const testConnection = useMutation({
     mutationFn: async (id: string) => {
       const res = await fetch(`/api/settings/email/${id}/health`);
-      if (!res.ok) throw new Error('Failed to test connection');
-      return res.json();
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || 'Failed to test connection');
+      }
+      const json = await res.json();
+      return json;
     },
-    onSuccess: (data) => {
+    onSuccess: (result) => {
+      // Invalidate queries first
       queryClient.invalidateQueries({ queryKey: ['email-integrations'] });
       
-      const title = data.healthy ? 'Connection successful!' : 'Connection failed';
-      const description = data.message || '';
+      // Extract only primitive values to avoid circular references
+      const isHealthy = Boolean(result?.healthy);
+      const message = String(result?.message || '');
       
-      if (data.healthy) {
-        toast.success(title, { description });
+      // Show appropriate toast
+      if (isHealthy) {
+        toast.success('Connection successful!', {
+          description: message
+        });
       } else {
-        toast.error(title, { description });
+        toast.error('Connection failed', {
+          description: message
+        });
       }
     },
-    onError: (error) => {
+    onError: (err) => {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
       toast.error('Failed to test connection', {
-        description: error instanceof Error ? error.message : 'Unknown error'
+        description: errorMessage
       });
     },
   });
 
-  const handleTest = async () => {
+  const handleTest = () => {
     setIsTesting(true);
-    try {
-      await testConnection.mutateAsync(integration.id);
-    } finally {
-      setIsTesting(false);
-    }
+    testConnection.mutate(integration.id, {
+      onSettled: () => {
+        setIsTesting(false);
+      }
+    });
   };
 
   const formatDate = (dateString: string | null) => {
