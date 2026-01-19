@@ -41,7 +41,7 @@ fi
 
 # 6. Iniciar servidor e salvar PID
 echo -e "${GREEN}✅ Iniciando servidor limpo...${NC}"
-tsx watch src/server.ts &
+npx tsx watch src/server.ts &
 echo $! > "$PID_FILE"
 
 echo -e "${GREEN}🚀 API Server iniciado! PID: $(cat $PID_FILE)${NC}"
