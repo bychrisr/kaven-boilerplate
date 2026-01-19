@@ -13,7 +13,9 @@ describe('Observability Stack E2E', () => {
 
   beforeAll(async () => {
     // Deserialize services
-    const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+    const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
+      family: 4, // Força IPv4 (evita tentativa de IPv6)
+    });
     initCacheProtection(redis, { enabled: true, ttl: 60, strategy: 'LRU' });
     initRateLimitMonitor();
 

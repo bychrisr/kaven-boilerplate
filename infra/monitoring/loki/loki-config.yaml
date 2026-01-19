@@ -14,6 +14,12 @@ common:
     kvstore:
       store: inmemory
 
+# Configuração de limites para compatibilidade com schema v11
+limits_config:
+  allow_structured_metadata: false # Desabilita structured metadata (requer schema v13)
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h # 7 dias
+
 schema_config:
   configs:
     - from: 2020-10-24

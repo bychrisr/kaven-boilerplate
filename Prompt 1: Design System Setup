@@ -1,0 +1,348 @@
+# Prompt 1: Design System Setup
+
+Analyze this design screenshot, extract design tokens, and set up a complete design system with shadcn/ui.
+
+## Input
+
+[SCREENSHOT FROM DRIBBBLE, BEHANCE, OR ANY DESIGN INSPIRATION]
+
+## Workflow
+
+### 1. Analyze the Design
+
+Look at the image and identify/infer:
+
+**Colors:**
+
+- Primary/brand color → generate full scale (50-900)
+- Neutral/grey colors → generate full scale (50-900)
+- Semantic colors (success, error, warning, info)
+- Background and surface colors
+- Border colors
+
+**Typography:**
+
+- Font family (sans-serif, serif, monospace)
+- Heading sizes and weights
+- Body text sizes
+
+**Spacing & Radius:**
+
+- Spacing rhythm (tight, normal, relaxed)
+- Border radius style (sharp, rounded, pill)
+
+**Shadows:**
+
+- Shadow style (none, subtle, prominent)
+
+### 2. Initialize shadcn
+
+```bash
+npx shadcn@latest init
+```
+
+When prompted:
+
+- Style: Default
+- Base color: Neutral (we'll override with our tokens)
+- CSS variables: Yes
+
+### 3. Generate and Apply globals.css
+
+Replace `/app/globals.css` with extracted design tokens:
+
+```css
+@import 'tailwindcss';
+
+:root {
+  /* === BASE === */
+  --background: [extracted page background];
+  --foreground: [extracted text color];
+
+  /* === CARD === */
+  --card: [extracted card background];
+  --card-foreground: [extracted card text];
+
+  /* === POPOVER / DROPDOWN / TOOLTIP === */
+  --popover: [same as card or white];
+  --popover-foreground: [same as card-foreground];
+
+  /* === PRIMARY (main brand color) === */
+  --primary: [extracted primary color];
+  --primary-foreground: [white or dark based on contrast];
+
+  /* === SECONDARY === */
+  --secondary: [light grey or muted version];
+  --secondary-foreground: [dark text];
+
+  /* === MUTED === */
+  --muted: [light grey background];
+  --muted-foreground: [medium grey text];
+
+  /* === ACCENT === */
+  --accent: [same as secondary or slight tint];
+  --accent-foreground: [dark text];
+
+  /* === DESTRUCTIVE === */
+  --destructive: [red/error color];
+  --destructive-foreground: [white];
+
+  /* === BORDERS & INPUTS === */
+  --border: [extracted border color];
+  --input: [slightly darker border for inputs];
+  --ring: [primary color for focus rings];
+
+  /* === BORDER RADIUS === */
+  --radius: [extracted radius, e.g., 0.5rem];
+
+  /* === CHART COLORS === */
+  --chart-1: [primary];
+  --chart-2: [complementary color];
+  --chart-3: [variation];
+  --chart-4: [variation];
+  --chart-5: [variation];
+
+  /* === SIDEBAR === */
+  --sidebar: [sidebar background];
+  --sidebar-foreground: [sidebar text];
+  --sidebar-primary: [primary];
+  --sidebar-primary-foreground: [white];
+  --sidebar-accent: [accent];
+  --sidebar-accent-foreground: [dark text];
+  --sidebar-border: [border color];
+  --sidebar-ring: [primary];
+
+  /* === CUSTOM SEMANTIC COLORS === */
+  --success: [green];
+  --success-foreground: [white];
+  --warning: [yellow/orange];
+  --warning-foreground: [dark for contrast];
+  --info: [blue];
+  --info-foreground: [white];
+}
+
+.dark {
+  /* Inverted values for dark mode */
+  --background: [dark background];
+  --foreground: [light text];
+  /* ... all other variables for dark mode */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family:
+    [extracted font],
+    sans-serif;
+}
+```
+
+### 4. Install Recommended Font
+
+If a Google Font matches the design, add it to `/app/layout.tsx`:
+
+```tsx
+import { Inter } from 'next/font/google'; // or recommended font
+
+const font = Inter({ subsets: ['latin'] });
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body className={font.className}>{children}</body>
+    </html>
+  );
+}
+```
+
+### 5. Install Demo Components
+
+Use shadcn MCP to install components for the styleguide:
+
+```bash
+npx shadcn@latest add button card badge alert radio-group
+```
+
+### 6. Create Styleguide Navigation Config
+
+Create `/app/styleguide/navigation.ts` to manage styleguide navigation:
+
+```ts
+export interface NavItem {
+  name: string;
+  href: string;
+}
+
+export interface NavSection {
+  title: string;
+  items: NavItem[];
+}
+
+export const navigation: NavSection[] = [
+  {
+    title: 'Foundation',
+    items: [{ name: 'Design Tokens', href: '/styleguide' }],
+  },
+  {
+    title: 'Components',
+    items: [
+      // Components will be added here by Prompt 2
+    ],
+  },
+];
+```
+
+### 7. Create Styleguide Layout with Sidebar
+
+Create `/app/styleguide/layout.tsx` with a sidebar that reads from the navigation config:
+
+```tsx
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
+import { navigation } from './navigation';
+
+export default function StyleguideLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+
+  return (
+    <div className="flex min-h-screen">
+      {/* Sidebar - Fixed */}
+      <aside className="w-64 border-r bg-card p-6 flex flex-col gap-6 fixed top-0 left-0 h-screen overflow-y-auto">
+        <div>
+          <Link href="/styleguide" className="text-xl font-bold">
+            Design System
+          </Link>
+        </div>
+
+        <nav className="flex flex-col gap-6">
+          {navigation.map((section) => (
+            <div key={section.title}>
+              <h3 className="text-sm font-semibold text-muted-foreground mb-2">
+                {section.title}
+              </h3>
+              <ul className="flex flex-col gap-1">
+                {section.items.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        'block px-3 py-2 rounded-md text-sm transition-colors',
+                        pathname === item.href
+                          ? 'bg-primary text-primary-foreground'
+                          : 'hover:bg-muted',
+                      )}
+                    >
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </nav>
+      </aside>
+
+      {/* Main content - offset by sidebar width */}
+      <main className="flex-1 ml-64 overflow-auto">{children}</main>
+    </div>
+  );
+}
+```
+
+### 8. Create Styleguide Page
+
+Create `/app/styleguide/page.tsx` displaying ALL design tokens in one page:
+
+- **Color palette** - All colors as swatches with CSS variable names
+- **Primary scale** - 50 through 900
+- **Grey scale** - 50 through 900
+- **Semantic colors** - Success, warning, error, info
+- **Typography** - Heading and body text samples
+- **Border radius** - Examples of each size
+- **Shadows** - Shadow examples
+- **Components** - Button, Card, Badge, Alert, Radio Group using the tokens
+- **Dark mode toggle** - Preview both themes
+
+## Directory Structure
+
+```
+app/
+└── styleguide/
+    ├── layout.tsx           # Shared layout with sidebar navigation
+    ├── navigation.ts        # Navigation config (editable by Prompt 2)
+    ├── page.tsx             # All design tokens in one page
+    └── components/
+        └── [name]/
+            └── page.tsx     # Individual components (added by Prompt 2)
+```
+
+## Output
+
+- shadcn initialized
+- `/app/globals.css` with complete design tokens
+- Font installed in layout
+- Demo components installed (button, card, badge, alert, radio-group)
+- Styleguide with navigable sidebar:
+  - `/app/styleguide/layout.tsx` - Layout with sidebar
+  - `/app/styleguide/navigation.ts` - Navigation config
+  - `/app/styleguide/page.tsx` - All design tokens
+- Design system ready for Prompt 2 (components) and Prompt 3 (pages)
+
+---
+
+## Design Summary (also provide)
+
+After setup, summarize:
+
+- **Primary color:** [hex and color name]
+- **Font:** [font name]
+- **Style:** [e.g., "Modern minimal", "Bold colorful", "Soft friendly"]
+- **Border radius:** [e.g., "Rounded 8px", "Sharp", "Pill"]
+- **Overall feel:** [brief description]
+
+---
+
+## Notes
+
+- If colors aren't clearly visible, make reasonable inferences
+- Generate harmonious color scales using color theory
+- Ensure sufficient contrast for accessibility (4.5:1 for text)
+- Chart colors should be visually distinct
+- When in doubt, use shadcn defaults as fallback

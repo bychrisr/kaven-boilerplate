@@ -116,37 +116,56 @@ export class EmailMetricsPersistenceService {
     });
 
     try {
-      const result = await prisma.emailMetrics.upsert({
-        where: {
-          metrics_unique: {
-            date: params.date,
-            hour: null,
-            tenantId: params.tenantId || null,
-            emailType: params.emailType || null,
-            provider: params.provider,
-            templateCode: params.templateCode || null,
-          },
-        },
-        create: {
-          date: params.date,
-          hour: null,
-          tenantId: params.tenantId,
-          emailType: params.emailType,
-          provider: params.provider,
-          templateCode: params.templateCode,
-          ...params.increment,
-        },
-        update: {
-          ...Object.fromEntries(
-            Object.entries(params.increment).map(([key, value]) => [
-              key,
-              { increment: value },
-            ])
-          ),
-        },
+      // Prisma upsert não funciona bem com unique constraints que incluem campos nullable
+      // Solução: findFirst + create ou update manual
+      
+      const whereClause = {
+        date: params.date,
+        hour: null, // Métricas diárias (sem granularidade horária)
+        tenantId: params.tenantId || null,
+        emailType: params.emailType || null,
+        provider: params.provider,
+        templateCode: params.templateCode || null,
+      };
+      
+      // Tentar encontrar registro existente
+      const existing = await prisma.emailMetrics.findFirst({
+        where: whereClause,
       });
       
-      console.log('[EmailMetricsPersistence] ✅ Métrica persistida com sucesso:', result.id);
+      if (existing) {
+        // Atualizar registro existente (incrementar contadores)
+        const updateData: any = {};
+        Object.entries(params.increment).forEach(([key, value]) => {
+          const currentValue = existing[key as keyof typeof existing];
+          // Garantir que estamos somando números
+          if (typeof currentValue === 'number') {
+            updateData[key] = currentValue + value;
+          }
+        });
+        
+        const result = await prisma.emailMetrics.update({
+          where: { id: existing.id },
+          data: updateData,
+        });
+        
+        console.log('[EmailMetricsPersistence] ✅ Métrica atualizada (incrementada):', result.id);
+      } else {
+        // Criar novo registro
+        const result = await prisma.emailMetrics.create({
+          data: {
+            date: params.date,
+            hour: null,
+            tenantId: params.tenantId,
+            emailType: params.emailType,
+            provider: params.provider,
+            templateCode: params.templateCode,
+            ...params.increment,
+          },
+        });
+        
+        console.log('[EmailMetricsPersistence] ✅ Métrica criada:', result.id);
+      }
     } catch (error) {
       console.error('[EmailMetricsPersistence] ❌ ERRO ao persistir métrica:', error);
       console.error('[EmailMetricsPersistence] 📋 Detalhes do erro:', {

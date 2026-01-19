@@ -1,0 +1,20 @@
+  /**
+   * GET /api/settings/email/:id/health
+   * Executa health check em uma integração específica
+   */
+  async healthCheck(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+    try {
+      const { id } = req.params;
+
+      const result = await emailIntegrationHealthService.checkIntegration(id);
+
+      return reply.send(result);
+    } catch (error) {
+      req.log.error(error);
+      return reply.status(500).send({ 
+        healthy: false,
+        error: 'Erro ao executar health check',
+        message: (error as Error).message 
+      });
+    }
+  }
