@@ -527,8 +527,33 @@
       "noFile": "None"
     },
     "integrations": {
-      "title": "Integrations",
-      "description": "Manage external integrations for your platform.",
+      "title": "Email Integrations",
+      "description": "Manage email providers and settings",
+      "addIntegration": "Add Integration",
+      "testConnection": "Test Connection",
+      "lastChecked": "Last checked",
+      "healthStatus": {
+        "healthy": "Healthy",
+        "unhealthy": "Unhealthy",
+        "unconfigured": "Unconfigured"
+      },
+      "automaticHealthCheck": {
+        "title": "Automatic Health Check",
+        "description": "Configure automatic validation of email integrations",
+        "enabled": "Enable automatic health check",
+        "frequency": "Frequency",
+        "lastRun": "Last run",
+        "nextRun": "Next run",
+        "runNow": "Run Now",
+        "frequencies": {
+          "15m": "Every 15 minutes",
+          "30m": "Every 30 minutes",
+          "1h": "Every hour",
+          "6h": "Every 6 hours",
+          "12h": "Every 12 hours",
+          "24h": "Daily"
+        }
+      },
       "comingSoon": "Integrations coming soon...",
       "emailIntegration": "Email Configuration (SMTP)",
       "smtpHost": "SMTP Host",
