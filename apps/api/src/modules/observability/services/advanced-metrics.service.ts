@@ -1,5 +1,6 @@
 import { performance } from 'perf_hooks';
 import { register } from '../../../lib/metrics';
+import { emailMetricsPersistence } from '../../../lib/email/metrics-persistence.service';
 
 /**
  * Serviço para métricas avançadas de observabilidade
@@ -155,43 +156,54 @@ export class AdvancedMetricsService {
 
   /**
    * Retorna métricas de infraestrutura de e-mail
+   * AGORA: Agrega dados históricos do banco + métricas em memória
    */
   async getEmailMetrics() {
-    console.log('[AdvancedMetrics] 📧 Coletando métricas de e-mail...');
+    console.log('[AdvancedMetrics] 📧 Coletando métricas de e-mail (DB + Memória)...');
+    
+    // 1. Buscar métricas históricas do banco (últimos 30 dias)
+    const dbMetrics = await emailMetricsPersistence.getAggregatedMetrics(30);
+    console.log('[AdvancedMetrics] 💾 Métricas do banco:', dbMetrics);
+
+    // 2. Buscar métricas em memória (Prometheus)
     const metrics = await register.getMetricsAsJSON();
+    console.log('[AdvancedMetrics] 🔍 Métricas Prometheus:', metrics.length);
     
-    console.log('[AdvancedMetrics] 🔍 Total de métricas:', metrics.length);
-    console.log('[AdvancedMetrics] 🔍 Métricas disponíveis:', metrics.map(m => m.name));
-    
-    // Funções auxiliares para extrair valores
+    // Funções auxiliares para extrair valores do Prometheus
     const getCounterTotal = (name: string, filter?: (labels: any) => boolean) => {
       const metric = metrics.find(m => m.name === name);
       let total = 0;
       if (metric) {
-        console.log(`[AdvancedMetrics] 📊 Métrica encontrada: ${name}`, metric);
         // @ts-ignore
         metric.values?.forEach((v: any) => {
           if (!filter || filter(v.labels)) {
-            console.log(`[AdvancedMetrics]   ↳ Valor: ${v.value}, Labels:`, v.labels);
             total += v.value;
           }
         });
-      } else {
-        console.log(`[AdvancedMetrics] ⚠️ Métrica NÃO encontrada: ${name}`);
       }
       return total;
     };
 
-    const sent = getCounterTotal('kaven_email_sent_total');
-    const bounced = getCounterTotal('kaven_email_bounced_total');
-    const complaints = getCounterTotal('kaven_email_complaints_total');
+    // Métricas em memória (sessão atual)
+    const memSent = getCounterTotal('kaven_email_sent_total');
+    const memBounced = getCounterTotal('kaven_email_bounced_total');
+    const memComplaints = getCounterTotal('kaven_email_complaints_total');
     
-    console.log('[AdvancedMetrics] 📈 Totais calculados:', { sent, bounced, complaints });
+    console.log('[AdvancedMetrics] 🧠 Métricas em memória:', { memSent, memBounced, memComplaints });
+
+    // 3. AGREGAR: DB + Memória
+    const totalSent = dbMetrics.overview.sent + memSent;
+    const totalBounced = dbMetrics.overview.bounced + memBounced;
+    const totalComplaints = dbMetrics.overview.complaints + memComplaints;
     
-    // Calcular delivery rate
-    const deliveryRate = sent > 0 ? Number(((sent - bounced) / sent * 100).toFixed(2)) : 100;
+    console.log('[AdvancedMetrics] 📊 Total agregado:', { totalSent, totalBounced, totalComplaints });
     
-    // Extrair latência média (histograma)
+    // Calcular delivery rate agregado
+    const deliveryRate = totalSent > 0 
+      ? Number(((totalSent - totalBounced) / totalSent * 100).toFixed(2)) 
+      : 100;
+    
+    // Extrair latência média (apenas memória, não persiste no banco)
     const latencyMetric = metrics.find(m => m.name === 'kaven_email_delivery_duration_seconds');
     let avgLatency = 0;
     if (latencyMetric) {
@@ -200,11 +212,15 @@ export class AdvancedMetricsService {
       // @ts-ignore
       const count = latencyMetric.values?.find((v: any) => v.metricName.endsWith('_count'))?.value || 0;
       avgLatency = count > 0 ? Number((sum / count).toFixed(3)) : 0;
-      console.log('[AdvancedMetrics] ⏱️ Latência:', { sum, count, avgLatency });
     }
 
-    // Extrair providers dinamicamente das métricas
+    // 4. Agregar por provider (DB + Memória)
     const providersSet = new Set<string>();
+    
+    // Adicionar providers do banco
+    Object.keys(dbMetrics.byProvider).forEach(p => providersSet.add(p));
+    
+    // Adicionar providers da memória
     const sentMetric = metrics.find(m => m.name === 'kaven_email_sent_total');
     if (sentMetric) {
       // @ts-ignore
@@ -217,13 +233,22 @@ export class AdvancedMetricsService {
 
     console.log('[AdvancedMetrics] 🏢 Providers detectados:', Array.from(providersSet));
 
-    // Calcular estatísticas por provider dinamicamente
+    // Calcular estatísticas por provider (DB + Memória)
     const byProvider: Record<string, { sent: number; bounced: number; complaints: number; deliveryRate: number }> = {};
     
     providersSet.forEach(provider => {
-      const providerSent = getCounterTotal('kaven_email_sent_total', (l) => l.provider === provider);
-      const providerBounced = getCounterTotal('kaven_email_bounced_total', (l) => l.provider === provider);
-      const providerComplaints = getCounterTotal('kaven_email_complaints_total', (l) => l.provider === provider);
+      // Dados do banco
+      const dbData = dbMetrics.byProvider[provider] || { sent: 0, bounced: 0, complaints: 0 };
+      
+      // Dados da memória
+      const memProviderSent = getCounterTotal('kaven_email_sent_total', (l) => l.provider === provider);
+      const memProviderBounced = getCounterTotal('kaven_email_bounced_total', (l) => l.provider === provider);
+      const memProviderComplaints = getCounterTotal('kaven_email_complaints_total', (l) => l.provider === provider);
+      
+      // Agregar
+      const providerSent = dbData.sent + memProviderSent;
+      const providerBounced = dbData.bounced + memProviderBounced;
+      const providerComplaints = dbData.complaints + memProviderComplaints;
       const providerDeliveryRate = providerSent > 0 
         ? Number(((providerSent - providerBounced) / providerSent * 100).toFixed(2)) 
         : 100;
@@ -235,10 +260,10 @@ export class AdvancedMetricsService {
         deliveryRate: providerDeliveryRate
       };
       
-      console.log(`[AdvancedMetrics] 📊 Provider ${provider}:`, byProvider[provider]);
+      console.log(`[AdvancedMetrics] 📊 Provider ${provider} (DB+Mem):`, byProvider[provider]);
     });
 
-    // Se não houver providers nas métricas, adicionar placeholders para RESEND, POSTMARK e SMTP
+    // Se não houver providers, adicionar placeholders
     if (providersSet.size === 0) {
       console.log('[AdvancedMetrics] ⚠️ Nenhum provider detectado, adicionando placeholders');
       ['RESEND', 'POSTMARK', 'SMTP'].forEach(provider => {
@@ -251,19 +276,20 @@ export class AdvancedMetricsService {
       });
     }
 
-    console.log('[AdvancedMetrics] ✅ Métricas coletadas:', {
-      sent,
-      bounced,
-      complaints,
+    console.log('[AdvancedMetrics] ✅ Métricas agregadas finais:', {
+      totalSent,
+      totalBounced,
+      totalComplaints,
+      deliveryRate,
       providers: Array.from(providersSet),
       byProvider
     });
 
     return {
       overview: {
-        sent,
-        bounced,
-        complaints,
+        sent: totalSent,
+        bounced: totalBounced,
+        complaints: totalComplaints,
         deliveryRate,
         avgLatencySeconds: avgLatency
       },
@@ -271,8 +297,8 @@ export class AdvancedMetricsService {
       health: {
         status: deliveryRate > 98 ? 'healthy' : deliveryRate > 95 ? 'warning' : 'critical',
         indicators: {
-          bounceRate: sent > 0 ? Number((bounced / sent * 100).toFixed(2)) : 0,
-          complaintRate: sent > 0 ? Number((complaints / sent * 100).toFixed(2)) : 0
+          bounceRate: totalSent > 0 ? Number((totalBounced / totalSent * 100).toFixed(2)) : 0,
+          complaintRate: totalSent > 0 ? Number((totalComplaints / totalSent * 100).toFixed(2)) : 0
         }
       }
     };
