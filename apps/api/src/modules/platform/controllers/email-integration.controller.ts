@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { encrypt } from '../../../lib/crypto/encryption';
 import { EmailServiceV2 } from '../../../lib/email';
 import { EmailProvider } from '../../../lib/email/types';
+import { providerEmailDetector } from '../../../lib/email/provider-email-detector';
 
 const emailIntegrationSchema = z.object({
   provider: z.nativeEnum(EmailProvider),
@@ -190,7 +191,7 @@ export class EmailIntegrationController {
         });
       }
 
-      // Buscar email do admin logado
+      // Buscar email do admin logado (usado como fallback)
       const user = (req as any).user;
       if (!user || !user.email) {
         return reply.status(401).send({ 
@@ -199,9 +200,24 @@ export class EmailIntegrationController {
         });
       }
 
+      // Determinar modo de teste
+      let testMode = mode || 'custom';
+
+      // Detectar email apropriado para teste baseado no provider
+      const detectedEmail = await providerEmailDetector.detectEmail(
+        {
+          id: integration.id,
+          provider: integration.provider as EmailProvider,
+          apiKey: integration.apiKey,
+          apiSecret: integration.apiSecret,
+          fromEmail: integration.fromEmail,
+        },
+        testMode,
+        user.email // Fallback para email do admin
+      );
+
       // Determinar email de envio baseado no modo
       let fromEmail = integration.fromEmail;
-      let testMode = mode || 'custom';
       
       // Para Resend e Postmark, oferecer opção de sandbox
       if (testMode === 'sandbox') {
@@ -220,7 +236,7 @@ export class EmailIntegrationController {
       
       // Enviar email de teste
       const result = await EmailServiceV2.getInstance().send({
-        to: user.email,
+        to: detectedEmail.email,
         from: fromEmail || undefined,
         subject: `✅ Teste de Integração - ${integration.provider} (${testMode === 'sandbox' ? 'Sandbox' : 'Domínio Customizado'})`,
         html: `
@@ -235,6 +251,8 @@ export class EmailIntegrationController {
                 <li><strong>Provedor:</strong> ${integration.provider}</li>
                 <li><strong>Modo de Teste:</strong> ${testMode === 'sandbox' ? '🧪 Sandbox' : '🌐 Domínio Customizado'}</li>
                 <li><strong>Email de Envio:</strong> ${fromEmail || 'Não configurado'}</li>
+                <li><strong>Email de Destino:</strong> ${detectedEmail.email}</li>
+                <li><strong>Fonte:</strong> ${detectedEmail.source === 'verified' ? '✅ Verificado no provider' : detectedEmail.source === 'configured' ? '⚙️ Configurado' : '👤 Email do admin'}</li>
                 <li><strong>Status:</strong> ${integration.isActive ? '✅ Ativo' : '❌ Inativo'}</li>
                 <li><strong>Primário:</strong> ${integration.isPrimary ? 'Sim' : 'Não'}</li>
               </ul>
@@ -251,6 +269,14 @@ export class EmailIntegrationController {
               </div>
             ` : ''}
             
+            ${detectedEmail.source === 'fallback' ? `
+              <div style="background: #dbeafe; padding: 12px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
+                <p style="margin: 0; color: #1e40af; font-size: 14px;">
+                  <strong>ℹ️ Email de Fallback:</strong> ${detectedEmail.providerMessage}
+                </p>
+              </div>
+            ` : ''}
+            
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;">
             <p style="color: #9ca3af; font-size: 12px;">
               Este email foi enviado automaticamente pelo sistema Kaven.<br>
@@ -262,11 +288,26 @@ export class EmailIntegrationController {
       }, { useQueue: false }); // Envio direto para feedback imediato
 
       if (result.success) {
+        // Mensagem de sucesso baseada na fonte do email
+        let successMessage = '';
+        
+        if (detectedEmail.source === 'verified') {
+          successMessage = `✅ Teste enviado para ${detectedEmail.email} (email verificado no ${integration.provider})`;
+        } else if (detectedEmail.source === 'sandbox') {
+          successMessage = `✅ Teste enviado! Modo sandbox permite apenas envio para seu email (${detectedEmail.email}). Para produção, verifique seu domínio.`;
+        } else if (detectedEmail.source === 'configured') {
+          successMessage = `✅ Teste enviado para ${detectedEmail.email} (email configurado). ${detectedEmail.providerMessage}`;
+        } else {
+          successMessage = `ℹ️ Teste enviado para ${detectedEmail.email} (email do admin). ${detectedEmail.providerMessage}`;
+        }
+        
         return reply.send({ 
-          success: true, 
-          message: `Email de teste (${testMode === 'sandbox' ? 'Sandbox' : 'Domínio Customizado'}) enviado com sucesso para ${user.email}`,
+          success: true,
+          isInfo: detectedEmail.source === 'fallback' || detectedEmail.source === 'sandbox',
+          message: successMessage,
           messageId: result.messageId,
-          mode: testMode
+          mode: testMode,
+          emailSource: detectedEmail.source
         });
       } else {
         // Detectar mensagens específicas de providers que são informativas, não erros
