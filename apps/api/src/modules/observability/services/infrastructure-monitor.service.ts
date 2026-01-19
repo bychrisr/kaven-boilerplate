@@ -38,6 +38,7 @@ export class InfrastructureMonitorService {
   }
 
   private services: InfrastructureService[] = [
+    // Critical Services (Priority 1)
     {
       name: 'PostgreSQL',
       type: 'database',
@@ -49,7 +50,33 @@ export class InfrastructureMonitorService {
       type: 'cache',
       priority: 1,
       enabled: true
-    }
+    },
+    // Monitoring Stack (Priority 2)
+    {
+      name: 'Prometheus',
+      type: 'queue',
+      priority: 2,
+      enabled: true
+    },
+    {
+      name: 'Grafana',
+      type: 'queue',
+      priority: 2,
+      enabled: true
+    },
+    // Logging & Email (Priority 3)
+    {
+      name: 'Loki',
+      type: 'storage',
+      priority: 3,
+      enabled: true
+    },
+    {
+      name: 'MailHog',
+      type: 'storage',
+      priority: 3,
+      enabled: true
+    },
   ];
 
   async checkAll(): Promise<InfrastructureServiceStatus[]> {
@@ -116,6 +143,32 @@ export class InfrastructureMonitorService {
     } else if (service.type === 'cache') {
       // Check Redis
       await this.redis.ping();
+    } else {
+      // HTTP health check for other services
+      const healthUrls: Record<string, string> = {
+        'Prometheus': 'http://localhost:9090/-/healthy',
+        'Grafana': 'http://localhost:3004/api/health',
+        'Loki': 'http://localhost:3100/ready',
+        'MailHog': 'http://localhost:8025',
+      };
+      
+      const url = healthUrls[service.name];
+      if (url) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000);
+        
+        try {
+          const response = await fetch(url, { signal: controller.signal });
+          clearTimeout(timeout);
+          
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+        } catch (error: any) {
+          clearTimeout(timeout);
+          throw error;
+        }
+      }
     }
   }
 
