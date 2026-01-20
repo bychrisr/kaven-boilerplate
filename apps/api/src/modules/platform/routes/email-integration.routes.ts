@@ -18,7 +18,7 @@ export async function emailIntegrationRoutes(app: FastifyInstance) {
   app.post('/test', emailIntegrationController.test);
 
   // Health Check Configuration
-  app.get('/health-check-config', emailHealthCheckConfigController.getConfig);
-  app.put('/health-check-config', emailHealthCheckConfigController.updateConfig);
-  app.post('/health-check-config/run-now', emailHealthCheckConfigController.runNow);
+  app.get('/health-check-config', emailHealthCheckConfigController.getConfig.bind(emailHealthCheckConfigController));
+  app.put('/health-check-config', emailHealthCheckConfigController.updateConfig.bind(emailHealthCheckConfigController));
+  app.post('/health-check-config/run-now', emailHealthCheckConfigController.runNow.bind(emailHealthCheckConfigController));
 }
