@@ -32,7 +32,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import {
-  Tooltip as TooltipRoot,
+  Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
@@ -163,7 +163,7 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
               {/* Health Status Badge */}
               {integration.healthStatus && (
                 <TooltipProvider>
-                  <TooltipRoot>
+                  <Tooltip>
                     <TooltipTrigger asChild>
                       <Badge 
                         variant={integration.healthStatus === 'healthy' ? 'default' : integration.healthStatus === 'unhealthy' ? 'destructive' : 'secondary'}
@@ -189,7 +189,7 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
                         )}
                       </div>
                     </TooltipContent>
-                  </TooltipRoot>
+                  </Tooltip>
                 </TooltipProvider>
               )}
             </h4>
