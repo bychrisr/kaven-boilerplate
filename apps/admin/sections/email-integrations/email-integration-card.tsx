@@ -34,6 +34,7 @@ import {
 import { MoreVertical, Mail, Check, Shield, Activity, Trash2, Pencil, Loader2, Send, Wifi } from 'lucide-react';
 import { toast } from 'sonner';
 import { emailIntegrationsApi, EmailIntegration } from '@/lib/api/email-integrations';
+import { api } from '@/lib/api';
 import { EmailIntegrationDialog } from './email-integration-dialog';
 import { cn } from '@/lib/utils';
 import { useQueryClient } from '@tanstack/react-query';
@@ -77,9 +78,7 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
   // Mutation para testar conectividade (health check)
   const testConnectivityMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/settings/email/${id}/health`);
-      if (!res.ok) throw new Error('Failed to check connectivity');
-      return res.json();
+      return data;
     },
     onMutate: () => setIsTestingConnectivity(true),
     onSettled: () => setIsTestingConnectivity(false),
