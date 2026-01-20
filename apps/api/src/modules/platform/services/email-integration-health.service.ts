@@ -30,11 +30,11 @@ export class EmailIntegrationHealthService {
       const emailService = EmailServiceV2.getInstance();
       await emailService.reload(); // Garantir que está atualizado
 
-      // Acessar provider
-      const provider = (emailService as any).providers.get(integration.provider);
+      // Acessar provider pelo ID da integração (não pelo nome do provider)
+      const provider = (emailService as any).providers.get(integration.id);
 
       if (!provider) {
-        // Provider não inicializado (credenciais faltando)
+        // Provider não inicializado (credenciais faltando ou erro na inicialização)
         const healthResult = {
           healthy: false,
           message: 'Credentials not configured',
