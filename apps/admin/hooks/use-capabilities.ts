@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth.store';
 import { useSpaces } from '@/hooks/use-spaces';
@@ -33,7 +34,7 @@ export function useCapabilities() {
    * 2. Usuário for SUPER_ADMIN (retorna '*')
    * 3. Usuário tiver a capability específica
    */
-  const check = (capabilityCode?: string) => {
+  const check = useCallback((capabilityCode?: string) => {
     if (!capabilityCode) return true;
     
     // Se ainda está carregando ou deu erro, assume falso por segurança (fail-secure)
@@ -44,7 +45,7 @@ export function useCapabilities() {
     if (query.data.capabilities.includes('*')) return true;
 
     return query.data.capabilities.includes(capabilityCode);
-  };
+  }, [query.data]);
 
   return {
     capabilities: query.data?.capabilities || [],
