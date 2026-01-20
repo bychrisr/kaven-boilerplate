@@ -91,6 +91,26 @@ export class EmailHealthCheckConfigController {
         '../services/email-integration-health.service'
       );
 
+      // Buscar ou criar configuração
+      let config = await prisma.emailHealthCheckSettings.findFirst();
+      
+      if (!config) {
+        config = await prisma.emailHealthCheckSettings.create({
+          data: {
+            enabled: false,
+            frequency: '1h',
+          },
+        });
+      }
+
+      // Atualizar lastRun ANTES de executar
+      await prisma.emailHealthCheckSettings.update({
+        where: { id: config.id },
+        data: {
+          lastRun: new Date(),
+        },
+      });
+
       // Executar health check em background
       emailIntegrationHealthService.checkAllIntegrations().catch((error) => {
         req.log.error('[HealthCheck] Failed to run manual check:', error);
