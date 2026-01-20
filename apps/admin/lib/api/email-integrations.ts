@@ -119,7 +119,7 @@ export const emailIntegrationsApi = {
     } catch (error: any) {
       return {
         success: false,
-        error: error.response?.data?.message || error.message || 'Failed to send test email',
+        error: error.response?.data?.error || error.response?.data?.message || error.message || 'Failed to send test email',
       };
     }
   },
