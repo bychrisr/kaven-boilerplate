@@ -1,6 +1,8 @@
 
 import { PrismaClient, Role, TenantStatus, DesignSystemType } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { seedCapabilities } from './seeds/capabilities.seed';
+import { seedSpaceRoles } from './seeds/space-roles.seed';
 
 const prisma = new PrismaClient();
 
@@ -304,28 +306,37 @@ async function main() {
   console.log('✅ Default email templates ensured.');
 
   // 6.2 Default Email Integration (SMTP Fallback/Dev)
-  await prisma.emailIntegration.upsert({
-    where: { primary_integration_unique: { isPrimary: true } },
-    update: {
-      smtpHost: 'localhost',
-      smtpPort: 1025,
-      smtpSecure: false,
-      transactionalDomain: 'localhost',
-      fromName: 'Kaven Dev',
-      fromEmail: 'noreply@localhost',
-    },
-    create: {
-      provider: 'SMTP',
-      isActive: true,
-      isPrimary: true,
-      smtpHost: 'localhost',
-      smtpPort: 1025,
-      smtpSecure: false,
-      transactionalDomain: 'localhost',
-      fromName: 'Kaven Dev',
-      fromEmail: 'noreply@localhost',
-    }
+  const existingIntegration = await prisma.emailIntegration.findFirst({
+    where: { isPrimary: true },
   });
+
+  if (existingIntegration) {
+    await prisma.emailIntegration.update({
+      where: { id: existingIntegration.id },
+      data: {
+        smtpHost: 'localhost',
+        smtpPort: 1025,
+        smtpSecure: false,
+        transactionalDomain: 'localhost',
+        fromName: 'Kaven Dev',
+        fromEmail: 'noreply@localhost',
+      },
+    });
+  } else {
+    await prisma.emailIntegration.create({
+      data: {
+        provider: 'SMTP',
+        isActive: true,
+        isPrimary: true,
+        smtpHost: 'localhost',
+        smtpPort: 1025,
+        smtpSecure: false,
+        transactionalDomain: 'localhost',
+        fromName: 'Kaven Dev',
+        fromEmail: 'noreply@localhost',
+      },
+    });
+  }
   console.log('✅ Default SMTP integration ensured.');
 
   // 3. Personas
@@ -457,7 +468,8 @@ async function main() {
       { code: 'FINANCE', name: 'Finance', icon: 'DollarSign', color: 'green' },
       { code: 'SUPPORT', name: 'Support', icon: 'Headphones', color: 'blue' },
       { code: 'MARKETING', name: 'Marketing', icon: 'TrendingUp', color: 'orange' },
-      { code: 'DEVOPS', name: 'DevOps', icon: 'Server', color: 'red' }
+      { code: 'DEVOPS', name: 'DevOps', icon: 'Server', color: 'red' },
+      { code: 'EXECUTIVE', name: 'Executive', icon: 'Briefcase', color: 'indigo' }
   ];
 
   for (const s of SPACES) {
@@ -504,6 +516,15 @@ async function main() {
           }
       }
   }
+
+  // 6. Spaces & Permissions Seeds
+  console.log('\n🔐 Seeding Spaces & Permissions...');
+  
+  // 6.1 Capabilities
+  await seedCapabilities();
+  
+  // 6.2 Space Roles
+  await seedSpaceRoles();
 
   console.log('\n=============================================');
   console.log('✅ Seed Finished Successfully');
