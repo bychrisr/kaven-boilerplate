@@ -32,10 +32,10 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import {
-  Tooltip,
-  TooltipContent,
   TooltipProvider,
+  TooltipRoot,
   TooltipTrigger,
+  TooltipContent,
 } from '@/components/ui/tooltip';
 import { MoreVertical, Mail, Check, Shield, Activity, Trash2, Pencil, Loader2, Send, Wifi } from 'lucide-react';
 import { toast } from 'sonner';
@@ -163,7 +163,7 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
               {/* Health Status Badge */}
               {integration.healthStatus && (
                 <TooltipProvider>
-                  <Tooltip>
+                  <TooltipRoot>
                     <TooltipTrigger asChild>
                       <Badge 
                         variant={integration.healthStatus === 'healthy' ? 'default' : integration.healthStatus === 'unhealthy' ? 'destructive' : 'secondary'}
@@ -189,7 +189,7 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
                         )}
                       </div>
                     </TooltipContent>
-                  </Tooltip>
+                  </TooltipRoot>
                 </TooltipProvider>
               )}
             </h4>

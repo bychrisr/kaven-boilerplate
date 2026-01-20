@@ -28,6 +28,11 @@ export interface EmailIntegration {
   enableBimi?: boolean;
   region?: string | null;
   
+  // Health Check fields
+  healthStatus?: string | null;
+  healthMessage?: string | null;
+  lastHealthCheck?: string | null;
+  
   createdAt: string;
   updatedAt: string;
 }
