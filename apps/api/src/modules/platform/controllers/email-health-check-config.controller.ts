@@ -56,10 +56,18 @@ export class EmailHealthCheckConfigController {
           },
         });
       } else {
+        // Preparar dados de atualização
+        const updateData: any = { ...data };
+
+        // Se a frequência mudou, recalcular nextRun
+        if (data.frequency && data.frequency !== config.frequency) {
+          updateData.nextRun = this.calculateNextRun(data.frequency);
+        }
+
         // Atualizar existente
         config = await prisma.emailHealthCheckSettings.update({
           where: { id: config.id },
-          data,
+          data: updateData,
         });
       }
 
@@ -103,11 +111,16 @@ export class EmailHealthCheckConfigController {
         });
       }
 
-      // Atualizar lastRun ANTES de executar
+      // Calcular próxima execução baseado na frequência
+      const now = new Date();
+      const nextRun = this.calculateNextRun(config.frequency);
+
+      // Atualizar lastRun e nextRun ANTES de executar
       await prisma.emailHealthCheckSettings.update({
         where: { id: config.id },
         data: {
-          lastRun: new Date(),
+          lastRun: now,
+          nextRun: nextRun,
         },
       });
 
@@ -126,6 +139,30 @@ export class EmailHealthCheckConfigController {
         error: 'Erro ao executar health check manual' 
       });
     }
+  }
+
+  /**
+   * Calcula próxima execução baseado na frequência
+   */
+  private calculateNextRun(frequency: string): Date {
+    const now = new Date();
+    const minutes = this.frequencyToMinutes(frequency);
+    return new Date(now.getTime() + minutes * 60 * 1000);
+  }
+
+  /**
+   * Converte frequência para minutos
+   */
+  private frequencyToMinutes(frequency: string): number {
+    const map: Record<string, number> = {
+      '15m': 15,
+      '30m': 30,
+      '1h': 60,
+      '6h': 360,
+      '12h': 720,
+      '24h': 1440,
+    };
+    return map[frequency] || 60; // Default: 1h
   }
 }
 
