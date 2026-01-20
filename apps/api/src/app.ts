@@ -46,6 +46,8 @@ import { advancedMetricsMiddleware, onResponseMetricsHook } from './modules/obse
 // [KAVEN_MODULE_IMPORTS]
 // [KAVEN_MODULE_IMPORTS_END]
 
+import { roleRoutes } from './modules/roles/routes/role.routes';
+
 // Initialize Sentry for error tracking
 initSentry();
 
@@ -118,7 +120,7 @@ app.register(cors, {
   origin: env.CORS_ORIGIN,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID', 'x-space-id'],
 });
 
 // Multipart (file upload)
@@ -216,6 +218,7 @@ app.register(emailIntegrationRoutes, { prefix: '/api/settings/email' });
 app.register(observabilityRoutes, { prefix: '/api/observability' });
 app.register(projectsRoutes, { prefix: '/api/app/projects' });
 app.register(tasksRoutes, { prefix: '/api/app/tasks' });
+app.register(roleRoutes, { prefix: '/api' });
 app.register(currenciesRoutes, { prefix: '/api/currencies' });
 
 // Webhooks
