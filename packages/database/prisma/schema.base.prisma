@@ -418,6 +418,22 @@ model User {
   // Email Relations
   emailEvents EmailEvent[]
 
+  // Spaces & Permissions Relations
+  spaceRoles            UserSpaceRole[]          @relation("UserSpaceRoles")
+  grants                Grant[]                  @relation("UserGrants")
+  grantsGivenByMe       Grant[]                  @relation("GrantedBy")
+  grantsRevokedByMe     Grant[]                  @relation("RevokedBy")
+  grantRequests         GrantRequest[]           @relation("GrantRequests")
+  grantApprovalsGiven   GrantRequest[]           @relation("GrantApprovals")
+  grantRejectionsGiven  GrantRequest[]           @relation("GrantRejections")
+  devices               PolicyDeviceTracking[]   @relation("UserDevices")
+  spaceOwnerships       SpaceOwner[]             @relation("SpaceOwnerships")
+  capabilityAudits      CapabilityAuditEvent[]   @relation("UserCapabilityAudits")
+  grantAuditsPerformed  GrantAuditEvent[]        @relation("GrantAuditPerformedBy")
+  impersonatorSessions  ImpersonationSession[]   @relation("Impersonator")
+  impersonatedSessions  ImpersonationSession[]   @relation("Impersonated")
+  dataExports           DataExportLog[]          @relation("UserDataExports")
+
   @@index([email])
   @@index([tenantId])
   @@index([role])
@@ -1319,6 +1335,14 @@ model Space {
   userSpaces   UserSpace[]
   inviteSpaces InviteSpace[]
   
+  // Spaces & Permissions Relations
+  roles            SpaceRole[]            @relation
+  userRoles        UserSpaceRole[]        @relation("SpaceUserRoles")
+  grants           Grant[]                @relation("SpaceGrants")
+  grantRequests    GrantRequest[]         @relation("SpaceGrantRequests")
+  owners           SpaceOwner[]
+  capabilityAudits CapabilityAuditEvent[] @relation("SpaceCapabilityAudits")
+  
   @@unique([tenantId, code])
   @@index([tenantId])
   @@index([isActive])
@@ -1610,5 +1634,434 @@ model EmailMetrics {
   @@index([date])
   @@index([tenantId])
   @@map("email_metrics")
+}
+
+// ============================================
+// SPACES & PERMISSIONS MODELS (CORE)
+// ============================================
+
+/// Capability - Permissão atômica
+/// Representa uma ação específica que pode ser realizada
+model Capability {
+  id          String   @id @default(uuid())
+  code        String   @unique // 'tickets.read', 'billing.view'
+  resource    String   // 'tickets', 'billing'
+  action      String   // 'read', 'update', 'delete'
+  description String?
+  category    String   // 'Support', 'Finance', 'DevOps'
+  
+  sensitivity      CapabilitySensitivity @default(NORMAL)
+  scope            CapabilityScope       @default(SPACE)
+  requiresMFA      Boolean               @default(false)
+  requiresApproval Boolean               @default(false)
+  
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  roleCapabilities RoleCapability[]
+  grants           Grant[]
+  policies         Policy[]
+  auditEvents      CapabilityAuditEvent[]
+  
+  @@index([code])
+  @@index([category])
+  @@index([sensitivity])
+  @@index([isActive])
+  @@map("capabilities")
+}
+
+/// SpaceRole - Roles específicas por Space
+/// Ex: SUPPORT_AGENT, SRE, FINANCE_ADMIN
+model SpaceRole {
+  id          String   @id @default(uuid())
+  spaceId     String   @map("space_id")
+  code        String   // 'SUPPORT_AGENT', 'SRE', 'FINANCE_ADMIN'
+  name        String
+  description String?
+  hierarchy   Int      @default(0)
+  
+  // Aprovações
+  canApproveGrants Boolean             @default(false)
+  canApproveLevel  GrantApprovalLevel?
+  
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  space            Space              @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  capabilities     RoleCapability[]
+  userAssignments  UserSpaceRole[]
+  
+  @@unique([spaceId, code])
+  @@index([spaceId])
+  @@index([isActive])
+  @@map("space_roles")
+}
+
+/// RoleCapability - Mapeamento Role → Capabilities
+model RoleCapability {
+  id           String   @id @default(uuid())
+  roleId       String   @map("role_id")
+  capabilityId String   @map("capability_id")
+  
+  createdAt    DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  role       SpaceRole  @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  capability Capability @relation(fields: [capabilityId], references: [id], onDelete: Cascade)
+  
+  @@unique([roleId, capabilityId])
+  @@index([roleId])
+  @@index([capabilityId])
+  @@map("role_capabilities")
+}
+
+/// UserSpaceRole - Atribuição de roles a usuários
+model UserSpaceRole {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  spaceId   String   @map("space_id")
+  roleId    String   @map("role_id")
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  user  User      @relation("UserSpaceRoles", fields: [userId], references: [id], onDelete: Cascade)
+  space Space     @relation("SpaceUserRoles", fields: [spaceId], references: [id], onDelete: Cascade)
+  role  SpaceRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, spaceId, roleId])
+  @@index([userId])
+  @@index([spaceId])
+  @@index([roleId])
+  @@map("user_space_roles")
+}
+
+/// Grant - Exceções de acesso (Add/Deny/Temporary)
+model Grant {
+  id           String      @id @default(uuid())
+  userId       String      @map("user_id")
+  spaceId      String?     @map("space_id")
+  capabilityId String?     @map("capability_id")
+  
+  type         GrantType   @default(ADD)
+  accessLevel  AccessLevel @default(READ_ONLY)
+  scope        CapabilityScope @default(SPACE)
+  
+  justification String
+  
+  grantedBy    String      @map("granted_by")
+  grantedAt    DateTime    @default(now()) @map("granted_at")
+  
+  expiresAt    DateTime?   @map("expires_at")
+  
+  status       GrantStatus @default(ACTIVE)
+  revokedAt    DateTime?   @map("revoked_at")
+  revokedBy    String?     @map("revoked_by")
+  revokeReason String?     @map("revoke_reason")
+  
+  // Rastreamento de origem
+  grantRequestId String?   @unique @map("grant_request_id")
+  
+  metadata     Json?
+  
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  
+  // Relations
+  user          User        @relation("UserGrants", fields: [userId], references: [id], onDelete: Cascade)
+  space         Space?      @relation("SpaceGrants", fields: [spaceId], references: [id], onDelete: Cascade)
+  capability    Capability? @relation(fields: [capabilityId], references: [id], onDelete: Cascade)
+  grantedByUser User        @relation("GrantedBy", fields: [grantedBy], references: [id])
+  revokedByUser User?       @relation("RevokedBy", fields: [revokedBy], references: [id])
+  grantRequest  GrantRequest? @relation("GeneratedGrant", fields: [grantRequestId], references: [id])
+  auditEvents   GrantAuditEvent[]
+  
+  @@index([userId])
+  @@index([spaceId])
+  @@index([capabilityId])
+  @@index([status])
+  @@index([expiresAt])
+  @@index([grantedBy])
+  @@map("grants")
+}
+
+/// GrantRequest - Solicitações de acesso
+model GrantRequest {
+  id            String   @id @default(uuid())
+  requesterId   String   @map("requester_id")
+  spaceId       String?  @map("space_id")
+  capabilityId  String?  @map("capability_id")
+  
+  // Detalhes da solicitação
+  accessLevel   AccessLevel @default(READ_ONLY)
+  scope         CapabilityScope @default(SPACE)
+  justification String
+  requestedDuration Int  @default(7) // Dias
+  
+  // Status
+  status        GrantRequestStatus @default(PENDING)
+  
+  // Aprovação
+  approvedBy    String?   @map("approved_by")
+  approvedAt    DateTime? @map("approved_at")
+  rejectedBy    String?   @map("rejected_by")
+  rejectedAt    DateTime? @map("rejected_at")
+  rejectionReason String? @map("rejection_reason")
+  
+  // Metadata
+  requestIp     String?   @map("request_ip")
+  requestDevice String?   @map("request_device")
+  requestUserAgent String? @map("request_user_agent")
+  
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  requester     User      @relation("GrantRequests", fields: [requesterId], references: [id])
+  space         Space?    @relation("SpaceGrantRequests", fields: [spaceId], references: [id])
+  capability    Capability? @relation(fields: [capabilityId], references: [id])
+  approver      User?     @relation("GrantApprovals", fields: [approvedBy], references: [id])
+  rejector      User?     @relation("GrantRejections", fields: [rejectedBy], references: [id])
+  grant         Grant?    @relation("GeneratedGrant")
+  
+  @@index([requesterId])
+  @@index([spaceId])
+  @@index([capabilityId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("grant_requests")
+}
+
+/// Policy - Regras condicionais
+model Policy {
+  id           String       @id @default(uuid())
+  name         String
+  description  String?
+  
+  type         PolicyType
+  targetType   PolicyTargetType
+  targetId     String?      @map("target_id")
+  
+  // Condições (JSON)
+  conditions   Json
+  
+  enforcement  PolicyEnforcement @default(DENY)
+  
+  isActive     Boolean      @default(true)
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+  
+  // Relations
+  capability       Capability?            @relation(fields: [targetId], references: [id])
+  ipWhitelists     PolicyIpWhitelist[]
+  deviceTracking   PolicyDeviceTracking[]
+  
+  @@index([type])
+  @@index([targetType])
+  @@index([targetId])
+  @@index([isActive])
+  @@map("policies")
+}
+
+/// PolicyIpWhitelist - IP Whitelist
+model PolicyIpWhitelist {
+  id        String   @id @default(uuid())
+  policyId  String   @map("policy_id")
+  ipAddress String   @map("ip_address") // Ex: '192.168.1.100' ou '10.0.0.0/24' (CIDR)
+  label     String?
+  
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  policy    Policy   @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  
+  @@index([policyId])
+  @@index([ipAddress])
+  @@index([isActive])
+  @@map("policy_ip_whitelist")
+}
+
+/// PolicyDeviceTracking - Device Tracking
+model PolicyDeviceTracking {
+  id           String   @id @default(uuid())
+  policyId     String?  @map("policy_id")
+  userId       String   @map("user_id")
+  
+  deviceId     String   @unique @map("device_id") // Hash do UserAgent + IP + outros fatores
+  deviceName   String?  @map("device_name") // Ex: 'Chrome on MacOS'
+  deviceType   String?  @map("device_type") // 'desktop', 'mobile', 'tablet'
+  
+  firstSeenAt  DateTime @default(now()) @map("first_seen_at")
+  lastSeenAt   DateTime @default(now()) @map("last_seen_at")
+  
+  isTrusted    Boolean  @default(false) @map("is_trusted")
+  
+  metadata     Json?
+  
+  // Relations
+  policy       Policy?  @relation(fields: [policyId], references: [id])
+  user         User     @relation("UserDevices", fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([policyId])
+  @@index([userId])
+  @@index([deviceId])
+  @@index([isTrusted])
+  @@map("policy_device_tracking")
+}
+
+/// SpaceOwner - Ownership e delegação
+model SpaceOwner {
+  id        String   @id @default(uuid())
+  spaceId   String   @map("space_id")
+  userId    String   @map("user_id")
+  
+  canDelegate Boolean @default(false) @map("can_delegate")
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  space     Space    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  user      User     @relation("SpaceOwnerships", fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([spaceId, userId])
+  @@index([spaceId])
+  @@index([userId])
+  @@map("space_owners")
+}
+
+/// CapabilityAuditEvent - Auditoria de capabilities
+model CapabilityAuditEvent {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  capabilityId String   @map("capability_id")
+  spaceId      String?  @map("space_id")
+  
+  action       String   // 'check', 'granted', 'denied'
+  result       String   // 'allowed', 'denied'
+  reason       String?
+  
+  grantId      String?  @map("grant_id")
+  
+  // Rastreamento expandido
+  ipAddress    String?  @map("ip_address")
+  userAgent    String?  @map("user_agent")
+  deviceId     String?  @map("device_id")
+  deviceType   String?  @map("device_type")
+  origin       String?  // 'web', 'mobile', 'api'
+  
+  metadata     Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  user       User       @relation("UserCapabilityAudits", fields: [userId], references: [id])
+  capability Capability @relation(fields: [capabilityId], references: [id])
+  space      Space?     @relation("SpaceCapabilityAudits", fields: [spaceId], references: [id])
+  
+  @@index([userId])
+  @@index([capabilityId])
+  @@index([spaceId])
+  @@index([createdAt])
+  @@index([ipAddress])
+  @@index([deviceId])
+  @@index([action])
+  @@index([result])
+  @@map("capability_audit_events")
+}
+
+/// GrantAuditEvent - Auditoria de grants
+model GrantAuditEvent {
+  id        String   @id @default(uuid())
+  grantId   String   @map("grant_id")
+  action    String   // 'created', 'extended', 'revoked', 'expired'
+  performedBy String? @map("performed_by")
+  reason    String?
+  
+  metadata  Json?
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  grant         Grant @relation(fields: [grantId], references: [id], onDelete: Cascade)
+  performedByUser User? @relation("GrantAuditPerformedBy", fields: [performedBy], references: [id])
+  
+  @@index([grantId])
+  @@index([performedBy])
+  @@index([action])
+  @@index([createdAt])
+  @@map("grant_audit_events")
+}
+
+/// ImpersonationSession - Sessões de Impersonation
+model ImpersonationSession {
+  id              String   @id @default(uuid())
+  impersonatorId  String   @map("impersonator_id")
+  impersonatedId  String   @map("impersonated_id")
+  
+  justification   String
+  
+  startedAt       DateTime @default(now()) @map("started_at")
+  expiresAt       DateTime @map("expires_at") // 15-30 minutos
+  endedAt         DateTime? @map("ended_at")
+  
+  // Rastreamento
+  ipAddress       String?  @map("ip_address")
+  userAgent       String?  @map("user_agent")
+  
+  // Ações executadas durante impersonation
+  actionsLog      Json?    @map("actions_log")
+  
+  // Bloqueios
+  blockedActions  String[] @map("blocked_actions")
+  
+  status          ImpersonationStatus @default(ACTIVE)
+  
+  // Relations
+  impersonator    User     @relation("Impersonator", fields: [impersonatorId], references: [id])
+  impersonated    User     @relation("Impersonated", fields: [impersonatedId], references: [id])
+  
+  @@index([impersonatorId])
+  @@index([impersonatedId])
+  @@index([status])
+  @@index([startedAt])
+  @@index([expiresAt])
+  @@map("impersonation_sessions")
+}
+
+/// DataExportLog - Logs de Exportação
+model DataExportLog {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  
+  exportType  String   @map("export_type") // 'csv', 'json', 'pdf'
+  resource    String   // 'users', 'invoices', 'analytics'
+  
+  // Controle
+  recordCount Int      @map("record_count")
+  columns     String[] // Colunas exportadas
+  filters     Json?    // Filtros aplicados
+  
+  // Segurança
+  hasPII      Boolean  @default(false) @map("has_pii")
+  watermark   String?  // UUID único para rastreamento
+  
+  // Rastreamento
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  user        User     @relation("UserDataExports", fields: [userId], references: [id])
+  
+  @@index([userId])
+  @@index([resource])
+  @@index([createdAt])
+  @@index([hasPII])
+  @@map("data_export_logs")
 }
 
