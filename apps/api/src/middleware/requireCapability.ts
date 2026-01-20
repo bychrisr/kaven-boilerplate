@@ -1,38 +1,33 @@
 /**
- * Require Capability Middleware
+ * Require Capability Middleware (Fastify)
  * 
  * Middleware para proteger rotas com verificação de capabilities.
  * 
  * Uso:
  * ```typescript
- * router.post('/invoices',
- *   requireCapability('invoices.create'),
- *   InvoiceController.create
- * );
+ * fastify.post('/invoices', {
+ *   preHandler: requireCapability('invoices.create')
+ * }, InvoiceController.create);
  * 
- * router.get('/tickets/:id',
- *   requireCapability('tickets.read', { spaceId: 'SUPPORT' }),
- *   TicketController.show
- * );
+ * fastify.get('/tickets/:id', {
+ *   preHandler: requireCapability('tickets.read', { spaceId: 'SUPPORT' })
+ * }, TicketController.show);
  * ```
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { CapabilityScope } from '@prisma/client';
+import { FastifyRequest, FastifyReply } from 'fastify';
 import { authorizationService } from '../services/authorization.service';
 import { AuthorizationContext, ERROR_MESSAGES } from '../types/authorization.types';
 import crypto from 'crypto';
 
-// Estender Request para incluir informações de autorização
-declare global {
-  namespace Express {
-    interface Request {
-      authorization?: {
-        accessLevel: string;
-        grantId?: string;
-        reason: string;
-      };
-    }
+// Estender FastifyRequest para incluir informações de autorização
+declare module 'fastify' {
+  interface FastifyRequest {
+    authorization?: {
+      accessLevel: string;
+      grantId?: string;
+      reason: string;
+    };
   }
 }
 
@@ -41,112 +36,20 @@ declare global {
  */
 interface RequireCapabilityOptions {
   spaceId?: string;
-  scope?: CapabilityScope;
+  scope?: string;
 }
 
 /**
  * Gera deviceId único baseado em UserAgent e IP
  */
-function generateDeviceId(req: Request): string {
+function generateDeviceId(req: FastifyRequest): string {
   const userAgent = req.headers['user-agent'] || 'unknown';
-  const ip = req.ip || req.socket.remoteAddress || 'unknown';
+  const ip = req.ip || 'unknown';
   
   return crypto
     .createHash('sha256')
     .update(`${userAgent}:${ip}`)
     .digest('hex');
-}
-
-/**
- * Middleware para exigir capability
- * 
- * @param capabilityCode - Código da capability (ex: 'tickets.read')
- * @param options - Opções adicionais
- * @returns Middleware function
- */
-export function requireCapability(
-  capabilityCode: string,
-  options: RequireCapabilityOptions = {}
-) {
-  return async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      // 1. Verificar se usuário está autenticado
-      const userId = req.user?.id;
-      if (!userId) {
-        return res.status(401).json({
-          error: 'Unauthorized',
-          message: 'Você precisa estar autenticado para acessar este recurso',
-        });
-      }
-
-      // 2. Montar contexto de autorização
-      const context: AuthorizationContext = {
-        userId,
-        tenantId: (req as any).tenantContext?.tenantId,
-        spaceId: options.spaceId || req.headers['x-space-id'] as string,
-        
-        // User info
-        user: {
-          id: req.user.id,
-          email: req.user.email,
-          role: req.user.role,
-          twoFactorEnabled: req.user.twoFactorEnabled || false,
-        },
-        
-        // Session info
-        session: {
-          id: (req as any).session?.id || 'unknown',
-          mfaVerified: (req as any).session?.mfaVerified || false,
-          mfaVerifiedAt: (req as any).session?.mfaVerifiedAt,
-        },
-        
-        // Request tracking
-        ip: req.ip || req.socket.remoteAddress,
-        userAgent: req.headers['user-agent'],
-        deviceId: generateDeviceId(req),
-        deviceType: detectDeviceType(req.headers['user-agent'] || ''),
-        origin: (req.headers['x-origin'] as any) || 'web',
-      };
-
-      // 3. Verificar capability
-      const result = await authorizationService.checkCapability({
-        userId,
-        capabilityCode,
-        spaceId: context.spaceId,
-        scope: options.scope,
-        context,
-      });
-
-      // 4. Se negado, retornar 403
-      if (!result.allowed) {
-        return res.status(403).json({
-          error: 'Forbidden',
-          message: ERROR_MESSAGES[result.reason] || 'Acesso negado',
-          reason: result.reason,
-          capability: capabilityCode,
-          metadata: result.metadata,
-        });
-      }
-
-      // 5. Anexar informações de autorização ao request
-      req.authorization = {
-        accessLevel: result.accessLevel || 'READ_WRITE',
-        grantId: result.grantId,
-        reason: result.reason,
-      };
-
-      // 6. Continuar para próximo middleware/controller
-      next();
-    } catch (error) {
-      console.error('Error in requireCapability middleware:', error);
-      
-      // Fail secure: em caso de erro, negar acesso
-      return res.status(500).json({
-        error: 'Internal Server Error',
-        message: 'Erro ao verificar permissões. Por favor, tente novamente.',
-      });
-    }
-  };
 }
 
 /**
@@ -164,33 +67,135 @@ function detectDeviceType(userAgent: string): 'desktop' | 'mobile' | 'tablet' {
 }
 
 /**
+ * Valida origem da requisição
+ */
+function parseOrigin(origin?: string): 'web' | 'mobile' | 'api' {
+  if (!origin) return 'web';
+  if (origin === 'mobile' || origin === 'api') return origin;
+  return 'web';
+}
+
+/**
+ * Middleware para exigir capability
+ * 
+ * @param capabilityCode - Código da capability (ex: 'tickets.read')
+ * @param options - Opções adicionais
+ * @returns Middleware function
+ */
+export function requireCapability(
+  capabilityCode: string,
+  options: RequireCapabilityOptions = {}
+) {
+  return async (req: FastifyRequest, reply: FastifyReply) => {
+    try {
+      // 1. Verificar se usuário está autenticado
+      const userId = (req as any).user?.id;
+      if (!userId) {
+        return reply.status(401).send({
+          error: 'Unauthorized',
+          message: 'Você precisa estar autenticado para acessar este recurso',
+        });
+      }
+
+      // 2. Montar contexto de autorização
+      const context: AuthorizationContext = {
+        userId,
+        tenantId: (req as any).tenantContext?.tenantId,
+        spaceId: options.spaceId || req.headers['x-space-id'] as string,
+        
+        // User info
+        user: {
+          id: (req as any).user.id,
+          email: (req as any).user.email,
+          role: (req as any).user.role,
+          twoFactorEnabled: (req as any).user.twoFactorEnabled || false,
+        },
+        
+        // Session info
+        session: {
+          id: (req as any).session?.id || 'unknown',
+          mfaVerified: (req as any).session?.mfaVerified || false,
+          mfaVerifiedAt: (req as any).session?.mfaVerifiedAt,
+        },
+        
+        // Request tracking
+        ip: req.ip,
+        userAgent: req.headers['user-agent'],
+        deviceId: generateDeviceId(req),
+        deviceType: detectDeviceType(req.headers['user-agent'] || ''),
+        origin: parseOrigin(req.headers['x-origin'] as string | undefined),
+      };
+
+      // 3. Verificar capability
+      const result = await authorizationService.checkCapability({
+        userId,
+        capabilityCode,
+        spaceId: context.spaceId,
+        scope: options.scope as any,
+        context,
+      });
+
+      // 4. Se negado, retornar 403
+      if (!result.allowed) {
+        return reply.status(403).send({
+          error: 'Forbidden',
+          message: ERROR_MESSAGES[result.reason] || 'Acesso negado',
+          reason: result.reason,
+          capability: capabilityCode,
+          metadata: result.metadata,
+        });
+      }
+
+      // 5. Anexar informações de autorização ao request
+      req.authorization = {
+        accessLevel: result.accessLevel || 'READ_WRITE',
+        grantId: result.grantId,
+        reason: result.reason,
+      };
+
+      // 6. Continuar para próximo handler
+      return;
+    } catch (error) {
+      console.error('Error in requireCapability middleware:', error);
+      
+      // Fail secure: em caso de erro, negar acesso
+      return reply.status(500).send({
+        error: 'Internal Server Error',
+        message: 'Erro ao verificar permissões. Por favor, tente novamente.',
+      });
+    }
+  };
+}
+
+/**
  * Middleware helper para verificar se usuário tem READ_WRITE
  * Útil para endpoints que modificam dados
  */
-export function requireReadWrite(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  if (req.authorization?.accessLevel === 'READ_ONLY') {
-    return res.status(403).json({
-      error: 'Forbidden',
-      message: 'Você possui apenas acesso de leitura. Não é possível modificar dados.',
-      accessLevel: 'READ_ONLY',
-    });
-  }
-  next();
+export function requireReadWrite() {
+  return async (req: FastifyRequest, reply: FastifyReply) => {
+    if (req.authorization?.accessLevel === 'READ_ONLY') {
+      return reply.status(403).send({
+        error: 'Forbidden',
+        message: 'Você possui apenas acesso de leitura. Não é possível modificar dados.',
+        accessLevel: 'READ_ONLY',
+      });
+    }
+    return;
+  };
 }
 
 /**
  * Middleware helper para verificar múltiplas capabilities (OR)
  * Usuário precisa ter PELO MENOS UMA das capabilities
  */
-export function requireAnyCapability(capabilityCodes: string[], options: RequireCapabilityOptions = {}) {
-  return async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.user?.id;
+export function requireAnyCapability(
+  capabilityCodes: string[],
+  options: RequireCapabilityOptions = {}
+) {
+  return async (req: FastifyRequest, reply: FastifyReply) => {
+    const userId = (req as any).user?.id;
     if (!userId) {
-      return res.status(401).json({
+      return reply.status(401).send({
         error: 'Unauthorized',
         message: 'Você precisa estar autenticado para acessar este recurso',
       });
@@ -201,7 +206,7 @@ export function requireAnyCapability(capabilityCodes: string[], options: Require
       const context: AuthorizationContext = {
         userId,
         spaceId: options.spaceId || req.headers['x-space-id'] as string,
-        user: req.user as any,
+        user: (req as any).user,
         session: (req as any).session,
         ip: req.ip,
         userAgent: req.headers['user-agent'],
@@ -222,12 +227,12 @@ export function requireAnyCapability(capabilityCodes: string[], options: Require
           grantId: result.grantId,
           reason: result.reason,
         };
-        return next();
+        return;
       }
     }
 
     // Nenhuma capability permitida
-    return res.status(403).json({
+    return reply.status(403).send({
       error: 'Forbidden',
       message: 'Você não possui nenhuma das permissões necessárias',
       requiredCapabilities: capabilityCodes,
@@ -239,11 +244,14 @@ export function requireAnyCapability(capabilityCodes: string[], options: Require
  * Middleware helper para verificar múltiplas capabilities (AND)
  * Usuário precisa ter TODAS as capabilities
  */
-export function requireAllCapabilities(capabilityCodes: string[], options: RequireCapabilityOptions = {}) {
-  return async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.user?.id;
+export function requireAllCapabilities(
+  capabilityCodes: string[],
+  options: RequireCapabilityOptions = {}
+) {
+  return async (req: FastifyRequest, reply: FastifyReply) => {
+    const userId = (req as any).user?.id;
     if (!userId) {
-      return res.status(401).json({
+      return reply.status(401).send({
         error: 'Unauthorized',
         message: 'Você precisa estar autenticado para acessar este recurso',
       });
@@ -252,7 +260,7 @@ export function requireAllCapabilities(capabilityCodes: string[], options: Requi
     const context: AuthorizationContext = {
       userId,
       spaceId: options.spaceId || req.headers['x-space-id'] as string,
-      user: req.user as any,
+      user: (req as any).user,
       session: (req as any).session,
       ip: req.ip,
       userAgent: req.headers['user-agent'],
@@ -270,7 +278,7 @@ export function requireAllCapabilities(capabilityCodes: string[], options: Requi
       });
 
       if (!result.allowed) {
-        return res.status(403).json({
+        return reply.status(403).send({
           error: 'Forbidden',
           message: ERROR_MESSAGES[result.reason] || 'Acesso negado',
           missingCapability: capabilityCode,
@@ -284,6 +292,6 @@ export function requireAllCapabilities(capabilityCodes: string[], options: Requi
       accessLevel: 'READ_WRITE',
       reason: 'ROLE_CAPABILITY',
     };
-    next();
+    return;
   };
 }
