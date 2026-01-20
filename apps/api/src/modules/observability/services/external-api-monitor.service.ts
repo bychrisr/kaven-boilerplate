@@ -91,6 +91,9 @@ export class ExternalAPIMonitorService {
           isActive: true,
           isPrimary: true,
           fromEmail: true,
+          healthStatus: true,
+          healthMessage: true,
+          lastHealthCheck: true,
         }
       });
 
@@ -104,7 +107,10 @@ export class ExternalAPIMonitorService {
         metadata: {
           integrationId: integration.id,
           emailProvider: integration.provider,
-          fromEmail: integration.fromEmail
+          fromEmail: integration.fromEmail,
+          healthStatus: integration.healthStatus,
+          healthMessage: integration.healthMessage,
+          lastHealthCheck: integration.lastHealthCheck,
         }
       }));
     } catch (error) {
@@ -134,6 +140,38 @@ export class ExternalAPIMonitorService {
   private async checkAPI(api: ExternalAPI): Promise<ExternalAPIStatus> {
     console.log(`[ExternalAPIMonitor] 🌐 Verificando ${api.name} (${api.provider})...`);
     
+    // Se é uma integração de email, usar health status do banco ao invés de ping
+    if (api.metadata?.emailProvider) {
+      const healthStatus = api.metadata.healthStatus;
+      const healthMessage = api.metadata.healthMessage;
+      const lastHealthCheck = api.metadata.lastHealthCheck;
+      
+      // Mapear healthStatus para status do observability
+      let status: 'healthy' | 'degraded' | 'unhealthy' | 'not_configured';
+      
+      if (!healthStatus || healthStatus === 'unconfigured') {
+        status = 'not_configured';
+      } else if (healthStatus === 'healthy') {
+        status = 'healthy';
+      } else {
+        status = 'unhealthy';
+      }
+      
+      const statusEmoji = status === 'healthy' ? '✅' : status === 'not_configured' ? '⚙️' : '❌';
+      console.log(`[ExternalAPIMonitor] ${statusEmoji} ${api.name}: ${status} (health check from DB)`);
+      
+      return {
+        ...api,
+        status,
+        latency: 0, // Health check não mede latência de rede
+        lastCheck: lastHealthCheck ? new Date(lastHealthCheck).getTime() : Date.now(),
+        errorCount: status === 'unhealthy' ? 1 : 0,
+        successRate: status === 'healthy' ? 100 : 0,
+        errorMessage: status !== 'healthy' ? (healthMessage || 'Health check failed') : undefined,
+      };
+    }
+    
+    // Lógica original para outras APIs (Stripe, Google Maps, etc)
     // Se não está habilitado (sem API key), retornar not_configured
     if (!api.enabled) {
       console.log(`[ExternalAPIMonitor] ⚙️  ${api.name}: NÃO CONFIGURADO (API key ausente)`);
