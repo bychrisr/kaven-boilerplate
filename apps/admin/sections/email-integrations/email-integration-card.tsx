@@ -31,6 +31,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import {
+  Tooltip as TooltipRoot,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { MoreVertical, Mail, Check, Shield, Activity, Trash2, Pencil, Loader2, Send, Wifi } from 'lucide-react';
 import { toast } from 'sonner';
 import { emailIntegrationsApi, EmailIntegration } from '@/lib/api/email-integrations';
@@ -153,6 +159,38 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
                 <Badge variant="default" className="text-[10px] h-5 px-2 bg-primary/90 hover:bg-primary/90 shadow-sm">
                   {t('primary')}
                 </Badge>
+              )}
+              {/* Health Status Badge */}
+              {integration.healthStatus && (
+                <TooltipProvider>
+                  <TooltipRoot>
+                    <TooltipTrigger asChild>
+                      <Badge 
+                        variant={integration.healthStatus === 'healthy' ? 'default' : integration.healthStatus === 'unhealthy' ? 'destructive' : 'secondary'}
+                        className={cn(
+                          "text-[10px] h-5 px-2 shadow-sm cursor-help",
+                          integration.healthStatus === 'healthy' && "bg-green-600 hover:bg-green-600",
+                          integration.healthStatus === 'unhealthy' && "bg-red-600 hover:bg-red-600",
+                          integration.healthStatus === 'unconfigured' && "bg-slate-400 hover:bg-slate-400"
+                        )}
+                      >
+                        {integration.healthStatus === 'healthy' && '🟢 Healthy'}
+                        {integration.healthStatus === 'unhealthy' && '🔴 Unhealthy'}
+                        {integration.healthStatus === 'unconfigured' && '⚪ Unconfigured'}
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="max-w-xs">
+                      <div className="space-y-1">
+                        <p className="font-medium">{integration.healthMessage || 'No health check performed yet'}</p>
+                        {integration.lastHealthCheck && (
+                          <p className="text-xs text-muted-foreground">
+                            Last checked: {new Date(integration.lastHealthCheck).toLocaleString()}
+                          </p>
+                        )}
+                      </div>
+                    </TooltipContent>
+                  </TooltipRoot>
+                </TooltipProvider>
               )}
             </h4>
             <div className="flex items-center gap-2 mt-1">
