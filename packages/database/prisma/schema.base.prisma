@@ -1,3 +1,38 @@
+// ============================================
+// SCHEMA BASE - CORE IMUTÁVEL DA PLATAFORMA
+// ============================================
+//
+// ⚠️ ATENÇÃO: ESTE É O SCHEMA CORE (BASE) DA PLATAFORMA
+//
+// Este arquivo contém os modelos FUNDAMENTAIS e de SEGURANÇA do Kaven:
+// - Tenant, User, Subscription (Multi-tenancy)
+// - Authentication, Authorization, RBAC
+// - Spaces & Permissions (Sistema de Segurança)
+// - Audit Logs, Security
+// - Billing, Payments, Invoices
+// - Email Infrastructure
+// - Platform Configuration
+//
+// 🚫 NÃO ADICIONE FEATURES CUSTOMIZADAS AQUI
+// ✅ Use schema.extended.prisma para SUAS features
+//
+// REGRA DE OURO:
+// - Modelos de SEGURANÇA e CORE → schema.base.prisma (AQUI)
+// - Modelos de FEATURES CUSTOM → schema.extended.prisma
+//
+// Exemplos de O QUE VAI AQUI:
+// ✅ Capabilities, Grants, Policies (Segurança)
+// ✅ TenantInvite, Space, UserSpace (Core)
+// ✅ AuditLog, SecurityAuditLog (Auditoria)
+// ✅ EmailIntegration, EmailEvent (Infraestrutura)
+//
+// Exemplos de O QUE NÃO VAI AQUI:
+// ❌ Projects, Tasks (Features de demo)
+// ❌ Blog, Posts, Comments (Features custom)
+// ❌ Inventory, Products (Features de negócio)
+//
+// ============================================
+
 generator client {
   provider = "prisma-client-js"
 }

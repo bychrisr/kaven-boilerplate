@@ -1,0 +1,395 @@
+# Database Schema Structure
+
+> Estrutura modular do schema Prisma do Kaven
+
+**Versão:** 1.0.0  
+**Data:** 2026-01-20  
+**Autor:** Chris + Antigravity  
+**Categoria:** Database
+
+---
+
+## Visão Geral
+
+O Kaven utiliza uma **estrutura modular de schemas Prisma** para separar claramente o **core imutável da plataforma** das **customizações do desenvolvedor**.
+
+Esta arquitetura permite:
+
+- ✅ **Atualizações seguras** do core sem afetar customizações
+- ✅ **Separação clara** entre segurança/infraestrutura e features de negócio
+- ✅ **Manutenibilidade** de longo prazo
+- ✅ **Evitar conflitos** em merges e atualizações
+
+---
+
+## Estrutura de Arquivos
+
+```
+packages/database/prisma/
+├── schema.base.prisma      ← CORE IMUTÁVEL (NÃO EDITE)
+├── schema.extended.prisma  ← SUAS CUSTOMIZAÇÕES (EDITE AQUI)
+└── schema.prisma           ← GERADO AUTOMATICAMENTE (NÃO EDITE)
+```
+
+### 1. `schema.base.prisma` - Core Imutável
+
+**Propósito:** Contém modelos fundamentais e de segurança da plataforma.
+
+**O que vai aqui:**
+
+- ✅ **Multi-tenancy:** `Tenant`, `User`, `Subscription`
+- ✅ **Autenticação:** `RefreshToken`, `VerificationToken`, `PasswordResetToken`
+- ✅ **Autorização:** `Capability`, `Grant`, `Policy`, `SpaceRole`
+- ✅ **Spaces:** `Space`, `UserSpace`, `InviteSpace`, `TenantInvite`
+- ✅ **Auditoria:** `AuditLog`, `SecurityAuditLog`, `CapabilityAuditEvent`
+- ✅ **Billing:** `Invoice`, `Order`, `Payment`, `Plan`, `Price`
+- ✅ **Email:** `EmailIntegration`, `EmailEvent`, `EmailQueue`
+- ✅ **Segurança:** `ImpersonationSession`, `DataExportLog`, `PolicyIpWhitelist`
+
+**Quem mantém:** Equipe core do Kaven
+
+**Quando editar:**
+
+- ❌ **NUNCA** edite diretamente
+- ✅ Apenas em atualizações oficiais da plataforma
+
+---
+
+### 2. `schema.extended.prisma` - Customizações
+
+**Propósito:** Onde o desenvolvedor adiciona **suas** tabelas e features.
+
+**O que vai aqui:**
+
+- ✅ **Features de negócio:** `Blog`, `Posts`, `Comments`
+- ✅ **Features custom:** `Inventory`, `Products`, `Orders` (custom)
+- ✅ **Demos/Exemplos:** `Project`, `Task` (atualmente aqui)
+
+**Quem mantém:** Você (desenvolvedor)
+
+**Quando editar:**
+
+- ✅ Sempre que adicionar novas features
+- ✅ Sempre que precisar de novos modelos de negócio
+- ✅ Para features específicas do seu SaaS
+
+---
+
+### 3. `schema.prisma` - Gerado Automaticamente
+
+**Propósito:** Resultado da mesclagem de `base` + `extended`.
+
+**Como é gerado:**
+
+```bash
+# Processo automático (não precisa rodar manualmente)
+cat schema.base.prisma > schema.prisma
+cat schema.extended.prisma >> schema.prisma
+```
+
+**Quando editar:**
+
+- ❌ **NUNCA** edite manualmente
+- ✅ É regenerado automaticamente
+
+---
+
+## Regras de Ouro
+
+### ✅ O QUE FAZER
+
+1. **Adicionar features custom:**
+
+   ```prisma
+   // schema.extended.prisma
+   model BlogPost {
+     id        String   @id @default(uuid())
+     title     String
+     content   String   @db.Text
+     tenantId  String
+     tenant    Tenant   @relation(fields: [tenantId], references: [id])
+     createdAt DateTime @default(now())
+   }
+   ```
+
+2. **Usar modelos do base:**
+
+   ```typescript
+   // Seus controllers podem usar modelos do base
+   const user = await prisma.user.findUnique({ where: { id } });
+   const tenant = await prisma.tenant.findUnique({ where: { slug } });
+   ```
+
+3. **Adicionar relations a modelos do base:**
+
+   ```prisma
+   // schema.extended.prisma
+   model BlogPost {
+     authorId String
+     author   User   @relation("BlogPosts", fields: [authorId], references: [id])
+   }
+
+   // Nota: Você precisa adicionar a relation reversa no User via email-user-patch.prisma
+   ```
+
+---
+
+### ❌ O QUE NÃO FAZER
+
+1. **Editar schema.base.prisma diretamente:**
+
+   ```prisma
+   // ❌ ERRADO - Não edite schema.base.prisma
+   model User {
+     // ... campos existentes
+     customField String? // ← NÃO FAÇA ISSO
+   }
+   ```
+
+2. **Adicionar modelos de segurança no extended:**
+
+   ```prisma
+   // ❌ ERRADO - Modelos de segurança vão no base
+   // schema.extended.prisma
+   model CustomPermission { // ← Use Capability/Grant do base
+     id String @id
+   }
+   ```
+
+3. **Editar schema.prisma manualmente:**
+   ```prisma
+   // ❌ ERRADO - Este arquivo é gerado automaticamente
+   // schema.prisma
+   model User {
+     // ... NÃO EDITE AQUI
+   }
+   ```
+
+---
+
+## Exemplos Práticos
+
+### Exemplo 1: Adicionar Feature de Blog
+
+**Objetivo:** Criar sistema de blog com posts e comentários.
+
+**Arquivo:** `schema.extended.prisma`
+
+```prisma
+// ===========================
+// BLOG SYSTEM
+// ===========================
+
+model BlogPost {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  content     String   @db.Text
+  published   Boolean  @default(false)
+
+  // Multi-tenancy
+  tenantId    String
+  tenant      Tenant   @relation("BlogPosts", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Author
+  authorId    String
+  author      User     @relation("BlogPosts", fields: [authorId], references: [id])
+
+  // Relations
+  comments    BlogComment[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([tenantId])
+  @@index([authorId])
+  @@index([slug])
+  @@map("blog_posts")
+}
+
+model BlogComment {
+  id        String   @id @default(uuid())
+  content   String   @db.Text
+
+  postId    String
+  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  authorId  String
+  author    User     @relation("BlogComments", fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([postId])
+  @@index([authorId])
+  @@map("blog_comments")
+}
+```
+
+**Adicionar relations reversas no User:**
+
+Arquivo: `email-user-patch.prisma` (ou criar `blog-user-patch.prisma`)
+
+```prisma
+// Patch para adicionar relations de Blog no User
+model User {
+  blogPosts    BlogPost[]    @relation("BlogPosts")
+  blogComments BlogComment[] @relation("BlogComments")
+}
+
+// Patch para adicionar relation de Blog no Tenant
+model Tenant {
+  blogPosts BlogPost[] @relation("BlogPosts")
+}
+```
+
+---
+
+### Exemplo 2: Usar Capabilities do Base
+
+**Objetivo:** Proteger endpoints de blog com capabilities.
+
+**Não precisa adicionar nada no schema!** Use o sistema existente:
+
+```typescript
+// apps/api/src/modules/blog/blog.routes.ts
+import { requireCapability } from '@/middleware/capability.middleware';
+
+fastify.post('/api/blog/posts', {
+  preHandler: [authMiddleware, requireCapability('blog.create')],
+  handler: blogController.create,
+});
+
+fastify.get('/api/blog/posts', {
+  preHandler: [authMiddleware, requireCapability('blog.read')],
+  handler: blogController.list,
+});
+```
+
+**Seed das capabilities:**
+
+```typescript
+// packages/database/prisma/seeds/capabilities.seed.ts
+const blogCapabilities = [
+  {
+    code: 'blog.read',
+    resource: 'blog',
+    action: 'read',
+    description: 'Visualizar posts do blog',
+    category: 'Blog',
+    sensitivity: 'NORMAL',
+  },
+  {
+    code: 'blog.create',
+    resource: 'blog',
+    action: 'create',
+    description: 'Criar posts no blog',
+    category: 'Blog',
+    sensitivity: 'NORMAL',
+  },
+];
+```
+
+---
+
+## Fluxo de Trabalho
+
+### 1. Adicionar Nova Feature
+
+```bash
+# 1. Editar schema.extended.prisma
+code packages/database/prisma/schema.extended.prisma
+
+# 2. Gerar migration
+pnpm --filter @kaven/database db:push
+
+# 3. Gerar Prisma Client
+pnpm --filter @kaven/database generate
+
+# 4. Criar seed (opcional)
+code packages/database/prisma/seeds/my-feature.seed.ts
+
+# 5. Rodar seed
+pnpm --filter @kaven/database db:seed
+```
+
+---
+
+### 2. Atualizar Core (Atualizações da Plataforma)
+
+```bash
+# 1. Pull das atualizações
+git pull origin main
+
+# 2. Verificar mudanças no schema.base.prisma
+git diff packages/database/prisma/schema.base.prisma
+
+# 3. Gerar migration
+pnpm --filter @kaven/database db:push
+
+# 4. Gerar Prisma Client
+pnpm --filter @kaven/database generate
+
+# 5. Testar aplicação
+pnpm dev
+```
+
+---
+
+## Troubleshooting
+
+### Erro: "Relation not found"
+
+**Problema:** Tentou adicionar relation a modelo do `base` no `extended`.
+
+**Solução:** Use arquivos de patch (ex: `email-user-patch.prisma`):
+
+```prisma
+// my-feature-user-patch.prisma
+model User {
+  myFeatureItems MyFeatureItem[] @relation("UserMyFeature")
+}
+```
+
+---
+
+### Erro: "Duplicate model"
+
+**Problema:** Modelo existe tanto no `base` quanto no `extended`.
+
+**Solução:** Remova do `extended` se for modelo de segurança/core.
+
+---
+
+### Erro: "Cannot find module '@prisma/client'"
+
+**Problema:** Prisma Client não foi gerado após mudanças.
+
+**Solução:**
+
+```bash
+pnpm --filter @kaven/database generate
+```
+
+---
+
+## Checklist de Validação
+
+Antes de fazer commit de mudanças no schema:
+
+- [ ] Editei apenas `schema.extended.prisma` (não `base` ou `schema.prisma`)
+- [ ] Adicionei modelos de **feature de negócio** (não segurança)
+- [ ] Usei relations com modelos do `base` corretamente
+- [ ] Rodei `db:push` com sucesso
+- [ ] Rodei `generate` com sucesso
+- [ ] Testei a aplicação localmente
+- [ ] Criei seed para dados iniciais (se aplicável)
+- [ ] Documentei a feature (se significativa)
+
+---
+
+## Relacionados
+
+- [Spaces & Permissions](/platform/features/spaces-and-permissions)
+- [RBAC Middleware](/platform/features/RBAC_MIDDLEWARE)
+- [Audit Logs](/platform/guides/audit-logs)
+- [Multi-tenancy](/platform/tenant-system)

@@ -1,3 +1,31 @@
+// ============================================
+// SCHEMA EXTENDED - CUSTOMIZAÇÕES DO DESENVOLVEDOR
+// ============================================
+//
+// ⚠️ IMPORTANTE: ESTRUTURA DO SCHEMA
+//
+// Este projeto usa uma estrutura modular de schemas Prisma:
+//
+// 1. schema.base.prisma
+//    - Core imutável da plataforma (Tenant, User, Subscription, etc)
+//    - NÃO EDITE este arquivo diretamente
+//    - Mantido pela equipe core do Kaven
+//
+// 2. schema.extended.prisma (ESTE ARQUIVO)
+//    - Onde o desenvolvedor adiciona SUAS tabelas e customizações
+//    - Adicione seus modelos, enums e relations aqui
+//    - Este arquivo é mesclado com schema.base.prisma
+//
+// 3. schema.prisma (GERADO AUTOMATICAMENTE)
+//    - Resultado da mesclagem de base + extended
+//    - NÃO EDITE manualmente
+//
+// REGRA DE OURO:
+// - Modelos CORE (Tenant, User, etc) → schema.base.prisma
+// - Modelos CUSTOM (suas features) → schema.extended.prisma (AQUI)
+//
+// ============================================
+
 // ===========================
 // TENANT INVITES
 // ===========================
