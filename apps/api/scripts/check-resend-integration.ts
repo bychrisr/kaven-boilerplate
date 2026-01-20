@@ -1,54 +1,77 @@
-#!/usr/bin/env tsx
-/**
- * Script para buscar API key do Resend via Admin Panel
- * 
- * Como a API key está criptografada com a chave antiga,
- * vamos fazer login no admin panel e buscar via API.
- */
+import { PrismaClient } from '@prisma/client';
+import { decrypt } from '../src/lib/crypto/encryption';
 
-import { prisma } from '../src/lib/prisma';
+const prisma = new PrismaClient();
 
-async function getResendIntegration() {
-  console.log('🔍 Buscando integração Resend...\n');
+async function checkResendIntegration() {
+  console.log('\n🔍 VERIFICANDO INTEGRAÇÃO RESEND NO BANCO\n');
 
   try {
-    const integration = await prisma.emailIntegration.findFirst({
+    const resendIntegrations = await prisma.emailIntegration.findMany({
       where: { provider: 'RESEND' },
-      select: {
-        id: true,
-        provider: true,
-        isActive: true,
-        isPrimary: true,
-        apiKey: true,
-        fromEmail: true,
-        fromName: true,
-      },
     });
 
-    if (!integration) {
-      console.log('❌ Nenhuma integração Resend encontrada');
+    if (resendIntegrations.length === 0) {
+      console.log('❌ Nenhuma integração Resend encontrada no banco');
       return;
     }
 
-    console.log('✅ Integração encontrada:');
-    console.log('ID:', integration.id);
-    console.log('Provider:', integration.provider);
-    console.log('Active:', integration.isActive);
-    console.log('Primary:', integration.isPrimary);
-    console.log('From Email:', integration.fromEmail);
-    console.log('From Name:', integration.fromName);
-    console.log('API Key (encrypted):', integration.apiKey ? `${integration.apiKey.substring(0, 20)}...` : 'NULL');
-    console.log('\n📋 Próximos passos:');
-    console.log('1. Fazer login no Admin Panel (admin@kaven.dev / Admin@123)');
-    console.log('2. Ir em Platform Settings > Integrations > Email');
-    console.log('3. Editar integração Resend');
-    console.log('4. Re-salvar com a nova ENCRYPTION_KEY');
-    
-  } catch (error) {
-    console.error('❌ Erro:', error);
+    console.log(`✅ Encontradas ${resendIntegrations.length} integração(ões) Resend\n`);
+
+    for (const integration of resendIntegrations) {
+      console.log('━'.repeat(60));
+      console.log(`📧 Integração ID: ${integration.id}`);
+      console.log(`   Provider: ${integration.provider}`);
+      console.log(`   Active: ${integration.isActive}`);
+      console.log(`   Primary: ${integration.isPrimary}`);
+      console.log(`   From: ${integration.fromName} <${integration.fromEmail}>`);
+      console.log(`   Domains: ${integration.transactionalDomain}, ${integration.marketingDomain}`);
+      
+      // Tentar descriptografar API key
+      if (integration.apiKey) {
+        try {
+          const decryptedKey = decrypt(integration.apiKey);
+          console.log(`   API Key (criptografada): ${integration.apiKey.substring(0, 20)}...`);
+          console.log(`   API Key (descriptografada): ${decryptedKey.substring(0, 10)}...`);
+          
+          // Testar API key
+          console.log('\n   🧪 Testando API key...');
+          const response = await fetch('https://api.resend.com/domains', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${decryptedKey}`,
+              'Content-Type': 'application/json',
+            },
+          });
+
+          console.log(`   📊 Status: ${response.status} ${response.statusText}`);
+
+          if (response.ok) {
+            const data = await response.json();
+            console.log(`   ✅ API Key VÁLIDA!`);
+            console.log(`   📊 Domínios: ${data.data?.length || 0}`);
+            console.log(`   ✅ Verificados: ${data.data?.filter((d: any) => d.status === 'verified').length || 0}`);
+          } else {
+            const errorText = await response.text();
+            console.log(`   ❌ API Key INVÁLIDA!`);
+            console.log(`   📋 Erro: ${errorText}`);
+          }
+
+        } catch (error: any) {
+          console.log(`   ❌ Erro ao descriptografar: ${error.message}`);
+        }
+      } else {
+        console.log(`   ⚠️  API Key não configurada`);
+      }
+
+      console.log('');
+    }
+
+  } catch (error: any) {
+    console.log('❌ Erro:', error.message);
   } finally {
     await prisma.$disconnect();
   }
 }
 
-getResendIntegration();
+checkResendIntegration().catch(console.error);

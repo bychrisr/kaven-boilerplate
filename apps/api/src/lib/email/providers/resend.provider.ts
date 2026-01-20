@@ -247,7 +247,11 @@ export class ResendProvider implements IEmailProvider {
   }
 
   /**
-   * Health check - validates API key and tests connectivity
+   * Health check - validates API key format
+   * 
+   * Note: Resend API keys can be restricted to only send emails,
+   * so we can't rely on calling /domains or other endpoints.
+   * Instead, we validate the key format and optionally test by sending to a test address.
    */
   async healthCheck(): Promise<{ healthy: boolean; message?: string; details?: Record<string, any> }> {
     try {
@@ -260,37 +264,23 @@ export class ResendProvider implements IEmailProvider {
         };
       }
 
-      // Test API key by fetching domains (lightweight API call)
-      // This validates the key without sending an actual email
-      const response = await fetch('https://api.resend.com/domains', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${this.config.apiKey}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({}));
+      // Validate API key format (Resend keys start with 're_')
+      if (!this.config.apiKey.startsWith('re_')) {
         return {
           healthy: false,
-          message: `API key validation failed: ${response.statusText}`,
-          details: {
-            status: response.status,
-            error: error,
-            reason: response.status === 401 ? 'invalid_credentials' : 'api_error',
-          },
+          message: 'Invalid API key format (must start with re_)',
+          details: { reason: 'invalid_format' },
         };
       }
 
-      const data = await response.json();
-      
+      // For restricted API keys, we can't test with /domains endpoint
+      // The key format validation is the best we can do without sending a real email
       return {
         healthy: true,
-        message: 'Resend API key is valid and working',
+        message: 'Resend API key format is valid',
         details: {
-          domains: data.data?.length || 0,
-          verified_domains: data.data?.filter((d: any) => d.status === 'verified').length || 0,
+          note: 'API key validated by format. Actual sending capability can only be verified by sending a test email.',
+          key_prefix: this.config.apiKey.substring(0, 10) + '...',
         },
       };
     } catch (error: any) {
