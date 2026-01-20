@@ -72,6 +72,7 @@ export const SPACES: Record<string, SpaceConfig> = {
         title: 'MANAGEMENT',
         items: [
           { icon: Users, label: 'Users', href: '/users', requiredCapability: 'users.read' },
+          { icon: Shield, label: 'Roles', href: '/spaces/ADMIN/roles', requiredCapability: 'roles.read' },
           { icon: Mail, label: 'Invites', href: '/invites', requiredCapability: 'invites.manage' },
           { icon: Building2, label: 'Tenant', href: '/tenants', requiredCapability: 'tenants.read' }
         ]
