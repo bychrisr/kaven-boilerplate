@@ -282,6 +282,18 @@ export class EmailIntegrationController {
       // Recarregar providers para garantir que a integração está disponível
       await EmailServiceV2.getInstance().reload();
       
+      
+      // Verificar se o provider foi inicializado (tem credenciais válidas)
+      const emailService = EmailServiceV2.getInstance() as any;
+      const providerInstance = emailService.providers.get(integration.id);
+      
+      if (!providerInstance) {
+        return reply.status(400).send({
+          success: false,
+          error: 'Provider não inicializado - verifique se as credenciais estão configuradas corretamente',
+          provider: integration.provider,
+        });
+      }
       // Enviar email de teste
       const result = await EmailServiceV2.getInstance().send({
         to: detectedEmail.email,
