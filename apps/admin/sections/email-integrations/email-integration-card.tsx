@@ -31,7 +31,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { MoreVertical, Mail, Check, Shield, Activity, Trash2, Pencil, Loader2 } from 'lucide-react';
+import { MoreVertical, Mail, Check, Shield, Activity, Trash2, Pencil, Loader2, Send, Wifi } from 'lucide-react';
 import { toast } from 'sonner';
 import { emailIntegrationsApi, EmailIntegration } from '@/lib/api/email-integrations';
 import { EmailIntegrationDialog } from './email-integration-dialog';
@@ -61,6 +61,7 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
   const t = useTranslations('EmailIntegrations');
   const queryClient = useQueryClient();
   const [isTesting, setIsTesting] = useState(false);
+  const [isTestingConnectivity, setIsTestingConnectivity] = useState(false);
 
   const deleteMutation = useMutation({
     mutationFn: emailIntegrationsApi.delete,
@@ -73,6 +74,36 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
     },
   });
 
+  // Mutation para testar conectividade (health check)
+  const testConnectivityMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/settings/email/${id}/health`);
+      if (!res.ok) throw new Error('Failed to check connectivity');
+      return res.json();
+    },
+    onMutate: () => setIsTestingConnectivity(true),
+    onSettled: () => setIsTestingConnectivity(false),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['email-integrations'] });
+      if (data.healthy) {
+        toast.success('Connectivity test successful!', {
+          description: data.message || 'Connection to email provider is working',
+        });
+      } else {
+        toast.info('Connectivity test completed', {
+          description: data.message || 'Provider responded but credentials may need configuration',
+          duration: 8000,
+        });
+      }
+    },
+    onError: (error: Error) => {
+      toast.error('Connectivity test failed', {
+        description: error.message || 'Could not connect to email provider',
+      });
+    },
+  });
+
+  // Mutation para enviar email de teste (teste real)
   const testMutation = useMutation({
     mutationFn: ({ id, mode }: { id: string; mode?: 'sandbox' | 'custom' }) => emailIntegrationsApi.test(id, mode),
     onMutate: () => setIsTesting(true),
@@ -96,7 +127,11 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
     },
   });
 
-  const handleTest = (mode: 'sandbox' | 'custom' = 'custom') => {
+  const handleTestConnectivity = () => {
+    testConnectivityMutation.mutate(integration.id);
+  };
+
+  const handleTestSend = (mode: 'sandbox' | 'custom' = 'custom') => {
     testMutation.mutate({ id: integration.id, mode });
   };
 
@@ -137,8 +172,8 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[160px]">
             <EmailIntegrationDialog mode="edit" integration={integration} asMenuItem />
-            <DropdownMenuItem onClick={handleTest}>
-               <Activity className="mr-2 h-4 w-4" />
+            <DropdownMenuItem onClick={() => handleTestSend()}>
+               <Send className="mr-2 h-4 w-4" />
                {t('test')}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -217,6 +252,19 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
             } />
          </div>
          
+          {/* Test Connectivity Button */}
+          <Button 
+            variant="ghost" 
+            size="icon"
+            className="h-9 w-9 shrink-0 text-muted-foreground hover:text-foreground"
+            onClick={handleTestConnectivity}
+            disabled={isTestingConnectivity}
+            title="Test Connectivity - Validates credentials and connection"
+          >
+            {isTestingConnectivity ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wifi className="h-4 w-4" />}
+          </Button>
+
+          {/* Send Test Email Buttons - Show dropdown for Resend/Postmark, single button for others */}
          {/* Test Buttons - Show two buttons for Resend/Postmark, one for others */}
          {(integration.provider === 'RESEND' || integration.provider === 'POSTMARK') ? (
            <DropdownMenu>
@@ -228,16 +276,16 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
                  disabled={isTesting}
                  title={t('test')}
                >
-                 {isTesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Activity className="h-4 w-4" />}
+                 {isTesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                </Button>
              </DropdownMenuTrigger>
              <DropdownMenuContent align="end" className="w-[200px]">
-               <DropdownMenuItem onSelect={() => handleTest('sandbox')} disabled={isTesting}>
-                 <Activity className="mr-2 h-4 w-4" />
+               <DropdownMenuItem onSelect={() => handleTestSend('sandbox')} disabled={isTesting}>
+                 <Send className="mr-2 h-4 w-4" />
                  Testar Sandbox
                </DropdownMenuItem>
-               <DropdownMenuItem onSelect={() => handleTest('custom')} disabled={isTesting}>
-                 <Activity className="mr-2 h-4 w-4" />
+               <DropdownMenuItem onSelect={() => handleTestSend('custom')} disabled={isTesting}>
+                 <Send className="mr-2 h-4 w-4" />
                  Testar Domínio
                </DropdownMenuItem>
              </DropdownMenuContent>
@@ -247,11 +295,11 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
              variant="ghost" 
              size="icon"
              className="h-9 w-9 shrink-0 text-muted-foreground hover:text-foreground"
-             onClick={() => handleTest('custom')}
+             onClick={() => handleTestSend('custom')}
              disabled={isTesting}
              title={t('test')}
            >
-             {isTesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Activity className="h-4 w-4" />}
+             {isTesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
            </Button>
          )}
       </div>
