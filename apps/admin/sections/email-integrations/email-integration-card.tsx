@@ -78,6 +78,7 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
   // Mutation para testar conectividade (health check)
   const testConnectivityMutation = useMutation({
     mutationFn: async (id: string) => {
+      const { data } = await api.get(`/api/settings/email/${id}/health`);
       return data;
     },
     onMutate: () => setIsTestingConnectivity(true),
@@ -255,6 +256,7 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
           <Button 
             variant="ghost" 
             size="icon"
+            type="button"
             className="h-9 w-9 shrink-0 text-muted-foreground hover:text-foreground"
             onClick={handleTestConnectivity}
             disabled={isTestingConnectivity}
@@ -271,6 +273,7 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
                <Button 
                  variant="ghost" 
                  size="icon"
+                  type="button"
                  className="h-9 w-9 shrink-0 text-muted-foreground hover:text-foreground"
                  disabled={isTesting}
                  title={t('test')}
@@ -293,6 +296,7 @@ export function EmailIntegrationCard({ integration }: EmailIntegrationCardProps)
            <Button 
              variant="ghost" 
              size="icon"
+              type="button"
              className="h-9 w-9 shrink-0 text-muted-foreground hover:text-foreground"
              onClick={() => handleTestSend('custom')}
              disabled={isTesting}
