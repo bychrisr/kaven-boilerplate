@@ -93,7 +93,7 @@ export const emailIntegrationsApi = {
   },
 
   /**
-   * Test an email integration (health check)
+   * Test an email integration (send real test email)
    */
   test: async (id: string, mode?: 'sandbox' | 'custom'): Promise<{ 
     success: boolean; 
@@ -105,16 +105,22 @@ export const emailIntegrationsApi = {
     provider?: string;
     healthy?: boolean;
   }> => {
-    const { data } = await api.get(`/api/settings/email/${id}/health`);
-    
-    // success = requisição HTTP funcionou (200 OK)
-    // healthy = integração está configurada corretamente
-    // Se unhealthy, mostra como info (não erro) pois a requisição funcionou
-    return {
-      success: true, // Sempre true se chegou aqui (200 OK)
-      message: data.message,
-      healthy: data.healthy,
-      isInfo: !data.healthy, // Se unhealthy, mostra como info ao invés de erro
-    };
+    try {
+      const { data } = await api.post(`/api/settings/email/test`, {
+        id,
+        mode: mode || 'custom',
+      });
+      
+      return {
+        success: true,
+        message: data.message || 'Test email sent successfully',
+        ...data,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        error: error.response?.data?.message || error.message || 'Failed to send test email',
+      };
+    }
   },
 };
