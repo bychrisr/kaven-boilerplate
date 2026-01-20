@@ -23,6 +23,12 @@ export async function userRoutes(fastify: FastifyInstance) {
     handler: userController.getCurrent.bind(userController),
   });
 
+  // GET /api/users/me/capabilities - Capabilities do usuário (requer autenticação)
+  fastify.get('/me/capabilities', {
+    preHandler: [authMiddleware],
+    handler: userController.getCapabilities.bind(userController),
+  });
+
   // GET /api/users/:id - Buscar usuário (requer ownership ou TENANT_ADMIN)
   fastify.get('/:id', {
     preHandler: [authMiddleware, requireResourceOwnership('id')],

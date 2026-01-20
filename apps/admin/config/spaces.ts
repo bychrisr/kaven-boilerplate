@@ -27,10 +27,12 @@ export interface NavItem {
   icon: LucideIcon;
   label: string;
   href: string;
+  requiredCapability?: string; // ← NOVO
   children?: {
     label: string;
     href: string;
     external?: boolean;
+    requiredCapability?: string; // ← NOVO
   }[];
 }
 
@@ -69,45 +71,45 @@ export const SPACES: Record<string, SpaceConfig> = {
       {
         title: 'MANAGEMENT',
         items: [
-          { icon: Users, label: 'Users', href: '/users' },
-          { icon: Mail, label: 'Invites', href: '/invites' },
-          { icon: Building2, label: 'Tenant', href: '/tenants' }
+          { icon: Users, label: 'Users', href: '/users', requiredCapability: 'users.read' },
+          { icon: Mail, label: 'Invites', href: '/invites', requiredCapability: 'invites.manage' },
+          { icon: Building2, label: 'Tenant', href: '/tenants', requiredCapability: 'tenants.read' }
         ]
       },
       {
         title: 'FINANCE',
         items: [
-          { icon: DollarSign, label: 'Revenue', href: '/coming-soon' },
-          { icon: ShoppingCart, label: 'Orders', href: '/orders' },
-          { icon: FileText, label: 'Invoices', href: '/invoices' },
-          { icon: CreditCard, label: 'Payments', href: '/coming-soon' },
-          { icon: Receipt, label: 'Billing', href: '/coming-soon' }
+          { icon: DollarSign, label: 'Revenue', href: '/coming-soon', requiredCapability: 'revenue.view' },
+          { icon: ShoppingCart, label: 'Orders', href: '/orders', requiredCapability: 'orders.view' },
+          { icon: FileText, label: 'Invoices', href: '/invoices', requiredCapability: 'invoices.view' },
+          { icon: CreditCard, label: 'Payments', href: '/coming-soon', requiredCapability: 'payments.view' },
+          { icon: Receipt, label: 'Billing', href: '/coming-soon', requiredCapability: 'billing.view' }
         ]
       },
       {
         title: 'MONETIZATION',
         items: [
-          { icon: CreditCard, label: 'Plans', href: '/plans' },
-          { icon: ShoppingCart, label: 'Products', href: '/products' },
-          { icon: Target, label: 'Features', href: '/features' },
-          { icon: Receipt, label: 'Subscriptions', href: '/subscriptions' },
-          { icon: Coins, label: 'Currencies', href: '/currencies' }
+          { icon: CreditCard, label: 'Plans', href: '/plans', requiredCapability: 'plans.view' },
+          { icon: ShoppingCart, label: 'Products', href: '/products', requiredCapability: 'products.read' },
+          { icon: Target, label: 'Features', href: '/features', requiredCapability: 'features.read' },
+          { icon: Receipt, label: 'Subscriptions', href: '/subscriptions', requiredCapability: 'subscriptions.read' },
+          { icon: Coins, label: 'Currencies', href: '/currencies', requiredCapability: 'currencies.read' }
         ]
       },
       {
         title: 'SUPPORT',
         items: [
-          { icon: Headphones, label: 'Tickets', href: '/coming-soon' },
-          { icon: UserCheck, label: 'Impersonation', href: '/coming-soon' },
-          { icon: Shield, label: '2FA Reset', href: '/coming-soon' }
+          { icon: Headphones, label: 'Tickets', href: '/coming-soon', requiredCapability: 'tickets.read' },
+          { icon: UserCheck, label: 'Impersonation', href: '/coming-soon', requiredCapability: 'impersonation.start' },
+          { icon: Shield, label: '2FA Reset', href: '/coming-soon', requiredCapability: 'auth.2fa_reset.request' }
         ]
       },
       {
         title: 'MARKETING',
         items: [
-          { icon: Users, label: 'CRM', href: '/coming-soon' },
-          { icon: Mail, label: 'Campaigns', href: '/coming-soon' },
-          { icon: Target, label: 'Goals', href: '/coming-soon' }
+          { icon: Users, label: 'CRM', href: '/coming-soon', requiredCapability: 'crm.read' },
+          { icon: Mail, label: 'Campaigns', href: '/coming-soon', requiredCapability: 'campaigns.read' },
+          { icon: Target, label: 'Goals', href: '/coming-soon', requiredCapability: 'goals.view' }
         ]
       },
       {
@@ -117,16 +119,17 @@ export const SPACES: Record<string, SpaceConfig> = {
             icon: Activity, 
             label: 'Monitoring', 
             href: '#',
+            requiredCapability: 'observability.view_metrics',
             children: [
                { label: 'Dashboard', href: '/observability' },
-               { label: 'Audit Logs', href: '/audit-logs' },
-               { label: 'Grafana', href: process.env.NEXT_PUBLIC_GRAFANA_URL || 'http://localhost:3001', external: true },
-               { label: 'Prometheus', href: process.env.NEXT_PUBLIC_PROMETHEUS_URL || 'http://localhost:9090', external: true }
+               { label: 'Audit Logs', href: '/audit-logs', requiredCapability: 'logs.read' },
+               { label: 'Grafana', href: process.env.NEXT_PUBLIC_GRAFANA_URL || 'http://localhost:3001', external: true, requiredCapability: 'grafana.open' },
+               { label: 'Prometheus', href: process.env.NEXT_PUBLIC_PROMETHEUS_URL || 'http://localhost:9090', external: true, requiredCapability: 'prometheus.open' }
             ]
           },
-          { icon: Server, label: 'Servers', href: '/dashboard/analytics' },
-          { icon: Database, label: 'Databases', href: '/dashboard/analytics' },
-          { icon: FileText, label: 'Logs', href: '/audit-logs' }
+          { icon: Server, label: 'Servers', href: '/dashboard/analytics', requiredCapability: 'server.view' },
+          { icon: Database, label: 'Databases', href: '/dashboard/analytics', requiredCapability: 'database.view' },
+          { icon: FileText, label: 'Logs', href: '/audit-logs', requiredCapability: 'logs.read' }
         ]
       },
       {

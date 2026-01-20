@@ -18,6 +18,7 @@ import {
 import { useState, useEffect, useMemo } from 'react';
 import { useSidebar } from '@/hooks/use-sidebar';
 import { useUIStore } from '@/stores/ui.store';
+import { useCapabilities } from '@/hooks/use-capabilities';
 
 interface NavigationChild {
   name: string;
@@ -44,6 +45,7 @@ export function Sidebar() {
   const { currentSpace } = useSpaces();
   const { isCollapsed, toggle } = useSidebar();
   const { sidebarOpen: isMobileOpen, setSidebarOpen } = useUIStore();
+  const { check } = useCapabilities();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
 
@@ -69,22 +71,46 @@ export function Sidebar() {
     
     if (!config) return [];
 
-    return config.navSections.map(section => ({
-      title: section.title,
-      items: section.items.map(item => ({
-        name: item.label, // Keep original for key/logic if needed, but we render translation
-        label: item.label,
-        href: item.href,
-        icon: item.icon,
-        children: item.children?.map(child => ({
-          name: child.label,
-          label: child.label,
-          href: child.href,
-          external: child.external
+    return config.navSections.map(section => {
+      // Filter items based on capability
+      const filteredItems = section.items.filter(item => {
+        // 1. Check item permission
+        if (!check(item.requiredCapability)) return false;
+        
+        // 2. Check children permissions (if any)
+        if (item.children) {
+             const visibleChildren = item.children.filter(child => check(child.requiredCapability));
+             return visibleChildren.length > 0 || !item.children.length; 
+        }
+        
+        return true; 
+      }).map(item => ({
+        ...item,
+        // Filter children here to be sure
+        children: item.children?.filter(child => check(child.requiredCapability))
+      })).filter(item => {
+        // Second pass: hide parent if all children were filtered out
+        if (item.children && item.children.length === 0) return false;
+        return true;
+      });
+
+      return {
+        title: section.title,
+        items: filteredItems.map(item => ({
+          name: item.label, // Keep original for key/logic if needed, but we render translation
+          label: item.label,
+          href: item.href,
+          icon: item.icon,
+          children: item.children?.map(child => ({
+            name: child.label,
+            label: child.label,
+            href: child.href,
+            external: child.external
+          }))
         }))
-      }))
-    }));
-  }, [currentSpace]);
+      };
+    }).filter(section => section.items.length > 0); // Hide empty sections
+  }, [currentSpace, check]); // Re-run when capabilities change
 
   // Expand all sections when navSections changes (e.g. switching spaces)
   useEffect(() => {

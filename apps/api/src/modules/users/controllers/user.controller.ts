@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { userService } from '../services/user.service';
+import { authorizationService } from '../../../services/authorization.service';
 import { createUserSchema, updateUserSchema } from '../../../lib/validation';
 
 export class UserController {
@@ -52,6 +53,23 @@ export class UserController {
       reply.send(user);
     } catch (error: any) {
       reply.status(404).send({ error: error.message });
+    }
+  }
+
+  async getCapabilities(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      if (!request.user) {
+        return reply.status(401).send({ error: 'Não autenticado' });
+      }
+      const userId = request.user.id;
+      // Obter Space ID do header (padrão do frontend)
+      const spaceId = request.headers['x-space-id'] as string | undefined;
+      
+      const capabilities = await authorizationService.getUserCapabilities(userId, spaceId);
+      
+      reply.send({ capabilities });
+    } catch (error: any) {
+      reply.status(400).send({ error: error.message });
     }
   }
 
