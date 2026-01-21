@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { PolicyService } from '../../../services/policy.service';
 import { PolicyType, PolicyTargetType, PolicyEnforcement } from '@prisma/client';
+import { MASKING_CONFIG } from '../../../config/masking.config';
 
 const policyService = new PolicyService();
 
@@ -199,6 +200,19 @@ export class PolicyController {
     } catch (error) {
       console.error('Error evaluating policies:', error);
       return reply.status(500).send({ error: 'Failed to evaluate policies' });
+    }
+  }
+
+  /**
+   * Retorna a configuração de Data Masking
+   * GET /api/policies/masking-config
+   */
+  async getMaskingConfig(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      return reply.send({ config: MASKING_CONFIG });
+    } catch (error) {
+      console.error('Error getting masking config:', error);
+      return reply.status(500).send({ error: 'Failed to get masking config' });
     }
   }
 }

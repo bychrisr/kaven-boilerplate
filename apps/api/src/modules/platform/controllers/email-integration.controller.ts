@@ -6,6 +6,8 @@ import { EmailServiceV2 } from '../../../lib/email';
 import { EmailProvider } from '../../../lib/email/types';
 import { providerEmailDetector } from '../../../lib/email/provider-email-detector';
 import { emailIntegrationHealthService } from '../services/email-integration-health.service';
+import { maskingService } from '../../../services/masking.service';
+import { authorizationService } from '../../../services/authorization.service';
 
 const emailIntegrationSchema = z.object({
   provider: z.nativeEnum(EmailProvider),
@@ -40,14 +42,12 @@ export class EmailIntegrationController {
         orderBy: { createdAt: 'desc' },
       });
 
-      // Mask sensitive data
-      const masked = integrations.map((int: any) => ({
-        ...int,
-        apiKey: int.apiKey ? '********' : null,
-        apiSecret: int.apiSecret ? '********' : null,
-        webhookSecret: int.webhookSecret ? '********' : null,
-        smtpPassword: int.smtpPassword ? '********' : null,
-      }));
+      // Get user capabilities for masking
+      const user = (req as any).user;
+      const spaceId = req.headers['x-space-id'] as string | undefined;
+      const capabilities = user ? await authorizationService.getUserCapabilities(user.id, spaceId) : [];
+      
+      const masked = maskingService.maskObject('EmailIntegration', integrations, capabilities);
 
       return reply.send(masked);
     } catch (error) {

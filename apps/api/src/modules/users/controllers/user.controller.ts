@@ -2,6 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import { userService } from '../services/user.service';
 import { authorizationService } from '../../../services/authorization.service';
 import { createUserSchema, updateUserSchema } from '../../../lib/validation';
+import { maskingService } from '../../../services/masking.service';
 
 export class UserController {
   async getStats(request: FastifyRequest, reply: FastifyReply) {
@@ -27,6 +28,14 @@ export class UserController {
         search,
         status
       );
+      const spaceId = request.headers['x-space-id'] as string | undefined;
+      const capabilities = request.user ? await authorizationService.getUserCapabilities(request.user.id, spaceId) : [];
+
+      // Mascarar PII se necessário
+      if (result.users) {
+        result.users = maskingService.maskObject('User', result.users, capabilities);
+      }
+
       reply.send(result);
     } catch (error: any) {
       reply.status(400).send({ error: error.message });
@@ -37,7 +46,12 @@ export class UserController {
     try {
       const { id } = request.params as { id: string };
       const user = await userService.getUserById(id);
-      reply.send(user);
+
+      const spaceId = request.headers['x-space-id'] as string | undefined;
+      const capabilities = request.user ? await authorizationService.getUserCapabilities(request.user.id, spaceId) : [];
+      
+      const masked = maskingService.maskObject('User', user, capabilities);
+      reply.send(masked);
     } catch (error: any) {
       reply.status(404).send({ error: error.message });
     }

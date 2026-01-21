@@ -17,6 +17,16 @@ export async function policyRoutes(fastify: FastifyInstance) {
   });
 
   /**
+   * @route GET /api/policies/masking-config
+   * @desc Retorna a configuração de Data Masking
+   * @access Requer capability 'policies.read'
+   */
+  fastify.get('/policies/masking-config', {
+    preHandler: [authMiddleware, requireCapability('policies.read')],
+    handler: policyController.getMaskingConfig.bind(policyController),
+  });
+
+  /**
    * @route GET /api/policies/:id
    * @desc Busca policy por ID
    * @access Requer capability 'policies.read'
