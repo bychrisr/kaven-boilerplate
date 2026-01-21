@@ -1,6 +1,19 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../../../lib/prisma';
 
+interface CurrencyInput {
+  code: string;
+  name: string;
+  symbol: string;
+  iconType: 'TEXT' | 'SVG';
+  iconSvgPath?: string;
+  decimals: number;
+  isActive: boolean;
+  isCrypto: boolean;
+  sortOrder: number;
+  metadata?: any;
+}
+
 export async function currenciesRoutes(app: FastifyInstance) {
   // GET /api/currencies - Lista todas as currencies
   app.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
@@ -20,9 +33,12 @@ export async function currenciesRoutes(app: FastifyInstance) {
   });
 
   // POST /api/currencies - Cria nova currency
-  app.post('/', async (request: FastifyRequest<{ Body: any }>, reply: FastifyReply) => {
+  app.post('/', async (request: FastifyRequest<{ Body: CurrencyInput }>, reply: FastifyReply) => {
     try {
       const data = request.body;
+      if (!data?.code) {
+        return reply.status(400).send({ error: 'Currency code is required' });
+      }
 
       // Verifica se o código já existe
       const existing = await prisma.currency.findUnique({
@@ -36,7 +52,7 @@ export async function currenciesRoutes(app: FastifyInstance) {
       // Cria a currency
       const currency = await prisma.currency.create({
         data: {
-          ...data,
+          ...(data as any),
           code: data.code.toUpperCase(),
         },
       });
@@ -69,7 +85,7 @@ export async function currenciesRoutes(app: FastifyInstance) {
   });
 
   // PUT /api/currencies/:code - Atualiza currency por código
-  app.put('/:code', async (request: FastifyRequest<{ Params: { code: string }; Body: any }>, reply: FastifyReply) => {
+  app.put('/:code', async (request: FastifyRequest<{ Params: { code: string }; Body: Partial<CurrencyInput> }>, reply: FastifyReply) => {
     try {
       const { code } = request.params;
       const data = request.body;
@@ -98,7 +114,7 @@ export async function currenciesRoutes(app: FastifyInstance) {
       const updated = await prisma.currency.update({
         where: { code: code.toUpperCase() },
         data: {
-          ...data,
+          ...(data as any),
           code: data.code?.toUpperCase() || code.toUpperCase(),
         },
       });

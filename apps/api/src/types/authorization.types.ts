@@ -64,6 +64,7 @@ export interface AuthorizationResult {
     expiresAt?: Date;
     grantedBy?: string;
     policies?: string[];
+    [key: string]: any;
   };
 }
 

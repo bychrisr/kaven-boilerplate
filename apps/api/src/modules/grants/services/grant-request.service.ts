@@ -50,7 +50,7 @@ export class GrantRequestService {
         capability: true,
         space: true,
         requester: {
-            select: { id: true, name: true, email: true, avatarUrl: true }
+            select: { id: true, name: true, email: true, avatar: true }
         }
       }
     });
@@ -96,7 +96,7 @@ export class GrantRequestService {
         capability: true,
         space: true,
         requester: {
-          select: { id: true, name: true, email: true, avatarUrl: true, role: true },
+          select: { id: true, name: true, email: true, avatar: true, role: true },
         },
       },
     });

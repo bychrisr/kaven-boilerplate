@@ -49,7 +49,7 @@ export class RoleService {
       },
       include: {
         _count: {
-          select: { users: true }
+          select: { userAssignments: true }
         },
         capabilities: {
           include: {

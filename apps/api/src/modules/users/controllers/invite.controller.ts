@@ -1,5 +1,6 @@
 
 import { FastifyRequest, FastifyReply } from 'fastify';
+import { Role } from '@prisma/client';
 import { InviteService } from '../services/invite.service';
 
 export class InviteController {
@@ -16,11 +17,15 @@ export class InviteController {
     // Frontend: ADMIN -> Backend: TENANT_ADMIN
     // Frontend: MEMBER -> Backend: USER
     // Frontend: SUPER_ADMIN -> Backend: SUPER_ADMIN
-    let dbRole: 'SUPER_ADMIN' | 'TENANT_ADMIN' | 'USER' = 'USER';
+    // dbRole is already correctly typed as Role from @prisma/client
+    let dbRole: Role = 'USER';
     if (role === 'ADMIN') dbRole = 'TENANT_ADMIN';
     else if (role === 'SUPER_ADMIN') dbRole = 'SUPER_ADMIN';
 
-    const currentUser = request.user; // Assuming request.user is populated by authMiddleware
+    const currentUser = request.user;
+    if (!currentUser) {
+      return reply.code(401).send({ error: 'Unauthorized' });
+    }
 
     // 1. AUTHORIZATION CHECKS 🛡️
     if (role === 'SUPER_ADMIN') {
@@ -41,7 +46,7 @@ export class InviteController {
       // Check permissions
       if (currentUser.role === 'SUPER_ADMIN') {
         // Super admin can invite to ANY tenant
-      } else if (currentUser.role === 'ADMIN' || currentUser.role === 'TENANT_ADMIN') {
+      } else if (currentUser.role === 'TENANT_ADMIN') {
         // Admin can only invite to ORG they belong to
         if (currentUser.tenantId !== tenantId) {
           return reply.code(403).send({
@@ -85,19 +90,22 @@ export class InviteController {
     };
 
     const currentUser = request.user;
+    if (!currentUser) {
+      return reply.code(401).send({ error: 'Unauthorized' });
+    }
 
     // Filter Security
     let filters: any = {};
 
     if (currentUser.role === 'SUPER_ADMIN') {
       // Super admin sees all, or filters by query
-      filters = { tenantId, email, role };
-    } else if (currentUser.role === 'ADMIN' || currentUser.role === 'TENANT_ADMIN') {
+      filters = { tenantId, email, role: role as Role | undefined };
+    } else if (currentUser.role === 'TENANT_ADMIN') {
       // Admin sees only their tenant's invites
       filters = {
         tenantId: currentUser.tenantId,
         email,
-        role,
+        role: role as Role | undefined,
       };
     } else {
       return reply.code(403).send({
@@ -112,6 +120,9 @@ export class InviteController {
   async cancel(request: FastifyRequest, reply: FastifyReply) {
     const { inviteId } = request.params as { inviteId: string };
     const currentUser = request.user;
+    if (!currentUser) {
+      return reply.code(401).send({ error: 'Unauthorized' });
+    }
 
     try {
         await this.inviteService.cancelInvite(inviteId, currentUser.id, currentUser.role);
