@@ -28,6 +28,10 @@ import { Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { IpPolicyConfig } from './ip-policy-config';
 import { TimePolicyConfig } from './time-policy-config';
+import { DevicePolicyConfig } from './device-policy-config';
+import { useSpaces } from '@/hooks/use-spaces';
+import { Space } from '@/stores/space.store';
+import { useRoles, useCapabilitiesList, Role, Capability } from '@/hooks/use-roles';
 
 const policySchema = z.object({
   name: z.string().min(3).max(100),
@@ -54,6 +58,10 @@ export function PolicyForm({ initialData, onSuccess }: PolicyFormProps) {
   const isEditing = !!initialData;
   const isLoading = createPolicy.isPending || updatePolicy.isPending;
 
+  const { availableSpaces: spaces } = useSpaces();
+  const { data: roles } = useRoles();
+  const { data: capabilities } = useCapabilitiesList();
+
   const form = useForm<PolicyFormValues>({
     resolver: zodResolver(policySchema),
     defaultValues: {
@@ -69,6 +77,7 @@ export function PolicyForm({ initialData, onSuccess }: PolicyFormProps) {
   });
 
   const selectedType = useWatch({ control: form.control, name: 'type' });
+  const targetType = useWatch({ control: form.control, name: 'targetType' });
 
   const onSubmit = async (data: PolicyFormValues) => {
     try {
@@ -186,7 +195,10 @@ export function PolicyForm({ initialData, onSuccess }: PolicyFormProps) {
                 <FormItem>
                   <FormLabel>{t('form.targetTypeLabel')}</FormLabel>
                   <Select 
-                    onValueChange={field.onChange} 
+                    onValueChange={(val) => {
+                      field.onChange(val);
+                      form.setValue('targetId', ''); // Reset ID when type changes
+                    }} 
                     defaultValue={field.value} 
                     disabled={isEditing || isLoading}
                   >
@@ -196,7 +208,7 @@ export function PolicyForm({ initialData, onSuccess }: PolicyFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {['GLOBAL', 'SPACE', 'ROLE', 'USER'].map((target) => (
+                      {['GLOBAL', 'SPACE', 'ROLE', 'CAPABILITY', 'USER'].map((target) => (
                         <SelectItem key={target} value={target}>
                           {t(`targets.${target}`)}
                         </SelectItem>
@@ -214,9 +226,42 @@ export function PolicyForm({ initialData, onSuccess }: PolicyFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('form.targetIdLabel')}</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="ID (UUID)" disabled={isEditing || isLoading} />
-                  </FormControl>
+                  {targetType === 'GLOBAL' ? (
+                    <FormControl>
+                      <Input value="Global Access" disabled className="bg-muted" />
+                    </FormControl>
+                  ) : targetType === 'SPACE' ? (
+                    <Select onValueChange={field.onChange} value={field.value} disabled={isEditing || isLoading}>
+                      <FormControl>
+                        <SelectTrigger><SelectValue placeholder="Select Space..." /></SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {spaces?.map((s: Space) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  ) : targetType === 'ROLE' ? (
+                    <Select onValueChange={field.onChange} value={field.value} disabled={isEditing || isLoading}>
+                      <FormControl>
+                        <SelectTrigger><SelectValue placeholder="Select Role..." /></SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {roles?.map((r: Role) => <SelectItem key={r.id} value={r.id}>{r.name} ({r.spaceId === 'ADMIN' ? 'Global' : 'Space'})</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  ) : targetType === 'CAPABILITY' ? (
+                    <Select onValueChange={field.onChange} value={field.value} disabled={isEditing || isLoading}>
+                      <FormControl>
+                        <SelectTrigger><SelectValue placeholder="Select Capability..." /></SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {capabilities?.map((c: Capability) => <SelectItem key={c.id} value={c.code}>{c.code}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <FormControl>
+                      <Input {...field} placeholder="User ID (UUID)" disabled={isEditing || isLoading} />
+                    </FormControl>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -235,7 +280,7 @@ export function PolicyForm({ initialData, onSuccess }: PolicyFormProps) {
                 <FormControl>
                   <Switch
                     checked={field.value}
-                    onChange={(e) => field.onChange(e.target.checked)}
+                    onChange={(e: { target: { checked: boolean } }) => field.onChange(e.target.checked)}
                     disabled={isLoading}
                   />
                 </FormControl>
@@ -260,9 +305,28 @@ export function PolicyForm({ initialData, onSuccess }: PolicyFormProps) {
               />
             )}
             {selectedType === 'DEVICE_TRUST' && (
-              <div className="p-4 bg-muted rounded-md text-sm">
-                This policy requires the user to be using a registered trusted device.
-                No additional conditions needed.
+              <DevicePolicyConfig
+                value={form.getValues('conditions') as { requireTrusted?: boolean; minTrustLevel?: number }}
+                onChange={(val) => form.setValue('conditions', val, { shouldDirty: true })}
+                disabled={isLoading}
+              />
+            )}
+            {selectedType === 'GEO_RESTRICTION' && (
+              <div className="grid gap-4">
+                <div className="space-y-2">
+                  <FormLabel>{t('geoConfig.allowedCountries')}</FormLabel>
+                  <Input 
+                    placeholder={t('geoConfig.placeholder')} 
+                    value={(form.getValues('conditions') as { allowedCountries?: string[] }).allowedCountries?.join(', ') || ''}
+                    onChange={(e) => {
+                      const val = e.target.value.split(',').map(s => s.trim().toUpperCase()).filter(Boolean);
+                      const current = form.getValues('conditions') as Record<string, unknown>;
+                      form.setValue('conditions', { ...current, allowedCountries: val }, { shouldDirty: true });
+                    }}
+                    disabled={isLoading}
+                  />
+                  <p className="text-[10px] text-muted-foreground">{t('geoConfig.help')}</p>
+                </div>
               </div>
             )}
           </div>
