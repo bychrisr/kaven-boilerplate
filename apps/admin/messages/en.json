@@ -3,6 +3,9 @@
     "dashboard": "Dashboard",
     "actions": "Actions",
     "users": "Users",
+    "export": "Export",
+    "exporting": "Exporting...",
+    "exportError": "Error exporting data",
     "business": "Business",
     "comingSoon": "Coming soon for {name}",
     "menu": {

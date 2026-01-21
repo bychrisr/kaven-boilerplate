@@ -608,6 +608,17 @@ export async function seedCapabilities() {
       requiresMFA: true,
       requiresApproval: true,
     },
+    {
+      code: 'users.export',
+      resource: 'users',
+      action: 'export',
+      description: 'Exportar lista de usuários (CSV)',
+      category: 'Management',
+      sensitivity: CapabilitySensitivity.HIGHLY_SENSITIVE,
+      scope: CapabilityScope.TENANT,
+      requiresMFA: true,
+      requiresApproval: true,
+    },
   ];
 
   let created = 0;

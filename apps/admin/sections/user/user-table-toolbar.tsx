@@ -3,6 +3,7 @@
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useTranslations } from 'next-intl';
+import { ExportButton } from '@/components/extra/export-button';
 
 type UserTableToolbarProps = {
   filterName: string;
@@ -43,6 +44,12 @@ export function UserTableToolbar({
           <option value="TENANT_ADMIN">{tUser('roles.TENANT_ADMIN')}</option>
           <option value="USER">{tUser('roles.USER')}</option>
         </select>
+        
+        <ExportButton 
+          endpoint={`/api/export/users?role=${filterRole}&search=${filterName}`}
+          capability="users.export"
+          filename={`users-export-${new Date().toISOString().split('T')[0]}.csv`}
+        />
       </div>
     </div>
   );

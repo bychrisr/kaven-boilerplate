@@ -95,6 +95,7 @@ export async function seedSpaceRoles() {
         'customers.update',
         'kb.read',
         'kb.manage',
+        'users.export',
       ],
     },
 
@@ -401,6 +402,7 @@ export async function seedSpaceRoles() {
         'reports.financial',
         'audit.read',
         'audit.export',
+        'users.export',
       ],
     },
     {
@@ -425,6 +427,7 @@ export async function seedSpaceRoles() {
         'reports.financial',
         'audit.read',
         'audit.export',
+        'users.export',
         'impersonate.user',
       ],
     },
@@ -450,6 +453,7 @@ export async function seedSpaceRoles() {
         'reports.financial',
         'audit.read',
         'audit.export',
+        'users.export',
         'impersonate.user',
       ],
     },
@@ -472,6 +476,28 @@ export async function seedSpaceRoles() {
     });
 
     if (existing) {
+      // Se já existe, atualizar as capabilities para garantir que novas permissões sejam aplicadas
+      // Primeiro, remover associações antigas para este papel
+      await prisma.roleCapability.deleteMany({
+        where: { roleId: existing.id }
+      });
+
+      // Reassociar capabilities atualizadas
+      for (const capabilityCode of capabilityCodes) {
+        const capability = await prisma.capability.findUnique({
+          where: { code: capabilityCode },
+        });
+
+        if (capability) {
+          await prisma.roleCapability.create({
+            data: {
+              roleId: existing.id,
+              capabilityId: capability.id,
+            },
+          });
+        }
+      }
+
       skipped++;
       continue;
     }

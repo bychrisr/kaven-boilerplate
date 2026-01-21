@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { ShieldCheck } from 'lucide-react';
 import { AuditLogTable } from '@/components/audit-log-table';
 import { Breadcrumbs, BreadcrumbItem } from '@/components/breadcrumbs';
+import { ExportButton } from '@/components/extra/export-button';
 
 export default function AuditLogsView() {
   const t = useTranslations('AuditLogs');
@@ -36,12 +37,21 @@ export default function AuditLogsView() {
       {/* Audit Logs Table */}
       <div className="rounded-lg border border-border bg-card shadow-sm">
         <div className="border-b border-border p-6">
-          <div className="flex items-center gap-2">
-            <h3 className="text-lg font-semibold text-foreground">{t('sectionTitle')}</h3>
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-foreground">{t('sectionTitle')}</h3>
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {t('sectionDescription')}
+              </p>
+            </div>
+            <ExportButton 
+              endpoint="/api/export/audit-logs"
+              capability="audit.export"
+              filename={`audit-logs-export-${new Date().toISOString().split('T')[0]}.csv`}
+            />
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t('sectionDescription')}
-          </p>
         </div>
         <div className="p-0">
           <AuditLogTable />
