@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -31,13 +31,14 @@ export function CurrencyForm({ currency, mode }: CurrencyFormProps) {
   const queryClient = useQueryClient();
 
   const {
+    control,
     register,
     handleSubmit,
-    watch,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<CurrencyFormData>({
-    resolver: zodResolver(currencySchema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(currencySchema) as any,
     defaultValues: currency
       ? {
           code: currency.code,
@@ -59,8 +60,12 @@ export function CurrencyForm({ currency, mode }: CurrencyFormProps) {
         },
   });
 
-  const iconType = watch('iconType');
-  const isCrypto = watch('isCrypto');
+  const iconType = useWatch({ control, name: 'iconType' });
+  const isCrypto = useWatch({ control, name: 'isCrypto' });
+  const iconSvgPath = useWatch({ control, name: 'iconSvgPath' });
+  const iconSvgViewBox = useWatch({ control, name: 'iconSvgViewBox' });
+  const isCurrencyCrypto = useWatch({ control, name: 'isCrypto' });
+  const isActive = useWatch({ control, name: 'isActive' });
 
   // Mutation para criar/atualizar
   const mutation = useMutation({
@@ -192,8 +197,8 @@ export function CurrencyForm({ currency, mode }: CurrencyFormProps) {
             <div className="space-y-2">
               <Label htmlFor="iconSvgPath">SVG Icon *</Label>
               <SvgUploader
-                value={watch('iconSvgPath') || ''}
-                viewBox={watch('iconSvgViewBox') || '0 0 24 24'}
+                value={iconSvgPath || ''}
+                viewBox={iconSvgViewBox || '0 0 24 24'}
                 onChange={(data) => {
                   setValue('iconSvgPath', data.path);
                   setValue('iconSvgViewBox', data.viewBox);
@@ -256,7 +261,7 @@ export function CurrencyForm({ currency, mode }: CurrencyFormProps) {
               </p>
             </div>
             <Switch
-              checked={watch('isCrypto')}
+              checked={isCurrencyCrypto}
               onChange={(e) => setValue('isCrypto', e.target.checked)}
             />
           </div>
@@ -270,7 +275,7 @@ export function CurrencyForm({ currency, mode }: CurrencyFormProps) {
               </p>
             </div>
             <Switch
-              checked={watch('isActive')}
+              checked={isActive}
               onChange={(e) => setValue('isActive', e.target.checked)}
             />
           </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, useWatch, type Control } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/radix-select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { useFeatures } from '@/hooks/use-features';
+import { useFeatures, type Feature } from '@/hooks/use-features';
 import { Plus, Trash2 } from 'lucide-react';
 import type { Product } from '@/hooks/use-products';
 
@@ -80,6 +80,9 @@ export function ProductForm({ onSubmit, defaultValues, isLoading }: ProductFormP
     name: 'effects',
   });
 
+  const type = useWatch({ control: form.control, name: 'type' });
+  const isPublic = useWatch({ control: form.control, name: 'isPublic' });
+
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
       {/* Informações Básicas */}
@@ -110,7 +113,7 @@ export function ProductForm({ onSubmit, defaultValues, isLoading }: ProductFormP
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="type">Tipo *</Label>
-              <Select value={form.watch('type')} onValueChange={(value) => form.setValue('type', value as 'ONE_TIME' | 'CONSUMABLE' | 'ADD_ON')}>
+              <Select value={type} onValueChange={(value) => form.setValue('type', value as 'ONE_TIME' | 'CONSUMABLE' | 'ADD_ON')}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ONE_TIME">Único</SelectItem>
@@ -151,7 +154,7 @@ export function ProductForm({ onSubmit, defaultValues, isLoading }: ProductFormP
           </div>
 
           <div className="flex items-center space-x-2">
-            <Switch id="isPublic" checked={form.watch('isPublic')} onChange={(e) => form.setValue('isPublic', e.target.checked)} />
+            <Switch id="isPublic" checked={isPublic} onChange={(e) => form.setValue('isPublic', e.target.checked)} />
             <Label htmlFor="isPublic">Público</Label>
           </div>
         </CardContent>
@@ -184,27 +187,20 @@ export function ProductForm({ onSubmit, defaultValues, isLoading }: ProductFormP
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Feature *</Label>
-                    <Select value={form.watch(`effects.${index}.featureCode`)} onValueChange={(value) => form.setValue(`effects.${index}.featureCode`, value)}>
-                      <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
-                      <SelectContent>
-                        {features?.map((f) => (
-                          <SelectItem key={f.code} value={f.code}>{f.name} ({f.type})</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <EffectFeatureSelector 
+                      control={form.control} 
+                      index={index} 
+                      features={features || []} 
+                      onChange={(value) => form.setValue(`effects.${index}.featureCode`, value)} 
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Tipo de Efeito *</Label>
-                    <Select value={form.watch(`effects.${index}.effectType`)} onValueChange={(value) => form.setValue(`effects.${index}.effectType`, value as 'ADD' | 'SET' | 'MULTIPLY' | 'ENABLE')}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="ADD">Adicionar</SelectItem>
-                        <SelectItem value="SET">Definir</SelectItem>
-                        <SelectItem value="MULTIPLY">Multiplicar</SelectItem>
-                        <SelectItem value="ENABLE">Habilitar</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <EffectTypeSelector 
+                      control={form.control} 
+                      index={index} 
+                      onChange={(value) => form.setValue(`effects.${index}.effectType`, value)} 
+                    />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -217,10 +213,11 @@ export function ProductForm({ onSubmit, defaultValues, isLoading }: ProductFormP
                     <Input type="number" placeholder="Deixe vazio para permanente" {...form.register(`effects.${index}.durationDays`)} />
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Switch checked={form.watch(`effects.${index}.isPermanent`)} onChange={(e) => form.setValue(`effects.${index}.isPermanent`, e.target.checked)} />
-                  <Label>Efeito Permanente</Label>
-                </div>
+                <EffectPermanentSwitch 
+                  control={form.control} 
+                  index={index} 
+                  onChange={(checked) => form.setValue(`effects.${index}.isPermanent`, checked)} 
+                />
               </div>
             ))
           )}
@@ -233,5 +230,45 @@ export function ProductForm({ onSubmit, defaultValues, isLoading }: ProductFormP
         <Button type="submit" disabled={isLoading}>{isLoading ? 'Salvando...' : 'Salvar Produto'}</Button>
       </div>
     </form>
+  );
+}
+
+// Sub-componentes para evitar form.watch em loops (React Compiler performance)
+function EffectFeatureSelector({ control, index, features, onChange }: { control: Control<ProductFormData>, index: number, features: Feature[], onChange: (val: string) => void }) {
+  const value = useWatch({ control, name: `effects.${index}.featureCode` });
+  return (
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+      <SelectContent>
+        {features.map((f) => (
+          <SelectItem key={f.code} value={f.code}>{f.name} ({f.type})</SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
+function EffectTypeSelector({ control, index, onChange }: { control: Control<ProductFormData>, index: number, onChange: (val: ProductFormData['effects'][0]['effectType']) => void }) {
+  const value = useWatch({ control, name: `effects.${index}.effectType` });
+  return (
+    <Select value={value} onValueChange={(val) => onChange(val as ProductFormData['effects'][0]['effectType'])}>
+      <SelectTrigger><SelectValue /></SelectTrigger>
+      <SelectContent>
+        <SelectItem value="ADD">Adicionar</SelectItem>
+        <SelectItem value="SET">Definir</SelectItem>
+        <SelectItem value="MULTIPLY">Multiplicar</SelectItem>
+        <SelectItem value="ENABLE">Habilitar</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+
+function EffectPermanentSwitch({ control, index, onChange }: { control: Control<ProductFormData>, index: number, onChange: (checked: boolean) => void }) {
+  const isPermanent = useWatch({ control, name: `effects.${index}.isPermanent` });
+  return (
+    <div className="flex items-center space-x-2">
+      <Switch checked={isPermanent} onChange={(e: { target: { checked: boolean } }) => onChange(e.target.checked)} />
+      <Label>Efeito Permanente</Label>
+    </div>
   );
 }

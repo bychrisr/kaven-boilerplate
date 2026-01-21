@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Logo } from '@/components/logo';
 import { TextField } from '@/components/ui/text-field';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, Loader2, Eye, EyeOff, Check, X } from 'lucide-react';
+import { AlertCircle, Loader2, Eye, EyeOff, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { api } from '@/lib/api';
@@ -45,16 +45,13 @@ export default function SignupForm() {
   const token = searchParams.get('token');
 
   const [showPassword, setShowPassword] = useState(false);
-  const [isValidToken, setIsValidToken] = useState<boolean | null>(null);
+  const [isValidToken, setIsValidToken] = useState<boolean | null>(token ? null : false);
   const [tenantName, setTenantName] = useState('');
   const [email, setEmail] = useState('');
 
   // Validate token on mount
   useEffect(() => {
-    if (!token) {
-        setIsValidToken(false);
-        return;
-    }
+    if (!token) return;
 
     const validateToken = async () => {
         try {
@@ -91,9 +88,9 @@ export default function SignupForm() {
   type SignupFormData = z.infer<typeof signupSchema>;
 
   const {
+    control,
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
@@ -104,7 +101,7 @@ export default function SignupForm() {
     },
   });
 
-  const watchedPassword = watch('password');
+  const watchedPassword = useWatch({ control, name: 'password' });
   const passwordStrength = getPasswordStrength(watchedPassword || '');
   
   const getStrengthLabel = (score: number) => {
@@ -135,9 +132,10 @@ export default function SignupForm() {
         router.push('/login');
       }, 2000);
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
         // Safe access to error message
-        const message = error?.response?.data?.error || error?.message || 'Error';
+        const axiosError = error as { response?: { data?: { error?: string } }; message?: string };
+        const message = axiosError?.response?.data?.error || axiosError?.message || 'Error';
         toast.error(message);
     }
   });

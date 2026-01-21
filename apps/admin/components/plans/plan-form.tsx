@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, useWatch, type Control } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/radix-select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { useFeatures } from '@/hooks/use-features';
+import { useFeatures, type Feature } from '@/hooks/use-features';
 import { Plus, Trash2, X } from 'lucide-react';
 import type { Plan } from '@/hooks/use-plans';
 
@@ -87,6 +87,10 @@ export function PlanForm({ onSubmit, defaultValues, isLoading }: PlanFormProps) 
     name: 'features',
   });
 
+  const type = useWatch({ control: form.control, name: 'type' });
+  const isPublic = useWatch({ control: form.control, name: 'isPublic' });
+  const isDefault = useWatch({ control: form.control, name: 'isDefault' });
+
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
       {/* Informações Básicas */}
@@ -142,7 +146,7 @@ export function PlanForm({ onSubmit, defaultValues, isLoading }: PlanFormProps) 
             <div className="space-y-2">
               <Label htmlFor="type">Tipo *</Label>
               <Select
-                value={form.watch('type')}
+                value={type}
                 onValueChange={(value) => form.setValue('type', value as 'SUBSCRIPTION' | 'LIFETIME')}
               >
                 <SelectTrigger>
@@ -188,7 +192,7 @@ export function PlanForm({ onSubmit, defaultValues, isLoading }: PlanFormProps) 
             <div className="flex items-center space-x-2">
               <Switch
                 id="isPublic"
-                checked={form.watch('isPublic')}
+                checked={isPublic}
                 onChange={(e) => form.setValue('isPublic', e.target.checked)}
               />
               <Label htmlFor="isPublic">Público</Label>
@@ -197,7 +201,7 @@ export function PlanForm({ onSubmit, defaultValues, isLoading }: PlanFormProps) 
             <div className="flex items-center space-x-2">
               <Switch
                 id="isDefault"
-                checked={form.watch('isDefault')}
+                checked={isDefault}
                 onChange={(e) => form.setValue('isDefault', e.target.checked)}
               />
               <Label htmlFor="isDefault">Plano Padrão</Label>
@@ -252,23 +256,11 @@ export function PlanForm({ onSubmit, defaultValues, isLoading }: PlanFormProps) 
               <div className="grid grid-cols-4 gap-4">
                 <div className="space-y-2">
                   <Label>Intervalo *</Label>
-                  <Select
-                    value={form.watch(`prices.${index}.interval`)}
-                    onValueChange={(value) => form.setValue(`prices.${index}.interval`, value as 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'QUARTERLY' | 'YEARLY' | 'LIFETIME' | 'FOREVER')}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="DAILY">Diário</SelectItem>
-                      <SelectItem value="WEEKLY">Semanal</SelectItem>
-                      <SelectItem value="MONTHLY">Mensal</SelectItem>
-                      <SelectItem value="QUARTERLY">Trimestral</SelectItem>
-                      <SelectItem value="YEARLY">Anual</SelectItem>
-                      <SelectItem value="LIFETIME">Vitalício</SelectItem>
-                      <SelectItem value="FOREVER">Gratuito</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <PriceIntervalSelector 
+                    control={form.control} 
+                    index={index} 
+                    onChange={(value) => form.setValue(`prices.${index}.interval`, value)} 
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -356,33 +348,18 @@ export function PlanForm({ onSubmit, defaultValues, isLoading }: PlanFormProps) 
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex items-center gap-3">
-                        <Select
-                          value={form.watch(`features.${index}.featureCode`)}
-                          onValueChange={(value) => form.setValue(`features.${index}.featureCode`, value)}
-                        >
-                          <SelectTrigger className="w-[300px]">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {features?.map((f) => (
-                              <SelectItem key={f.code} value={f.code}>
-                                {f.name} ({f.type})
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <FeatureCodeSelector 
+                          control={form.control} 
+                          index={index} 
+                          features={features || []} 
+                          onChange={(value) => form.setValue(`features.${index}.featureCode`, value)} 
+                        />
 
-                        {feature?.type === 'BOOLEAN' && (
-                          <div className="flex items-center gap-2">
-                            <Switch
-                              checked={form.watch(`features.${index}.enabled`) ?? true}
-                              onChange={(e) => 
-                                form.setValue(`features.${index}.enabled`, e.target.checked)
-                              }
-                            />
-                            <span className="text-sm">Habilitado</span>
-                          </div>
-                        )}
+                        <FeatureEnabledSwitch 
+                          control={form.control} 
+                          index={index} 
+                          onChange={(checked) => form.setValue(`features.${index}.enabled`, checked)} 
+                        />
 
                         {feature?.type === 'QUOTA' && (
                           <div className="flex items-center gap-2">
@@ -439,5 +416,55 @@ export function PlanForm({ onSubmit, defaultValues, isLoading }: PlanFormProps) 
         </Button>
       </div>
     </form>
+  );
+}
+
+// Sub-componentes para evitar form.watch em loops (React Compiler performance)
+function PriceIntervalSelector({ control, index, onChange }: { control: Control<PlanFormData>, index: number, onChange: (val: PlanFormData['prices'][0]['interval']) => void }) {
+  const value = useWatch({ control, name: `prices.${index}.interval` });
+  return (
+    <Select value={value} onValueChange={(val) => onChange(val as PlanFormData['prices'][0]['interval'])}>
+      <SelectTrigger><SelectValue /></SelectTrigger>
+      <SelectContent>
+        <SelectItem value="DAILY">Diário</SelectItem>
+        <SelectItem value="WEEKLY">Semanal</SelectItem>
+        <SelectItem value="MONTHLY">Mensal</SelectItem>
+        <SelectItem value="QUARTERLY">Trimestral</SelectItem>
+        <SelectItem value="YEARLY">Anual</SelectItem>
+        <SelectItem value="LIFETIME">Vitalício</SelectItem>
+        <SelectItem value="FOREVER">Gratuito</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+
+function FeatureCodeSelector({ control, index, features, onChange }: { control: Control<PlanFormData>, index: number, features: Feature[], onChange: (val: string) => void }) {
+  const value = useWatch({ control, name: `features.${index}.featureCode` });
+  return (
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger className="w-[300px]">
+        <SelectValue placeholder="Selecione uma funcionalidade..." />
+      </SelectTrigger>
+      <SelectContent>
+        {features.map((f) => (
+          <SelectItem key={f.code} value={f.code}>
+            {f.name} ({f.type})
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
+function FeatureEnabledSwitch({ control, index, onChange }: { control: Control<PlanFormData>, index: number, onChange: (checked: boolean) => void }) {
+  const enabled = useWatch({ control, name: `features.${index}.enabled` }) ?? true;
+  return (
+    <div className="flex items-center gap-2">
+      <Switch
+        checked={enabled}
+        onChange={(e: { target: { checked: boolean } }) => onChange(e.target.checked)}
+      />
+      <span className="text-sm">Habilitado</span>
+    </div>
   );
 }

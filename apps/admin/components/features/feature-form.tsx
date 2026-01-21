@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
@@ -75,7 +75,10 @@ export function FeatureForm({ onSubmit, isLoading }: FeatureFormProps) {
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="type">Tipo *</Label>
-              <Select value={form.watch('type')} onValueChange={(value) => form.setValue('type', value as 'BOOLEAN' | 'QUOTA' | 'CUSTOM')}>
+              <Select 
+                value={useWatch({ control: form.control, name: 'type' })} 
+                onValueChange={(value) => form.setValue('type', value as 'BOOLEAN' | 'QUOTA' | 'CUSTOM')}
+              >
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="BOOLEAN">Boolean (On/Off)</SelectItem>
