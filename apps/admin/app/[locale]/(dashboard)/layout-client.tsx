@@ -12,6 +12,7 @@ import { SettingsDrawer } from '@/components/settings/settings-drawer';
 import { Scrollbar } from '@/components/scrollbar/scrollbar';
 import { NotificationProvider } from '@/contexts/notification-context';
 import { cn } from '@/lib/utils';
+import { ImpersonationBanner } from '@/components/layout/impersonation-banner';
 
 /**
  * Dashboard Layout Inner Component
@@ -46,6 +47,7 @@ function DashboardLayoutInner({ children }: { children: ReactNode }) {
           isCollapsed ? 'lg:ml-[88px]' : 'lg:ml-[280px]'
         )}
       >
+        <ImpersonationBanner />
         <Header />
 
         <main className="flex-1 relative overflow-hidden">

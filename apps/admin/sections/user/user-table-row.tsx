@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { MoreVertical, Pencil, Trash2 } from 'lucide-react';
+import { MoreVertical, Pencil, ShieldCheck, Trash2 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { TooltipContent, TooltipRoot, TooltipTrigger } from '@/components/ui/tooltip';
 import { useDeleteUser } from '@/hooks/use-users';
+import { useImpersonation } from '@/hooks/use-impersonation';
 import { toast } from 'sonner';
 import { CONFIG } from '@/lib/config';
 
@@ -55,6 +56,7 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
   const { name, email, role, status, phone, tenant } = row;
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { mutate: deleteUser, isPending } = useDeleteUser();
+  const { startImpersonation } = useImpersonation();
   
   // Generate initials for avatar
   const initials = name
@@ -155,6 +157,22 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                <DropdownMenuItem 
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    if (confirm(`Iniciar suporte como ${name}?`)) {
+                      startImpersonation.mutate({ 
+                        targetUserId: row.id,
+                        justification: 'Suporte administrativo via User List'
+                      });
+                    }
+                  }}
+                  disabled={startImpersonation.isPending}
+                >
+                  <ShieldCheck className="mr-2 h-4 w-4" />
+                  Impersonate
+                </DropdownMenuItem>
+
                 <DropdownMenuItem 
                   className="text-destructive"
                   onSelect={(e) => {

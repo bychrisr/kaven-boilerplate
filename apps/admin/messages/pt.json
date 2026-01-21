@@ -197,6 +197,13 @@
         "ADDRESS": "Endereço",
         "GENERIC": "Genérico"
       }
+    },
+    "impersonation": {
+      "banner_title": "Modo Impersonation",
+      "viewing_as": "Você está visualizando como",
+      "exit": "Sair da Sessão",
+      "confirm_start": "Deseja iniciar uma sessão de suporte como {name}?",
+      "justification_default": "Suporte administrativo"
     }
   },
   "Sidebar": {

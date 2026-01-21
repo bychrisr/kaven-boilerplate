@@ -197,6 +197,13 @@
         "ADDRESS": "Address",
         "GENERIC": "Generic"
       }
+    },
+    "impersonation": {
+      "banner_title": "Impersonation Mode",
+      "viewing_as": "You are viewing as",
+      "exit": "Exit Session",
+      "confirm_start": "Do you want to start a support session as {name}?",
+      "justification_default": "Administrative support"
     }
   },
   "Sidebar": {
