@@ -91,7 +91,20 @@
       "target": "Target",
       "enforcement": "Enforcement",
       "status": "Status",
-      "createdAt": "Created At"
+      "createdAt": "Created At",
+      "empty": "No policies found.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "deleteConfirm": {
+        "title": "Delete Policy",
+        "description": "Are you sure you want to delete this policy? This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      }
     },
     "form": {
       "create": "Create Policy",
@@ -146,6 +159,23 @@
         "5": "Friday",
         "6": "Saturday"
       }
+    },
+    "deviceConfig": {
+      "requireTrusted": "Require Trusted Device",
+      "requireTrustedHelp": "Access will only be allowed if the device is registered and validated.",
+      "minTrustLevel": "Minimum Trust Level",
+      "minTrustLevelHelp": "Trust level is based on device hardware validation and MFA.",
+      "trustLevels": {
+        "1": "Basic (Registered)",
+        "2": "Secure (Verified)",
+        "3": "Critical (MFA Hardened)"
+      }
+    },
+    "geoConfig": {
+      "allowedCountries": "Allowed Countries",
+      "blockedCountries": "Blocked Countries",
+      "placeholder": "Ex: US, UK, CA",
+      "help": "Use 2-letter ISO codes, separated by comma"
     }
   },
   "Sidebar": {

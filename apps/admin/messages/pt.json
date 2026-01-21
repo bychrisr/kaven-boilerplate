@@ -91,7 +91,20 @@
       "target": "Alvo",
       "enforcement": "Execução",
       "status": "Status",
-      "createdAt": "Criado em"
+      "createdAt": "Criado em",
+      "empty": "Nenhuma política encontrada.",
+      "active": "Ativo",
+      "inactive": "Inativo",
+      "actions": {
+        "edit": "Editar",
+        "delete": "Excluir"
+      },
+      "deleteConfirm": {
+        "title": "Excluir Política",
+        "description": "Tem certeza que deseja excluir esta política? Esta ação não pode ser desfeita.",
+        "cancel": "Cancelar",
+        "confirm": "Excluir"
+      }
     },
     "form": {
       "create": "Criar Política",
@@ -146,6 +159,23 @@
         "5": "Sexta-feira",
         "6": "Sábado"
       }
+    },
+    "deviceConfig": {
+      "requireTrusted": "Exigir Dispositivo Confiável",
+      "requireTrustedHelp": "O acesso será permitido apenas se o dispositivo estiver registrado e validado.",
+      "minTrustLevel": "Nível de Confiança Mínimo",
+      "minTrustLevelHelp": "O nível de confiança é baseado na validação de hardware e 2FA do dispositivo.",
+      "trustLevels": {
+        "1": "Básico (Registrado)",
+        "2": "Seguro (Verificado)",
+        "3": "Crítico (MFA Hardened)"
+      }
+    },
+    "geoConfig": {
+      "allowedCountries": "Países Permitidos",
+      "blockedCountries": "Países Bloqueados",
+      "placeholder": "Ex: BR, US, PT",
+      "help": "Use códigos ISO de 2 letras, separados por vírgula"
     }
   },
   "Sidebar": {
