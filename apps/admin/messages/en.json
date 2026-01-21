@@ -178,6 +178,27 @@
       "help": "Use 2-letter ISO codes, separated by comma"
     }
   },
+  "Security": {
+    "masking": {
+      "title": "Data Masking",
+      "description": "View which fields are protected and which permissions are required for viewing.",
+      "errorLoading": "An error occurred while loading the masking configurations.",
+      "table": {
+        "entity": "Entity",
+        "field": "Field",
+        "type": "Mask Type",
+        "capability": "Required Capability"
+      },
+      "types": {
+        "EMAIL": "Email",
+        "PHONE": "Phone",
+        "NAME": "Name",
+        "TOKEN": "Token/Secret",
+        "ADDRESS": "Address",
+        "GENERIC": "Generic"
+      }
+    }
+  },
   "Sidebar": {
     "groups": {
       "overview": "Overview",

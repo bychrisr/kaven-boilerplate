@@ -178,6 +178,27 @@
       "help": "Use códigos ISO de 2 letras, separados por vírgula"
     }
   },
+  "Security": {
+    "masking": {
+      "title": "Mascaramento de Dados",
+      "description": "Veja quais campos estão protegidos e quais permissões são necessárias para visualização.",
+      "errorLoading": "Ocorreu um erro ao carregar as configurações de mascaramento.",
+      "table": {
+        "entity": "Entidade",
+        "field": "Campo",
+        "type": "Tipo de Máscara",
+        "capability": "Capability Requerida"
+      },
+      "types": {
+        "EMAIL": "E-mail",
+        "PHONE": "Telefone",
+        "NAME": "Nome",
+        "TOKEN": "Token/Segredo",
+        "ADDRESS": "Endereço",
+        "GENERIC": "Genérico"
+      }
+    }
+  },
   "Sidebar": {
     "groups": {
       "overview": "Visão Geral",

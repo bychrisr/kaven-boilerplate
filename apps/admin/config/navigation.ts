@@ -61,6 +61,7 @@ export const MASTER_NAVIGATION: NavSection[] = [
       { icon: Users, label: 'Users', href: '/users', requiredCapability: 'users.read' },
       { icon: Shield, label: 'Roles', href: '/roles', requiredCapability: 'roles.read' },
       { icon: ShieldCheck, label: 'Policies', href: '/policies', requiredCapability: 'policies.read' },
+      { icon: Lock, label: 'Data Masking', href: '/security/masking', requiredCapability: 'policies.read' },
       { icon: Mail, label: 'Invites', href: '/invites', requiredCapability: 'invites.manage' },
       { icon: Lock, label: 'Access Requests', href: '/access-requests', requiredCapability: 'access_requests.read' },
       { icon: Building2, label: 'Tenant', href: '/tenants', requiredCapability: 'tenants.read' }
