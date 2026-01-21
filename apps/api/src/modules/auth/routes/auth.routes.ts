@@ -3,6 +3,9 @@ import { authController } from '../controllers/auth.controller';
 import { PasswordResetController } from '../controllers/password-reset.controller';
 import { PasswordResetService } from '../services/password-reset.service';
 import { prisma } from '../../../lib/prisma';
+import { impersonationController } from '../controllers/impersonation.controller';
+import { authMiddleware } from '../../../middleware/auth.middleware';
+import { requireCapability } from '../../../middleware/requireCapability';
 
 export async function authRoutes(fastify: FastifyInstance) {
   const passwordResetService = new PasswordResetService(prisma);
@@ -67,4 +70,20 @@ export async function authRoutes(fastify: FastifyInstance) {
   fastify.post('/2fa/setup', authController.setup2FA.bind(authController));
   fastify.post('/2fa/verify', authController.verify2FA.bind(authController));
   fastify.post('/2fa/disable', authController.disable2FA.bind(authController));
+
+  // Impersonation
+  fastify.post('/impersonate/start', {
+    preHandler: [authMiddleware, requireCapability('impersonation.start')],
+    handler: impersonationController.start.bind(impersonationController),
+  });
+
+  fastify.post('/impersonate/stop', {
+    preHandler: [authMiddleware],
+    handler: impersonationController.stop.bind(impersonationController),
+  });
+
+  fastify.get('/impersonate/status', {
+    preHandler: [authMiddleware],
+    handler: impersonationController.getStatus.bind(impersonationController),
+  });
 }

@@ -2,6 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import { verifyToken } from '../lib/jwt';
 import { prisma } from '../lib/prisma';
 import { Role } from '@prisma/client';
+import { impersonationService } from '../services/impersonation.service';
 
 /**
  * Auth Middleware - Verifica JWT e injeta user no request
@@ -19,6 +20,10 @@ declare module 'fastify' {
       email: string;
       role: Role;
       tenantId: string | null;
+    };
+    impersonator?: {
+      id: string;
+      email: string;
     };
   }
 }
@@ -93,8 +98,45 @@ export async function authMiddleware(
       email: user.email,
       role: user.role,
       tenantId: user.tenantId,
-      // @ts-ignore
     };
+
+    // 🕵️ LÓGICA DE IMPERSONATION
+    // Verificar se existe uma sessão ativa para este admin
+    const impersonation = await impersonationService.getActiveSession(user.id);
+    
+    if (impersonation && impersonation.impersonated) {
+      secureLog.info('[AUTH: IMPERSONATION_ACTIVE]', { 
+        adminId: user.id, 
+        targetUserId: impersonation.impersonated.id 
+      });
+
+      // Salvar admin original
+      request.impersonator = {
+        id: user.id,
+        email: user.email
+      };
+
+      // Sobrescrever user atual com o alvo
+      // Precisamos buscar o perfil completo do alvo (role, tenant)
+      const targetUser = await prisma.user.findUnique({
+        where: { id: impersonation.impersonated.id },
+        select: {
+          id: true,
+          email: true,
+          role: true,
+          tenantId: true
+        }
+      });
+
+      if (targetUser) {
+        request.user = {
+          id: targetUser.id,
+          email: targetUser.email,
+          role: targetUser.role,
+          tenantId: targetUser.tenantId
+        };
+      }
+    }
 
     // Continuar para próximo handler
   } catch (error) {
