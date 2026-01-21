@@ -17,12 +17,35 @@ interface UpdateRoleDto {
 export class RoleService {
   /**
    * List roles for a specific space
+   * @param spaceIdOrCode - Space ID (UUID) or Space Code (e.g., 'ADMIN', 'FINANCE')
    */
-  async listRoles(spaceId: string) {
+  async listRoles(spaceIdOrCode: string) {
+    // Verificar se é um UUID ou um código
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(spaceIdOrCode);
+    
+    let spaceId: string;
+    
+    if (isUUID) {
+      // Já é um UUID, usar diretamente
+      spaceId = spaceIdOrCode;
+    } else {
+      // É um código, buscar o Space pelo código
+      const space = await prisma.space.findFirst({
+        where: { code: spaceIdOrCode },
+        select: { id: true }
+      });
+      
+      if (!space) {
+        throw new Error(`Space with code '${spaceIdOrCode}' not found`);
+      }
+      
+      spaceId = space.id;
+    }
+    
     return prisma.spaceRole.findMany({
       where: {
         spaceId: spaceId,
-        deletedAt: null
+        isActive: true // Usar isActive ao invés de deletedAt
       },
       include: {
         _count: {
@@ -55,7 +78,7 @@ export class RoleService {
       }
     });
 
-    if (!role || role.deletedAt) {
+    if (!role || !role.isActive) {
       throw new Error('Role not found');
     }
 
@@ -66,7 +89,27 @@ export class RoleService {
    * Create a new role with capabilities
    */
   async createRole(data: CreateRoleDto) {
-    const { name, description, spaceId, capabilities } = data;
+    const { name, description, spaceId: spaceIdOrCode, capabilities } = data;
+
+    // Verificar se é um UUID ou um código
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(spaceIdOrCode);
+    
+    let spaceId: string;
+    
+    if (isUUID) {
+      spaceId = spaceIdOrCode;
+    } else {
+      const space = await prisma.space.findFirst({
+        where: { code: spaceIdOrCode },
+        select: { id: true }
+      });
+      
+      if (!space) {
+        throw new Error(`Space with code '${spaceIdOrCode}' not found`);
+      }
+      
+      spaceId = space.id;
+    }
 
     // Validate if capabilities exist
     if (capabilities.length > 0) {
@@ -84,7 +127,7 @@ export class RoleService {
           name,
           description,
           spaceId,
-          isSystem: false, // Custom roles are never system roles by default
+          code: name.toUpperCase().replace(/\s+/g, '_'), // Gerar código a partir do nome
         }
       });
 
@@ -108,13 +151,9 @@ export class RoleService {
     const { name, description, capabilities } = data;
 
     const role = await prisma.spaceRole.findUnique({ where: { id } });
-    if (!role || role.deletedAt) throw new Error('Role not found');
+    if (!role || !role.isActive) throw new Error('Role not found');
 
-    if (role.isSystem && name) {
-      // Prevent renaming system roles if desired, or allow it. 
-      // Usually system roles structure should stay intact, but name might be editable?
-      // For now, let's allow editing name/desc but be careful with standard roles.
-    }
+
 
     return prisma.$transaction(async (tx) => {
       // 1. Update basic info
@@ -158,32 +197,29 @@ export class RoleService {
   }
 
   /**
-   * Soft delete a role
+   * Soft delete a role (desativar)
    */
   async deleteRole(id: string) {
     const role = await prisma.spaceRole.findUnique({
       where: { id },
       include: {
         _count: {
-          select: { users: true }
+          select: { userAssignments: true } // Corrigido: userAssignments ao invés de users
         }
       }
     });
 
-    if (!role || role.deletedAt) throw new Error('Role not found');
+    if (!role || !role.isActive) throw new Error('Role not found');
 
-    if (role.isSystem) {
-      throw new Error('Cannot delete a system role');
-    }
-
-    if (role._count.users > 0) {
+    if (role._count.userAssignments > 0) {
       throw new Error('Cannot delete role assigned to users. Reassign them first.');
     }
 
+    // Desativar ao invés de soft delete
     return prisma.spaceRole.update({
       where: { id },
       data: {
-        deletedAt: new Date()
+        isActive: false
       }
     });
   }

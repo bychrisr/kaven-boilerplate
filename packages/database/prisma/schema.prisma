@@ -213,11 +213,15 @@ enum GrantApprovalLevel {
 enum PolicyType {
   MFA_REQUIRED
   IP_RESTRICTION
+  IP_WHITELIST              // Adicionado: suporta allowedIps e blockedIps
   TIME_RESTRICTION
+  TIME_BASED                // Adicionado: alias para TIME_RESTRICTION
   DEVICE_RESTRICTION
+  DEVICE_TRUST              // Adicionado: alias para DEVICE_RESTRICTION
   APPROVAL_REQUIRED
   RATE_LIMIT
   JUSTIFICATION_REQUIRED
+  GEO_RESTRICTION           // Adicionado: restrição geográfica
 }
 
 enum PolicyTargetType {
@@ -225,10 +229,12 @@ enum PolicyTargetType {
   ROLE
   CAPABILITY
   USER
+  GLOBAL                    // Adicionado: políticas globais
 }
 
 enum PolicyEnforcement {
   DENY
+  ALLOW                     // Adicionado: permite acesso
   WARN
   REQUIRE_MFA
 }
@@ -1329,6 +1335,9 @@ model Space {
   
   /// Ordem de exibição
   sortOrder   Int      @default(0) @map("sort_order")
+  
+  /// Configuração dinâmica da UI (navSections, dashboardCards, etc.)
+  config      Json?    @map("ui_config")
   
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")

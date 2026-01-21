@@ -47,6 +47,8 @@ import { advancedMetricsMiddleware, onResponseMetricsHook } from './modules/obse
 // [KAVEN_MODULE_IMPORTS_END]
 
 import { roleRoutes } from './modules/roles/routes/role.routes';
+import { grantRequestRoutes } from './modules/grants/routes/grant-request.routes';
+import policyRoutes from './modules/policies/routes/policy.routes';
 
 // Initialize Sentry for error tracking
 initSentry();
@@ -219,13 +221,18 @@ app.register(observabilityRoutes, { prefix: '/api/observability' });
 app.register(projectsRoutes, { prefix: '/api/app/projects' });
 app.register(tasksRoutes, { prefix: '/api/app/tasks' });
 app.register(roleRoutes, { prefix: '/api' });
+app.register(grantRequestRoutes, { prefix: '/api' });
+app.register(policyRoutes, { prefix: '/api' });
 app.register(currenciesRoutes, { prefix: '/api/currencies' });
 
 // Webhooks
 app.register(emailWebhookRoutes, { prefix: '/api/webhooks/email' });
 app.register(unsubscribeRoutes, { prefix: '/api/webhooks/email/unsubscribe' });
 
+import { spaceRoutes } from './modules/spaces/routes/space.routes';
+
 app.register(diagnosticsRoutes, { prefix: '/api/diagnostics' });
+app.register(spaceRoutes, { prefix: '/api/spaces' });
 // [KAVEN_MODULE_REGISTRATION]
 // [KAVEN_MODULE_REGISTRATION_END]
 
