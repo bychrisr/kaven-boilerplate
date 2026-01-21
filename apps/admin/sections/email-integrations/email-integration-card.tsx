@@ -37,7 +37,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip';
-import { MoreVertical, Mail, Check, Shield, Activity, Trash2, Pencil, Loader2, Send, Wifi } from 'lucide-react';
+import { MoreVertical, Mail, Check, Shield, Trash2, Pencil, Loader2, Send, Wifi } from 'lucide-react';
 import { toast } from 'sonner';
 import { emailIntegrationsApi, EmailIntegration } from '@/lib/api/email-integrations';
 import { api } from '@/lib/api';

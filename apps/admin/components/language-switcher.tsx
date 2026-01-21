@@ -1,13 +1,11 @@
 'use client';
 
-import { useLocale, useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Select, SelectOption } from '@/components/ui/select';
-import { useState, useTransition } from 'react';
+import { useTransition } from 'react';
 
 export function LanguageSwitcher() {
-  const t = useTranslations('Common');
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();

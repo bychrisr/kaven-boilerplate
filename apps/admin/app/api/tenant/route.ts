@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 /**
  * GET /api/tenant
  * Retorna dados do tenant atual do usuário logado
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // TODO: Pegar tenantId do token JWT ou header
     // Por enquanto, vamos buscar o primeiro tenant (Admin Tenant)

@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname } from '@/i18n/routing';
 import { useTranslations, useLocale } from 'next-intl';
-import { Home, User, Settings, LogOut, CreditCard, Moon, Sun, Monitor } from 'lucide-react';
+import { Home, User, Settings, LogOut, CreditCard, Moon, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
 import { useSettings } from '@/stores/settings.store';
@@ -22,7 +22,6 @@ export function UserMenu() {
   const pathname = usePathname();
   const locale = useLocale(); // Get current locale correctly
   const t = useTranslations('Common.menu');
-  const tSettings = useTranslations('Settings');
   
   const { user, logout } = useAuthStore();
   const { theme, toggleTheme } = useSettings();

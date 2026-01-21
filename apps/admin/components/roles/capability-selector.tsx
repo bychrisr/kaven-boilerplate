@@ -4,7 +4,6 @@ import { useCapabilitiesList } from '@/hooks/use-roles';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { useMemo } from 'react';
 import { Label } from '@/components/ui/label';
 

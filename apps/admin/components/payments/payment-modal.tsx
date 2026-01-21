@@ -17,7 +17,7 @@ interface PaymentModalProps {
 }
 
 export function PaymentModal({ purchaseId, onSuccess, onClose }: PaymentModalProps) {
-  const { purchase, isLoading, status, timeRemaining, formattedTime, isExpired, copyPixCode } = usePayment(purchaseId);
+  const { purchase, isLoading, status, formattedTime, isExpired, copyPixCode } = usePayment(purchaseId);
   
   useEffect(() => {
     if (status === 'approved') {
