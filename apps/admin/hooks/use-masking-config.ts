@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { api } from '@/lib/api';
 
 export interface MaskingRule {
   type: string;
@@ -17,11 +18,8 @@ export function useMaskingConfig() {
   return useQuery<MaskingConfigData>({
     queryKey: ['masking-config'],
     queryFn: async () => {
-      const response = await fetch('/api/policies/masking-config');
-      if (!response.ok) {
-        throw new Error('Failed to fetch masking config');
-      }
-      return response.json();
+      const response = await api.get<MaskingConfigData>('/api/policies/masking-config');
+      return response.data;
     }
   });
 }
