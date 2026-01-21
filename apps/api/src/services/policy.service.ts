@@ -1,5 +1,7 @@
 import { 
   PrismaClient,
+  Policy,
+  Prisma,
   PolicyType,
   PolicyTargetType,
   PolicyEnforcement
@@ -88,7 +90,7 @@ export class PolicyService {
         type: data.type,
         targetType: data.targetType,
         targetId: data.targetId,
-        conditions: data.conditions,
+        conditions: data.conditions as Prisma.InputJsonValue,
         enforcement: data.enforcement,
         isActive: data.isActive ?? true,
       },
@@ -162,7 +164,7 @@ export class PolicyService {
       data: {
         name: data.name,
         description: data.description,
-        conditions: data.conditions,
+        conditions: data.conditions as Prisma.InputJsonValue,
         enforcement: data.enforcement,
         isActive: data.isActive,
       },
