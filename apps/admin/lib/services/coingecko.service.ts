@@ -139,18 +139,34 @@ export class CoinGeckoService {
 
     // Caso 2: Crypto → Fiat
     if (fromIsCrypto && !toIsCrypto) {
-      return await this.getCryptoToFiatRate(fromCurrency, to, source);
+      return await this.getCryptoToFiatRate({ 
+        code: fromCurrency.code, 
+        metadata: fromCurrency.metadata as unknown as CurrencyMetadata, 
+        isCrypto: fromCurrency.isCrypto 
+      }, to, source);
     }
 
     // Caso 3: Fiat → Crypto
     if (!fromIsCrypto && toIsCrypto) {
-      const inverseRate = await this.getCryptoToFiatRate(toCurrency, from, source);
+      const inverseRate = await this.getCryptoToFiatRate({ 
+        code: toCurrency.code, 
+        metadata: toCurrency.metadata as unknown as CurrencyMetadata, 
+        isCrypto: toCurrency.isCrypto 
+      }, from, source);
       return 1 / inverseRate;
     }
 
     // Caso 4: Crypto → Crypto (usar USD como ponte)
-    const fromToUsd = await this.getCryptoToFiatRate(fromCurrency, 'USD', source);
-    const toToUsd = await this.getCryptoToFiatRate(toCurrency, 'USD', source);
+    const fromToUsd = await this.getCryptoToFiatRate({ 
+      code: fromCurrency.code, 
+      metadata: fromCurrency.metadata as unknown as CurrencyMetadata, 
+      isCrypto: fromCurrency.isCrypto 
+    }, 'USD', source);
+    const toToUsd = await this.getCryptoToFiatRate({ 
+      code: toCurrency.code, 
+      metadata: toCurrency.metadata as unknown as CurrencyMetadata, 
+      isCrypto: toCurrency.isCrypto 
+    }, 'USD', source);
     return fromToUsd / toToUsd;
   }
 
@@ -158,7 +174,7 @@ export class CoinGeckoService {
    * Busca cotação de criptomoeda em moeda fiat
    */
   private async getCryptoToFiatRate(
-    cryptoCurrency: { code: string; metadata: any; isCrypto: boolean },
+    cryptoCurrency: { code: string; metadata: CurrencyMetadata | null; isCrypto: boolean },
     fiatCode: string,
     source: 'coingecko' | 'tradingview'
   ): Promise<number> {
@@ -173,7 +189,7 @@ export class CoinGeckoService {
    * Busca cotação via CoinGecko
    */
   private async getCryptoToFiatRateFromCoinGecko(
-    cryptoCurrency: { code: string; metadata: any },
+    cryptoCurrency: { code: string; metadata: CurrencyMetadata | null },
     fiatCode: string
   ): Promise<number> {
     const metadata = cryptoCurrency.metadata as CurrencyMetadata | null;
@@ -218,7 +234,7 @@ export class CoinGeckoService {
    * Busca cotação via TradingView (fallback)
    */
   private async getCryptoToFiatRateFromTradingView(
-    cryptoCurrency: { code: string; metadata: any },
+    cryptoCurrency: { code: string; metadata: CurrencyMetadata | null },
     fiatCode: string
   ): Promise<number> {
     const metadata = cryptoCurrency.metadata as CurrencyMetadata | null;

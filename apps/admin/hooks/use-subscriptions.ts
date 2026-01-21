@@ -18,7 +18,7 @@ export interface Subscription {
   trialEnd?: string;
   discountCode?: string;
   discountPercent?: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
   tenant: {

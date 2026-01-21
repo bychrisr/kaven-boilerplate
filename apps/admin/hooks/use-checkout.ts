@@ -4,6 +4,11 @@ import { useCurrentSubscription } from './use-current-subscription';
 import { useMutation } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
+import { AxiosError } from 'axios';
+
+interface ApiErrorResponse {
+  message: string;
+}
 
 type BillingInterval = 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'QUARTERLY' | 'YEARLY' | 'LIFETIME' | 'FOREVER';
 
@@ -51,7 +56,7 @@ export function useCheckout(planId: string) {
       // Redirecionar para modal de pagamento será feito no componente
       return purchase;
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<ApiErrorResponse>) => {
       toast.error(error.response?.data?.message || 'Erro ao criar pedido');
     },
   });

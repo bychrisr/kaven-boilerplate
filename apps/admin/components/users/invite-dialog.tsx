@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import {
@@ -166,7 +166,7 @@ export function InviteUserDialog({ open, onClose }: InviteUserDialogProps) {
             <Label>{t('roleLabel')}</Label>
             <Select
               value={role}
-              onValueChange={(val: any) => setRole(val)}
+              onValueChange={(val: string) => setRole(val as 'SUPER_ADMIN' | 'ADMIN' | 'MEMBER')}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select role" />

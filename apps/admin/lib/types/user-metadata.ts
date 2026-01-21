@@ -3,11 +3,12 @@
  * Usados no campo metadata.internalRole
  */
 export type InternalRole = 
-  | 'ARCHITECT'   // Super Admin - Acesso total ao sistema
-  | 'SUPPORT'     // Customer Success - Suporte ao cliente
-  | 'FINANCE'     // CFO - Gestão financeira e faturamento
-  | 'MARKETING'   // Growth - Marketing, CRM e aquisição
-  | 'DEVOPS';     // System Health - Monitoramento e logs
+  | 'ARCHITECT'   // Super Admin - Acesso total ao sistema (Mapeia para Space ADMIN)
+  | 'SUPPORT'     // Customer Success
+  | 'FINANCE'     // CFO
+  | 'MARKETING'   // Growth
+  | 'DEVOPS'      // System Health
+  | 'EXECUTIVE';  // Gestão Executiva
 
 /**
  * Estrutura do campo metadata no User
@@ -58,13 +59,19 @@ export const INTERNAL_ROLE_PERMISSIONS: Record<InternalRole, string[]> = {
     'action:send_broadcast',
     'view:user_metrics'
   ],
-  
   DEVOPS: [
     'view:grafana',
     'view:logs',
     'view:health_check',
     'view:audit_logs',
     'view:security_logs'
+  ],
+  
+  EXECUTIVE: [
+    'view:analytics',
+    'view:management_dashboard',
+    'view:reports',
+    'view:audit_logs'
   ]
 };
 

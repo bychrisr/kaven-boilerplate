@@ -8,7 +8,7 @@ export interface Notification {
   priority: NotificationPriority;
   title: string;
   message: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   read: boolean;
   actionUrl?: string;
   actionText?: string;

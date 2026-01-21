@@ -4,6 +4,11 @@ import api from '@/lib/api';
 import { toast } from 'sonner';
 import { useSpaces } from '@/hooks/use-spaces';
 
+interface ApiErrorResponse {
+  error: string;
+  message?: string;
+}
+
 export interface Capability {
   id: string;
   code: string;
@@ -94,7 +99,7 @@ export function useCreateRole() {
       queryClient.invalidateQueries({ queryKey: ['roles', variables.spaceId] });
       toast.success('Role criada com sucesso!');
     },
-    onError: (error: AxiosError<any>) => {
+    onError: (error: AxiosError<ApiErrorResponse>) => {
       toast.error(error.response?.data?.error || 'Erro ao criar role');
     },
   });
@@ -115,7 +120,7 @@ export function useUpdateRole() {
       queryClient.invalidateQueries({ queryKey: ['role', data.id] });
       toast.success('Role atualizada com sucesso!');
     },
-    onError: (error: AxiosError<any>) => {
+    onError: (error: AxiosError<ApiErrorResponse>) => {
       toast.error(error.response?.data?.error || 'Erro ao atualizar role');
     },
   });
@@ -132,7 +137,7 @@ export function useDeleteRole() {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       toast.success('Role removida com sucesso!');
     },
-    onError: (error: AxiosError<any>) => {
+    onError: (error: AxiosError<ApiErrorResponse>) => {
       toast.error(error.response?.data?.error || 'Erro ao remover role');
     },
   });

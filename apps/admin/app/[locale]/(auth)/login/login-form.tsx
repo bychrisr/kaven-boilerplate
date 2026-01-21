@@ -77,7 +77,7 @@ export default function LoginForm() {
       // Usando console.error para garantir que o erro completo seja visível no console do navegador
       console.error('❌ LOGIN FORM - Error:', error);
       
-      const axiosError = error as any; // Usando any para evitar TypeError se estrutura for inesperada
+      const axiosError = error as { response?: { data?: { error?: string; message?: string } }; message?: string };
       
       // Tenta extrair mensagem de erro de varias formas
       const message = 

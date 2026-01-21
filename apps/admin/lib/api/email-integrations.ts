@@ -121,10 +121,11 @@ export const emailIntegrationsApi = {
         message: data.message || 'Test email sent successfully',
         ...data,
       };
-    } catch (error: any) {
+    } catch (error) {
+      const axiosError = error as { response?: { data?: { error?: string; message?: string } }; message?: string };
       return {
         success: false,
-        error: error.response?.data?.error || error.response?.data?.message || error.message || 'Failed to send test email',
+        error: axiosError.response?.data?.error || axiosError.response?.data?.message || axiosError.message || 'Failed to send test email',
       };
     }
   },
