@@ -49,6 +49,7 @@ import { advancedMetricsMiddleware, onResponseMetricsHook } from './modules/obse
 import { roleRoutes } from './modules/roles/routes/role.routes';
 import { grantRequestRoutes } from './modules/grants/routes/grant-request.routes';
 import { policyRoutes } from './modules/policies/routes/policy.routes';
+import { exportRoutes } from './modules/export/routes/export.routes';
 
 // Initialize Sentry for error tracking
 initSentry();
@@ -224,6 +225,7 @@ app.register(roleRoutes, { prefix: '/api' });
 app.register(grantRequestRoutes, { prefix: '/api' });
 app.register(policyRoutes, { prefix: '/api' });
 app.register(currenciesRoutes, { prefix: '/api/currencies' });
+app.register(exportRoutes, { prefix: '/api/export' });
 
 // Webhooks
 app.register(emailWebhookRoutes, { prefix: '/api/webhooks/email' });
