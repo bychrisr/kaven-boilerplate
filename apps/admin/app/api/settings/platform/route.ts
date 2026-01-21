@@ -41,7 +41,7 @@ export async function GET() {
 
   } catch (error) {
     console.error('[API] ❌ CRITICAL ERROR in GET:', error);
-    const apiError = error as any;
+    const apiError = error as Error;
     return NextResponse.json({ 
         error: 'Internal Server Error', 
         message: apiError?.message, 
@@ -113,13 +113,13 @@ export async function PUT(req: Request) {
     console.log('[API] Save successful:', storedConfig);
     return NextResponse.json(storedConfig);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error) {
     console.error('[API] ❌ CRITICAL ERROR in PUT:', error);
+    const apiError = error as Error;
     return NextResponse.json({ 
         error: 'Internal Server Error', 
-        message: error?.message, 
-        stack: error?.stack,
+        message: apiError?.message, 
+        stack: apiError?.stack,
         details: String(error)
     }, { status: 500 });
   }

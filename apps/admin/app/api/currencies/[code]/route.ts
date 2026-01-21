@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import { currencySchema, validateCurrencyData } from '@/lib/validations/currency';
 
 /**
@@ -106,7 +107,7 @@ export async function PUT(
         isActive: data.isActive,
         isCrypto: data.isCrypto,
         sortOrder: data.sortOrder,
-        metadata: data.metadata || null,
+        metadata: (data.metadata || Prisma.DbNull) as Prisma.InputJsonValue,
       },
     });
 

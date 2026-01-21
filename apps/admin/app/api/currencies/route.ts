@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import { currencySchema, validateCurrencyData } from '@/lib/validations/currency';
 
 /**
@@ -27,6 +28,7 @@ export async function GET(request: Request) {
         isActive: true,
         isCrypto: true,
         sortOrder: true,
+        metadata: true,
       },
     });
 
@@ -93,7 +95,7 @@ export async function POST(request: Request) {
         isActive: data.isActive,
         isCrypto: data.isCrypto,
         sortOrder: data.sortOrder,
-        metadata: data.metadata || null,
+        metadata: (data.metadata || Prisma.DbNull) as Prisma.InputJsonValue,
       },
     });
 
