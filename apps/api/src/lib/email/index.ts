@@ -273,7 +273,7 @@ export class EmailServiceV2 {
       console.log('[EmailService] 🔄 Chamando recordEmailSent...');
       await emailMetricsPersistence.recordEmailSent({
         provider: result.provider as any,
-        emailType: payload.type || EmailType.TRANSACTIONAL,
+        emailType: (payload.type === EmailType.MARKETING ? EmailType.MARKETING : EmailType.TRANSACTIONAL) as any,
         tenantId: payload.tenantId,
         templateCode: payload.template,
       });

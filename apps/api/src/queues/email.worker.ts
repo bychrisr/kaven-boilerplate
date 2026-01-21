@@ -83,7 +83,7 @@ export const emailWorker = new Worker(
           status: 'FAILED',
           error: error.message
         }
-      }).catch(err => secureLog.error('[EmailWorker] Error updating failure status:', err));
+      }).catch((err: Error) => secureLog.error('[EmailWorker] Error updating failure status:', err));
 
       throw error; // Re-throw para o BullMQ lidar com retries
     }

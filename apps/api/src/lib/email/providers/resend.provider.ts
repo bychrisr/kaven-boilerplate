@@ -60,7 +60,7 @@ export class ResendProvider implements IEmailProvider {
       const bcc = payload.bcc ? (Array.isArray(payload.bcc) ? payload.bcc : [payload.bcc]) : undefined;
 
       // Send email
-      const result = await this.client.emails.send({
+      const result = await (this.client.emails.send as any)({
         from,
         to,
         cc,
