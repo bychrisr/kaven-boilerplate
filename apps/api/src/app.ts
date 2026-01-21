@@ -48,7 +48,7 @@ import { advancedMetricsMiddleware, onResponseMetricsHook } from './modules/obse
 
 import { roleRoutes } from './modules/roles/routes/role.routes';
 import { grantRequestRoutes } from './modules/grants/routes/grant-request.routes';
-import policyRoutes from './modules/policies/routes/policy.routes';
+import { policyRoutes } from './modules/policies/routes/policy.routes';
 
 // Initialize Sentry for error tracking
 initSentry();

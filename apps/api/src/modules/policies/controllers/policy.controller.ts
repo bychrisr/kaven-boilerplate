@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { FastifyRequest, FastifyReply } from 'fastify';
 import { PolicyService } from '../../../services/policy.service';
 import { PolicyType, PolicyTargetType, PolicyEnforcement } from '@prisma/client';
 
@@ -9,9 +9,9 @@ export class PolicyController {
    * Lista policies com filtros
    * GET /api/policies
    */
-  async listPolicies(req: Request, res: Response) {
+  async listPolicies(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { type, targetType, targetId, isActive } = req.query;
+      const { type, targetType, targetId, isActive } = request.query as any;
 
       const filters: any = {};
       if (type) filters.type = type as PolicyType;
@@ -21,10 +21,10 @@ export class PolicyController {
 
       const policies = await policyService.listPolicies(filters);
 
-      return res.status(200).json({ policies });
+      return reply.send({ policies });
     } catch (error) {
       console.error('Error listing policies:', error);
-      return res.status(500).json({ error: 'Failed to list policies' });
+      return reply.status(500).send({ error: 'Failed to list policies' });
     }
   }
 
@@ -32,19 +32,19 @@ export class PolicyController {
    * Busca policy por ID
    * GET /api/policies/:id
    */
-  async getPolicyById(req: Request, res: Response) {
+  async getPolicyById(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { id } = req.params;
+      const { id } = request.params as any;
 
       const policy = await policyService.getPolicyById(id);
 
-      return res.status(200).json({ policy });
+      return reply.send({ policy });
     } catch (error: any) {
       if (error.message === 'Policy not found') {
-        return res.status(404).json({ error: error.message });
+        return reply.status(404).send({ error: error.message });
       }
       console.error('Error getting policy:', error);
-      return res.status(500).json({ error: 'Failed to get policy' });
+      return reply.status(500).send({ error: 'Failed to get policy' });
     }
   }
 
@@ -52,7 +52,7 @@ export class PolicyController {
    * Cria nova policy
    * POST /api/policies
    */
-  async createPolicy(req: Request, res: Response) {
+  async createPolicy(request: FastifyRequest, reply: FastifyReply) {
     try {
       const {
         name,
@@ -63,11 +63,11 @@ export class PolicyController {
         conditions,
         enforcement,
         isActive,
-      } = req.body;
+      } = request.body as any;
 
       // Validações básicas
       if (!name || !type || !targetType || !conditions || !enforcement) {
-        return res.status(400).json({
+        return reply.status(400).send({
           error: 'Missing required fields: name, type, targetType, conditions, enforcement',
         });
       }
@@ -83,10 +83,10 @@ export class PolicyController {
         isActive,
       });
 
-      return res.status(201).json({ policy });
+      return reply.status(201).send({ policy });
     } catch (error: any) {
       console.error('Error creating policy:', error);
-      return res.status(400).json({ error: error.message || 'Failed to create policy' });
+      return reply.status(400).send({ error: error.message || 'Failed to create policy' });
     }
   }
 
@@ -94,10 +94,10 @@ export class PolicyController {
    * Atualiza policy
    * PUT /api/policies/:id
    */
-  async updatePolicy(req: Request, res: Response) {
+  async updatePolicy(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { id } = req.params;
-      const { name, description, conditions, enforcement, isActive } = req.body;
+      const { id } = request.params as any;
+      const { name, description, conditions, enforcement, isActive } = request.body as any;
 
       const policy = await policyService.updatePolicy(id, {
         name,
@@ -107,13 +107,13 @@ export class PolicyController {
         isActive,
       });
 
-      return res.status(200).json({ policy });
+      return reply.send({ policy });
     } catch (error: any) {
       if (error.message === 'Policy not found') {
-        return res.status(404).json({ error: error.message });
+        return reply.status(404).send({ error: error.message });
       }
       console.error('Error updating policy:', error);
-      return res.status(400).json({ error: error.message || 'Failed to update policy' });
+      return reply.status(400).send({ error: error.message || 'Failed to update policy' });
     }
   }
 
@@ -121,19 +121,19 @@ export class PolicyController {
    * Deleta policy
    * DELETE /api/policies/:id
    */
-  async deletePolicy(req: Request, res: Response) {
+  async deletePolicy(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { id } = req.params;
+      const { id } = request.params as any;
 
       await policyService.deletePolicy(id);
 
-      return res.status(200).json({ message: 'Policy deleted successfully' });
+      return reply.send({ message: 'Policy deleted successfully' });
     } catch (error: any) {
       if (error.message === 'Policy not found') {
-        return res.status(404).json({ error: error.message });
+        return reply.status(404).send({ error: error.message });
       }
       console.error('Error deleting policy:', error);
-      return res.status(500).json({ error: 'Failed to delete policy' });
+      return reply.status(500).send({ error: 'Failed to delete policy' });
     }
   }
 
@@ -141,13 +141,13 @@ export class PolicyController {
    * Avalia uma policy específica
    * POST /api/policies/:id/evaluate
    */
-  async evaluatePolicy(req: Request, res: Response) {
+  async evaluatePolicy(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { id } = req.params;
-      const { userId, ipAddress, deviceId, timestamp, userAgent } = req.body;
+      const { id } = request.params as any;
+      const { userId, ipAddress, deviceId, timestamp, userAgent } = request.body as any;
 
       if (!userId) {
-        return res.status(400).json({ error: 'userId is required' });
+        return reply.status(400).send({ error: 'userId is required' });
       }
 
       const result = await policyService.evaluatePolicy(id, {
@@ -158,13 +158,13 @@ export class PolicyController {
         userAgent,
       });
 
-      return res.status(200).json({ result });
+      return reply.send({ result });
     } catch (error: any) {
       if (error.message === 'Policy not found') {
-        return res.status(404).json({ error: error.message });
+        return reply.status(404).send({ error: error.message });
       }
       console.error('Error evaluating policy:', error);
-      return res.status(500).json({ error: 'Failed to evaluate policy' });
+      return reply.status(500).send({ error: 'Failed to evaluate policy' });
     }
   }
 
@@ -172,13 +172,13 @@ export class PolicyController {
    * Avalia todas as policies de um target
    * POST /api/policies/evaluate
    */
-  async evaluatePolicies(req: Request, res: Response) {
+  async evaluatePolicies(request: FastifyRequest, reply: FastifyReply) {
     try {
       const { targetType, targetId, userId, ipAddress, deviceId, timestamp, userAgent } =
-        req.body;
+        request.body as any;
 
       if (!targetType || !targetId || !userId) {
-        return res.status(400).json({
+        return reply.status(400).send({
           error: 'targetType, targetId, and userId are required',
         });
       }
@@ -195,10 +195,10 @@ export class PolicyController {
         }
       );
 
-      return res.status(200).json({ result });
+      return reply.send({ result });
     } catch (error) {
       console.error('Error evaluating policies:', error);
-      return res.status(500).json({ error: 'Failed to evaluate policies' });
+      return reply.status(500).send({ error: 'Failed to evaluate policies' });
     }
   }
 }
