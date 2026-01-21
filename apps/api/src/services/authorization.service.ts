@@ -32,6 +32,7 @@ import {
   UserCapabilities,
   AuthorizationError,
 } from '../types/authorization.types';
+import { notificationService } from '../modules/notifications/services/notification.service';
 
 const prisma = new PrismaClient();
 
@@ -359,6 +360,22 @@ export class AuthorizationService {
 
         if (!ipAllowed) {
           if (policy.enforcement === 'DENY') {
+            // Notificar usuário sobre bloqueio de IP
+            setTimeout(async () => {
+              try {
+                await notificationService.createNotification({
+                  userId: context.userId,
+                  type: 'security',
+                  priority: 'high',
+                  title: 'Acesso Bloqueado: IP Não Autorizado',
+                  message: `Detectamos uma tentativa de acesso à capability ${capability.id} através de um endereço IP não autorizado (${context.ip}).`,
+                  metadata: { policyId: policy.id, ip: context.ip }
+                });
+              } catch (err) {
+                console.error('[AuthorizationService] IP notification error:', err);
+              }
+            }, 0);
+
             return {
               allowed: false,
               reason: 'IP_NOT_ALLOWED',
@@ -387,6 +404,22 @@ export class AuthorizationService {
 
         if (!deviceInfo.isTrusted) {
           if (policy.enforcement === 'DENY') {
+            // Notificar usuário sobre dispositivo não confiável
+            setTimeout(async () => {
+              try {
+                await notificationService.createNotification({
+                  userId: context.userId,
+                  type: 'security',
+                  priority: 'high',
+                  title: 'Acesso Bloqueado: Dispositivo Não Confiável',
+                  message: `Um acesso foi bloqueado na capability ${capability.id} por ser realizado através de um dispositivo ainda não confiável.`,
+                  metadata: { policyId: policy.id, deviceId: deviceInfo.deviceId }
+                });
+              } catch (err) {
+                console.error('[AuthorizationService] Device notification error:', err);
+              }
+            }, 0);
+
             return {
               allowed: false,
               reason: 'DEVICE_NOT_TRUSTED',

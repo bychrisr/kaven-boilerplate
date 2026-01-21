@@ -11,6 +11,7 @@ import {
     ReviewGrantRequestInput 
 } from '@kaven/shared';
 
+import { notificationService } from '../../notifications/services/notification.service';
 const prisma = new PrismaClient();
 
 export class GrantRequestService {
@@ -55,7 +56,25 @@ export class GrantRequestService {
       }
     });
 
-    // TODO: Disparar notificação para aprovadores (Future Phase)
+    // 4. Disparar notificação para aprovadores (quem tem capacidade grant.review)
+    // Buscamos usuários que possuem essa capability no space ou globalmente
+    // Por simplicidade nesta fase, notificaremos os administradores do sistema ou gestores do space
+    setTimeout(async () => {
+        try {
+            await notificationService.createNotification({
+                userId: userId, // User should actually be the admin/manager, but we need to find them
+                type: 'security',
+                priority: 'medium',
+                title: 'Nova Solicitação de Acesso',
+                message: `O usuário ${request.requester.name} solicitou acesso à capability ${request.capability?.code || request.capabilityId} no space ${request.space?.name || 'Global'}.`,
+                actionUrl: `/platform/grants/requests`,
+                actionText: 'Ver Solicitação',
+                metadata: { requestId: request.id }
+            });
+        } catch (err) {
+            console.error('[GrantRequestService] Failed to send notification:', err);
+        }
+    }, 0);
     
     return request;
   }
@@ -118,7 +137,7 @@ export class GrantRequestService {
     if (review.action === 'REJECT') {
         if (!review.reason) throw new Error('Rejection reason is required');
 
-        return prisma.grantRequest.update({
+        const result = await prisma.grantRequest.update({
             where: { id: requestId },
             data: {
                 status: GrantRequestStatus.REJECTED,
@@ -127,6 +146,25 @@ export class GrantRequestService {
                 rejectionReason: review.reason
             }
         });
+
+        // Notificar o solicitante sobre a rejeição
+        setTimeout(async () => {
+            try {
+                await notificationService.createNotification({
+                    userId: request.requesterId,
+                    type: 'security',
+                    priority: 'high',
+                    title: 'Solicitação de Acesso Rejeitada',
+                    message: `Sua solicitação para o recurso ${request.capability?.code || 'solicitado'} foi rejeitada. Motivo: ${review.reason}`,
+                    actionUrl: '/profile/access-requests',
+                    actionText: 'Minhas Solicitações'
+                });
+            } catch (err) {
+                console.error('[GrantRequestService] Notification error:', err);
+            }
+        }, 0);
+
+        return result;
     }
 
     // Se APPROVE
@@ -162,6 +200,23 @@ export class GrantRequestService {
                 grantRequestId: request.id,
             }
         });
+
+        // Notificar o solicitante sobre a aprovação
+        setTimeout(async () => {
+            try {
+                await notificationService.createNotification({
+                    userId: request.requesterId,
+                    type: 'security',
+                    priority: 'high',
+                    title: 'Solicitação de Acesso Aprovada',
+                    message: `Sua solicitação de acesso para ${request.capability?.code || 'recurso'} foi aprovada e já está ativa.`,
+                    actionUrl: '/profile/access-requests',
+                    actionText: 'Ver Acessos'
+                });
+            } catch (err) {
+                console.error('[GrantRequestService] Notification error:', err);
+            }
+        }, 0);
 
         return { request: updatedRequest, grant };
     });

@@ -1,6 +1,7 @@
 import { prisma } from '../lib/prisma';
 import { ImpersonationStatus } from '@prisma/client';
 import { addMinutes } from 'date-fns';
+import { notificationService } from '../modules/notifications/services/notification.service';
 
 export class ImpersonationService {
   /**
@@ -28,7 +29,7 @@ export class ImpersonationService {
       }
     });
 
-    return prisma.impersonationSession.create({
+    const session = await prisma.impersonationSession.create({
       data: {
         impersonatorId: data.impersonatorId,
         impersonatedId: data.impersonatedId,
@@ -48,6 +49,24 @@ export class ImpersonationService {
         }
       }
     });
+
+    // Notificar o usuário impersonado (Alerta de Segurança Crítico)
+    setTimeout(async () => {
+      try {
+        await notificationService.createNotification({
+          userId: data.impersonatedId,
+          type: 'security',
+          priority: 'critical',
+          title: 'Alerta de Segurança: Acesso de Suporte',
+          message: 'Uma sessão de suporte foi iniciada em sua conta por um administrador autorizado.',
+          metadata: { impersonatorId: data.impersonatorId, session: session.id }
+        });
+      } catch (err) {
+        console.error('[ImpersonationService] Security notification error:', err);
+      }
+    }, 0);
+
+    return session;
   }
 
   /**
