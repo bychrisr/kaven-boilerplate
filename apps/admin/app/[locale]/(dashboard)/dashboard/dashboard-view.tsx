@@ -2,7 +2,8 @@
 'use client';
 
 import { useSpaces } from '@/hooks/use-spaces';
-import { SPACES } from '@/config/spaces';
+import { useCapabilities } from '@/hooks/use-capabilities';
+import { IconResolver } from '@/components/ui/icon-resolver';
 import { useTranslations } from 'next-intl';
 import { useCurrency } from '@/hooks/use-currency';
 
@@ -11,7 +12,7 @@ import { useDashboardSummary, useDashboardCharts } from '@/hooks/use-dashboard';
 import { DashboardSkeleton } from '@/components/skeletons/dashboard-skeleton';
 import { StatCard } from '@/components/ui/stat-card';
 import { CurrencyDisplay } from '@/components/ui/currency-display';
-import { Users, DollarSign, FileText, Lock } from 'lucide-react';
+import { Users, DollarSign, FileText } from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -40,17 +41,31 @@ const getRoleBadgeClasses = (role: string) => {
   return 'bg-blue-500/10 text-blue-500 border border-blue-500/20';
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CustomTooltip = ({ active, payload, label, formatCurrency, locale }: any) => {
+interface MetricItem {
+  value: number;
+  trend: number;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    value: number;
+    name: string;
+    fill: string;
+  }>;
+  label?: string;
+  formatCurrency: (value: number) => string;
+  locale: string;
+}
+
+const CustomTooltip = ({ active, payload, label, formatCurrency, locale }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     const value = payload[0].value;
     const name = payload[0].name;
     // Format value based on context or type (simplified here)
-    const formattedValue = typeof value === 'number' 
-        ? name === 'revenue' 
+    const formattedValue = name === 'revenue' 
           ? formatCurrency(value)
-          : value.toLocaleString(locale, { style: 'decimal' })
-        : value;
+          : value.toLocaleString(locale, { style: 'decimal' });
 
     return (
       <div className="bg-popover border border-border p-3 rounded-lg shadow-xl">
@@ -69,10 +84,14 @@ const CustomTooltip = ({ active, payload, label, formatCurrency, locale }: any) 
 
 const CHART_COLORS = ['hsl(var(--primary))', '#FFAB00', '#00B8D9', '#FF5630'];
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const normalizeMetric = (metric: any) => {
+const normalizeMetric = (metric: unknown): MetricItem => {
   if (typeof metric === 'number') return { value: metric, trend: 0 };
-  if (metric && typeof metric.value === 'number') return metric;
+  if (metric && typeof metric === 'object' && 'value' in metric && typeof metric.value === 'number') {
+    return {
+      value: metric.value,
+      trend: (metric as { trend?: number }).trend ?? 0
+    };
+  }
   return { value: 0, trend: 0 };
 };
 
@@ -85,14 +104,14 @@ export default function DashboardView() {
   const { data: summary, isLoading: isLoadingSummary } = useDashboardSummary();
   const { data: charts, isLoading: isLoadingCharts } = useDashboardCharts();
   const { currentSpace } = useSpaces();
+  const { check } = useCapabilities();
 
   // ✅ Skeleton loader com tema Glassmorphism
-  if (isLoadingSummary || isLoadingCharts) {
+  if (isLoadingSummary || isLoadingCharts || !currentSpace) {
     return <DashboardSkeleton />;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const rawMetrics: any = summary || {};
+  const rawMetrics = (summary as unknown as Record<string, unknown>) || {};
   
   const metrics = {
     totalUsers: normalizeMetric(rawMetrics.totalUsers),
@@ -111,26 +130,31 @@ export default function DashboardView() {
     { name: 'Android', value: metrics.invoices.value * 0.1 },
   ];
 
-  let spaceId = currentSpace?.id || 'ADMIN';
-  if ((spaceId as string) === 'ARCHITECT') spaceId = 'ADMIN';
+  if (!currentSpace) return null;
 
-  const spaceConfig = SPACES[spaceId];
-  
-  if (!spaceConfig) return null;
-
-  const showCard = (card: string) => spaceConfig.dashboardCards.includes(card);
+  // Render cards based on real capabilities
+  const canViewUsers = check('users.read');
+  const canViewRevenue = check('revenue.view');
+  const canViewInvoices = check('invoices.read');
+  const canViewActivity = check('observability.view_metrics');
 
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-         <h1 className="text-2xl font-bold tracking-tight text-foreground">{t('title', { name: spaceConfig.name })}</h1>
+      <div className="flex items-center gap-4">
+         <div className="p-3 rounded-2xl bg-primary/10 text-primary border border-primary/20">
+            <IconResolver name={currentSpace.icon} className="h-8 w-8" />
+         </div>
+         <div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">{t('title', { name: currentSpace.name })}</h1>
+            <p className="text-sm text-muted-foreground">{currentSpace.description || t('welcome')}</p>
+         </div>
       </div>
 
       {/* Metrics Cards Grid */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {/* Users Card */}
-        {showCard('users') && (
+        {canViewUsers && (
             <StatCard
                 title={t('cards.totalUsers')}
                 value={metrics.totalUsers.value.toLocaleString()}
@@ -144,7 +168,7 @@ export default function DashboardView() {
         )}
 
         {/* New Signups Card */}
-        {showCard('users') && (
+        {canViewUsers && (
              <StatCard
                 title={t('cards.newSignups')}
                 value={metrics.newSignups.value}
@@ -157,7 +181,7 @@ export default function DashboardView() {
         )}
 
         {/* Activation Rate Card */}
-        {showCard('users') && (
+        {canViewUsers && (
              <StatCard
                 title={t('cards.activationRate')}
                 value={`${metrics.activationRate.value}%`}
@@ -169,30 +193,11 @@ export default function DashboardView() {
              />
         )}
         
-        {/* Placeholder for other cards defined in space but not yet implemented */}
-        {spaceConfig.dashboardCards
-            .filter(card => !['users'].includes(card))
-             // Note: Excluding Revenue/Invoices from this row as they are now in Business Section
-             // But for now keeping logic flexible or hiding them if handled below
-            .filter(card => !['revenue', 'invoices'].includes(card)) // Removing them from here
-            .map(card => (
-                <StatCard
-                    key={card}
-                    title={card.replace('_', ' ')}
-                    value="-"
-                    icon={Lock}
-                    subtitle={tCommon('comingSoon', { name: spaceConfig.name })}
-                    variant="outline"
-                    iconClassName="bg-muted text-muted-foreground"
-                    valueClassName="text-muted-foreground"
-                    className="opacity-80"
-                />
-            ))
-        }
+
       </div>
 
-      {/* NEW: Business Section (Revenue, Invoices, Etc) */}
-      {(showCard('revenue') || showCard('invoices')) && (
+      {/* Business Section (Revenue, Invoices, Etc) */}
+      {(canViewRevenue || canViewInvoices) && (
         <div className="space-y-4">
              <div className="flex items-center gap-2">
                 <DollarSign className="h-5 w-5 text-muted-foreground" />
@@ -201,7 +206,7 @@ export default function DashboardView() {
             
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 {/* Revenue Card */}
-                {showCard('revenue') && (
+                {canViewRevenue && (
                     <StatCard
                         title={t('cards.totalRevenue')}
                         value={<CurrencyDisplay value={metrics.revenue.value} />}
@@ -214,7 +219,7 @@ export default function DashboardView() {
                 )}
 
                 {/* Invoices/Downloads Card */}
-                {showCard('invoices') && (
+                {canViewInvoices && (
                     <StatCard
                         title={t('cards.totalInvoices')}
                         value={metrics.invoices.value}
@@ -226,29 +231,12 @@ export default function DashboardView() {
                     />
                 )}
                 
-                {/* Placeholders for other cards */}
-                {spaceConfig.dashboardCards
-                    .filter(card => !['users', 'revenue', 'invoices', 'activity'].includes(card))
-                    .map(card => (
-                <StatCard
-                    key={card}
-                    title={card.replace('_', ' ')}
-                    value="-"
-                    icon={Lock}
-                    subtitle={tCommon('comingSoon', { name: spaceConfig.name })}
-                    variant="outline"
-                    iconClassName="bg-muted text-muted-foreground"
-                    valueClassName="text-muted-foreground"
-                    className="opacity-80"
-                />
-            ))
-                }
             </div>
         </div>
       )}
 
-      {/* Charts Row - Only show for Architect/Admin or specific spaces if mapped */}
-      {showCard('activity') && (
+      {/* Charts Row */}
+      {canViewActivity && (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Donut Chart */}
             <div className="rounded-2xl bg-card p-6 shadow-xl border border-border/50 lg:col-span-1">
@@ -270,7 +258,7 @@ export default function DashboardView() {
                                     <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
                                 ))}
                             </Pie>
-                            <Tooltip content={<CustomTooltip />} />
+                            <Tooltip content={<CustomTooltip formatCurrency={formatCurrency} locale={locale} />} />
                             <Legend verticalAlign="bottom" height={36} iconType="circle" />
                         </PieChart>
                     </ResponsiveContainer>
@@ -301,8 +289,8 @@ export default function DashboardView() {
         </div>
       )}
 
-      {/* User Table - Only show if users card is active or explicit */}
-      {showCard('users') && (
+      {/* User Table */}
+      {canViewUsers && (
         <div className="rounded-2xl bg-card shadow-xl border border-border/50 overflow-hidden">
             <div className="p-6 border-b border-border/50">
                 <h3 className="text-lg font-bold text-foreground">{t('table.title')}</h3>

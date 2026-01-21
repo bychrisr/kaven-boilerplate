@@ -5,8 +5,7 @@ import { notificationsApi } from '../lib/api/notifications';
 import type {
   Notification,
   NotificationState,
-  NotificationType,
-  NotificationPriority,
+
 } from '../lib/types/notification';
 
 type NotificationAction =

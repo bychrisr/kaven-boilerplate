@@ -6,10 +6,25 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { UseFormRegister, Control, Controller } from 'react-hook-form';
 
+interface ProviderFormValues {
+  smtpHost?: string;
+  smtpPort?: number;
+  smtpUser?: string;
+  smtpPassword?: string;
+  smtpSecure?: boolean;
+  apiKey?: string;
+  apiSecret?: string;
+  region?: string;
+  transactionalStream?: string;
+  marketingStream?: string;
+  webhookSecret?: string;
+  testEmail?: string;
+}
+
 interface ProviderFieldsProps {
   provider: 'SMTP' | 'RESEND' | 'POSTMARK' | 'AWS_SES';
-  register: UseFormRegister<any>;
-  control: Control<any>;
+  register: UseFormRegister<ProviderFormValues>;
+  control: Control<ProviderFormValues>;
 }
 
 export function ProviderFields({ provider, register, control }: ProviderFieldsProps) {

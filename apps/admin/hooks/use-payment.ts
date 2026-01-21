@@ -36,13 +36,17 @@ export function usePayment(purchaseId: string | null, options?: { enabled?: bool
     const expiresAt = new Date(purchase.expiresAt);
     const now = new Date();
     const secondsRemaining = Math.floor((expiresAt.getTime() - now.getTime()) / 1000);
+    const initialSeconds = Math.max(0, secondsRemaining);
     
-    setTimeRemaining(Math.max(0, secondsRemaining));
+    // Use timeout to avoid cascading render warning during initial sync
+    const initialSync = setTimeout(() => {
+      setTimeRemaining(initialSeconds);
+      if (initialSeconds <= 0) {
+        setIsExpired(true);
+      }
+    }, 0);
     
-    if (secondsRemaining <= 0) {
-      setIsExpired(true);
-      return;
-    }
+    if (initialSeconds <= 0) return () => clearTimeout(initialSync);
     
     const timer = setInterval(() => {
       setTimeRemaining(prev => {
@@ -56,7 +60,10 @@ export function usePayment(purchaseId: string | null, options?: { enabled?: bool
       });
     }, 1000);
     
-    return () => clearInterval(timer);
+    return () => {
+      clearTimeout(initialSync);
+      clearInterval(timer);
+    };
   }, [purchase]);
   
   // Formatar tempo restante (MM:SS)

@@ -14,6 +14,7 @@ export interface Currency {
   isActive: boolean;
   isCrypto: boolean;
   sortOrder: number;
+  metadata?: unknown;
 }
 
 export interface CurrencyConfig {
