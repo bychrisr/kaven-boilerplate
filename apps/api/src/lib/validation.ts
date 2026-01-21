@@ -114,3 +114,9 @@ export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
 export type CreateTenantInput = z.infer<typeof createTenantSchema>;
 export type UpdateTenantInput = z.infer<typeof updateTenantSchema>;
+
+// ===========================
+// GRANT REQUEST SCHEMAS
+// ===========================
+
+// Grants validation moved to @kaven/shared

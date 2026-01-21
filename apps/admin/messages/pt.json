@@ -54,6 +54,7 @@
   },
   "Dashboard": {
     "title": "Dashboard {name}",
+    "welcome": "Bem-vindo de volta ao seu espaço de trabalho!",
     "cards": {
       "totalUsers": "Usuários Ativos",
       "newSignups": "Novos Cadastros",
@@ -78,6 +79,72 @@
         "role": "Função",
         "joined": "Entrou em",
         "action": "Ação"
+      }
+    }
+  },
+  "Policies": {
+    "title": "Políticas de Acesso",
+    "description": "Gerencie regras de segurança e acesso para seu espaço de trabalho.",
+    "list": {
+      "name": "Nome da Política",
+      "type": "Tipo",
+      "target": "Alvo",
+      "enforcement": "Execução",
+      "status": "Status",
+      "createdAt": "Criado em"
+    },
+    "form": {
+      "create": "Criar Política",
+      "edit": "Editar Política",
+      "basicInfo": "Informações Básicas",
+      "conditions": "Condições",
+      "namePlaceholder": "Ex: Whitelist de IP do Escritório",
+      "typeLabel": "Tipo de Política",
+      "targetTypeLabel": "Tipo de Alvo",
+      "targetIdLabel": "ID do Alvo (Opcional)",
+      "enforcementLabel": "Ação ao corresponder",
+      "active": "Ativo",
+      "inactive": "Inativo",
+      "save": "Salvar Política",
+      "cancel": "Cancelar"
+    },
+    "types": {
+      "IP_WHITELIST": "Whitelist/Blacklist de IP",
+      "DEVICE_TRUST": "Confiança de Dispositivo",
+      "TIME_BASED": "Acesso Baseado em Tempo",
+      "GEO_RESTRICTION": "Restrição Geográfica"
+    },
+    "enforcements": {
+      "DENY": "Negar Acesso",
+      "ALLOW": "Permitir Acesso",
+      "WARN": "Avisar e Logar",
+      "REQUIRE_MFA": "Exigir MFA"
+    },
+    "targets": {
+      "SPACE": "Espaço",
+      "ROLE": "Cargo",
+      "CAPABILITY": "Capability",
+      "USER": "Usuário",
+      "GLOBAL": "Global"
+    },
+    "ipConfig": {
+      "allowedIps": "IPs / CIDR Permitidos",
+      "blockedIps": "IPs / CIDR Bloqueados",
+      "placeholder": "Ex: 192.168.1.1 ou 10.0.0.0/24",
+      "help": "Adicione um IP ou CIDR por linha"
+    },
+    "timeConfig": {
+      "allowedHours": "Horários Permitidos (HH:mm-HH:mm)",
+      "allowedDays": "Dias Permitidos",
+      "hoursPlaceholder": "Ex: 09:00-18:00",
+      "days": {
+        "0": "Domingo",
+        "1": "Segunda-feira",
+        "2": "Terça-feira",
+        "3": "Quarta-feira",
+        "4": "Quinta-feira",
+        "5": "Sexta-feira",
+        "6": "Sábado"
       }
     }
   },
@@ -965,6 +1032,79 @@
       "RESEND": "Resend",
       "POSTMARK": "Postmark",
       "AWS_SES": "AWS SES"
+    },
+    "healthCheckConfig": {
+      "title": "Health Check Automático",
+      "description": "Configure verificações automáticas de saúde das integrações de email",
+      "enabled": "Habilitar health check automático",
+      "enabledDescription": "Verifica automaticamente a saúde das integrações em intervalos regulares",
+      "frequency": "Frequência",
+      "frequencies": {
+        "15m": "A cada 15 minutos",
+        "30m": "A cada 30 minutos",
+        "1h": "A cada hora",
+        "6h": "A cada 6 horas",
+        "12h": "A cada 12 horas",
+        "24h": "Diariamente"
+      },
+      "lastRun": "Última execução",
+      "nextRun": "Próxima execução",
+      "never": "Nunca",
+      "notScheduled": "Não agendado",
+      "runNow": "Executar Agora",
+      "running": "Executando...",
+      "updateSuccess": "Configuração atualizada com sucesso",
+      "updateError": "Erro ao atualizar configuração",
+      "runNowSuccess": "Health check executado com sucesso",
+      "runNowError": "Erro ao executar health check"
+    }
+  },
+  "AccessRequests": {
+    "title": "Meus Pedidos de Acesso",
+    "subtitle": "Histórico e status das suas solicitações de permissão.",
+    "newRequest": "Nova Solicitação",
+    "empty": "Nenhuma solicitação encontrada.",
+    "table": {
+      "resource": "Recurso / Space",
+      "level": "Nível",
+      "justification": "Justificativa",
+      "duration": "Duração",
+      "status": "Status",
+      "date": "Data",
+      "levelWrite": "Escrita",
+      "levelRead": "Leitura"
+    },
+    "status": {
+      "approved": "Aprovado",
+      "rejected": "Rejeitado",
+      "pending": "Pendente",
+      "expired": "Expirado"
+    },
+    "dialog": {
+      "title": "Solicitar Acesso",
+      "description": "Você está solicitando acesso temporário para: <bold>{resource}</bold>. Esta solicitação passará por aprovação.",
+      "labels": {
+        "level": "Nível de Acesso",
+        "duration": "Duração (dias)",
+        "justification": "Justificativa"
+      },
+      "hints": {
+        "level": "Selecione se precisa apenas visualizar ou modificar dados.",
+        "duration": "Por quanto tempo você precisa deste acesso?"
+      },
+      "placeholders": {
+        "level": "Selecione o nível",
+        "justification": "Explique por que você precisa deste acesso..."
+      },
+      "validation": {
+          "justificationMin": "A justificativa deve ter pelo menos 10 caracteres."
+      },
+      "submit": "Enviar Solicitação",
+      "submitting": "Enviando...",
+      "cancel": "Cancelar",
+      "success": "Solicitação enviada com sucesso!",
+      "error": "Erro ao enviar solicitação."
+>>>>>>> c4fe432 (chore: update translations and shared validation logic)
     }
   }
 }

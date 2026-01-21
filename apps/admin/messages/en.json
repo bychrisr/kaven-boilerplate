@@ -54,6 +54,7 @@
   },
   "Dashboard": {
     "title": "{name} Dashboard",
+    "welcome": "Welcome back to your workspace!",
     "cards": {
       "totalUsers": "Total Active Users",
       "newSignups": "New Signups",
@@ -78,6 +79,72 @@
         "role": "Role",
         "joined": "Joined",
         "action": "Action"
+      }
+    }
+  },
+  "Policies": {
+    "title": "Access Policies",
+    "description": "Manage security and access rules for your workspace.",
+    "list": {
+      "name": "Policy Name",
+      "type": "Type",
+      "target": "Target",
+      "enforcement": "Enforcement",
+      "status": "Status",
+      "createdAt": "Created At"
+    },
+    "form": {
+      "create": "Create Policy",
+      "edit": "Edit Policy",
+      "basicInfo": "Basic Information",
+      "conditions": "Conditions",
+      "namePlaceholder": "Ex: IP Whitelist for Office",
+      "typeLabel": "Policy Type",
+      "targetTypeLabel": "Target Type",
+      "targetIdLabel": "Target ID (Optional)",
+      "enforcementLabel": "Action on match",
+      "active": "Active",
+      "inactive": "Inactive",
+      "save": "Save Policy",
+      "cancel": "Cancel"
+    },
+    "types": {
+      "IP_WHITELIST": "IP Whitelist/Blacklist",
+      "DEVICE_TRUST": "Device Trust",
+      "TIME_BASED": "Time-based Access",
+      "GEO_RESTRICTION": "Geo Restriction"
+    },
+    "enforcements": {
+      "DENY": "Deny Access",
+      "ALLOW": "Allow Access",
+      "WARN": "Warn & Log",
+      "REQUIRE_MFA": "Require MFA"
+    },
+    "targets": {
+      "SPACE": "Space",
+      "ROLE": "Role",
+      "CAPABILITY": "Capability",
+      "USER": "User",
+      "GLOBAL": "Global"
+    },
+    "ipConfig": {
+      "allowedIps": "Allowed IPs / CIDR",
+      "blockedIps": "Blocked IPs / CIDR",
+      "placeholder": "Ex: 192.168.1.1 or 10.0.0.0/24",
+      "help": "Add one IP or CIDR per line"
+    },
+    "timeConfig": {
+      "allowedHours": "Allowed Hours (HH:mm-HH:mm)",
+      "allowedDays": "Allowed Days",
+      "hoursPlaceholder": "Ex: 09:00-18:00",
+      "days": {
+        "0": "Sunday",
+        "1": "Monday",
+        "2": "Tuesday",
+        "3": "Wednesday",
+        "4": "Thursday",
+        "5": "Friday",
+        "6": "Saturday"
       }
     }
   },
@@ -955,6 +1022,53 @@
       "RESEND": "Resend",
       "POSTMARK": "Postmark",
       "AWS_SES": "AWS SES"
+    }
+  },
+  "AccessRequests": {
+    "title": "My Access Requests",
+    "subtitle": "History and status of your permission requests.",
+    "newRequest": "New Request",
+    "empty": "No requests found.",
+    "table": {
+      "resource": "Resource / Space",
+      "level": "Level",
+      "justification": "Justification",
+      "duration": "Duration",
+      "status": "Status",
+      "date": "Date",
+      "levelWrite": "Read-Write",
+      "levelRead": "Read-Only"
+    },
+    "status": {
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "pending": "Pending",
+      "expired": "Expired"
+    },
+    "dialog": {
+      "title": "Request Access",
+      "description": "You are requesting temporary access for: <bold>{resource}</bold>. This request will require approval.",
+      "labels": {
+        "level": "Access Level",
+        "duration": "Duration (days)",
+        "justification": "Justification"
+      },
+      "hints": {
+        "level": "Select if you need only view or modify rights.",
+        "duration": "How long do you need this access?"
+      },
+      "placeholders": {
+        "level": "Select level",
+        "justification": "Explain why you need this access..."
+      },
+      "validation": {
+          "justificationMin": "Justification must have at least 10 characters."
+      },
+      "submit": "Send Request",
+      "submitting": "Sending...",
+      "cancel": "Cancel",
+      "success": "Request sent successfully!",
+      "error": "Error sending request."
     }
   }
 }
