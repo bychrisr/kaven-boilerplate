@@ -91,20 +91,10 @@ export class EmailHealthCheckCronService {
   }
 
   /**
-   * Atualiza timestamps de execução
+   * Atualiza timestamps de execução (vazio pois modelo foi removido)
    */
   private async updateExecutionTimestamps() {
-    const config = await this.getConfig();
-    const now = new Date();
-    const nextRun = this.calculateNextRun(config.frequency);
-
-    await prisma.emailHealthCheckSettings.update({
-      where: { id: config.id },
-      data: {
-        lastRun: now,
-        nextRun: nextRun,
-      },
-    });
+    // No-op: EmailHealthCheckSettings model was removed from schema
   }
 
   /**
@@ -147,36 +137,22 @@ export class EmailHealthCheckCronService {
   }
 
   /**
-   * Busca configuração do banco (ou cria se não existir)
+   * Retorna configuração padrão (substitui modelo removido do banco)
    */
   private async getConfig() {
-    let config = await prisma.emailHealthCheckSettings.findFirst();
-
-    if (!config) {
-      // Criar configuração padrão
-      config = await prisma.emailHealthCheckSettings.create({
-        data: {
-          enabled: false,
-          frequency: '1h',
-        },
-      });
-    }
-
-    return config;
+    return {
+      id: 'default',
+      enabled: process.env.EMAIL_HEALTH_CHECK_ENABLED === 'true',
+      frequency: (process.env.EMAIL_HEALTH_CHECK_FREQUENCY as string) || '1h',
+    };
   }
 
   /**
-   * Atualiza configuração e reinicia cron job
+   * Atualiza configuração (apenas reinicia job, persiste via ENV se necessário)
    */
   async updateConfig(data: { enabled?: boolean; frequency?: string }) {
-    const config = await this.getConfig();
-
-    await prisma.emailHealthCheckSettings.update({
-      where: { id: config.id },
-      data,
-    });
-
-    // Reiniciar cron job com nova configuração
+    // No-op: Persistência removida do schema. 
+    // Em produção, isso deve ser via Env ou nova Tabela.
     await this.restart();
   }
 }

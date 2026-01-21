@@ -41,17 +41,14 @@ export class EmailIntegrationHealthService {
           details: { reason: 'missing_credentials' },
         };
 
-        // Atualizar banco
-        await this.updateHealthStatus(integrationId, healthResult);
+        // Retornar resultado sem atualizar banco (campos não existem no schema)
         return healthResult;
       }
 
       // Executar health check
       const healthResult = await provider.healthCheck();
 
-      // Atualizar banco
-      await this.updateHealthStatus(integrationId, healthResult);
-
+      // Retornar resultado sem atualizar banco (campos não existem no schema)
       return healthResult;
     } catch (error: any) {
       const healthResult = {
@@ -60,34 +57,13 @@ export class EmailIntegrationHealthService {
         details: { reason: 'error', error: error.message },
       };
 
-      // Tentar atualizar banco mesmo em caso de erro
-      try {
-        await this.updateHealthStatus(integrationId, healthResult);
-      } catch (updateError) {
-        console.error('[HealthService] Failed to update health status:', updateError);
-      }
-
+      // Tentar reportar erro sem atualizar banco (campos não existem no schema)
+      console.error('[HealthService] Email Health Check failed:', error);
       return healthResult;
     }
   }
 
-  /**
-   * Atualiza status de health check no banco
-   */
-  private async updateHealthStatus(
-    integrationId: string,
-    health: { healthy: boolean; message?: string; details?: Record<string, any> }
-  ) {
-    await prisma.emailIntegration.update({
-      where: { id: integrationId },
-      data: {
-        healthStatus: health.healthy ? 'healthy' : 'unhealthy',
-        healthMessage: health.message,
-        healthDetails: health.details as any,
-        lastHealthCheck: new Date(),
-      },
-    });
-  }
+
 
   /**
    * Executa health check em todas as integrações ativas

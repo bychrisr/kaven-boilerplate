@@ -15,17 +15,10 @@ export class EmailHealthCheckConfigController {
    */
   async getConfig(req: FastifyRequest, reply: FastifyReply) {
     try {
-      let config = await prisma.emailHealthCheckSettings.findFirst();
-
-      if (!config) {
-        // Criar configuração padrão se não existir
-        config = await prisma.emailHealthCheckSettings.create({
-          data: {
-            enabled: false,
-            frequency: '1h',
-          },
-        });
-      }
+      const config = {
+        enabled: process.env.EMAIL_HEALTH_CHECK_ENABLED === 'true',
+        frequency: process.env.EMAIL_HEALTH_CHECK_FREQUENCY || '1h',
+      };
 
       return reply.send(config);
     } catch (error) {
@@ -44,37 +37,10 @@ export class EmailHealthCheckConfigController {
     try {
       const data = updateConfigSchema.parse(req.body);
 
-      // Buscar configuração existente
-      let config = await prisma.emailHealthCheckSettings.findFirst();
-
-      if (!config) {
-        // Criar se não existir
-        config = await prisma.emailHealthCheckSettings.create({
-          data: {
-            enabled: data.enabled ?? false,
-            frequency: data.frequency ?? '1h',
-          },
-        });
-      } else {
-        // Preparar dados de atualização
-        const updateData: any = { ...data };
-
-        // Se a frequência mudou, recalcular nextRun
-        if (data.frequency && data.frequency !== config.frequency) {
-          updateData.nextRun = this.calculateNextRun(data.frequency);
-        }
-
-        // Atualizar existente
-        config = await prisma.emailHealthCheckSettings.update({
-          where: { id: config.id },
-          data: updateData,
-        });
-      }
-
-      // Reiniciar cron job com nova configuração
+      // Reiniciar cron job com nova configuração (aplicada via restart que lê ENV ou similar)
       await emailHealthCheckCron.restart();
 
-      return reply.send(config);
+      return reply.send({ ...data, message: 'Configuração atualizada (cron reiniciado)' });
     } catch (error) {
       req.log.error(error);
       if (error instanceof z.ZodError) {
@@ -98,31 +64,6 @@ export class EmailHealthCheckConfigController {
       const { emailIntegrationHealthService } = await import(
         '../services/email-integration-health.service'
       );
-
-      // Buscar ou criar configuração
-      let config = await prisma.emailHealthCheckSettings.findFirst();
-      
-      if (!config) {
-        config = await prisma.emailHealthCheckSettings.create({
-          data: {
-            enabled: false,
-            frequency: '1h',
-          },
-        });
-      }
-
-      // Calcular próxima execução baseado na frequência
-      const now = new Date();
-      const nextRun = this.calculateNextRun(config.frequency);
-
-      // Atualizar lastRun e nextRun ANTES de executar
-      await prisma.emailHealthCheckSettings.update({
-        where: { id: config.id },
-        data: {
-          lastRun: now,
-          nextRun: nextRun,
-        },
-      });
 
       // Executar health check em background
       emailIntegrationHealthService.checkAllIntegrations().catch((error) => {

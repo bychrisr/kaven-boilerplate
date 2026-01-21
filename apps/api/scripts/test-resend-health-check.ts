@@ -31,12 +31,9 @@ async function testResendHealthCheck() {
 
     // Criar provider
     const provider = new ResendProvider({
+      ...resendIntegration,
       apiKey,
-      fromEmail: resendIntegration.fromEmail || undefined,
-      fromName: resendIntegration.fromName || undefined,
-      transactionalDomain: resendIntegration.transactionalDomain || undefined,
-      marketingDomain: resendIntegration.marketingDomain || undefined,
-    });
+    } as any);
 
     // Executar health check
     console.log('🏥 Executando health check...\n');
