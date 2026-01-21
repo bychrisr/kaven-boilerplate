@@ -40,7 +40,19 @@ export function EmailIntegrationDialog({ mode, integration, trigger, asMenuItem 
   const queryClient = useQueryClient();
 
   const { register, handleSubmit, setValue, reset, control } = useForm<EmailIntegrationInput>({
-    defaultValues: integration || {
+    defaultValues: integration ? {
+      ...integration,
+      smtpHost: integration.smtpHost || '',
+      smtpUser: integration.smtpUser || '',
+      apiKey: integration.apiKey || '',
+      apiSecret: integration.apiSecret || '',
+      webhookSecret: integration.webhookSecret || '',
+      fromName: integration.fromName || '',
+      fromEmail: integration.fromEmail || '',
+      transactionalDomain: integration.transactionalDomain || '',
+      marketingDomain: integration.marketingDomain || '',
+      smtpSecure: !!integration.smtpSecure,
+    } : {
       provider: 'SMTP',
       isActive: true,
       isPrimary: false,
@@ -168,7 +180,7 @@ export function EmailIntegrationDialog({ mode, integration, trigger, asMenuItem 
           {/* Dynamic Provider Fields */}
           <div className="rounded-lg border p-4 bg-muted/20">
             <h4 className="text-sm font-medium mb-4 text-muted-foreground uppercase tracking-wider text-xs">Auth Credentials</h4>
-            <ProviderFields provider={selectedProvider} register={register} control={control} /> 
+            <ProviderFields provider={selectedProvider} register={register as any} control={control as any} /> 
             {/* Added control prop */}
           </div>
 

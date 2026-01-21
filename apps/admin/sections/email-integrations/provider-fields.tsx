@@ -7,18 +7,18 @@ import { Switch } from '@/components/ui/switch';
 import { UseFormRegister, Control, Controller } from 'react-hook-form';
 
 interface ProviderFormValues {
-  smtpHost?: string;
-  smtpPort?: number;
-  smtpUser?: string;
-  smtpPassword?: string;
-  smtpSecure?: boolean;
-  apiKey?: string;
-  apiSecret?: string;
-  region?: string;
-  transactionalStream?: string;
-  marketingStream?: string;
-  webhookSecret?: string;
-  testEmail?: string;
+  smtpHost?: string | null;
+  smtpPort?: number | null;
+  smtpUser?: string | null;
+  smtpPassword?: string | null;
+  smtpSecure?: boolean | null;
+  apiKey?: string | null;
+  apiSecret?: string | null;
+  region?: string | null;
+  transactionalStream?: string | null;
+  marketingStream?: string | null;
+  webhookSecret?: string | null;
+  testEmail?: string | null;
 }
 
 interface ProviderFieldsProps {
@@ -90,7 +90,7 @@ export function ProviderFields({ provider, register, control }: ProviderFieldsPr
               name="smtpSecure"
               render={({ field }) => (
                 <Switch 
-                  checked={field.value} 
+                  checked={!!field.value} 
                   onChange={field.onChange} 
                 />
               )}

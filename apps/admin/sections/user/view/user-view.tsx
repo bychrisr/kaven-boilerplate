@@ -24,6 +24,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import { ExportButton } from '@/components/extra/export-button';
 import {
   Select,
   SelectContent,
@@ -153,15 +154,23 @@ export function UserView() {
             </Breadcrumbs>
           </div>
         </div>
-        <Button 
-          variant="contained"
-          color="primary"
-          size="md"
-          onClick={() => setIsInviteOpen(true)}
-        >
-          <Plus className="h-4 w-4" />
-          {t('inviteUser')}
-        </Button>
+        <div className="flex gap-2">
+          <ExportButton 
+            endpoint={`/api/export/users?status=${filterStatus}&search=${filterName}`}
+            capability="users.export"
+            filename={`users-export-${new Date().toISOString().split('T')[0]}.csv`}
+            className="h-10"
+          />
+          <Button 
+            variant="contained"
+            color="primary"
+            size="md"
+            onClick={() => setIsInviteOpen(true)}
+          >
+            <Plus className="h-4 w-4" />
+            {t('inviteUser')}
+          </Button>
+        </div>
       </div>
 
       <Card className="!p-0 !gap-0 block overflow-hidden border-none shadow-md bg-card dark:bg-[#212B36]">
