@@ -154,7 +154,11 @@ export function TenantUsersList({ tenantId }: TenantUsersListProps) {
               users.map((user) => (
                 <TenantUserTableRow
                   key={user.id}
-                  row={user}
+                  row={{
+                    ...user,
+                    status: user.status || 'PENDING',
+                    tenant: user.tenant ? { id: tenantId, name: user.tenant.name } : null
+                  }}
                   selected={selected.includes(user.id)}
                   onSelectRow={() => handleSelectRow(user.id)}
                 />

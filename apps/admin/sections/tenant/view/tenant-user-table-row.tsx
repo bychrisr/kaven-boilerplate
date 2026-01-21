@@ -35,7 +35,7 @@ interface UserRow {
 }
 
 interface Props {
-  row: any; // User from API
+  row: UserRow;
   selected: boolean;
   onSelectRow: () => void;
 }
@@ -98,8 +98,7 @@ export function TenantUserTableRow({ row, selected, onSelectRow }: Props) {
       </TableCell>
 
       <TableCell>
-         {/* @ts-ignore Badge variant type mismatch handling */}
-        <Badge variant={statusVariant as "default" | "secondary" | "destructive" | "outline"}>{status}</Badge>
+        <Badge variant={statusVariant as "destructive"}>{status}</Badge>
       </TableCell>
 
       <TableCell align="right">

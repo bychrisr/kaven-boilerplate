@@ -63,7 +63,7 @@ export function TenantSwitcher() {
           {/* Spaces List */}
           <div className="p-2">
             {availableSpaces.map((space) => {
-              const isActive = currentSpace.id === space.id;
+              const isActive = currentSpace.code === space.code;
               
               return (
                 <button

@@ -7,7 +7,7 @@ import { Scrollbar } from '@/components/scrollbar/scrollbar';
 import { cn } from '@/lib/utils';
 
 import { useSpaces } from '@/hooks/use-spaces';
-import { SPACES } from '@/config/spaces';
+import { MASTER_NAVIGATION } from '@/config/navigation';
 import {
 
   ChevronDown,
@@ -36,6 +36,11 @@ interface NavigationItem {
   external?: boolean;
 }
 
+interface NavGroup {
+  title: string;
+  items: NavigationItem[];
+}
+
 
 
 export function Sidebar() {
@@ -62,33 +67,30 @@ export function Sidebar() {
     return t.has(`items.${key}`) ? t(`items.${key}`) : label;
   };
 
-  // Derive navigation sections based on current space
+  // Derive navigation sections based on actual capabilities, agnostic of Space code
   const navSections = useMemo(() => {
-    let spaceId = currentSpace?.id || 'ADMIN';
-    if ((spaceId as string) === 'ARCHITECT') spaceId = 'ADMIN';
-    
-    const config = SPACES[spaceId];
-    
-    if (!config) return [];
+    if (!currentSpace) return [];
 
-    return config.navSections.map(section => {
+    return MASTER_NAVIGATION.map((section) => {
       // Filter items based on capability
-      const filteredItems = section.items.filter(item => {
+      const filteredItems = section.items.filter((item) => {
         // 1. Check item permission
-        if (!check(item.requiredCapability)) return false;
+        if (item.requiredCapability && !check(item.requiredCapability)) return false;
         
         // 2. Check children permissions (if any)
         if (item.children) {
-             const visibleChildren = item.children.filter(child => check(child.requiredCapability));
+             const visibleChildren = item.children.filter((child) => 
+                !child.requiredCapability || check(child.requiredCapability)
+             );
              return visibleChildren.length > 0 || !item.children.length; 
         }
         
         return true; 
-      }).map(item => ({
+      }).map((item) => ({
         ...item,
         // Filter children here to be sure
-        children: item.children?.filter(child => check(child.requiredCapability))
-      })).filter(item => {
+        children: item.children?.filter((child) => !child.requiredCapability || check(child.requiredCapability))
+      })).filter((item) => {
         // Second pass: hide parent if all children were filtered out
         if (item.children && item.children.length === 0) return false;
         return true;
@@ -96,12 +98,12 @@ export function Sidebar() {
 
       return {
         title: section.title,
-        items: filteredItems.map(item => ({
-          name: item.label, // Keep original for key/logic if needed, but we render translation
+        items: filteredItems.map((item) => ({
+          name: item.label,
           label: item.label,
           href: item.href,
           icon: item.icon,
-          children: item.children?.map(child => ({
+          children: item.children?.map((child) => ({
             name: child.label,
             label: child.label,
             href: child.href,
@@ -109,7 +111,7 @@ export function Sidebar() {
           }))
         }))
       };
-    }).filter(section => section.items.length > 0); // Hide empty sections
+    }).filter((section) => section.items.length > 0); // Hide empty sections
   }, [currentSpace, check]); // Re-run when capabilities change
 
   // Expand all sections when navSections changes (e.g. switching spaces)
@@ -280,7 +282,7 @@ export function Sidebar() {
 
             {/* Navigation */}
             <nav className={cn("px-4 pb-4 flex-1", isCollapsed ? "space-y-4" : "space-y-6")}>
-              {navSections.map((section) => {
+              {navSections.map((section: NavGroup) => {
                 const isSectionExpanded = expandedSections.includes(section.title);
                 
                 return (
@@ -313,7 +315,7 @@ export function Sidebar() {
                           : "max-h-0 opacity-0"
                       )}
                     >
-                      {section.items.map((item) => renderNavItem(item))}
+                      {section.items.map((item: NavigationItem) => renderNavItem(item))}
                     </div>
                   </div>
                 );

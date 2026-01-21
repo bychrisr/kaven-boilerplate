@@ -6,11 +6,11 @@
 'use client';
 
 import { Building2, Users, Calendar, MoreVertical } from 'lucide-react';
-import type { MockTenant } from '@/lib/mock';
+import type { Tenant } from '@/hooks/use-tenants';
 import { fDate } from '@/lib/utils/format';
 
 type TenantCardProps = {
-  tenant: MockTenant;
+  tenant: Tenant & { usersCount?: number; plan?: string };
 };
 
 const planColors = {
@@ -21,10 +21,9 @@ const planColors = {
 };
 
 const statusColors = {
-  active: 'bg-green-100 text-green-800',
-  inactive: 'bg-gray-100 text-gray-800',
-  pending: 'bg-yellow-100 text-yellow-800',
-  suspended: 'bg-red-100 text-red-800',
+  ACTIVE: 'bg-green-100 text-green-800',
+  SUSPENDED: 'bg-red-100 text-red-800',
+  DELETED: 'bg-gray-100 text-gray-800',
 };
 
 export function TenantCard({ tenant }: TenantCardProps) {
@@ -50,7 +49,7 @@ export function TenantCard({ tenant }: TenantCardProps) {
       <div className="space-y-3 mb-4">
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <Users className="h-4 w-4" />
-          <span>{tenant.usersCount} usuários</span>
+          <span>{tenant.usersCount ?? 0} usuários</span>
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <Calendar className="h-4 w-4" />
@@ -62,14 +61,14 @@ export function TenantCard({ tenant }: TenantCardProps) {
       <div className="flex items-center gap-2">
         <span
           className={`px-2 py-1 text-xs font-semibold rounded-full ${
-            planColors[tenant.plan as keyof typeof planColors] || planColors.free
+            planColors[(tenant.plan?.toLowerCase() || 'free') as keyof typeof planColors] || planColors.free
           }`}
         >
-          {tenant.plan}
+          {tenant.plan || 'Free'}
         </span>
         <span
           className={`px-2 py-1 text-xs font-semibold rounded-full ${
-            statusColors[tenant.status as keyof typeof statusColors] || statusColors.inactive
+            statusColors[tenant.status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800'
           }`}
         >
           {tenant.status}
