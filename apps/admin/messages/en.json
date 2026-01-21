@@ -199,11 +199,12 @@
       }
     },
     "impersonation": {
-      "banner_title": "Impersonation Mode",
+      "banner_title": "Support Mode",
       "viewing_as": "You are viewing as",
       "exit": "Exit Session",
       "confirm_start": "Do you want to start a support session as {name}?",
-      "justification_default": "Administrative support"
+      "justification_default": "Administrative support",
+      "action": "Impersonate User"
     }
   },
   "Sidebar": {

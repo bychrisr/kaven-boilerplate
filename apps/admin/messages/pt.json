@@ -199,11 +199,12 @@
       }
     },
     "impersonation": {
-      "banner_title": "Modo Impersonation",
+      "banner_title": "Modo de Suporte",
       "viewing_as": "Você está visualizando como",
       "exit": "Sair da Sessão",
       "confirm_start": "Deseja iniciar uma sessão de suporte como {name}?",
-      "justification_default": "Suporte administrativo"
+      "justification_default": "Suporte administrativo",
+      "action": "Acessar como Usuário"
     }
   },
   "Sidebar": {

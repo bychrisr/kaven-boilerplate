@@ -53,6 +53,7 @@ type UserTableRowProps = {
 export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
   const t = useTranslations('User.table');
   const tUser = useTranslations('User.edit');
+  const tSec = useTranslations('Security.impersonation');
   const { name, email, role, status, phone, tenant } = row;
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { mutate: deleteUser, isPending } = useDeleteUser();
@@ -160,17 +161,17 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
                 <DropdownMenuItem 
                   onSelect={(e) => {
                     e.preventDefault();
-                    if (confirm(`Iniciar suporte como ${name}?`)) {
+                    if (confirm(tSec('confirm_start', { name }))) {
                       startImpersonation.mutate({ 
                         targetUserId: row.id,
-                        justification: 'Suporte administrativo via User List'
+                        justification: tSec('justification_default')
                       });
                     }
                   }}
                   disabled={startImpersonation.isPending}
                 >
                   <ShieldCheck className="mr-2 h-4 w-4" />
-                  Impersonate
+                  {tSec('action')}
                 </DropdownMenuItem>
 
                 <DropdownMenuItem 
