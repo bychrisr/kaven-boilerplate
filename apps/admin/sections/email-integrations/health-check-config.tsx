@@ -128,6 +128,7 @@ export function HealthCheckConfig() {
 
         {/* Run Now Button */}
         <Button
+          type="button"
           onClick={handleRunNow}
           disabled={runNowMutation.isPending}
           className="w-full"
