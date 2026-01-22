@@ -20,5 +20,6 @@ export default {
   'tenant-app-projects-tasks': 'Tenant App - Projects & Tasks',
   'email-integrations': 'Email Integrations',
   'email-dns-setup': 'Email DNS Setup',
+  'email-integration-health-check': 'Email Integration Health Check',
 };
 
