@@ -7,9 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectOption } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, Trash2, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
@@ -40,11 +39,16 @@ interface TasksTableProps {
 export function TasksTable({ projectId }: TasksTableProps) {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
-  const [newTask, setNewTask] = useState({
+  const [newTask, setNewTask] = useState<{
+    title: string;
+    description: string;
+    status: Task['status'];
+    priority: Task['priority'];
+  }>({
     title: '',
     description: '',
-    status: 'TODO' as const,
-    priority: 'MEDIUM' as const,
+    status: 'TODO',
+    priority: 'MEDIUM',
   });
 
   const { data: tasks, isLoading } = useQuery({
@@ -108,15 +112,7 @@ export function TasksTable({ projectId }: TasksTableProps) {
     createMutation.mutate(newTask);
   };
 
-  const getStatusColor = (status: Task['status']) => {
-    switch (status) {
-      case 'TODO': return 'secondary';
-      case 'IN_PROGRESS': return 'default';
-      case 'IN_REVIEW': return 'outline';
-      case 'DONE': return 'default';
-      default: return 'secondary';
-    }
-  };
+
 
   const getPriorityColor = (priority: Task['priority']) => {
     switch (priority) {
@@ -173,34 +169,26 @@ export function TasksTable({ projectId }: TasksTableProps) {
                   <Label htmlFor="status">Status</Label>
                   <Select
                     value={newTask.status}
-                    onValueChange={(value: any) => setNewTask({ ...newTask, status: value })}
+                    onChange={(value: string) => setNewTask({ ...newTask, status: value as Task['status'] })}
+                    placeholder="Select status"
                   >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="TODO">To Do</SelectItem>
-                      <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-                      <SelectItem value="IN_REVIEW">In Review</SelectItem>
-                      <SelectItem value="DONE">Done</SelectItem>
-                    </SelectContent>
+                    <SelectOption value="TODO">To Do</SelectOption>
+                    <SelectOption value="IN_PROGRESS">In Progress</SelectOption>
+                    <SelectOption value="IN_REVIEW">In Review</SelectOption>
+                    <SelectOption value="DONE">Done</SelectOption>
                   </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="priority">Priority</Label>
                   <Select
                     value={newTask.priority}
-                    onValueChange={(value: any) => setNewTask({ ...newTask, priority: value })}
+                    onChange={(value: string) => setNewTask({ ...newTask, priority: value as Task['priority'] })}
+                    placeholder="Select priority"
                   >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="LOW">Low</SelectItem>
-                      <SelectItem value="MEDIUM">Medium</SelectItem>
-                      <SelectItem value="HIGH">High</SelectItem>
-                      <SelectItem value="URGENT">Urgent</SelectItem>
-                    </SelectContent>
+                    <SelectOption value="LOW">Low</SelectOption>
+                    <SelectOption value="MEDIUM">Medium</SelectOption>
+                    <SelectOption value="HIGH">High</SelectOption>
+                    <SelectOption value="URGENT">Urgent</SelectOption>
                   </Select>
                 </div>
               </div>
@@ -243,19 +231,15 @@ export function TasksTable({ projectId }: TasksTableProps) {
                   <TableCell>
                     <Select
                       value={task.status}
-                      onValueChange={(value: any) =>
-                        updateStatusMutation.mutate({ taskId: task.id, status: value })
+                      onChange={(value: string) =>
+                        updateStatusMutation.mutate({ taskId: task.id, status: value as Task['status'] })
                       }
+                      className="w-32"
                     >
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="TODO">To Do</SelectItem>
-                        <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-                        <SelectItem value="IN_REVIEW">In Review</SelectItem>
-                        <SelectItem value="DONE">Done</SelectItem>
-                      </SelectContent>
+                      <SelectOption value="TODO">To Do</SelectOption>
+                      <SelectOption value="IN_PROGRESS">In Progress</SelectOption>
+                      <SelectOption value="IN_REVIEW">In Review</SelectOption>
+                      <SelectOption value="DONE">Done</SelectOption>
                     </Select>
                   </TableCell>
                   <TableCell>

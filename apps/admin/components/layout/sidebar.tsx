@@ -25,6 +25,7 @@ interface NavigationChild {
   label: string;
   href: string;
   external?: boolean;
+  requiredCapability?: string;
 }
 
 interface NavigationItem {
@@ -34,6 +35,7 @@ interface NavigationItem {
   icon: LucideIcon;
   children?: NavigationChild[];
   external?: boolean;
+  requiredCapability?: string;
 }
 
 interface NavGroup {
@@ -50,7 +52,7 @@ export function Sidebar() {
   const { currentSpace } = useSpaces();
   const { isCollapsed, toggle } = useSidebar();
   const { sidebarOpen: isMobileOpen, setSidebarOpen } = useUIStore();
-  const { check } = useCapabilities();
+  const { check, grants } = useCapabilities();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
 
@@ -103,11 +105,13 @@ export function Sidebar() {
           label: item.label,
           href: item.href,
           icon: item.icon,
+          requiredCapability: item.requiredCapability,
           children: item.children?.map((child) => ({
             name: child.label,
             label: child.label,
             href: child.href,
-            external: child.external
+            external: child.external,
+            requiredCapability: child.requiredCapability
           }))
         }))
       };
@@ -161,6 +165,10 @@ export function Sidebar() {
     const isExpanded = expandedItems.includes(item.name);
     const Icon = item.icon;
 
+    const itemGrant = item.requiredCapability 
+        ? grants.find(g => g.capabilityCode === item.requiredCapability)
+        : null;
+
     if (item.children) {
       return (
         <div key={item.name}>
@@ -169,7 +177,6 @@ export function Sidebar() {
             data-tooltip={isCollapsed ? getItemLabel(item.label) : undefined}
             className={cn(
               'w-full flex items-center justify-between px-3 py-2.5 text-sm rounded-lg transition-colors min-h-[44px]',
-              // Typography & Colors match reference
               isActive || (isExpanded && !isCollapsed)
                 ? 'bg-primary/10 text-primary font-semibold'
                 : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground font-medium',
@@ -178,7 +185,19 @@ export function Sidebar() {
           >
             <div className={cn("flex items-center gap-4 min-w-0", isCollapsed ? "gap-0" : "")}>
               <Icon className="h-6 w-6 flex-shrink-0" />
-              {!isCollapsed && <span className="truncate">{getItemLabel(item.label)}</span>}
+              {!isCollapsed && (
+                <div className="flex items-center gap-2 truncate">
+                  <span className="truncate">{getItemLabel(item.label)}</span>
+                  {itemGrant && (
+                    <span 
+                      className="px-1.5 py-0.5 text-[9px] font-bold bg-amber-500/20 text-amber-500 border border-amber-500/30 rounded uppercase tracking-tighter cursor-help"
+                      title={`Acesso temporário: ${itemGrant.justification}. Expira em: ${itemGrant.expiresAt ? new Date(itemGrant.expiresAt).toLocaleDateString() : 'N/A'}`}
+                    >
+                      TEMP
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
             {!isCollapsed && (
               <ChevronDown
@@ -190,6 +209,10 @@ export function Sidebar() {
             <div className="mt-1 space-y-1">
               {item.children.map((child: NavigationChild) => {
                 const isChildActive = pathname === child.href;
+                const childGrant = child.requiredCapability 
+                  ? grants.find(g => g.capabilityCode === child.requiredCapability)
+                  : null;
+
                 return (
                     <Link
                     key={child.href}
@@ -210,6 +233,14 @@ export function Sidebar() {
                        )} />
                     </div>
                     <span className="truncate">{getItemLabel(child.label)}</span>
+                    {childGrant && (
+                      <span 
+                        className="ml-auto px-1 py-0.5 text-[8px] font-bold bg-amber-500/20 text-amber-500 border border-amber-500/30 rounded uppercase tracking-tighter"
+                        title={`Expira em: ${childGrant.expiresAt ? new Date(childGrant.expiresAt).toLocaleDateString() : 'N/A'}`}
+                      >
+                        TEMP
+                      </span>
+                    )}
                     </Link>
                 );
               })}
@@ -233,7 +264,19 @@ export function Sidebar() {
         )}
       >
         <Icon className="h-6 w-6 flex-shrink-0" />
-        {!isCollapsed && <span className="truncate">{getItemLabel(item.label)}</span>}
+        {!isCollapsed && (
+          <div className="flex items-center gap-2 truncate">
+            <span className="truncate">{getItemLabel(item.label)}</span>
+            {itemGrant && (
+              <span 
+                className="px-1.5 py-0.5 text-[9px] font-bold bg-amber-500/20 text-amber-500 border border-amber-500/30 rounded uppercase tracking-tighter cursor-help"
+                title={`Acesso temporário: ${itemGrant.justification}. Expira em: ${itemGrant.expiresAt ? new Date(itemGrant.expiresAt).toLocaleDateString() : 'N/A'}`}
+              >
+                TEMP
+              </span>
+            )}
+          </div>
+        )}
       </Link>
     );
   };
