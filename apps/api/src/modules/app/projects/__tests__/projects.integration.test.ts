@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import axios from 'axios';
 
 const API_URL = process.env.API_URL || 'http://localhost:8000';
@@ -12,7 +12,7 @@ describe('Projects API Integration Tests', () => {
     // Login to get auth token
     const loginResponse = await axios.post(`${API_URL}/api/auth/login`, {
       email: 'admin@kaven.dev',
-      password: 'Admin@123',
+      password: process.env.ADMIN_INIT_PASSWORD || 'Secret.123!',
     });
     authToken = loginResponse.data.accessToken;
   });
@@ -86,7 +86,7 @@ describe('Projects API Integration Tests', () => {
           { description: 'No name' },
           { headers: { Authorization: `Bearer ${authToken}` } }
         );
-        fail('Should have thrown error');
+        expect.fail('Should have thrown error');
       } catch (error: any) {
         expect(error.response.status).toBe(400);
       }
@@ -113,7 +113,7 @@ describe('Projects API Integration Tests', () => {
           `${API_URL}/api/app/projects/non-existent-id`,
           { headers: { Authorization: `Bearer ${authToken}` } }
         );
-        fail('Should have thrown error');
+        expect.fail('Should have thrown error');
       } catch (error: any) {
         expect(error.response.status).toBe(404);
       }
@@ -173,7 +173,7 @@ describe('Projects API Integration Tests', () => {
           `${API_URL}/api/app/projects/${testProjectId}`,
           { headers: { Authorization: `Bearer ${authToken}` } }
         );
-        fail('Should have thrown error');
+        expect.fail('Should have thrown error');
       } catch (error: any) {
         expect(error.response.status).toBe(404);
       }

@@ -178,4 +178,4 @@ export const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])
 /**
  * Password validation error message
  */
-export const PASSWORD_ERROR_MESSAGE = 'Password must contain at least: 1 lowercase letter, 1 uppercase letter, 1 number and 1 special character';
+export const PWD_VALIDATION_ERROR = 'Password must contain at least: 1 lowercase letter, 1 uppercase letter, 1 number and 1 special character';
