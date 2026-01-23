@@ -1,0 +1,91 @@
+{
+  "name": "Observability Stack",
+  "slug": "observability",
+  "version": "1.0.0",
+  "description": "Prometheus metrics, diagnostics, and business event tracking.",
+  "category": "core",
+  "files": [
+    { 
+      "path": "api", 
+      "target": "apps/api/src/modules/observability" 
+    },
+    { 
+      "path": "admin", 
+      "target": "apps/admin/app/[locale]/(dashboard)/observability" 
+    }
+  ],
+  "injections": [
+    {
+      "targetFile": "apps/api/src/app.ts",
+      "type": "anchor",
+      "anchor": "KAVEN_MODULE_IMPORTS",
+      "content": "import { observabilityRoutes } from './modules/observability/routes/observability.routes';\nimport { diagnosticsRoutes } from './modules/observability/routes/diagnostics.routes';\nimport { advancedMetricsMiddleware, onResponseMetricsHook } from './modules/observability/middleware/advanced-metrics.middleware';",
+      "strategy": "append",
+      "dedupeKey": "obs-imports"
+    },
+    {
+      "targetFile": "apps/api/src/app.ts",
+      "type": "anchor",
+      "anchor": "KAVEN_MODULE_HOOKS",
+      "content": "app.addHook('onRequest', advancedMetricsMiddleware);\napp.addHook('onResponse', onResponseMetricsHook);",
+      "strategy": "append",
+      "dedupeKey": "obs-hooks"
+    },
+    {
+      "targetFile": "apps/api/src/app.ts",
+      "type": "anchor",
+      "anchor": "KAVEN_MODULE_REGISTRATION",
+      "content": "app.register(observabilityRoutes, { prefix: '/api/observability' });\napp.register(diagnosticsRoutes, { prefix: '/api/diagnostics' });",
+      "strategy": "append",
+      "dedupeKey": "obs-registration"
+    },
+    {
+      "targetFile": "apps/api/src/server.ts",
+      "type": "anchor",
+      "anchor": "KAVEN_SERVER_IMPORTS",
+      "content": "import { metricsUpdaterService } from './modules/observability/services/metrics-updater.service';",
+      "strategy": "append",
+      "dedupeKey": "obs-server-imports"
+    },
+    {
+      "targetFile": "apps/api/src/server.ts",
+      "type": "anchor",
+      "anchor": "KAVEN_SERVER_STARTUP",
+      "content": "metricsUpdaterService.start();",
+      "strategy": "append",
+      "dedupeKey": "obs-server-startup"
+    },
+    {
+      "targetFile": "apps/api/src/modules/auth/controllers/auth.controller.ts",
+      "type": "patch",
+      "pattern": "import { sanitizer } from '../../../utils/sanitizer';",
+      "strategy": "before",
+      "content": "import { businessMetricsService } from '../../observability/services/business-metrics.service';\n",
+      "dedupeKey": "obs-auth-import"
+    },
+    {
+      "targetFile": "apps/api/src/modules/auth/controllers/auth.controller.ts",
+      "type": "patch",
+      "pattern": "const result = await authService.register(data);",
+      "strategy": "after",
+      "content": "\n      // 📊 Track user registration\n      if ('user' in result) {\n        businessMetricsService.trackUserRegistration(result.user.id, 'email');\n      }",
+      "dedupeKey": "obs-auth-register"
+    },
+    {
+      "targetFile": "apps/api/src/modules/auth/controllers/auth.controller.ts",
+      "type": "patch",
+      "pattern": "const result = await authService.login(data, ip, userAgent);",
+      "strategy": "after",
+      "content": "\n      // 📊 Track successful login\n      businessMetricsService.trackLogin(true, 'email');",
+      "dedupeKey": "obs-auth-login-success"
+    },
+    {
+      "targetFile": "apps/api/src/modules/auth/controllers/auth.controller.ts",
+      "type": "patch",
+      "pattern": "} catch (error: any) {",
+      "strategy": "after",
+      "content": "\n      // 📊 Track failed login\n      businessMetricsService.trackLogin(false, 'email');",
+      "dedupeKey": "obs-auth-login-fail"
+    }
+  ]
+}

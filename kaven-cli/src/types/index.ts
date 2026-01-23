@@ -92,11 +92,4 @@ export interface Migration {
   source: 'kaven' | 'dev';
 }
 
-export interface ModuleManifest {
-  name: string;
-  version: string;
-  description: string;
-  dependencies?: Record<string, string>;
-  migrations?: string[];
-  files: string[];
-}
+export * from './module-manifest.js';

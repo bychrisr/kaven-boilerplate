@@ -1,0 +1,39 @@
+{
+  "name": "Payments Module",
+  "slug": "payments",
+  "version": "1.0.0",
+  "description": "Full payment stack with Stripe/MercadoPago, Invoices and Orders.",
+  "category": "feature",
+  "dependencies": {
+    "stripe": "^14.14.0",
+    "mercadopago": "^2.0.8"
+  },
+  "files": [
+    { 
+      "path": "api", 
+      "target": "apps/api/src/modules/payments" 
+    },
+    { 
+      "path": "admin", 
+      "target": "apps/admin/app/[locale]/(dashboard)/payments" 
+    }
+  ],
+  "injections": [
+    {
+      "targetFile": "apps/api/src/app.ts",
+      "type": "anchor",
+      "anchor": "KAVEN_MODULE_IMPORTS",
+      "content": "import { paymentRoutes, webhookRoutes } from './modules/payments/routes/payment.routes';\nimport { invoiceRoutes } from './modules/invoices/routes/invoice.routes';\nimport { orderRoutes } from './modules/orders/routes/order.routes';",
+      "strategy": "append",
+      "dedupeKey": "payments-imports"
+    },
+    {
+      "targetFile": "apps/api/src/app.ts",
+      "type": "anchor",
+      "anchor": "KAVEN_MODULE_REGISTRATION",
+      "content": "app.register(paymentRoutes, { prefix: '/api/payments' });\napp.register(invoiceRoutes, { prefix: '/api/invoices' });\napp.register(orderRoutes, { prefix: '/api/orders' });\napp.register(webhookRoutes, { prefix: '/api/webhooks' });",
+      "strategy": "append",
+      "dedupeKey": "payments-registration"
+    }
+  ]
+}

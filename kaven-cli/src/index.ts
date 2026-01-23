@@ -1,102 +1,57 @@
-/**
- * Kaven CLI
- * Main entry point
- */
+#!/usr/bin/env node
 
+import 'reflect-metadata';
 import { Command } from 'commander';
-import { updateCommand } from './commands/update.js';
-import { moduleCommand } from './commands/module.js';
-import { logger } from './lib/logger.js';
+// Ensure container logs are suppressed or handled? 
+// Actually container is imported for side-effects (bindings)
+import './core/ioc/container.js'; 
 
-const program = new Command();
+import fs from 'fs-extra';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-program
-  .name('kaven')
-  .description('Official CLI for Kaven Boilerplate')
-  .version('2.0.0');
+// Commands
+import { registerAuthCommands } from './commands/auth.js';
+import { registerMarketplaceCommands } from './commands/marketplace/index.js'; // Phase 2/3
 
-// kaven update
-program
-  .command('update')
-  .description('Update Kaven to the latest version')
-  .option('--check', 'Check for updates without installing')
-  .option('--force', 'Force update even with uncommitted changes')
-  .option('--skip-migrations', 'Skip running migrations')
-  .action(async (options) => {
-    try {
-      await updateCommand(options);
-    } catch (error) {
-      logger.error(`Update failed: ${error}`);
-      process.exit(1);
-    }
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export async function run() {
+  const program = new Command();
+
+  // Load Package JSON for version
+  // In build, src/index.ts -> dist/index.js. package.json is in ../package.json relative to dist?
+  // If dist/index.js, then ../package.json is correct.
+  const pkgPath = path.resolve(__dirname, '../package.json');
+  let pkgVersion = '0.0.0';
+  try {
+      const pkg = await fs.readJson(pkgPath);
+      pkgVersion = pkg.version;
+  } catch (e) {
+      // Ignored
+  }
+
+  program
+    .name('kaven')
+    .description('Kaven CLI - The Ultimate SaaS Boilerplate Tooling')
+    .version(pkgVersion);
+
+  // Register Commands
+  registerAuthCommands(program);
+  registerMarketplaceCommands(program);
+
+  // Global Error Handler
+  process.on('unhandledRejection', (err) => {
+    console.error('CRITICAL ERROR:', err);
+    process.exit(1);
   });
 
-// kaven module
-const moduleCmd = program
-  .command('module')
-  .description('Manage Kaven modules');
-
-moduleCmd
-  .command('add <name>')
-  .description('Add a module')
-  .action(async (name) => {
-    try {
-      await moduleCommand('add', name);
-    } catch (error) {
-      logger.error(`Failed to add module: ${error}`);
-      process.exit(1);
-    }
-  });
-
-moduleCmd
-  .command('remove <name>')
-  .description('Remove a module')
-  .action(async (name) => {
-    try {
-      await moduleCommand('remove', name);
-    } catch (error) {
-      logger.error(`Failed to remove module: ${error}`);
-      process.exit(1);
-    }
-  });
-
-moduleCmd
-  .command('list')
-  .description('List all modules')
-  .action(async () => {
-    try {
-      await moduleCommand('list');
-    } catch (error) {
-      logger.error(`Failed to list modules: ${error}`);
-      process.exit(1);
-    }
-  });
-
-// kaven db
-import { dbCommand } from './commands/db.js';
-
-const dbCmd = program
-  .command('db')
-  .description('Database management commands');
-
-dbCmd
-  .command('generate')
-  .description('Generate final schema.prisma from base and extended files')
-  .action(async () => {
-    try {
-      await dbCommand('generate');
-    } catch (error) {
-      logger.error(`Failed to generate schema: ${error}`);
-      process.exit(1);
-    }
-  });
-
-
-export async function run(): Promise<void> {
   await program.parseAsync(process.argv);
 }
 
-run().catch((error) => {
-  logger.error(`CLI execution failed: ${error}`);
-  process.exit(1);
-});
+// Support direct execution if run as script
+import { pathToFileURL } from 'url';
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  run();
+}

@@ -1,46 +1,15 @@
 import path from 'path';
 import { logger } from '../lib/logger.js';
 import { fsUtils } from '../lib/fs.js';
-import { ModuleOptions, KavenConfig } from '../types/index.js';
+import { ModuleOptions, KavenConfig, ModuleManifest, ModuleManifestSchema, ModuleInjection } from '../types/index.js';
 
 export class ModuleManager {
   private readonly projectRoot: string;
-  private readonly modulesPath: string;
-  private injections: Record<string, { 
-    appImports: string; 
-    appRegistration: string; 
-    appHooks?: string;
-    serverImports?: string;
-    serverStartup?: string;
-    authControllerInjections?: {
-        import: string;
-        registerTrack: string;
-        loginSuccessTrack: string;
-        loginFailTrack: string;
-    }
-  }> = {
-    'payments': {
-      appImports: "import { paymentRoutes, webhookRoutes } from './modules/payments/routes/payment.routes';\nimport { invoiceRoutes } from './modules/invoices/routes/invoice.routes';\nimport { orderRoutes } from './modules/orders/routes/order.routes';",
-      appRegistration: "app.register(paymentRoutes, { prefix: '/api/payments' });\napp.register(invoiceRoutes, { prefix: '/api/invoices' });\napp.register(orderRoutes, { prefix: '/api/orders' });\napp.register(webhookRoutes, { prefix: '/api/webhooks' });"
-    },
-    'observability': {
-      appImports: "import { observabilityRoutes } from './modules/observability/routes/observability.routes';\nimport { diagnosticsRoutes } from './modules/observability/routes/diagnostics.routes';\nimport { advancedMetricsMiddleware, onResponseMetricsHook } from './modules/observability/middleware/advanced-metrics.middleware';",
-      appHooks: "app.addHook('onRequest', advancedMetricsMiddleware);\napp.addHook('onResponse', onResponseMetricsHook);",
-      appRegistration: "app.register(observabilityRoutes, { prefix: '/api/observability' });\napp.register(diagnosticsRoutes, { prefix: '/api/diagnostics' });",
-      serverImports: "import { metricsUpdaterService } from './modules/observability/services/metrics-updater.service';",
-      serverStartup: "metricsUpdaterService.start();",
-      authControllerInjections: {
-          import: "import { businessMetricsService } from '../../observability/services/business-metrics.service';",
-          registerTrack: "      // 📊 Track user registration\n      if ('user' in result) {\n        businessMetricsService.trackUserRegistration(result.user.id, 'email');\n      }",
-          loginSuccessTrack: "      // 📊 Track successful login\n      businessMetricsService.trackLogin(true, 'email');",
-          loginFailTrack: "      // 📊 Track failed login\n      businessMetricsService.trackLogin(false, 'email');"
-      }
-    }
-  };
+  private readonly modulesStorePath: string;
 
   constructor(projectRoot: string) {
     this.projectRoot = projectRoot;
-    this.modulesPath = path.join(projectRoot, 'apps/api/src/modules');
+    this.modulesStorePath = path.join(projectRoot, 'kaven-cli/modules');
   }
 
   /**
@@ -62,6 +31,24 @@ export class ModuleManager {
     }
   }
 
+  private async loadManifest(name: string): Promise<ModuleManifest> {
+      // 1. Try Local (Dev Mode / Cached)
+      const manifestPath = path.join(this.modulesStorePath, name, 'module.json');
+      if (await fsUtils.exists(manifestPath)) {
+          try {
+              const content = await fsUtils.readJSON(manifestPath);
+              return ModuleManifestSchema.parse(content);
+          } catch (error: any) {
+              throw new Error(`Invalid manifest for module "${name}": ${error.message}`);
+          }
+      }
+
+      // 2. Try Local Cache (Downloaded)
+      // TODO: Implement cache dir logic explicitly if not using modulesStorePath as cache
+      
+      throw new Error(`Module "${name}" not found locally. Support for automatic remote download is active in addModule flow.`);
+  }
+
   /**
    * Add a module to the project
    */
@@ -69,32 +56,54 @@ export class ModuleManager {
     logger.startSpinner(`Adding module "${name}"...`);
 
     try {
-      if (!this.isValidModule(name)) {
-        throw new Error(`Module "${name}" not found in Kaven catalog.`);
+      // 1. Resolve Manifest source
+      let manifest: ModuleManifest;
+      let modulePath = path.join(this.modulesStorePath, name);
+      
+      if (!await fsUtils.exists(modulePath)) {
+          // Attempt Remote Download
+          logger.info(`Module undefined locally, attempting download from Marketplace...`);
+          
+          // Lazy resolve dependencies to avoid circular imports if any, or just get from container/global
+          // In this non-DI class (it's new'd manually in current CLI), we need to access container or pass deps.
+          // For Phase 2 refactor, we should move ModuleManager to container.
+          // But strict update: let's try to get from container instance if exported
+          try {
+              const { container } = await import('./ioc/container.js');
+              const { TYPES } = await import('./ioc/types.js');
+              const marketplace = container.get<any>(TYPES.MarketplaceClient);
+              const downloadManager = container.get<any>(TYPES.DownloadManager);
+              
+              const moduleInfo = await marketplace.getModule(name);
+              // TODO: Version selection
+              const downloadToken = await marketplace.getDownloadToken(name, moduleInfo.version);
+              
+              // Target: modulesStorePath (acts as cache)
+              await downloadManager.downloadAndExtract(name, downloadToken, modulePath);
+          } catch (e: any) {
+             throw new Error(`Failed to download module "${name}": ${e.message}`);
+          }
       }
 
+      manifest = await this.loadManifest(name);
+      
       const config = await fsUtils.readKavenConfig(this.projectRoot);
-      const storePath = path.join(this.projectRoot, 'kaven-cli/modules', name);
+      const storePath = path.join(this.modulesStorePath, name);
 
-      // 1. Copy API files
-      const apiSource = path.join(storePath, 'api');
-      if (await fsUtils.exists(apiSource)) {
-        const apiTarget = path.join(this.modulesPath, name);
-        await fsUtils.copy(apiSource, apiTarget);
+      // 2. Copy Files
+      for (const file of manifest.files) {
+          const sourcePath = path.join(storePath, file.path);
+          const targetPath = path.join(this.projectRoot, file.target);
+          if (await fsUtils.exists(sourcePath)) {
+              await fsUtils.copy(sourcePath, targetPath);
+          }
       }
 
-      // 2. Copy Admin files
-      const adminSource = path.join(storePath, 'admin');
-      if (await fsUtils.exists(adminSource)) {
-        const adminTarget = path.join(this.projectRoot, 'apps/admin/app/[locale]/(dashboard)', name);
-        await fsUtils.copy(adminSource, adminTarget);
-      }
-
-      // 3. Inject Routes in app.ts
-      await this.injectRoutes(name);
+      // 3. Inject Code
+      await this.injectCode(manifest);
 
       // 4. Update Config
-      await this.updateConfig(config, name, true);
+      await this.updateConfig(config, manifest.slug, true);
 
       logger.succeedSpinner(`Module "${name}" added successfully!`);
     } catch (error: any) {
@@ -110,30 +119,34 @@ export class ModuleManager {
     logger.startSpinner(`Removing module "${name}"...`);
 
     try {
+      // Try to load manifest, if fails (e.g. stores missing), try to cleanup via config if possible?
+      // For Phase 0, we assume manifest exists to guide removal.
+      const manifest = await this.loadManifest(name);
       const config = await fsUtils.readKavenConfig(this.projectRoot);
       
-      if (!this.isModuleInstalled(config, name)) {
+      if (!this.isModuleInstalled(config, manifest.slug)) {
         logger.warning(`Module "${name}" is not installed.`);
         logger.stopSpinner();
         return;
       }
 
-      // 1. Remove files
-      const apiPath = path.join(this.modulesPath, name);
-      if (await fsUtils.exists(apiPath)) {
-        await fsUtils.remove(apiPath);
+      // 1. Remove Files
+      for (const file of manifest.files) {
+          // Careful: Only remove if it's a directory? 
+          // Previous logic removed the whole target directory. 
+          // If target is specific file, remove file. If dir, remove dir.
+          // In previous implementation: path.join(this.modulesPath, name) -> removed dir.
+          const targetPath = path.join(this.projectRoot, file.target);
+          if (await fsUtils.exists(targetPath)) {
+             await fsUtils.remove(targetPath);
+          }
       }
 
-      const adminPath = path.join(this.projectRoot, 'apps/admin/app/[locale]/(dashboard)', name);
-      if (await fsUtils.exists(adminPath)) {
-        await fsUtils.remove(adminPath);
-      }
-
-      // 2. Remove Routes from app.ts
-      await this.ejectRoutes(name);
+      // 2. Eject Code
+      await this.ejectCode(manifest);
 
       // 3. Update config
-      await this.updateConfig(config, name, false);
+      await this.updateConfig(config, manifest.slug, false);
 
       logger.succeedSpinner(`Module "${name}" removed successfully!`);
     } catch (error: any) {
@@ -143,137 +156,72 @@ export class ModuleManager {
   }
 
   /**
-   * Inject routes and hooks into app.ts and startup into server.ts
+   * Inject code based on manifest
    */
-  private async injectRoutes(name: string): Promise<void> {
-    const appTsPath = path.join(this.projectRoot, 'apps/api/src/app.ts');
-    const serverTsPath = path.join(this.projectRoot, 'apps/api/src/server.ts');
-    const authControllerPath = path.join(this.projectRoot, 'apps/api/src/modules/auth/controllers/auth.controller.ts');
-    
-    let appContent = await fsUtils.readFile(appTsPath);
-    let serverContent = await fsUtils.readFile(serverTsPath);
+  private async injectCode(manifest: ModuleManifest): Promise<void> {
+      for (const injection of manifest.injections) {
+          const absPath = path.join(this.projectRoot, injection.targetFile);
+          if (!await fsUtils.exists(absPath)) continue;
 
-    const injection = this.injections[name];
-    if (!injection) return;
+          let content = await fsUtils.readFile(absPath);
+          
+          // Marker Logic
+          const markerStart = `// [KAVEN:${manifest.slug}:${injection.dedupeKey || 'GENERIC'}:START]`;
+          const markerEnd = `// [KAVEN:${manifest.slug}:${injection.dedupeKey || 'GENERIC'}:END]`;
+          
+          if (content.includes(markerStart)) continue; // Already injected
 
-    // 1. App Injections
-    if (!appContent.includes(injection.appImports)) {
-        appContent = appContent.replace('// [KAVEN_MODULE_IMPORTS]', `${injection.appImports}\n// [KAVEN_MODULE_IMPORTS]`);
-    }
-    if (injection.appHooks && !appContent.includes(injection.appHooks)) {
-        appContent = appContent.replace('// [KAVEN_MODULE_HOOKS]', `${injection.appHooks}\n// [KAVEN_MODULE_HOOKS]`);
-    }
-    if (!appContent.includes(injection.appRegistration)) {
-        appContent = appContent.replace('// [KAVEN_MODULE_REGISTRATION]', `${injection.appRegistration}\n// [KAVEN_MODULE_REGISTRATION]`);
-    }
+          const wrappedContent = `${markerStart}\n${injection.content}\n${markerEnd}`;
 
-    // 2. Server Injections
-    if (injection.serverImports && !serverContent.includes(injection.serverImports)) {
-        serverContent = serverContent.replace('// [KAVEN_SERVER_IMPORTS]', `${injection.serverImports}\n// [KAVEN_SERVER_IMPORTS]`);
-    }
-    if (injection.serverStartup && !serverContent.includes(injection.serverStartup)) {
-        serverContent = serverContent.replace('// [KAVEN_SERVER_STARTUP]', `${injection.serverStartup}\n// [KAVEN_SERVER_STARTUP]`);
-    }
-
-    // 3. AuthController Injections (Special case)
-    if (injection.authControllerInjections && await fsUtils.exists(authControllerPath)) {
-        let authContent = await fsUtils.readFile(authControllerPath);
-        if (!authContent.includes(injection.authControllerInjections.import)) {
-            authContent = authContent.replace("import { sanitizer } from '../../../utils/sanitizer';", `${injection.authControllerInjections.import}\nimport { sanitizer } from '../../../utils/sanitizer';`);
-            authContent = authContent.replace("const result = await authService.register(data);", `const result = await authService.register(data);\n\n${injection.authControllerInjections.registerTrack}`);
-            authContent = authContent.replace("const result = await authService.login(data, ip, userAgent);", `const result = await authService.login(data, ip, userAgent);\n\n${injection.authControllerInjections.loginSuccessTrack}`);
-            authContent = authContent.replace("} catch (error: any) {", `} catch (error: any) {\n${injection.authControllerInjections.loginFailTrack}`);
-            
-            await fsUtils.writeFile(authControllerPath, authContent);
-        }
-    }
-
-    await fsUtils.writeFile(appTsPath, appContent);
-    await fsUtils.writeFile(serverTsPath, serverContent);
+          if (injection.type === 'anchor' && injection.anchor) {
+              const anchorTag = `// [${injection.anchor}]`;
+              if (content.includes(anchorTag)) {
+                  // Append strategy by default for anchors (inject BEFORE the anchor tag to keep anchor at the end of block)
+                  // Wait, original logic replaced anchor with "new content + \n + anchor".
+                  // This effectively "pushes" the anchor down.
+                  content = content.replace(anchorTag, `${wrappedContent}\n${anchorTag}`);
+                  await fsUtils.writeFile(absPath, content);
+              }
+          } else if (injection.type === 'patch' && injection.pattern) {
+             const pattern = injection.pattern; 
+             // Simple string match for Phase 0
+             if (content.includes(pattern)) {
+                 if (injection.strategy === 'before') {
+                     content = content.replace(pattern, `${wrappedContent}\n${pattern}`);
+                 } else if (injection.strategy === 'after') {
+                     content = content.replace(pattern, `${pattern}\n${wrappedContent}`);
+                 }
+                 await fsUtils.writeFile(absPath, content);
+             }
+          }
+      }
   }
 
   /**
-   * Remove routes and hooks from core files
+   * Eject code based on manifest markers
    */
-  private async ejectRoutes(name: string): Promise<void> {
-    const appTsPath = path.join(this.projectRoot, 'apps/api/src/app.ts');
-    const serverTsPath = path.join(this.projectRoot, 'apps/api/src/server.ts');
-    const authControllerPath = path.join(this.projectRoot, 'apps/api/src/modules/auth/controllers/auth.controller.ts');
-    
-    let appContent = await fsUtils.readFile(appTsPath);
-    let serverContent = await fsUtils.readFile(serverTsPath);
+  private async ejectCode(manifest: ModuleManifest): Promise<void> {
+      for (const injection of manifest.injections) {
+          const absPath = path.join(this.projectRoot, injection.targetFile);
+          if (!await fsUtils.exists(absPath)) continue;
 
-    const routesToRemove: Record<string, string[]> = {
-        'payments': [
-            "import { paymentRoutes, webhookRoutes } from './modules/payments/routes/payment.routes';",
-            "import { invoiceRoutes } from './modules/invoices/routes/invoice.routes';",
-            "import { orderRoutes } from './modules/orders/routes/order.routes';",
-            "app.register(paymentRoutes, { prefix: '/api/payments' });",
-            "app.register(invoiceRoutes, { prefix: '/api/invoices' });",
-            "app.register(orderRoutes, { prefix: '/api/orders' });",
-            "app.register(webhookRoutes, { prefix: '/api/webhooks' });"
-        ],
-        'observability': [
-            "import { observabilityRoutes } from './modules/observability/routes/observability.routes';",
-            "import { diagnosticsRoutes } from './modules/observability/routes/diagnostics.routes';",
-            "import { advancedMetricsMiddleware, onResponseMetricsHook } from './modules/observability/middleware/advanced-metrics.middleware';",
-            "app.addHook('onRequest', advancedMetricsMiddleware);",
-            "app.addHook('onResponse', onResponseMetricsHook);",
-            "app.register(observabilityRoutes, { prefix: '/api/observability' });",
-            "app.register(diagnosticsRoutes, { prefix: '/api/diagnostics' });",
-            "import { metricsUpdaterService } from './modules/observability/services/metrics-updater.service';",
-            "metricsUpdaterService.start();",
-            "import { businessMetricsService } from '../../observability/services/business-metrics.service';",
-            "businessMetricsService.trackUserRegistration",
-            "businessMetricsService.trackLogin"
-        ]
-    };
+          let content = await fsUtils.readFile(absPath);
+          
+          const markerStart = `// [KAVEN:${manifest.slug}:${injection.dedupeKey || 'GENERIC'}:START]`;
+          const markerEnd = `// [KAVEN:${manifest.slug}:${injection.dedupeKey || 'GENERIC'}:END]`;
 
-    const targets = routesToRemove[name];
-    if (targets) {
-        targets.forEach(target => {
-            // Se for observabilidade, tratar AuthController especialmente antes do RegExp genérico
-            if (name === 'observability' && target.startsWith('businessMetricsService.track')) {
-                // Skip for generic core replacement - will handle explicitly
-                return;
-            }
-            appContent = appContent.replace(new RegExp(target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '');
-            serverContent = serverContent.replace(new RegExp(target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '');
-        });
-        
-        // Cleanup para AuthController
-        if (name === 'observability' && await fsUtils.exists(authControllerPath)) {
-            let authContent = await fsUtils.readFile(authControllerPath);
-            
-            const authInjection = this.injections['observability'].authControllerInjections;
-            if (authInjection) {
-                authContent = authContent.replace(authInjection.import, '');
-                authContent = authContent.replace(authInjection.registerTrack, '');
-                authContent = authContent.replace(authInjection.loginSuccessTrack, '');
-                authContent = authContent.replace(authInjection.loginFailTrack, '');
-            }
-
-            // Fallback for duplicates or partials
-            authContent = authContent.replace(/import { businessMetricsService } from .*/g, '');
-            authContent = authContent.replace(/\/\/ 📊 Track .*/g, '');
-            authContent = authContent.replace(/businessMetricsService\.trackUserRegistration\(.*/g, '');
-            authContent = authContent.replace(/businessMetricsService\.trackLogin\(.*/g, '');
-            authContent = authContent.replace(/\(result\.user\.id, 'email'\);/g, '');
-            authContent = authContent.replace(/\(true, 'email'\);/g, '');
-            authContent = authContent.replace(/\(false, 'email'\);/g, '');
-
-            // Clean up empty lines
-            authContent = authContent.replace(/\n\s*\n\s*\n/g, '\n\n');
-            await fsUtils.writeFile(authControllerPath, authContent);
-        }
-
-        // Clean up empty lines for app/server
-        appContent = appContent.replace(/\n\s*\n\s*\n/g, '\n\n');
-        serverContent = serverContent.replace(/\n\s*\n\s*\n/g, '\n\n');
-    }
-
-    await fsUtils.writeFile(appTsPath, appContent);
-    await fsUtils.writeFile(serverTsPath, serverContent);
+          // Regex to match everything between markers including markers
+          // Escape special chars in markers
+          const escapeRegExp = (string: string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const regex = new RegExp(`${escapeRegExp(markerStart)}[\\s\\S]*?${escapeRegExp(markerEnd)}\\n?`, 'g');
+          
+          if (regex.test(content)) {
+              content = content.replace(regex, '');
+              // Clean up potential double newlines left behind
+              content = content.replace(/\n\s*\n\s*\n/g, '\n\n');
+              await fsUtils.writeFile(absPath, content);
+          }
+      }
   }
 
   /**
@@ -284,24 +232,27 @@ export class ModuleManager {
         const config = await fsUtils.readKavenConfig(this.projectRoot);
         const installed = Object.keys(config.kaven.modules.optional).filter(k => config.kaven.modules.optional[k]);
         
+        // Scan store directory for available modules
+        const available: string[] = [];
+        if (await fsUtils.exists(this.modulesStorePath)) {
+            const items = await import('fs').then(fs => fs.promises.readdir(this.modulesStorePath));
+            for (const item of items) {
+                if (await fsUtils.exists(path.join(this.modulesStorePath, item, 'module.json'))) {
+                    available.push(item);
+                }
+            }
+        }
+        
         logger.box('Kaven Modules', [
             'Installed:',
             ...installed.map(m => `  ✅ ${m}`),
             '',
             'Available:',
-            '  📦 payments',
-            '  📦 observability',
-            '  📦 ai-assistant (coming soon)',
-            '  📦 analytics (coming soon)'
+            ...available.map(m => `  📦 ${m}`),
         ]);
     } catch (error) {
         logger.error(`Failed to read config: ${error}`);
     }
-  }
-
-  private isValidModule(name: string): boolean {
-    const validModules = ['payments', 'observability', 'ai-assistant', 'analytics'];
-    return validModules.includes(name);
   }
 
   private isModuleInstalled(config: KavenConfig, name: string): boolean {
@@ -309,6 +260,9 @@ export class ModuleManager {
   }
 
   private async updateConfig(config: KavenConfig, name: string, installed: boolean): Promise<void> {
+    // Normalizing naming: If old "payments-stripe" exists, remove it?
+    // For Phase 0, we use new slug from module.json (e.g. "payments")
+    
     config.kaven.modules.optional[name] = installed;
     
     // Fallback if customizations object is missing

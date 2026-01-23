@@ -170,8 +170,7 @@ export class ProjectInitializer {
         modules: {
           core: { auth: true, users: true, tenants: true },
           optional: {
-            'payments-stripe': options.payment === 'stripe',
-            'payments-mercadopago': options.payment === 'mercadopago',
+            'payments': options.payment !== 'none',
             analytics: options.modules.analytics,
             'ai-assistant': options.modules.aiAssistant,
             notifications: options.modules.notifications,
@@ -186,8 +185,19 @@ export class ProjectInitializer {
 
     const modulesPath = path.join(projectPath, 'apps/api/src/modules');
     if (await fsUtils.exists(modulesPath)) {
-      if (options.payment !== 'stripe') await fsUtils.remove(path.join(modulesPath, 'payments-stripe'));
-      if (options.payment !== 'mercadopago') await fsUtils.remove(path.join(modulesPath, 'payments-mercadopago'));
+      // Phase 0: Normalized 'payments' module handling
+      // If payment is 'none', we treat it as removing the payments module entirely
+      if (options.payment === 'none') {
+          // In the new system, we would just run moduleManager.remove('payments')
+          // But here we are simulating what the template has pre-installed
+          // Assuming template has 'payments' folder or split folders
+          // For AS-IS compatibility with current boilerplate structure:
+          await fsUtils.remove(path.join(modulesPath, 'payments')); 
+          // Also remove specific provider folders if they exist in template (legacy)
+          await fsUtils.remove(path.join(modulesPath, 'payments-stripe'));
+          await fsUtils.remove(path.join(modulesPath, 'payments-mercadopago'));
+      }
+      
       if (!options.modules.analytics) await fsUtils.remove(path.join(modulesPath, 'analytics'));
       if (!options.modules.aiAssistant) await fsUtils.remove(path.join(modulesPath, 'ai-assistant'));
       if (!options.modules.notifications) await fsUtils.remove(path.join(modulesPath, 'notifications'));
