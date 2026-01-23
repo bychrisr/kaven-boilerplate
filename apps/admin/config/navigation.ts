@@ -92,7 +92,7 @@ export const MASTER_NAVIGATION: NavSection[] = [
     items: [
       { icon: Headphones, label: 'Tickets', href: '/coming-soon', requiredCapability: 'tickets.read' },
       { icon: UserCheck, label: 'Impersonation', href: '/coming-soon', requiredCapability: 'impersonation.start' },
-      { icon: Shield, label: '2FA Reset', href: '/coming-soon', requiredCapability: 'auth.2fa_reset.request' }
+      { icon: Shield, label: '2FA Reset', href: '/security/2fa-reset', requiredCapability: 'auth.2fa_reset.request' }
     ]
   },
   {

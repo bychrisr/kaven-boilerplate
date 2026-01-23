@@ -208,6 +208,17 @@
       "confirm_start": "Deseja iniciar uma sessão de suporte como {name}?",
       "justification_default": "Suporte administrativo",
       "action": "Acessar como Usuário"
+    },
+    "TwoFactorReset": {
+      "title": "Recuperação de Conta (2FA Reset)",
+      "description": "Gestão de solicitações para reset de autenticação de dois fatores.",
+      "requestDialog": {
+        "title": "Solicitar Reset de 2FA",
+        "description": "Esta ação será auditada e requer aprovação superior para ser executada.",
+        "email": "Email do Usuário",
+        "justification": "Justificativa",
+        "justificationPlaceholder": "Motivo da solicitação de reset..."
+      }
     }
   },
   "Sidebar": {
@@ -1166,7 +1177,7 @@
       "cancel": "Cancelar",
       "success": "Solicitação enviada com sucesso!",
       "error": "Erro ao enviar solicitação."
->>>>>>> c4fe432 (chore: update translations and shared validation logic)
+
     }
   }
 }

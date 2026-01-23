@@ -207,7 +207,18 @@
       "exit": "Exit Session",
       "confirm_start": "Do you want to start a support session as {name}?",
       "justification_default": "Administrative support",
-      "action": "Impersonate User"
+      "action": "Access as User"
+    },
+    "TwoFactorReset": {
+      "title": "Account Recovery (2FA Reset)",
+      "description": "Management of requests for resetting two-factor authentication.",
+      "requestDialog": {
+        "title": "Request 2FA Reset",
+        "description": "This action will be audited and requires superior approval to be executed.",
+        "email": "User Email",
+        "justification": "Justification",
+        "justificationPlaceholder": "Reason for the reset request..."
+      }
     }
   },
   "Sidebar": {
