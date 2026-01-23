@@ -51,6 +51,12 @@
 │   ├── 03-admin-panel.md        # Next.js admin panel
 │   ├── 04-payment-system.md     # Stripe integration
 │   └── 05-testing-deployment.md # Testing setup
+│   └── 06-spaces-permissions-stabilization.md # Spaces/Permissions stabilization (x-space-id + Admin HTTP)
+│
+├── rules/                        # Always-on rules ("skills") for agents
+│   ├── snyk_rules.md             # Security scanning discipline
+│   ├── space-context-contract.md # x-space-id contract (space-aware auth)
+│   └── entitlements-gating-contract.md # Plan entitlements + gating contract
 │
 ├── telemetry/                    # Execution metrics (generated at runtime)
 │   ├── current_execution.json   # Current workflow state
