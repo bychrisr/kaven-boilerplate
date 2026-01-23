@@ -10,6 +10,9 @@ const prisma = new PrismaClient();
  * Serviço reutilizável para configuração inicial do sistema
  * Pode ser usado tanto via CLI (seed.ts) quanto via API (/api/setup/init)
  */
+// Default password for seed users if not provided in env
+const DEFAULT_SEED_PASSWORD = process.env.SEED_DEFAULT_PASSWORD || 'Dev@123456';
+
 export class SetupService {
   /**
    * Executa o seed completo do banco de dados
@@ -144,7 +147,7 @@ export class SetupService {
    * Cria o usuário FINANCE (CFO) - Condicional
    */
   private static async createFinanceUser(tenantId: string) {
-    const hashedPassword = await bcrypt.hash('Finance@123', 12);
+    const hashedPassword = await bcrypt.hash(DEFAULT_SEED_PASSWORD, 12);
     
     const metadata: UserMetadata = {
       internalRole: 'FINANCE',
@@ -177,7 +180,7 @@ export class SetupService {
    * Cria o usuário SUPPORT (Customer Success) - Condicional
    */
   private static async createSupportUser(tenantId: string) {
-    const hashedPassword = await bcrypt.hash('Support@123', 12);
+    const hashedPassword = await bcrypt.hash(DEFAULT_SEED_PASSWORD, 12);
     
     const metadata: UserMetadata = {
       internalRole: 'SUPPORT',
@@ -210,7 +213,7 @@ export class SetupService {
    * Cria o usuário MARKETING (Growth) - Condicional
    */
   private static async createMarketingUser(tenantId: string) {
-    const hashedPassword = await bcrypt.hash('Marketing@123', 12);
+    const hashedPassword = await bcrypt.hash(DEFAULT_SEED_PASSWORD, 12);
     
     const metadata: UserMetadata = {
       internalRole: 'MARKETING',
@@ -243,7 +246,7 @@ export class SetupService {
    * Cria o usuário DEVOPS (System Health) - Condicional
    */
   private static async createDevOpsUser(tenantId: string) {
-    const hashedPassword = await bcrypt.hash('DevOps@123', 12);
+    const hashedPassword = await bcrypt.hash(DEFAULT_SEED_PASSWORD, 12);
     
     const metadata: UserMetadata = {
       internalRole: 'DEVOPS',

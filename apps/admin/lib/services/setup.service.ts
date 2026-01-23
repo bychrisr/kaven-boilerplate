@@ -137,7 +137,9 @@ export class SetupService {
    * Cria o usuário FINANCE (CFO) - Condicional
    */
   private static async createFinanceUser(tenantId: string) {
-    const hashedPassword = await bcrypt.hash('Finance@123', 12);
+    const password = process.env.FINANCE_INIT_PASSWORD;
+    if (!password) throw new Error('FINANCE_INIT_PASSWORD is required');
+    const hashedPassword = await bcrypt.hash(password, 12);
     
     const metadata: UserMetadata = {
       internalRole: 'FINANCE',
@@ -170,7 +172,9 @@ export class SetupService {
    * Cria o usuário SUPPORT (Customer Success) - Condicional
    */
   private static async createSupportUser(tenantId: string) {
-    const hashedPassword = await bcrypt.hash('Support@123', 12);
+    const password = process.env.SUPPORT_INIT_PASSWORD;
+    if (!password) throw new Error('SUPPORT_INIT_PASSWORD is required');
+    const hashedPassword = await bcrypt.hash(password, 12);
     
     const metadata: UserMetadata = {
       internalRole: 'SUPPORT',
@@ -203,7 +207,9 @@ export class SetupService {
    * Cria o usuário MARKETING (Growth) - Condicional
    */
   private static async createMarketingUser(tenantId: string) {
-    const hashedPassword = await bcrypt.hash('Marketing@123', 12);
+    const password = process.env.MARKETING_INIT_PASSWORD;
+    if (!password) throw new Error('MARKETING_INIT_PASSWORD is required');
+    const hashedPassword = await bcrypt.hash(password, 12);
     
     const metadata: UserMetadata = {
       internalRole: 'MARKETING',
@@ -236,7 +242,9 @@ export class SetupService {
    * Cria o usuário DEVOPS (System Health) - Condicional
    */
   private static async createDevOpsUser(tenantId: string) {
-    const hashedPassword = await bcrypt.hash('DevOps@123', 12);
+    const password = process.env.DEVOPS_INIT_PASSWORD;
+    if (!password) throw new Error('DEVOPS_INIT_PASSWORD is required');
+    const hashedPassword = await bcrypt.hash(password, 12);
     
     const metadata: UserMetadata = {
       internalRole: 'DEVOPS',

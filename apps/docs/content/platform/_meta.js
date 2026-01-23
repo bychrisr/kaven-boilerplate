@@ -9,6 +9,7 @@ export default {
   backend: 'Backend',
   frontend: 'Frontend',
   features: 'Features',
+  'spaces-permissions': 'Spaces & Permissions',
   'crud-page-pattern': 'Padrão de Páginas CRUD',
   'customization-live-reload': 'Customização & Live Reload',
   'timezone-system': 'Sistema de Timezones Multi-idioma',
