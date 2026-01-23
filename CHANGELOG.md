@@ -5,6 +5,48 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-01-23
+
+### ✨ Adicionado
+
+#### Kaven CLI Module System & Security
+
+**1. Secure Marketplace**
+
+- Instalação de módulos via `kaven marketplace install <slug>`.
+- Verificação de assinatura Ed25519 e Checksum SHA256.
+- Suporte a licenças pagas com `--key <KEY>`.
+
+**2. Auth Flow v2**
+
+- Fluxo `kaven auth login` via navegador (Device Flow).
+- Armazenamento seguro de credenciais com Keytar e fallback para FS protegido.
+- Comando `kaven auth whoami` e `logout`.
+
+**3. Backend Licensing System**
+
+- Novo serviço `LicensingService` para emissão e validação de chaves.
+- Modelo de dados `License` vinculado a compras.
+- Endpoint `/licenses/verify` para integração.
+
+### 🔧 Corrigido
+
+- CLI: Corrigida importação de módulos ES (`.js` extensions).
+- CLI: Melhorada mensagem de erro quando módulo não é encontrado.
+- Database: Ajuste nas relações `User` e `Purchase` para suportar licenças.
+
+---
+
+## [2.0.0] - 2026-01-10
+
+### ✨ Adicionado
+
+- **Kaven CLI V2**: Reescrevido em TypeScript com InversifyJS.
+- **Split-Schema Architecture**: `schema.base.prisma` e `schema.extended.prisma`.
+- **Module Manifest**: Padrão `module.json` para definição de módulos.
+
+---
+
 ## [1.2.0] - 2026-01-15
 
 ### ✨ Adicionado

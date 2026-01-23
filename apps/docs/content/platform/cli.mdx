@@ -1,15 +1,15 @@
 ---
 title: Kaven CLI
-description: Guia completo da interface de linha de comando do Kaven v2.0
-date: 2026-01-10
-author: Chris + Claude Sonnet 4.5
-version: 2.0.0
-tags: [cli, automation, productivity, devtools]
+description: Guia completo da interface de linha de comando do Kaven v2.1
+date: 2026-01-23
+author: Antigravity
+version: 2.1.0
+tags: [cli, automation, productivity, devtools, marketplace]
 ---
 
 # Kaven CLI
 
-A **Kaven CLI** é o coração da v2.0, permitindo gerenciar o ciclo de vida do seu projeto, desde a inicialização até a adição de módulos complexos e manutenção do banco de dados.
+A **Kaven CLI** é o coração da v2.1, permitindo gerenciar o ciclo de vida do seu projeto, sistema de módulos, autenticação e banco de dados.
 
 ## 📦 Instalação
 
@@ -20,67 +20,126 @@ cd kaven-cli
 pnpm run build
 ```
 
-Você pode executar os comandos usando `node kaven-cli/bin/kaven.js` ou criar um link simbólico global.
+Você pode executar os comandos usando `node kaven-cli/bin/kaven.js` ou criar um alias.
 
-## 🚀 Comandos Principais
+> [!TIP]
+> Recomendamos adicionar `alias kaven="node $(pwd)/kaven-cli/bin/kaven.js"` ao seu `.bashrc` ou `.zshrc` para facilidade de uso.
 
-### `kaven init`
+## 🔐 Autenticação
 
-Inicia o wizard interativo para configurar um novo projeto Kaven.
+O Kaven utiliza um sistema de autenticação segura para interagir com o Marketplace e serviços da nuvem.
 
-**O que ele faz:**
+### `kaven auth login`
 
-- Valida o diretório atual.
-- Coleta informações do projeto (Nome, Versão, Descrição).
-- Cria o arquivo de configuração `kaven.config.json`.
-- Prepara a estrutura base de pastas.
+Inicia o fluxo de login via navegador (OAuth2 Device Flow).
+
+```bash
+kaven auth login
+```
+
+1. O comando exibirá um código de verificação.
+2. Seu navegador abrirá automaticamente em `https://kaven.dev/activate`.
+3. Confirme o código para autenticar o CLI.
+
+### `kaven auth whoami`
+
+Exibe o usuário atualmente logado.
+
+```bash
+kaven auth whoami
+# > Logged in as: chris@kaven.dev (Tenant: kaven-corp)
+```
+
+### `kaven auth logout`
+
+Remove as credenciais armazenadas localmente.
+
+```bash
+kaven auth logout
+```
+
+## 🛒 Marketplace de Módulos
+
+O Marketplace permite estender seu SaaS com funcionalidades prontas (Pagamentos, IA, Analytics).
+
+### `kaven marketplace list`
+
+Lista todos os módulos disponíveis publicamente.
+
+```bash
+kaven marketplace list
+# Ou filtrar por termo
+kaven marketplace list --query pay
+```
+
+**Saída Exemplo:**
+
+```text
+📦 Available Modules:
+
+payments v1.2.0 [PAID]
+  Stripe & Pix full integration
+observability v1.0.0 [FREE]
+  Metrics & Logs stack
+```
+
+### `kaven marketplace install <slug>`
+
+Baixa e instala um módulo no seu projeto.
+
+```bash
+kaven marketplace install observability
+```
+
+O comando irá:
+
+1. Verificar se você tem direito ao módulo (Passport Gate).
+2. Baixar o artefato assinado criptograficamente.
+3. Verificar a assinatura (Ed25519) e integridade (SHA256).
+4. Extrair para a pasta de módulos.
+
+#### Instalação com Chave de Licença
+
+Para módulos pagos ("PAID"), se você não tiver uma assinatura ativa vinculada à sua conta, você pode fornecer uma **License Key** diretamente:
+
+```bash
+kaven marketplace install payments --key KVN-PAY-A1B2C3D4
+```
+
+Isso é útil para ambientes de CI/CD ou instalações manuais.
+
+## 🗄️ Banco de Dados (Split-Schema)
 
 ### `kaven db generate`
 
-A ferramenta essencial para quem trabalha com a arquitetura **Split-Schema**.
+A ferramenta essencial para mesclar o schema base do Kaven com suas extensões.
+
+```bash
+kaven db generate
+```
 
 **O que ele faz:**
 
-- Mescla o `schema.base.prisma` (core do Kaven) com o seu `schema.extended.prisma` (específico do projeto).
-- Gera o arquivo `packages/database/prisma/schema.prisma` final.
-- Garante que as atualizações do boilerplate não sobrescrevam suas alterações no banco.
+- Mescla `packages/database/prisma/schema.base.prisma` (Core Imutável).
+- Com `packages/database/prisma/schema.extended.prisma` (Suas Features).
+- Gera o `schema.prisma` final e roda `prisma generate`.
 
 > [!IMPORTANT]
-> Sempre use este comando ao adicionar novas models no seu projeto.
-
-### `kaven module list`
-
-Lista todos os módulos disponíveis no ecossistema Kaven e seu status atual no projeto (instalado ou não).
-
-### `kaven module add <name>`
-
-Instala um novo módulo no seu projeto.
-
-**Exemplo:**
-
-```bash
-node kaven-cli/bin/kaven.js module add payments
-```
-
-### `kaven module remove <name>`
-
-Remove um módulo instalado, limpando as dependências e arquivos injetados.
-
----
+> Nunca edite o arquivo `schema.prisma` diretamente. Edite o `schema.extended.prisma` e rode este comando.
 
 ## ⚙️ Configuração (`kaven.config.json`)
 
-Toda a inteligência da CLI reside no arquivo `kaven.config.json` localizado na raiz do projeto.
+O arquivo `kaven.config.json` rastreia os módulos instalados no projeto.
 
 ```json
 {
   "name": "meu-projeto",
   "version": "1.0.0",
-  "description": "Meu App SaaS",
   "modules": {
     "payments": {
       "enabled": true,
-      "installedAt": "2026-01-10T..."
+      "installedAt": "2026-01-23T10:00:00Z",
+      "version": "1.2.0"
     }
   }
 }
@@ -88,19 +147,18 @@ Toda a inteligência da CLI reside no arquivo `kaven.config.json` localizado na 
 
 ## 🛠️ Troubleshooting
 
-### Erro: "Command not found"
+### Erro: "Entitlement Check Failed"
 
-Certifique-se de que está passando o caminho correto para o executável ou rodando via `node`.
+Se você receber este erro ao tentar instalar um módulo, significa que sua conta não possui licença para ele.
 
-### Permissões
+- Verifique seu plano no dashboard.
+- Ou use `--key` se tiver uma chave manual.
 
-Em sistemas Linux/macOS, pode ser necessário dar permissão de execução ao binário:
+### Erro: "Invalid Signature"
 
-```bash
-chmod +x kaven-cli/bin/kaven.js
-```
+O artefato baixado foi corrompido ou adulterado. O CLI bloqueia a instalação automaticamente para sua segurança. Tente novamente.
 
 ## Relacionados
 
-- [Database (Split-Schema)](/platform/database)
 - [Sistema Modular](/platform/modules)
+- [Database Guide](/platform/database)

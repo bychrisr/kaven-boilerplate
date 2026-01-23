@@ -1,7 +1,7 @@
 # Kaven Boilerplate - Plataforma SaaS Multi-tenant Completa
 
-**Versão:** 2.0.0  
-**Data:** Janeiro 2026  
+**Versão:** 2.1.0 (CLI V2 + Security Core)
+**Data:** Janeiro 2026
 **Status:** ✅ Produção Ready
 
 ---
@@ -143,6 +143,18 @@ Sistema completo de autenticação e controle de acesso:
 
 **Exemplo de Spaces**: Finance, Marketing, DevOps, Support - cada um com suas próprias permissões.
 
+#### 🛡️ **Segurança Avançada (Enterprise 2.0)**
+
+Novas capacidades de segurança e compliance adicionadas na v2.1:
+
+- **Data Masking Engine**: PII (Dados Pessoais) mascarados automaticamente na UI/API baseados em políticas.
+  - _Exemplo_: `***-***-123-**` (CPF).
+  - _Audit_: Solicitações de "Unmask" geram logs auditáveis.
+- **Impersonation Auditada**: Admins acessam como usuários para suporte ("Log in as...").
+  - _Contexto_: Banner visual persistente durante a sessão.
+  - _Safety_: Logs imutáveis de cada ação realizada enquanto impersonado.
+- **Security Requests**: Workflow de aprovação para ações sensíveis (Exportação de dados, Mudança de Role).
+
 ---
 
 ### 📊 **Observability Stack Enterprise-Grade**
@@ -242,17 +254,25 @@ Envio automatizado de emails com templates premium:
 
 ---
 
-### 🛠️ **Kaven CLI - Automação Total**
+### 🛠️ **Kaven CLI V2.1 - Arquitetura IoC**
 
-Interface de linha de comando para gestão do projeto:
+Nova geração da CLI construída com **InversifyJS** e arquitetura segura:
+
+#### Arquitetura & Segurança
+
+- **Hybrid Auth System**: OAuth2 Device Flow (Github-style) + License Keys Offline.
+- **Passport Gating**: Validação local de direitos (`Allow = Authorized + Entitled`).
+- **Secure Marketplace**: Instalação de módulos com verificação de assinatura **Ed25519** e Checksum SHA256.
+- **Smart Caching**: Offloading inteligente de cache para otimização de disco.
+- **License Keys**: Suporte a chaves de licença manuais (`--key`) para CI/CD ou installs offline.
 
 #### Comandos Principais
 
-- `kaven init`: Wizard interativo de configuração inicial
+- `kaven auth login`: Autenticação segura via navegador
+- `kaven marketplace list`: Catálogo de módulos verificados
+- `kaven marketplace install <slug>`: Instalação segura com validação
+- `kaven marketplace install <slug> --key <KEY>`: Instalação com chave privada
 - `kaven db generate`: Merge de schemas (Base + Extended)
-- `kaven module list`: Lista módulos disponíveis
-- `kaven module add <name>`: Instala módulo (ex: payments)
-- `kaven module remove <name>`: Remove módulo com cleanup
 
 #### Split-Schema Database
 
@@ -407,6 +427,18 @@ Sistema de convites para novos usuários:
 - **Expiration**: Tokens com validade configurável
 - **Resend**: Reenvio de convites expirados
 - **Acceptance Flow**: Fluxo completo de aceitação
+
+---
+
+### 🤝 **Community & Gamification (Dual Marketplace)**
+
+Estratégia de engajamento e troca de valor (Novo na v2.1):
+
+- **Marketplace de Código**: Módulos verificados para expandir a plataforma.
+- **Marketplace de Reputação**: Sistema de XP e Badges integrado ao Discord.
+  - **Rewards**: Descontos vitalícios para Top Contributors.
+  - **Levels**: De Novice a Legend, desbloqueando acesso a betas e canais exclusivos.
+  - **Integration**: Webhooks do Github conectam PRs a recompensas de XP.
 
 ---
 
