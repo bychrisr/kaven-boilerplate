@@ -31,6 +31,13 @@ export class ExportService {
 
     const csvContent = [headerRow, ...dataRows].join('\n');
 
+    // 4. Adicionar Watermark DLP (Rastreabilidade) ao final do arquivo
+    const watermarkId = `KAVEN-DLP-${actorId.substring(0, 8)}-${Date.now()}`;
+    const watermarkRow = `\n\n# --- SECURITY WATERMARK ---\n# ID: ${watermarkId}\n# Exported by: ${actorId}\n# Date: ${new Date().toISOString()}\n# Warning: This file is audited and tracked. Unauthorized distribution is prohibited.\n# --- END WATERMARK ---`;
+    
+    const finalContent = csvContent + watermarkRow;
+
+
     // Registrar auditoria
     await auditService.log({
       action: `${entity.toLowerCase()}.export`,
@@ -43,11 +50,12 @@ export class ExportService {
       metadata: {
         recordCount: data.length,
         format: 'CSV',
-        fields: headerKeys
+        fields: headerKeys,
+        watermarkId // Rastreabilidade DLP
       }
     });
 
-    return csvContent;
+    return finalContent;
   }
 }
 

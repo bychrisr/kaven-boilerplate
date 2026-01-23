@@ -131,6 +131,26 @@ export async function seedCapabilities() {
       sensitivity: CapabilitySensitivity.NORMAL,
       scope: CapabilityScope.SPACE,
     },
+    {
+      code: 'auth.2fa_reset.request',
+      resource: 'auth',
+      action: '2fa_reset_request',
+      description: 'Solicitar reset de 2FA para um usuário',
+      category: 'Support',
+      sensitivity: CapabilitySensitivity.HIGHLY_SENSITIVE,
+      scope: CapabilityScope.TENANT,
+    },
+    {
+      code: 'auth.2fa_reset.execute',
+      resource: 'auth',
+      action: '2fa_reset_execute',
+      description: 'Executar reset de 2FA para um usuário',
+      category: 'Support',
+      sensitivity: CapabilitySensitivity.CRITICAL,
+      scope: CapabilityScope.TENANT,
+      requiresMFA: true,
+      requiresApproval: true,
+    },
 
     // ===========================
     // DEVOPS (15 capabilities)

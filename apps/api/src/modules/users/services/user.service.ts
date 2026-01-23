@@ -435,6 +435,38 @@ export class UserService {
 
     return avatarUrl;
   }
+
+  /**
+   * Reseta a autenticação de dois fatores de um usuário
+   */
+  async resetTwoFactor(userId: string, actorId?: string): Promise<boolean> {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) throw new Error('Usuário não encontrado');
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        twoFactorEnabled: false,
+        twoFactorSecret: null,
+        backupCodes: null,
+        updatedAt: new Date(),
+      },
+    });
+
+    // Log Audit
+    await auditService.log({
+      action: 'user.2fa_reset',
+      entity: 'User',
+      entityId: userId,
+      actorId: actorId,
+      metadata: { previousStatus: user.twoFactorEnabled }
+    });
+
+    return true;
+  }
 }
 
 export const userService = new UserService();

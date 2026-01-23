@@ -12,6 +12,7 @@ import {
 } from '@kaven/shared';
 
 import { notificationService } from '../../notifications/services/notification.service';
+import { Role, GrantApprovalLevel, CapabilitySensitivity } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export class GrantRequestService {
@@ -133,6 +134,9 @@ export class GrantRequestService {
     if (!request) throw new Error('Request not found');
     if (request.status !== GrantRequestStatus.PENDING) throw new Error('Request is not pending');
 
+    // 0. Verificar se o revisor tem permissão hierárquica
+    await this.validateReviewerPermission(reviewerId, request);
+
     // Se REJECT
     if (review.action === 'REJECT') {
         if (!review.reason) throw new Error('Rejection reason is required');
@@ -220,6 +224,65 @@ export class GrantRequestService {
 
         return { request: updatedRequest, grant };
     });
+  }
+
+  /**
+   * Valida se o revisor tem permissão para aprovar/rejeitar a solicitação baseado na hierarquia
+   */
+  private async validateReviewerPermission(reviewerId: string, request: any) {
+    const reviewer = await prisma.user.findUnique({
+      where: { id: reviewerId },
+      include: {
+        spaceRoles: {
+          where: { spaceId: request.spaceId || undefined },
+          include: { role: true }
+        }
+      }
+    });
+
+    if (!reviewer) throw new Error('Reviewer not found');
+
+    // 1. Super Admin pode tudo
+    if (reviewer.role === Role.SUPER_ADMIN) return;
+
+    // 2. Verificar se o revisor tem um papel de aprovação no space
+    const approvalRole = reviewer.spaceRoles.find(sr => sr.role.canApproveGrants);
+    
+    if (!approvalRole) {
+      throw new Error('Você não tem permissão para revisar solicitações de acesso');
+    }
+
+    const reviewerLevel = approvalRole.role.canApproveLevel;
+    const capabilitySensitivity = request.capability?.sensitivity || CapabilitySensitivity.NORMAL;
+
+    // 3. Validar nível de aprovação vs Sensibilidade
+    const hasPermission = this.checkApprovalLevel(reviewerLevel, capabilitySensitivity);
+
+    if (!hasPermission) {
+      throw new Error(`Seu nível de aprovação (${reviewerLevel}) é insuficiente para este recurso de sensibilidade ${capabilitySensitivity}`);
+    }
+  }
+
+  /**
+   * Mapeia nível de aprovação do revisor contra a sensibilidade do recurso
+   */
+  private checkApprovalLevel(reviewerLevel: GrantApprovalLevel | null, sensitivity: CapabilitySensitivity): boolean {
+    if (!reviewerLevel) return false;
+
+    const levelWeights = {
+      [GrantApprovalLevel.NORMAL]: 1,
+      [GrantApprovalLevel.SENSITIVE]: 2,
+      [GrantApprovalLevel.CRITICAL]: 3
+    };
+
+    const sensitivityWeights = {
+      [CapabilitySensitivity.NORMAL]: 1,
+      [CapabilitySensitivity.SENSITIVE]: 2,
+      [CapabilitySensitivity.HIGHLY_SENSITIVE]: 3,
+      [CapabilitySensitivity.CRITICAL]: 3
+    };
+
+    return levelWeights[reviewerLevel] >= sensitivityWeights[sensitivity];
   }
 }
 
