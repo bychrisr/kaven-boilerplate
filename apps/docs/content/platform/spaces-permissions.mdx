@@ -141,24 +141,66 @@ O Kaven mantém um registro imutável de todos os eventos de segurança.
 
 ---
 
+---
+
+## Implementação Técnica (Admin Context)
+
+A estabilidade do sistema de permissões no Admin depende da propagação correta do contexto do Space em cada requisição.
+
+### Propagação de Contexto (HTTP)
+
+O Kaven utiliza interceptores do **Axios** em `apps/admin/lib/api.ts` para garantir que o contexto seja enviado de forma transparente para o backend.
+
+- **Header `x-space-id`**: Enviado em todas as chamadas para a API. O valor é obtido dinamicamente do `localStorage` (chave `space-storage-v2`).
+- **Header `X-Tenant-ID`**: Propagado para garantir o isolamento multi-tenant.
+- **Fail-Secure**: Se nenhum Space estiver selecionado ou persistido, o header não é enviado, e o backend aplica as políticas globais ou nega o acesso por padrão.
+
+### Gerenciamento de Estado (Space Store)
+
+O contexto do Space é gerenciado centralmente pelo `useSpaceStore` (Zustand), que coordena:
+
+1.  **Hydration**: Recupera o último Space selecionado do armazenamento persistente ao carregar o Admin.
+2.  **Sync**: Garante que o switcher de espaços (`SpaceSwitcher`) reflita o estado global.
+3.  **API Integration**: Utiliza o cliente `api` pré-configurado para carregar a lista de espaços, garantindo que o carregamento inicial ocorra sob autenticação válida.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Switcher as SpaceSwitcher
+    participant Store as useSpaceStore
+    participant API as Axios (api.ts)
+    participant Backend
+
+    User->>Switcher: Seleciona "Finance"
+    Switcher->>Store: setCurrentSpace(finance)
+    Store->>LocalStorage: Persiste ID
+    User->>Switcher: Navega para /roles
+    API->>LocalStorage: Lê currentSpace.id
+    API->>Backend: GET /api/roles (Header x-space-id: FINANCE)
+    Backend-->>API: 200 OK
+```
+
+---
+
 ## API Reference
 
-### `AuthorizationService`
+### Admin HTTP Client (`lib/api.ts`)
 
-Serviço central de validação de acesso.
+O cliente `api` é o **source of truth** para comunicações com o backend.
 
-- `checkCapability(params)`: Retorna se a ação é permitida e o nível de acesso.
-- `trackDevice(params)`: Rastreia e valida a confiança do dispositivo.
+- **Request Interceptor**: Injeta `Authorization`, `X-Tenant-ID` e `x-space-id`.
+- **Response Interceptor**: Gerencia automaticamente o refresh de tokens (401) e redirecionamento para login em caso de expiração total.
 
-### `GrantRequestService`
+### `grantRequestService`
 
-Gere o ciclo de vida de acesso temporário.
+Localizado em `apps/admin/services/grant-request.service.ts`, este serviço unifica as operações de Access Leasing.
 
-- `createRequest(data)`: Inicia solicitação de grant.
-- `reviewRequest(id, action)`: Aprova ou rejeita pedidos pendentes.
+- `listPending()`: Lista solicitações aguardando aprovação para o contexto atual.
+- `review(requestId, data)`: Aprova ou rejeita (`APPROVED` | `REJECTED`) justificando a decisão.
 
-### `MaskingService`
+### `spaceStore`
 
-Proteção de dados em runtime.
+Localizado em `apps/admin/stores/space.store.ts`, gerencia a lista de domínios operacionais.
 
-- `maskObject(entity, data, caps)`: Purifica objetos sensíveis baseado em permissões.
+- `fetchSpaces()`: Carrega os espaços disponíveis para o usuário autenticado.
+- `setCurrentSpace(space)`: Altera o contexto ativo globalmente.
