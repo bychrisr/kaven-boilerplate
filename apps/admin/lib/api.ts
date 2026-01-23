@@ -38,6 +38,20 @@ api.interceptors.request.use(
         console.log('⚠️ AXIOS REQUEST - Failed to parse user data');
       }
     }
+
+    // Space Context: Adicionar x-space-id se disponível
+    const spaceStr = localStorage.getItem('space-storage-v2');
+    if (spaceStr) {
+      try {
+        const { state } = JSON.parse(spaceStr);
+        if (state?.currentSpace?.id) {
+          config.headers['x-space-id'] = state.currentSpace.id;
+          console.log('✅ AXIOS REQUEST - Space ID header set:', state.currentSpace.id);
+        }
+      } catch {
+        console.log('⚠️ AXIOS REQUEST - Failed to parse space data');
+      }
+    }
     
     return config;
   },
