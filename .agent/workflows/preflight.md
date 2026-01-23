@@ -36,7 +36,7 @@ Para cada fase:
 - Testes (lint/type/test)
 - Critérios de aceite
 - Evidência necessária
-- “Ao final: rodar /document”
+- “Ao final: rodar /impl-notes”
 
 ## 3) Checar quality commands
 
@@ -52,4 +52,13 @@ bash .agent/scripts/evidence_finalize.sh preflight
 
 Rode:
 
-- `/document` (gerar doc do pré-voo)
+- `/impl-notes` (gerar doc do pré-voo)
+
+---
+
+## Fechamento de documentação (aplicação)
+
+Após concluir o PR (gates verdes) e fazer o commit do código, rode também:
+
+- `/document` para gerar **documentação Nextra/MDX** em `apps/docs/content/...` e atualizar `_meta.js`.
+- Commit separado de docs é recomendado.

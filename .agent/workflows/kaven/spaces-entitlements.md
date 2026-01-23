@@ -17,4 +17,13 @@ name: kaven-spaces-entitlements
    - Fase: UX e edge-cases
 4) Testes por fase.
 5) `/ci-verify`.
-6) `/document`.
+6) `/impl-notes`.
+
+---
+
+## Fechamento de documentação (aplicação)
+
+Após concluir o PR (gates verdes) e fazer o commit do código, rode também:
+
+- `/document` para gerar **documentação Nextra/MDX** em `apps/docs/content/...` e atualizar `_meta.js`.
+- Commit separado de docs é recomendado.

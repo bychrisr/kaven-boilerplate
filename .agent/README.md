@@ -24,3 +24,15 @@ Princípios:
 - `skills/` — pacotes ativáveis por intenção
 - `scripts/` — helpers de evidência/quality
 
+---
+
+## 📌 Documentação principal do kit
+
+Este workspace `.agent/` é parte do **Kaven Agent Kit v3**.
+
+- Leia o **README completo do kit** (na raiz do ZIP) para entender regras, workflows, skills e MCPs.
+
+### Fechamento
+- Use `/ci-verify` para gates + evidência.
+- Use `/impl-notes` para notas internas em `docs/agent`.
+- Use `/document` para gerar docs Nextra/MDX em `apps/docs/content`.

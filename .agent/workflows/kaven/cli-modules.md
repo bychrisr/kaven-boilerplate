@@ -15,4 +15,13 @@ name: kaven-cli-modules
 3) Planeje por fases e escreva testes por fase.
 4) Implemente.
 5) Rode `/ci-verify`.
-6) Ao final: `/document`.
+6) Ao final: `/impl-notes`.
+
+---
+
+## Fechamento de documentação (aplicação)
+
+Após concluir o PR (gates verdes) e fazer o commit do código, rode também:
+
+- `/document` para gerar **documentação Nextra/MDX** em `apps/docs/content/...` e atualizar `_meta.js`.
+- Commit separado de docs é recomendado.

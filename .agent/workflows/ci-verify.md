@@ -31,4 +31,13 @@ bash .agent/scripts/evidence_finalize.sh ci-verify
 
 ## 4) Documentar
 
-- `/document`
+- `/impl-notes`
+
+---
+
+## Fechamento de documentação (aplicação)
+
+Após concluir o PR (gates verdes) e fazer o commit do código, rode também:
+
+- `/document` para gerar **documentação Nextra/MDX** em `apps/docs/content/...` e atualizar `_meta.js`.
+- Commit separado de docs é recomendado.
