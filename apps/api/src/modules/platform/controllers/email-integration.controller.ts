@@ -45,7 +45,7 @@ export class EmailIntegrationController {
       // Get user capabilities for masking
       const user = (req as any).user;
       const spaceId = req.headers['x-space-id'] as string | undefined;
-      const capabilities = user ? await authorizationService.getUserCapabilities(user.id, spaceId) : [];
+      const { capabilities } = user ? await authorizationService.getUserCapabilities(user.id, spaceId) : { capabilities: [] as string[] };
       
       const masked = maskingService.maskObject('EmailIntegration', integrations, capabilities);
 

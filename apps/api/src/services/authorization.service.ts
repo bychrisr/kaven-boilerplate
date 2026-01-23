@@ -485,11 +485,10 @@ export class AuthorizationService {
   /**
    * Obtém todas as capabilities de um usuário em um space
    * 
-   * @param userId - ID do usuário
    * @param spaceId - ID do space (opcional)
-   * @returns Lista de códigos de capabilities
+   * @returns Objeto contendo códigos de capabilities e detalhes dos grants
    */
-  async getUserCapabilities(userId: string, spaceId?: string): Promise<string[]> {
+  async getUserCapabilities(userId: string, spaceId?: string): Promise<{ capabilities: string[]; grants: any[] }> {
     try {
       // 1. Verificar se é SUPER_ADMIN
       const user = await prisma.user.findUnique({
@@ -498,7 +497,7 @@ export class AuthorizationService {
       });
 
       if (user?.role === Role.SUPER_ADMIN) {
-        return ['*']; // Acesso total
+        return { capabilities: ['*'], grants: [] };
       }
 
       const capabilityCodes = new Set<string>();
@@ -579,10 +578,24 @@ export class AuthorizationService {
         }
       }
 
-      return Array.from(capabilityCodes);
+      const activeGrants = addGrants.map(g => ({
+        id: g.id,
+        capabilityCode: g.capability?.code,
+        type: g.type,
+        accessLevel: g.accessLevel,
+        expiresAt: g.expiresAt,
+        justification: g.justification,
+        grantedBy: g.grantedBy,
+        grantedAt: g.grantedAt
+      }));
+
+      return {
+        capabilities: Array.from(capabilityCodes),
+        grants: activeGrants
+      };
     } catch (error) {
       console.error('Error in getUserCapabilities:', error);
-      return [];
+      return { capabilities: [], grants: [] };
     }
   }
 

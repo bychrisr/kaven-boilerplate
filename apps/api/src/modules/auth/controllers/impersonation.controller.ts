@@ -26,7 +26,7 @@ export class ImpersonationController {
       }
 
       // 1. Validar se o admin tem a capability impersonation.start
-      const capabilities = await authorizationService.getUserCapabilities(admin.id);
+      const { capabilities } = await authorizationService.getUserCapabilities(admin.id);
       const hasCapability = capabilities.includes('impersonation.start') || capabilities.includes('*');
 
       if (!hasCapability) {

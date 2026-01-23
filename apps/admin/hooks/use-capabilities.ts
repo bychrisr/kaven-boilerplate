@@ -6,6 +6,14 @@ import { useSpaces } from '@/hooks/use-spaces';
 
 interface CapabilitiesResponse {
   capabilities: string[];
+  grants: Array<{
+    id: string;
+    capabilityCode: string;
+    type: string;
+    accessLevel: string;
+    expiresAt?: string;
+    justification: string;
+  }>;
 }
 
 export function useCapabilities() {
@@ -49,6 +57,7 @@ export function useCapabilities() {
 
   return {
     capabilities: query.data?.capabilities || [],
+    grants: query.data?.grants || [],
     isLoading: query.isLoading,
     error: query.error,
     check,
