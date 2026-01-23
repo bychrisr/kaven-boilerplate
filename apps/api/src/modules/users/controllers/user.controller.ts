@@ -3,6 +3,7 @@ import { userService } from '../services/user.service';
 import { authorizationService } from '../../../services/authorization.service';
 import { createUserSchema, updateUserSchema } from '../../../lib/validation';
 import { maskingService } from '../../../services/masking.service';
+import { sanitize } from 'isomorphic-dompurify';
 
 export class UserController {
   async getStats(request: FastifyRequest, reply: FastifyReply) {
@@ -10,7 +11,7 @@ export class UserController {
       // NÃO usar x-tenant-id automaticamente
       // SUPER_ADMIN deve ver stats globais (sem filtro de tenant)
       // Se precisar filtrar por tenant, passar como query parameter
-      const { tenantId } = request.query as any;
+      const { tenantId } = request.query as { tenantId?: string };
       const stats = await userService.getStats(tenantId);
       reply.send(stats);
     } catch (error: any) {
@@ -20,16 +21,25 @@ export class UserController {
 
   async list(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { page = '1', limit = '10', tenantId, search, status } = request.query as any;
+      const query = request.query as Record<string, any>;
+      const pageNum = Number(query.page) || 1;
+      const limitNum = Number(query.limit) || 10;
+      const tenantId = typeof query.tenantId === 'string' ? query.tenantId : undefined;
+      const search = typeof query.search === 'string' ? sanitize(query.search) : undefined;
+      const status = typeof query.status === 'string' ? sanitize(query.status) : undefined;
+
       const result = await userService.listUsers(
         tenantId,
-        Number.parseInt(page),
-        Number.parseInt(limit),
+        pageNum,
+        limitNum,
         search,
         status
       );
+      
       const spaceId = request.headers['x-space-id'] as string | undefined;
-      const capabilities = request.user ? await authorizationService.getUserCapabilities(request.user.id, spaceId) : [];
+      const { capabilities } = request.user 
+        ? await authorizationService.getUserCapabilities(request.user.id, spaceId) 
+        : { capabilities: [] as string[] };
 
       // Mascarar PII se necessário
       if (result.users) {
@@ -48,7 +58,9 @@ export class UserController {
       const user = await userService.getUserById(id);
 
       const spaceId = request.headers['x-space-id'] as string | undefined;
-      const capabilities = request.user ? await authorizationService.getUserCapabilities(request.user.id, spaceId) : [];
+      const { capabilities } = request.user 
+        ? await authorizationService.getUserCapabilities(request.user.id, spaceId) 
+        : { capabilities: [] as string[] };
       
       const masked = maskingService.maskObject('User', user, capabilities);
       reply.send(masked);
@@ -76,12 +88,11 @@ export class UserController {
         return reply.status(401).send({ error: 'Não autenticado' });
       }
       const userId = request.user.id;
-      // Obter Space ID do header (padrão do frontend)
       const spaceId = request.headers['x-space-id'] as string | undefined;
       
-      const capabilities = await authorizationService.getUserCapabilities(userId, spaceId);
+      const result = await authorizationService.getUserCapabilities(userId, spaceId);
       
-      reply.send({ capabilities });
+      reply.send(result);
     } catch (error: any) {
       reply.status(400).send({ error: error.message });
     }

@@ -1,14 +1,20 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { tenantService } from '../services/tenant.service';
 import { createTenantSchema, updateTenantSchema } from '../../../lib/validation';
+import { sanitize } from 'isomorphic-dompurify';
 
 export class TenantController {
   async list(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { page = '1', limit = '10', search, status } = request.query as any;
+      const query = request.query as Record<string, any>;
+      const pageNum = Number(query.page) || 1;
+      const limitNum = Number(query.limit) || 10;
+      const search = typeof query.search === 'string' ? sanitize(query.search) : undefined;
+      const status = typeof query.status === 'string' ? sanitize(query.status) : undefined;
+      
       const result = await tenantService.listTenants(
-        parseInt(page), 
-        parseInt(limit),
+        pageNum, 
+        limitNum,
         search,
         status
       );

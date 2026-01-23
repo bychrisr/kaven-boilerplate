@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../../lib/prisma';
 import { exportService } from '../../../services/export.service';
+import { sanitize } from 'isomorphic-dompurify';
 
 export class ExportController {
   /**
@@ -12,7 +13,10 @@ export class ExportController {
       return reply.status(400).send({ error: 'Tenant ID é obrigatório' });
     }
 
-    const { role, status, search } = request.query as any;
+    const query = request.query as Record<string, any>;
+    const role = typeof query.role === 'string' ? query.role : undefined;
+    const status = typeof query.status === 'string' ? query.status : undefined;
+    const search = typeof query.search === 'string' ? sanitize(query.search) : undefined;
 
     const where: any = {
       tenantId,

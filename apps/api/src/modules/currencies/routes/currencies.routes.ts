@@ -1,5 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../../../lib/prisma';
+import { sanitize } from 'isomorphic-dompurify';
 
 interface CurrencyInput {
   code: string;
@@ -36,8 +37,8 @@ export async function currenciesRoutes(app: FastifyInstance) {
   app.post('/', async (request: FastifyRequest<{ Body: CurrencyInput }>, reply: FastifyReply) => {
     try {
       const data = request.body;
-      if (!data?.code) {
-        return reply.status(400).send({ error: 'Currency code is required' });
+      if (!data?.code || typeof data.code !== 'string') {
+        return reply.status(400).send({ error: 'Currency code is required and must be a string' });
       }
 
       // Verifica se o código já existe
@@ -53,7 +54,7 @@ export async function currenciesRoutes(app: FastifyInstance) {
       const currency = await prisma.currency.create({
         data: {
           ...(data as any),
-          code: data.code.toUpperCase(),
+          code: String(sanitize(data.code)).toUpperCase(),
         },
       });
 
