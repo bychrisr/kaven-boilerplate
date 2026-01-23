@@ -1,0 +1,164 @@
+---
+title: Spaces & Permissions
+description: Sistema robusto de autorização granular, governança de acesso e segurança multi-tenant
+date: 2026-01-21
+author: Chris + Claude Sonnet 4.5
+version: 1.0.0
+tags: [security, rbac, capabilities, grants, masking, impersonation]
+---
+
+# Spaces & Permissions
+
+O Kaven utiliza um modelo híbrido de **Spaces**, **Capabilities** e **Grants** para fornecer um sistema de autorização robusto, auditável e seguro. Diferente de sistemas RBAC tradicionais simples, o Kaven permite o controle granular de ações e dados através de múltiplos domínios operacionais.
+
+## Visão Geral
+
+Um **Space** representa um domínio operacional (ex.: Suporte, DevOps, Financeiro) que segmenta a navegação, as permissões e a visibilidade de dados.
+
+### Princípios Fundamentais
+
+- **Least Privilege**: Acesso mínimo necessário para a função.
+- **Auditability First**: Responde quem, o quê, quando e por que.
+- **Explicit Overrides**: Exceções são concedidas via Grants temporários.
+- **Deny Wins**: Negações explícitas têm precedência absoluta.
+
+---
+
+## Arquitetura Técnica
+
+A autorização é calculada em tempo real combinando diferentes camadas de permissões.
+
+### Ordem de Resolução
+
+1.  **SUPER_ADMIN Bypass**: Admin total do sistema.
+2.  **DENY Grants**: Bloqueios explícitos por usuário/capability.
+3.  **ADD Grants**: Exceções temporárias (Access Leasing).
+4.  **Role Capabilities**: Permissões padrão do cargo no Space.
+5.  **Policies Enforcement**: Validação de IP, MFA, Dispositivo e Horário.
+
+```mermaid
+graph TD
+    A[Request] --> B{is SUPER_ADMIN?}
+    B -- Sim --> C[Allow]
+    B -- Não --> D{Has DENY Grant?}
+    D -- Sim --> E[Deny]
+    D -- Não --> F{Has ADD Grant?}
+    F -- Sim --> G[Check Policies]
+    F -- Não --> H{Check Role Caps}
+    H -- Sim --> G
+    H -- Não --> E
+    G -- Pass --> C
+    G -- Fail --> E
+```
+
+---
+
+## Capabilities
+
+As **Capabilities** são a unidade atômica de permissão no Kaven. Elas definem `recurso.ação` (ex: `users.delete`).
+
+### Categorias Principais
+
+- **Support**: `tickets.read`, `impersonation.start`, `auth.2fa_reset.request`
+- **Finance**: `billing.view`, `payments.refund`, `invoices.issue`
+- **DevOps**: `observability.view_metrics`, `infrastructure.manage`
+- **Management**: `tenants.cross_read`, `users.manage`, `invites.manage`
+
+> [!IMPORTANT]
+> Capabilities podem ser marcadas como **SENSITIVE** ou **CRITICAL**, exigindo obrigatoriamente MFA ou aprovação adicional.
+
+---
+
+## Grants & Access Leasing
+
+O sistema de **Grants** permite a concessão de acesso temporário sem a necessidade de alterar a role permanente do usuário.
+
+### Fluxo de Solicitação
+
+1.  **Request**: O usuário solicita uma capability justificando a necessidade.
+2.  **Review**: Um gestor com permissão `grant.review` aprova ou rejeita.
+3.  **Activation**: O grant é ativado com expiração automática (default 7 dias).
+
+```typescript
+// Exemplo de criação de solicitação
+const request = await grantRequestService.createRequest(userId, {
+  capabilityId: 'payments.refund',
+  justification: 'Necessário para resolver ticket #1234',
+  requestedDuration: 3, // dias
+  accessLevel: 'READ_WRITE',
+});
+```
+
+---
+
+## Security Policies
+
+As políticas aplicam restrições contextuais dinâmicas à autorização.
+
+| Política           | Descrição                                                      |
+| :----------------- | :------------------------------------------------------------- |
+| **IP Restriction** | Bloqueia acesso fora de faixas de IP/VPN autorizadas.          |
+| **Device Trust**   | Exige que o dispositivo seja marcado como confiável.           |
+| **Time-based**     | Restringe acesso a horários comerciais ou janelas específicas. |
+| **MFA Required**   | Exige verificação em duas etapas para ações sensíveis.         |
+
+---
+
+## Data Masking & Privacidade
+
+Para cumprir regulamentações como GDPR/LGPD, o Kaven implementa **Data Masking** automático em dados PII (Personally Identifiable Information).
+
+### Comportamento
+
+- Usuários sem a capability `users.view_pii` veem dados mascarados:
+  - `email`: `jo***@domain.com`
+  - `phone`: `+55 (11) *****-4432`
+  - `address`: `Rua Am***... (Ocultado)`
+
+---
+
+## Impersonation
+
+Permite que a equipe de suporte aja em nome de um usuário para fins de depuração.
+
+> [!CAUTION]
+> Toda sessão de Impersonation dispara um alerta de segurança **CRÍTICO** para o usuário final e é limitada a 30 minutos por padrão.
+
+### Regras de Segurança
+
+- Auditoria completa de todas as ações executadas durante a sessão.
+- Bloqueio automático de ações críticas (Reset de 2FA, Mudança de Senha).
+
+---
+
+## Auditoria & Logs
+
+O Kaven mantém um registro imutável de todos os eventos de segurança.
+
+- **Capability Logs**: Registra cada verificação de autorização (Sucesso/Falha).
+- **Grant Audit**: Histórico de quem concedeu acessos e por que.
+- **Export Control**: Auditoria granular de quem baixou CSVs, com contagem de registros e campos.
+
+---
+
+## API Reference
+
+### `AuthorizationService`
+
+Serviço central de validação de acesso.
+
+- `checkCapability(params)`: Retorna se a ação é permitida e o nível de acesso.
+- `trackDevice(params)`: Rastreia e valida a confiança do dispositivo.
+
+### `GrantRequestService`
+
+Gere o ciclo de vida de acesso temporário.
+
+- `createRequest(data)`: Inicia solicitação de grant.
+- `reviewRequest(id, action)`: Aprova ou rejeita pedidos pendentes.
+
+### `MaskingService`
+
+Proteção de dados em runtime.
+
+- `maskObject(entity, data, caps)`: Purifica objetos sensíveis baseado em permissões.
