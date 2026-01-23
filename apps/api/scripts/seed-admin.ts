@@ -5,7 +5,10 @@ const prisma = new PrismaClient();
 
 async function main() {
   const email = 'admin@kaven.com';
-  const password = 'adminpassword123';
+  const password = process.env.ADMIN_INIT_PASSWORD;
+  if (!password) {
+    throw new Error('ADMIN_INIT_PASSWORD must be defined');
+  }
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.upsert({

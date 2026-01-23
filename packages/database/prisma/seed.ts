@@ -45,7 +45,7 @@ export const INTERNAL_ROLE_PERMISSIONS: Record<InternalRole, string[]> = {
 const SEED_CONFIG = {
   companyName: 'Kaven HQ',
   adminEmail: 'admin@kaven.dev',
-  adminPassword: 'Admin@123',
+  adminPassword: process.env.ADMIN_INIT_PASSWORD || '',
   modules: {
     createFinance: true,
     createSupport: true,
@@ -204,6 +204,9 @@ async function main() {
   console.log(`✅ Admin Tenant ensured: ${adminTenant.name}`);
 
   // 2. Architect (Super Admin)
+  if (!SEED_CONFIG.adminPassword) {
+    throw new Error('ADMIN_INIT_PASSWORD must be defined for seeding');
+  }
   const architectHash = await bcrypt.hash(SEED_CONFIG.adminPassword, 12);
   const architectMeta: UserMetadata = {
     internalRole: 'ARCHITECT',
@@ -346,7 +349,7 @@ async function main() {
       email: 'finance@admin.com',
       name: 'CFO - Finance Team',
       role: 'FINANCE',
-      pass: 'Finance@123',
+      pass: process.env.FINANCE_INIT_PASSWORD || 'ChangeMe123!',
       theme: 'light'
     },
     {
@@ -354,7 +357,7 @@ async function main() {
       email: 'support@admin.com',
       name: 'Customer Success Team',
       role: 'SUPPORT',
-      pass: 'Support@123',
+      pass: process.env.SUPPORT_INIT_PASSWORD || 'ChangeMe123!',
       theme: 'light'
     },
     {
@@ -362,7 +365,7 @@ async function main() {
       email: 'marketing@admin.com',
       name: 'Growth - Marketing Team',
       role: 'MARKETING',
-      pass: 'Marketing@123',
+      pass: process.env.MARKETING_INIT_PASSWORD || 'ChangeMe123!',
       theme: 'light'
     },
     {
@@ -370,7 +373,7 @@ async function main() {
       email: 'devops@admin.com',
       name: 'DevOps - System Health',
       role: 'DEVOPS',
-      pass: 'DevOps@123',
+      pass: process.env.DEVOPS_INIT_PASSWORD || 'ChangeMe123!',
       theme: 'dark'
     }
   ];

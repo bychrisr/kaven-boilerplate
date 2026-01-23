@@ -38,7 +38,7 @@ export interface SeedConfig {
 export const DEFAULT_SEED_CONFIG: SeedConfig = {
   companyName: 'Kaven HQ',
   adminEmail: 'admin@kaven.dev',
-  adminPassword: 'Admin@123',
+  adminPassword: process.env.ADMIN_INIT_PASSWORD || '',
   modules: {
     createFinance: true,
     createSupport: true,
@@ -55,7 +55,7 @@ export const DEFAULT_SEED_CONFIG: SeedConfig = {
 export const MINIMAL_SEED_CONFIG: SeedConfig = {
   companyName: 'My SaaS',
   adminEmail: 'admin@example.com',
-  adminPassword: 'Admin@123',
+  adminPassword: process.env.ADMIN_INIT_PASSWORD || '',
   modules: {
     createFinance: false,
     createSupport: false,

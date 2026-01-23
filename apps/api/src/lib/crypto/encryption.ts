@@ -2,7 +2,10 @@ import crypto from 'crypto';
 import { env } from '../../config/env';
 
 // A ENCRYPTION_KEY deve ter 32 bytes (64 caracteres hex) para o aes-256-gcm
-const ENCRYPTION_KEY = env.ENCRYPTION_KEY || '0'.repeat(64); 
+const ENCRYPTION_KEY = env.ENCRYPTION_KEY;
+if (!ENCRYPTION_KEY) {
+  throw new Error('ENCRYPTION_KEY must be defined in environment variables');
+} 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;
 const AUTH_TAG_LENGTH = 16;
@@ -16,7 +19,7 @@ export function encrypt(text: string): string {
   if (!text) return '';
   
   const iv = crypto.randomBytes(IV_LENGTH);
-  const key = Buffer.from(ENCRYPTION_KEY, 'hex');
+  const key = Buffer.from(ENCRYPTION_KEY as string, 'hex');
   
   const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
   
@@ -45,7 +48,7 @@ export function decrypt(encryptedText: string): string {
     const iv = Buffer.from(parts[0], 'hex');
     const authTag = Buffer.from(parts[1], 'hex');
     const encrypted = parts[2];
-    const key = Buffer.from(ENCRYPTION_KEY, 'hex');
+    const key = Buffer.from(ENCRYPTION_KEY as string, 'hex');
     
     const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
     decipher.setAuthTag(authTag);

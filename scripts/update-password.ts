@@ -9,12 +9,16 @@ import * as bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  const hashedPassword = await bcrypt.hash('adminpassword123', 10);
+  const newPassword = process.env.NEW_ADMIN_PASSWORD;
+  if (!newPassword) {
+    throw new Error('NEW_ADMIN_PASSWORD environment variable is required');
+  }
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
   await prisma.user.update({
     where: { email: 'testadmin@kaven.com' },
     data: { password: hashedPassword },
   });
-  console.log('Password updated to adminpassword123');
+  console.log('✅ Admin password updated successfully');
 }
 
 main()

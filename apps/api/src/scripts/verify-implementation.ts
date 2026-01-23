@@ -8,7 +8,7 @@ async function main() {
   console.log('🚀 Starting Verification: Auth Security Integration');
 
   const email = `security-test-${Date.now()}@kaven.dev`;
-  const password = 'Password123!';
+  const password = process.env.TEST_PASSWORD || 'P@ssword123!'; // Usando fallback complexo apenas para teste local
   const wrongPassword = 'WrongPassword!';
 
   // 1. Create User directly (to avoid sending emails if email service not mocked)

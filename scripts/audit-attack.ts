@@ -10,7 +10,7 @@ async function attackXSS() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: `hacker-${Date.now()}@xss.com`,
-        password: 'Password123!',
+        password: process.env.TEST_PASSWORD || 'P@ssword123!',
         name: '<script>alert("XSS")</script> hacker' 
       })
     });
