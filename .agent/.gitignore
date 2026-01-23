@@ -1,0 +1,6 @@
+# Evidências e artefatos gerados
+artifacts/
+reports/
+
+# logs temporários
+*.log
