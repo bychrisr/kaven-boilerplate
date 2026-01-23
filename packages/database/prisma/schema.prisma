@@ -245,6 +245,13 @@ enum ImpersonationStatus {
   EXPIRED
 }
 
+enum SecurityRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXECUTED
+}
+
 // ===========================
 // CURRENCIES
 // ===========================
@@ -442,6 +449,10 @@ model User {
   impersonatorSessions  ImpersonationSession[]   @relation("Impersonator")
   impersonatedSessions  ImpersonationSession[]   @relation("Impersonated")
   dataExports           DataExportLog[]          @relation("UserDataExports")
+  securityRequests      SecurityRequest[]        @relation("SecurityRequests")
+  securityTargetActions SecurityRequest[]        @relation("TargetUserSecurity")
+  securityApprovals     SecurityRequest[]        @relation("SecurityApprovals")
+  securityExecutions    SecurityRequest[]        @relation("SecurityExecutions")
 
   @@index([email])
   @@index([tenantId])
@@ -2079,6 +2090,38 @@ model DataExportLog {
   @@map("data_export_logs")
 }
 
+
+/// SecurityRequest - Solicitações de ações sensíveis (ex: 2FA Reset)
+model SecurityRequest {
+  id            String   @id @default(uuid())
+  type          String   // '2FA_RESET'
+  status        SecurityRequestStatus @default(PENDING)
+  
+  requesterId   String   @map("requester_id")
+  targetUserId  String   @map("target_user_id")
+  justification String
+  
+  approvedBy    String?  @map("approved_by")
+  approvedAt    DateTime? @map("approved_at")
+  
+  executedBy    String?  @map("executed_by")
+  executedAt    DateTime? @map("executed_at")
+  
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  requester     User     @relation("SecurityRequests", fields: [requesterId], references: [id])
+  targetUser    User     @relation("TargetUserSecurity", fields: [targetUserId], references: [id])
+  approver      User?    @relation("SecurityApprovals", fields: [approvedBy], references: [id])
+  executor      User?    @relation("SecurityExecutions", fields: [executedBy], references: [id])
+  
+  @@map("security_requests")
+  @@index([type])
+  @@index([status])
+  @@index([requesterId])
+  @@index([targetUserId])
+}
 
 
 // --- USER EXTENSIONS ---
