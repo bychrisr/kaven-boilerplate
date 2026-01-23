@@ -18,29 +18,10 @@ import { Card } from '@/components/ui/card';
 import { GrantApprovalDialog } from '@/components/grants/grant-approval-dialog';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { grantRequestService } from '@/services/grant-request.service';
+import { GrantRequest } from '@/services/grant-request.service';
 
-interface GrantRequest {
-  id: string;
-  requester: {
-    id: string;
-    name: string;
-    email: string;
-    avatarUrl?: string;
-    role: string;
-  };
-  capability?: {
-    code: string;
-    description: string;
-  };
-  space?: {
-    name: string;
-  };
-  justification: string;
-  requestedDuration: number;
-  accessLevel: 'READ_ONLY' | 'READ_WRITE';
-  createdAt: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
-}
+// Interface local removida em favor da importada do serviço
 
 export default function ApprovalsPage() {
   const [selectedRequest, setSelectedRequest] = useState<GrantRequest | null>(null);
@@ -50,9 +31,7 @@ export default function ApprovalsPage() {
   const { data: requests, isLoading, error } = useQuery<GrantRequest[]>({
     queryKey: ['grant-requests', 'pending'],
     queryFn: async () => {
-      const response = await fetch('/api/grant-requests?status=PENDING');
-      if (!response.ok) throw new Error('Falha ao carregar solicitações');
-      return response.json();
+      return grantRequestService.listPending();
     },
   });
 

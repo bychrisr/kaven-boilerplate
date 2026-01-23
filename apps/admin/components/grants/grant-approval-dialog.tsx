@@ -17,29 +17,9 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { grantRequestService } from '@/services/grant-request.service';
 
-interface GrantRequest {
-  id: string;
-  requester: {
-    id: string;
-    name: string;
-    email: string;
-    avatarUrl?: string;
-    role: string;
-  };
-  capability?: {
-    code: string;
-    description: string;
-  };
-  space?: {
-    name: string;
-  };
-  justification: string;
-  requestedDuration: number;
-  accessLevel: 'READ_ONLY' | 'READ_WRITE';
-  createdAt: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
-}
+import { GrantRequest } from '@/services/grant-request.service';
 
 interface GrantApprovalDialogProps {
   request: GrantRequest | null;
@@ -59,18 +39,11 @@ export function GrantApprovalDialog({
 
   const reviewMutation = useMutation({
     mutationFn: async (data: { action: 'APPROVE' | 'REJECT'; reason?: string }) => {
-      const response = await fetch(`/api/grant-requests/${request?.id}/review`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+      // @ts-expect-error - ReviewGrantRequestInput esperado pelo backend
+      return grantRequestService.review(request?.id as string, {
+        status: data.action === 'APPROVE' ? 'APPROVED' : 'REJECTED',
+        reason: data.reason,
       });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Falha ao processar solicitação');
-      }
-
-      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['grant-requests'] });
