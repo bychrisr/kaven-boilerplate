@@ -50,6 +50,7 @@ import { roleRoutes } from './modules/roles/routes/role.routes';
 import { grantRequestRoutes } from './modules/grants/routes/grant-request.routes';
 import { policyRoutes } from './modules/policies/routes/policy.routes';
 import { exportRoutes } from './modules/export/routes/export.routes';
+import { securityRoutes } from './modules/security/routes/security.routes';
 
 // Initialize Sentry for error tracking
 initSentry();
@@ -226,6 +227,7 @@ app.register(grantRequestRoutes, { prefix: '/api' });
 app.register(policyRoutes, { prefix: '/api' });
 app.register(currenciesRoutes, { prefix: '/api/currencies' });
 app.register(exportRoutes, { prefix: '/api/export' });
+app.register(securityRoutes, { prefix: '/api/security' });
 
 // Webhooks
 app.register(emailWebhookRoutes, { prefix: '/api/webhooks/email' });

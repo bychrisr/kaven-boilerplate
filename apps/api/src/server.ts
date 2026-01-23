@@ -5,6 +5,7 @@ import { env } from './config/env';
 import { metricsUpdaterService } from './modules/observability/services/metrics-updater.service';
 import { emailServiceV2 } from './lib/email';
 import { emailHealthCheckCron } from './jobs/email-health-check-cron.service';
+import { securityJobs } from './jobs/security-jobs.service';
 import './queues/email.worker'; // Importa para inicializar o worker
 // [KAVEN_SERVER_IMPORTS_END]
 
@@ -29,6 +30,10 @@ const start = async () => {
       console.error('❌ Error starting Email Health Check Cron:', err);
     });
     console.log('⏰ Email Health Check Cron initialized');
+
+    // Inicializar automações de segurança
+    securityJobs.start();
+    console.log('🛡️ Security Jobs initialized');
 // [KAVEN_SERVER_STARTUP_END]
   } catch (err) {
     app.log.error(err);
