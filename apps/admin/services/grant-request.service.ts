@@ -23,11 +23,12 @@ export interface GrantRequest {
     id: string;
     name: string;
   };
-  requester?: {
+  requester: {
     id: string;
     name: string;
     email: string;
     avatarUrl?: string;
+    role: string;
   };
   approver?: {
     name: string;
